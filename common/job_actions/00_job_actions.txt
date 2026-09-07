@@ -1,0 +1,687 @@
+##########################################
+# COUNCILLOR ACTIONS
+##########################################
+# attribute = [diplomacy/stewardship/intrigue/martial/learning] - Character attribute is multiplied with the modifiers
+# trigger = Province scope trigger to determine if the action is meaningful in a province (the player character is FROM, the councillor is in 'new_character')
+# Events that can trigger off this action. This info is only used by the GUI.
+# All modifiers (like 'local_build_time_modifier') are multiplied by the attribute
+
+# display_on_map = {
+#	tooltip = JOB_PROSELYTIZE_DIFFERENT_RELIGION  # Key of the loc to add to the tooltip
+#	trigger = {                                   # Trigger for when this should happen. Same scopes as the allow/potential for the job action itself
+#		NOT = { religion = FROM }
+#	}
+#	color = { 255 0 0 }                           # What color to use on the map
+# }
+
+# Chancellor
+action_improve_relations = {
+	attribute = diplomacy
+	
+	potential = {
+		FROM = { 
+			NOT = { 
+				AND = {
+					has_landed_title = d_nightswatch 
+					trait = nightswatch
+				}	
+			} 
+		}
+	}
+	
+	trigger = {
+		NOT = { 
+			any_province_lord = {
+				character = FROM
+			}
+		}
+		is_within_diplo_range = FROM
+	}
+	
+	events = { 910 911 }
+}
+
+action_clan_sentiment = {
+	attribute = diplomacy
+	
+	potential = {
+		FROM = {
+			is_nomadic = yes
+		}
+	}
+	
+	trigger = {
+		owner = {
+			is_nomadic = yes
+			NOT = { character = FROM }
+
+			FROM = {
+				job_chancellor = {
+					NOT = { character = PREVPREV } # Can't be sent to improve relations with himself...
+				}
+			}
+			
+			OR = {
+				vassal_of = FROM
+				same_liege = FROM
+				overlord_of = FROM
+			}
+		}
+	}
+	
+	events = { 20235 }
+}
+
+action_fabricate_claims = {
+	attribute = diplomacy
+	
+	potential = {
+		NOT = { has_game_rule = { name = fabricating_claims value = off } }
+		FROM = { 
+			NOR = {
+				primary_title = { has_law = succ_appointment }
+				AND = { 
+					has_landed_title = c_dosh_khaleen 
+					trait = dosh_khaleen
+				}
+				trait = nightswatch
+				trait = kingsguard
+				trait = archmaester
+				trait = maester
+				culture_group = unoccupied_group
+				is_nomadic = yes
+				trait = pirate
+			}
+		}
+	}
+	
+	trigger = {
+		owner = { 
+			NOT = { character = FROM } 
+			NOT = { culture = ruin } #Cannot fabricate a claim to a ruin
+		}		
+		OR = {
+			owner = { NOT = { trait = nightswatch } }
+			FROM = { trait = wildling }
+		}
+		OR = {
+			owner = { is_nomadic = no }
+			NOT = { traditional_nomad_territory_trigger = yes }
+		}
+		is_within_diplo_range = FROM
+	}
+	
+	events = { 913 914 }
+}
+
+action_sow_dissent = {
+	attribute = diplomacy
+	
+	potential = {
+		FROM = { 
+			NOT = { 
+				AND = {
+					has_landed_title = d_nightswatch 
+					trait = nightswatch
+				}	
+			} 
+		}
+	}
+	
+	trigger = {
+		any_province_lord = {
+			NOT = { character = FROM }
+			NOT = { is_liege_or_above = FROM }
+		}
+		NOT = { 
+			any_province_lord = {
+				character = FROM
+			}
+		}
+		is_within_diplo_range = FROM
+		num_of_settlements = 1
+	}
+	
+	events = { 916 917 }
+}
+
+action_statecraft = {
+	attribute = diplomacy
+
+	potential = {
+		#has_dlc = Mystics
+	}
+
+	trigger = {
+		
+	}
+
+	#liege_modifier = statecraft_liege_mod
+
+	offmap = yes
+	
+	events = { MNM.78000 91095 91096 } 
+}
+
+# Steward
+action_squeeze_peasants = {
+	attribute = stewardship
+	
+	potential = {
+		FROM = { 
+			is_nomadic = no
+			#is_tribal = no
+			NOT = { trait = nightswatch } 		
+			OR = { #Dothraki, jogos nhai, wildlings cant do this in homeland
+				ai = yes
+				AND = { 
+					is_nomadic = no
+					NOT = { trait = wildling } 
+				}
+				any_demesne_province = {
+					NOT = { traditional_nomad_territory_trigger = yes }
+					NOT = { wildling_culture_trigger = yes }
+				}
+			}
+		}
+	}
+
+	trigger = {
+		any_province_lord = {
+			character = FROM
+		}
+		OR = { #Dothraki, jogos nhai, wildlings cant do this in homeland
+			FROM = { 
+				is_nomadic = no
+				NOT = { trait = wildling } 
+			}
+			AND = {
+				NOT = { traditional_nomad_territory_trigger = yes }
+				NOT = { wildling_culture_trigger = yes }
+			}
+		}
+		num_of_settlements = 1
+	}
+	
+	local_tax_modifier = 0.025
+	attribute_cap = 35
+	
+	events = { 920 921 20214 }
+}
+
+action_collect_tribute = {
+	attribute = stewardship
+
+	potential = {
+		FROM = {
+			is_nomadic = yes
+		}
+	}
+
+	trigger = {
+		num_of_settlements = 1
+		any_province_lord = {
+			NOT = { character = FROM }
+			
+			FROM = {
+				job_treasurer = {
+					NOT = { character = PREVPREV } # Can't be sent to himself...
+				}
+			}
+			
+			OR = {
+				vassal_of = FROM
+				pays_tribute_to = FROM
+			}
+			capital_scope = {
+				province = ROOT
+			}
+		}
+	}
+	
+	events = { 20225 }
+}
+
+# action_settle_tribe = {
+# }
+
+action_oversee_construction = {
+	attribute = stewardship
+
+	trigger = {
+		any_province_lord = {
+			character = FROM
+		}
+		num_of_settlements = 1
+	}
+	
+	local_build_time_modifier = -0.025
+	attribute_cap = 25
+	
+	events = { 923 924 unoccupied.499 }
+}
+
+# action_advance_eco_tech = {
+# }
+
+action_build_legend = {
+	attribute = stewardship
+
+	potential = {
+		FROM = {
+			#is_tribal = yes
+			OR = {
+				culture = dothraki
+				culture = jogos_nhai
+				trait = wildling
+				culture = moon_clansman
+			}
+			NOT = { trait = nightswatch }
+		}
+	}
+
+	trigger = {
+		FROM = {
+			is_capital = PREV
+		}
+	}
+	
+	monthly_character_prestige = 0.1
+	attribute_cap = 35
+	
+	events = { 20208 }
+}
+
+action_administer_realm = {
+	attribute = stewardship
+
+	potential = {
+		has_dlc = Mystics
+		FROM = {
+			demesne_size = 1
+		}
+	}
+	trigger = {
+	}
+
+	offmap = yes
+	
+	events = { MNM.70005 MNM.78007 }
+}
+
+# Spymaster
+action_uncover_plots = {
+	attribute = intrigue
+	
+	potential = {
+		NOT = { has_dlc = Mystics }
+	}
+	
+	trigger = {
+		any_province_lord = {
+			OR = {
+				is_liege_or_above = FROM
+				same_liege = FROM
+			}
+		}
+		num_of_settlements = 1	
+	}
+
+	plot_discovery_chance = 0.01
+	attribute_cap = 35
+	
+	events = { 929 931 9000 9020 }
+}
+
+action_uncover_plots_offmap = {
+	attribute = intrigue
+	
+	potential = {
+		has_dlc = Mystics
+	}
+	
+	offmap = yes
+
+	plot_discovery_chance = 0.01
+	attribute_cap = 35
+	
+	events = { 929 931 9000 9020 }
+}
+
+action_study_technology = { ###loc changed to 'Sabotage Economy'
+	attribute = intrigue
+	
+	potential = {
+		FROM = { 
+			NOT = { trait = nightswatch } 
+		}
+		NOT = { has_dlc = Mystics }
+	}
+	
+	trigger = {
+		any_province_lord = {
+			NOT = { is_liege_or_above = FROM }
+			NOT = { character = FROM }
+		}
+		is_within_diplo_range = FROM
+		num_of_settlements = 1		
+	}
+	
+	local_tax_modifier = -0.01
+	attribute_cap = 25
+	
+	events = { 933 }
+}
+
+action_organize_spies = {
+	attribute = intrigue
+	
+	potential = {
+	}
+	
+	trigger = {	
+		any_province_lord = {
+			NOT = { character = FROM }
+		}
+		is_within_diplo_range = FROM
+	}
+	
+	plot_power_modifier = 0.005
+	attribute_cap = 35
+	
+	events = { 935 936 }
+}
+
+action_sabotage_province = {
+	attribute = intrigue
+
+	potential = {
+		has_dlc = Mystics
+	}
+
+	trigger = {	
+		any_province_lord = {
+			NOT = {
+				tier = BARON
+			}
+			NOT = { character = FROM }
+		}
+		can_be_sabotaged_trigger = yes
+		is_within_diplo_range = FROM
+	}
+	
+	events = { MNM.70020 933 }
+}
+
+# Marshal
+action_advance_mil_tech = { #loc changed to 'Train Children'
+	attribute = martial
+	
+	potential = {
+		FROM = {
+			NOT = { trait = nightswatch } 
+		}
+	}
+
+	trigger = {
+		# is_capital = yes
+		# any_province_lord = {
+			# character = FROM
+		# }
+		FROM = { job_marshal = { is_maimed_trigger = no } }
+	}
+	
+	offmap = yes
+	
+	events = { 938 93800 }
+}
+action_organize_raid = {
+	attribute = martial
+
+	potential = {
+		FROM = {
+			#is_tribal = yes
+			OR = {
+				religion_group = wildling_religion
+				is_drowned_god_religion_trigger = yes
+				religion = dothraki_pagan
+				culture = jogos_nhai
+				government = pirate_government
+				religion_group = pirate_group
+			}
+			NOT = { trait = nightswatch }
+			is_allowed_to_loot = yes
+		}
+	}
+
+	trigger = {
+		FROM = {
+			is_capital = PREV		
+		}
+	}
+	
+	events = { 20221 }
+}
+
+action_train_troops = {
+	attribute = martial
+	
+	potential = {
+		FROM = {
+			is_nomadic = no
+		}
+	}
+
+	trigger = {
+		any_province_lord = {
+			character = FROM
+		}
+	}
+	
+	levy_size = 0.0125
+	levy_reinforce_rate = 0.05
+	attribute_cap = 25
+	
+	events = { 941 942 }
+}
+
+action_train_troops_nomadic = {
+	attribute = martial
+	
+	potential = {
+		FROM = {
+			is_nomadic = yes
+		}
+	}
+
+	trigger = {
+		FROM = {
+			is_capital = ROOT
+		}
+	}
+	
+	manpower_growth = 0.015
+	attribute_cap = 25
+	
+	events = { }
+}
+
+action_assist_arrest = {
+	attribute = martial
+	
+	potential = {
+		FROM = { 
+			NOR = {
+				is_nomadic = yes
+				trait = wildling
+				culture = moon_clansman
+			}	
+		}
+	}
+
+	trigger = {		
+		any_province_lord = {
+			OR = {
+				character = FROM
+				is_liege_or_above = FROM
+			}
+		}
+	}
+	
+	arrest_chance_modifier = 0.01
+	local_revolt_risk = -0.01
+	attribute_cap = 25
+	
+	events = {  }
+}
+
+action_organize_army = {
+	attribute = martial
+
+	potential = {
+		has_dlc = Mystics
+	}
+
+	offmap = yes
+	
+	liege_modifier = organize_army_liege_mod
+	
+	attribute_cap = 25
+	
+	events = { MNM.70010 MNM.70012 MNM.70015 } 
+}
+#Priest
+action_inquisition = {
+	attribute = learning
+	
+	potential = {
+		FROM = { 
+			NOT = { trait = nightswatch } 
+			NOT = { culture_group = unoccupied_group }
+			NOT = { culture_group = winter_group }
+			NOT = { religion = lady_of_spears } 
+		}
+	}
+	
+	trigger = {
+		num_of_settlements = 1
+		any_province_lord = {
+			OR = {
+				character = FROM
+				is_liege_or_above = FROM
+			}
+		}
+	}
+	
+	display_on_map = {
+		tooltip = JOB_PROSELYTIZE_SAME_RELIGION
+		trigger = {
+			religion = FROM
+			any_province_lord = {
+				OR = {
+					character = FROM
+					is_liege_or_above = FROM
+				}
+			}
+		}
+		color = { 0 0 255 }
+	}
+	
+	display_on_map = {
+		tooltip = JOB_PROSELYTIZE_DIFFERENT_RELIGION
+		trigger = {
+			NOT = { religion = FROM }
+			any_province_lord = {
+				OR = {
+					character = FROM
+					is_liege_or_above = FROM
+				}
+			}
+		}
+		color = { 0 255 0 }
+	}
+	
+	events = { 900 901 902 } #903
+}
+# action_improve_rel_relations = {
+	# attribute = learning
+	
+	# potential = {	
+	# }
+	
+	# offmap = yes
+	
+	# events = { maester.15 maester.18 maester.33 maester.35 }
+# }
+# action_advance_cul_tech = {
+# }
+action_build_zeal = {
+	attribute = learning
+
+	potential = {
+		FROM = {
+			#is_tribal = yes
+			OR = {
+				culture = dothraki
+				culture = jogos_nhai
+				trait = wildling
+				AND = {
+					culture_group = iron_isles_culture
+					is_drowned_god_religion_trigger = yes
+				}
+			}
+			NOT = { trait = nightswatch }
+		}
+	}
+
+	trigger = {
+		FROM = {
+			is_capital = PREV
+		}
+	}
+	
+	monthly_character_piety = 0.05
+	attribute_cap = 35
+	
+	events = { 20218 }
+}
+
+action_hunt_heretics = {
+	attribute = learning
+
+	potential = {
+		has_dlc = Mystics
+		NOT = { has_game_rule = { name = devil_worshipers value = none } }
+	}
+	
+	liege_modifier = apostate_liege_mod
+
+	offmap = yes
+	
+	events = { MNM.70100 }
+}
+
+action_charity = {
+	attribute = learning
+	
+	potential = {
+		FROM = {
+			NOR = {
+				is_nomadic = yes
+				trait = wildling
+			}
+		}
+	}
+	
+	trigger = {
+		any_province_lord = {
+			character = FROM
+		}
+		num_of_settlements = 1
+	}
+	
+	local_revolt_risk = -0.005
+	attribute_cap = 25
+	
+	events = { 20040 20043 20048 20050 }
+}

@@ -1,0 +1,473 @@
+########################################################
+# MINOR TITLES
+# Characters can have any number of these
+########################################################
+#	grant_limit: Max number of holders.
+#	realm_in_name: Append the name of the country after the title (Queen [of Sweden])
+#	allowed_to_hold: conditions for the character to hold the title
+#	allowed_to_grant: conditions for a ruler to grant the title
+#	regent: This is the title for regents (not really "minor")
+#	gain_effect: fires when the title is granted
+#	lose_effect: fires when a title is lost through most causes
+#	retire_effect: fires when a title is lost due to the character stepping down
+#	death_effect: fires when a title is lost due to the character dying
+#	message: should fire a message to the its owner when set
+#	The other fields are all character modifiers.
+
+#######################################
+# SPECIAL
+#######################################
+title_bravo = {
+	grant_limit = 3
+	opinion_effect = 5
+	monthly_prestige = 0.1
+	#monthly_salary = 0.01
+	revoke_allowed = no
+	
+	allowed_to_hold = {
+		age = 16
+		trait = duelist
+		NOT = { trait = craven }
+		NOT = { trait = infirm }
+	}
+	allowed_to_grant = {
+		is_patrician = yes
+		culture_group = free_cities
+	}
+	
+	gain_effect = { }
+	lose_effect = { }
+}
+title_maid_fields = {
+	dignity = 0.3
+	grant_limit = 1
+	
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_prestige = 0.25
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_female = yes
+		is_married = no
+		culture = pentosi
+		is_ruler = no
+		age = 15
+		NOT = { age = 17 }
+		NOT = { has_minor_title = title_maid_seas }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_maid_seas = {
+	dignity = 0.3
+	grant_limit = 1
+	
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_prestige = 0.25
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_female = yes
+		is_married = no
+		culture = pentosi
+		is_ruler = no
+		age = 15
+		NOT = { age = 17 }
+		NOT = { has_minor_title = title_maid_fields }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_triarch = {
+	dignity = 1
+	grant_limit = 2
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	is_voter = yes
+	
+	monthly_prestige = 0.4
+	monthly_salary = 0.5
+	
+	allowed_to_hold = {
+		has_character_flag = triarch
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { }
+	lose_effect = { }
+
+	message = no
+}
+title_triarch_for_life = {
+	dignity = 1
+	grant_limit = 1
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_prestige = 0.4
+	
+	allowed_to_hold = {
+		has_character_flag = title_triarch_for_life
+		has_character_flag = triarch
+		any_liege = {
+			is_merchant_republic = yes
+			government = triarch_merchant_republic_government	
+			primary_title = { has_law = republic_triarch_for_life }	
+			dynasty = ROOT
+		}
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+		random_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_named_me_co_triarch_for_life }
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = opinion_named_me_co_triarch_for_life
+			}	
+		}
+	}
+
+	message = no
+}
+title_freeholder = {
+	dignity = 0.3
+	grant_limit = 500
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_prestige = 0.25
+	monthly_salary = 0.5
+	
+	allowed_to_hold = {
+		is_ruler = no
+		has_character_flag = title_freeholder
+		OR = {
+			government = triarch_merchant_republic_government
+			is_valyrian_freehold_trigger = yes
+			any_liege = {
+				OR = {
+					government = triarch_merchant_republic_government
+					is_valyrian_freehold_trigger = yes
+				}	
+			}		
+		}
+		can_press_claims_trigger = yes
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+		#hidden_tooltip = { FROM = { character_event = { id = volantis.108 } } } 
+	}
+	lose_effect = { }
+	death_effect = {
+		#inherited on death
+		random_child = {
+			limit = {
+				is_female = no
+				NOT = { has_character_flag = title_freeholder }
+				is_alive = yes	
+				is_ruler = no
+				any_liege = { 
+					OR = {
+						government = triarch_merchant_republic_government
+						is_valyrian_freehold_trigger = yes
+					}	
+				}
+				can_press_claims_trigger = yes
+				NOT = {
+					any_sibling = {
+						is_older_than = PREV
+						is_female = no
+						NOT = { has_character_flag = title_freeholder }
+						is_alive = yes	
+						is_ruler = no
+						any_liege = { 
+							OR = {
+								government = triarch_merchant_republic_government
+								is_valyrian_freehold_trigger = yes
+							}	
+						}
+						can_press_claims_trigger = yes					
+					}
+				}
+			}
+			set_character_flag = title_freeholder
+			give_minor_title = title_freeholder
+			break = yes
+		}
+		random_child = {
+			limit = {
+				NOT = { has_character_flag = title_freeholder }
+				is_alive = yes	
+				is_ruler = no
+				any_liege = { government = triarch_merchant_republic_government }
+				can_press_claims_trigger = yes
+			}
+			set_character_flag = title_freeholder
+			give_minor_title = title_freeholder
+			break = yes
+		}
+		random_child_even_if_dead = {
+			limit = {
+				any_child = {
+					NOT = { has_character_flag = title_freeholder }
+					is_alive = yes	
+					is_ruler = no
+					any_liege = { 
+						OR = {
+							government = triarch_merchant_republic_government
+							is_valyrian_freehold_trigger = yes
+						}	
+					}
+					can_press_claims_trigger = yes
+				}	
+			}
+			random_child = {
+				limit = {
+					NOT = { has_character_flag = title_freeholder }
+					is_alive = yes	
+					is_ruler = no
+					any_liege = { 
+						OR = {
+							government = triarch_merchant_republic_government
+							is_valyrian_freehold_trigger = yes
+						}	
+					}
+					can_press_claims_trigger = yes
+				}
+				set_character_flag = title_freeholder
+				give_minor_title = title_freeholder
+				break = yes
+			}
+		}
+		random_spouse = {
+			limit = {
+				NOT = { has_character_flag = title_freeholder }
+				is_alive = yes	
+				is_ruler = no
+				any_liege = { 
+					OR = {
+						government = triarch_merchant_republic_government
+						is_valyrian_freehold_trigger = yes
+					}	
+				}
+				can_press_claims_trigger = yes
+			}
+			set_character_flag = title_freeholder
+			give_minor_title = title_freeholder
+			break = yes
+		}
+		random_sibling = {
+			limit = {
+				NOT = { has_character_flag = title_freeholder }
+				is_alive = yes	
+				is_ruler = no
+				any_liege = { 
+					OR = {
+						government = triarch_merchant_republic_government
+						is_valyrian_freehold_trigger = yes
+					}	
+				}
+				can_press_claims_trigger = yes
+			}
+			set_character_flag = title_freeholder
+			give_minor_title = title_freeholder
+			break = yes
+		}
+	}
+
+	message = no
+}
+title_fisher_prince = { #Lorath
+	dignity = 1
+	grant_limit = 1
+	
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0.5
+	monthly_prestige = 0.4
+	opinion_effect = 0
+	
+	allowed_to_hold = {	
+		OR = {
+			has_landed_title = k_lorath
+			any_liege = {
+				OR = {
+					has_landed_title = k_lorath
+					liege_before_war = { has_landed_title = k_lorath }
+				}
+			}
+		}	
+		has_character_flag = title_fisher_prince
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+		k_lorath = { holder_scope = { character_event = { id = free_cities.11027 days = 5 } } }
+	}
+	death_effect = {
+		k_lorath = { holder_scope = { character_event = { id = free_cities.11027 days = 5 } } }
+	}
+
+	message = no
+}
+title_prince_of_the_streets = { #Lorath
+	dignity = 1
+	grant_limit = 1
+	
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0.5
+	monthly_prestige = 0.4
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		OR = {
+			has_landed_title = k_lorath
+			any_liege = {
+				OR = {
+					has_landed_title = k_lorath
+					liege_before_war = { has_landed_title = k_lorath }
+				}
+			}
+		}	
+		has_character_flag = title_prince_of_the_streets
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+		k_lorath = { holder_scope = { character_event = { id = free_cities.11027 days = 5 } } }
+	}
+	death_effect = {
+		k_lorath = { holder_scope = { character_event = { id = free_cities.11027 days = 5 } } }
+	}
+
+	message = no
+}
+title_bearded_priest_designated_heir = {
+	dignity = 0.5
+	realm_in_name = yes
+	grant_limit = 1
+	opinion_effect = 20
+	
+	#monthly_salary = 0.01
+	monthly_prestige = 0.1
+	
+	allowed_to_hold = {
+		trait = bearded_priest
+		religion = bearded_priests
+		prisoner = no
+		is_incapable = no
+		OR = {
+			is_ruler = no
+			dynasty = FROM
+		}	
+		OR = {
+			NOT = { has_dynasty_flag = bearded_priest_order }
+			dynasty = FROM
+			dynasty = 0
+		}
+	}
+	allowed_to_grant = {
+		government = theocratic_feudal_government
+		has_dynasty_flag = bearded_priest_order
+		NOR = { 
+			has_landed_title = d_bearded_priests
+			higher_tier_than = DUKE
+		}
+	}
+	
+	gain_effect = {
+		dynasty = FROM
+		set_immune_to_pruning = yes
+	}
+	lose_effect = {
+	}
+
+	message = yes
+}
+title_archon_for_life = {
+	dignity = 1
+	grant_limit = 1
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_prestige = 0.4
+	
+	allowed_to_hold = {
+		has_character_flag = title_archon_for_life
+		has_job_title = job_castellan
+		liege = {
+			is_valyrian_freehold_trigger = yes
+			primary_title = { has_law = republic_triarch_for_life }	
+			dynasty = ROOT
+		}
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { 
+	}
+	lose_effect = { 
+		random_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_named_me_co_archon_for_life }
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = opinion_named_me_co_archon_for_life
+			}	
+		}
+	}
+
+	message = no
+}

@@ -1,0 +1,2579 @@
+#Warden events, by Wolfgang pauli and knuckey
+namespace = warden
+
+#warden.1 - notify King new warden needed
+#warden.2 - A Warden needs assigning
+#warden.3 - King picks a favoured Lord
+#warden.4 - King picks a capable person
+#warden.5 - Notify Warden of North
+#warden.6 - Notify Warden of East
+#warden.7 - Notify Warden of West
+#warden.8- Notify Warden of South
+#warden.9- Notify not given traditional title
+#warden.10- Post mega war titles reassigned
+
+#Iron Throne is notified that a warden title is empty
+character_event = {
+	id = warden.1
+	desc = WARDEN1DESC #A Warden position stands empty. This is an ancient and venerable duty, and must be fulfilled.
+	
+	only_independent = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_landed_title = e_iron_throne
+		NOT = { trait = civil_war }
+		NOT = { has_global_flag = aegons_conquest }
+		OR = {
+			NOT = { has_character_flag = mega_war_wardens_reset }
+			had_character_flag = { flag = mega_war_wardens_reset days = 20 }
+		}	
+		OR = {
+			#any vassal has Warden of the North
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_north }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_north
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_north_self_assign
+				}
+			}	
+			#any vassal has Warden of the East
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_east }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_east
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_east_self_assign
+				}
+			}
+			#any vassal has Warden of the West
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_west }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_west
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_west_self_assign
+				}
+			}
+			#any vassal has Warden of the South
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_south }		
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_south
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_south_self_assign
+				}
+			}
+		}
+	}
+	
+	immediate = { clr_character_flag = mega_war_wardens_reset }
+	
+	option = { #assign Warden of the North
+		name = WARDEN1OPTA #We must assign a Warden of the North
+		trigger = { 
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_north }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_north
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_north_self_assign
+				}
+			}
+		}	
+		random_courtier_or_vassal = {
+			limit = {
+				has_character_flag = warden_of_the_north
+				liege = { character = ROOT }
+				NOT = { character = ROOT }
+			}
+			if = {
+				limit = { 
+					prisoner = no 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_honorary_title } }
+				}
+				give_minor_title = warden_north 
+				break = yes
+			}	
+			clr_character_flag = warden_of_the_north
+		}
+		set_character_flag = assign_north
+		hidden_tooltip = { character_event = { id = warden.2 } }
+	}
+
+	option = {
+		name = WARDEN1OPTB #We must assign a Warden of the East
+		trigger = { 
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_east }		
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_east
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_east_self_assign
+				}
+			}
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				has_character_flag = warden_of_the_east
+				liege = { character = ROOT }
+				NOT = { character = ROOT }
+			}
+			if = {
+				limit = { 
+					prisoner = no 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_honorary_title } }
+				}
+				give_minor_title = warden_east 
+				break = yes
+			}	
+			clr_character_flag = warden_of_the_east
+		}
+		set_character_flag = assign_east
+		hidden_tooltip = { character_event = { id = warden.2 } }
+	}
+
+	option = {
+		name = WARDEN1OPTC #We must assign a Warden of the West
+		trigger = { 
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_west }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_west
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_west_self_assign
+				}
+			}
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				has_character_flag = warden_of_the_west
+				liege = { character = ROOT }
+				NOT = { character = ROOT }
+			}
+			if = {
+				limit = { 
+					prisoner = no 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_honorary_title } }
+				}
+				give_minor_title = warden_west
+				break = yes
+			}	
+			clr_character_flag = warden_of_the_west
+		}
+		set_character_flag = assign_west
+		hidden_tooltip = { character_event = { id = warden.2 } }
+	}
+
+	option = {
+		name = WARDEN1OPTD #We must assign a Warden of the South
+		trigger = { 
+			NOT = {
+				OR = { 	
+					any_courtier_or_vassal = { has_minor_title = warden_south }	
+					any_independent_ruler = {
+						has_character_flag = warden_of_the_south
+						primary_title = { ROOT = { primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } } }
+						NOT = { tier = EMPEROR }
+						NOT = { war_with = ROOT }
+					}
+					has_character_flag = warden_south_self_assign
+				}
+			}
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				has_character_flag = warden_of_the_south
+				liege = { character = ROOT }
+				NOT = { character = ROOT }
+			}
+			if = {
+				limit = { 
+					prisoner = no 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_honorary_title } }
+				}
+				give_minor_title = warden_south 
+				break = yes
+			}	
+			clr_character_flag = warden_of_the_south
+		}
+		set_character_flag = assign_south
+		hidden_tooltip = { character_event = { id = warden.2 } }
+	}
+}
+
+character_event = {
+	id = warden.2
+	desc = WARDEN2DESC #"To whom should this duty fall?"
+
+	is_triggered_only = yes
+	
+	trigger = { has_landed_title = e_iron_throne }
+	
+	immediate = {
+		character_event = { id = warden.1 days = 30 } #check again
+	}
+
+	option = {
+		name = WARDEN2OPTA #It should fall to the Lord of the North
+		trigger = { #The North must be a vassal of the Iron Throne
+			has_character_flag = assign_north
+			k_north = { holder_scope = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } } }
+		}
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -20 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -60 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -80 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 20 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 60 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 80 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { martial = 1 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { martial = 4 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { martial = 7 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						martial = 14
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						martial = 17
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						martial = 20
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_north = { 
+					holder_scope = {
+						martial = 23
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						is_female = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_north = { 
+					holder_scope = {
+						NOT = { age = 16 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		k_north = { 
+			holder_scope = {
+				give_minor_title = warden_north 
+				hidden_tooltip = { character_event = { id = warden.5 } }
+				set_character_flag = warden_of_the_north
+				if = {
+					limit = { liege = { regent = { character = PREVPREV } } }
+					custom_tooltip = { text = TOOLTIPWARDENREGENT }
+				}	
+			}	
+		}
+		clr_character_flag = assign_north
+	}
+
+	option = {
+		name = WARDEN2OPTB #It should fall to a man of the Vale
+		trigger = { #The Vale must be a vassal of the Iron Throne
+			has_character_flag = assign_east
+			k_vale = { holder_scope = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } } }
+		}
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -20 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -60 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -80 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 20 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 60 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 80 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { martial = 1 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { martial = 4 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { martial = 7 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						martial = 14
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						martial = 17
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						martial = 20
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_vale = { 
+					holder_scope = {
+						martial = 23
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						is_female = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_vale = { 
+					holder_scope = {
+						NOT = { age = 16 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		k_vale = { 
+			holder_scope = {
+				give_minor_title = warden_east
+				hidden_tooltip = { character_event = { id = warden.6 } }
+				set_character_flag = warden_of_the_east
+				if = {
+					limit = { liege = { regent = { character = PREVPREV } } }
+					custom_tooltip = { text = TOOLTIPWARDENREGENT }
+				}
+			}	
+		}
+		clr_character_flag = assign_east
+	}
+
+	option = {
+		name = WARDEN2OPTC #It should fall to a man of the Westerlands
+		trigger = { #The Westerlands must be a vassal of the Iron Throne
+			has_character_flag = assign_west
+			k_westerlands = { holder_scope = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } } }
+		}
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -20 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -60 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -80 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 20 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 60 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 80 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { martial = 1 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { martial = 4 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { martial = 7 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						martial = 14
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						martial = 17
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						martial = 20
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_westerlands = { 
+					holder_scope = {
+						martial = 23
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						is_female = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_westerlands = { 
+					holder_scope = {
+						NOT = { age = 16 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		k_westerlands = { 
+			holder_scope = {
+				give_minor_title = warden_west
+				hidden_tooltip = { character_event = { id = warden.7 } }
+				set_character_flag = warden_of_the_west
+				if = {
+					limit = { liege = { regent = { character = PREVPREV } } }
+					custom_tooltip = { text = TOOLTIPWARDENREGENT }
+				}
+			}	
+		}
+		clr_character_flag = assign_west
+	}
+
+	option = {
+		name = WARDEN2OPTD #It should fall to a man of the Reach
+		trigger = { #The Reach must be a vassal of the Iron Throne
+			has_character_flag = assign_south
+			k_reach = { holder_scope = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } } }
+		}
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -20 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -60 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -80 } }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 20 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 60 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						reverse_opinion = { who = ROOT value = 80 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { martial = 1 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { martial = 4 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { martial = 7 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						martial = 14
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						martial = 17
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						martial = 20
+					}	
+				}
+			}
+			modifier = {
+				factor = 1.5
+				k_reach = { 
+					holder_scope = {
+						martial = 23
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						is_female = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.66
+				k_reach = { 
+					holder_scope = {
+						NOT = { age = 16 }
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		k_reach = { 
+			holder_scope = {
+				give_minor_title = warden_south
+				hidden_tooltip = { character_event = { id = warden.8 } }
+				set_character_flag = warden_of_the_south
+				if = {
+					limit = { liege = { regent = { character = PREVPREV } } }
+					custom_tooltip = { text = TOOLTIPWARDENREGENT }
+				}
+			}	
+		}
+		clr_character_flag = assign_south
+	}
+
+	option = {
+		name = WARDEN2OPTE #The traditional warden is incapable, it shall fall to a great lord I like
+		trigger = { #at least one other lord paramount
+			any_vassal = {
+				demesne_size = 1		
+				is_female = no
+				age = 16
+				reverse_opinion = { who = ROOT value = 25 }
+				prisoner = no
+				NOT = { has_landed_title = k_the_most_devout }
+				NOT = {
+					AND = {
+						has_landed_title = k_north
+						ROOT = { has_character_flag = assign_north }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_vale
+						ROOT = { has_character_flag = assign_east }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_westerlands
+						ROOT = { has_character_flag = assign_west }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_reach
+						ROOT = { has_character_flag = assign_south }
+					}
+				}
+			}	
+			#regents always get traditional title
+			NOT = {
+				AND = {
+					has_character_flag = assign_north
+					k_north = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_east
+					k_vale = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_south
+					k_reach = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_west
+					k_westerlands = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+		}
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			k_north = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			k_vale = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			k_westerlands = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			k_reach = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+		set_character_flag = assign_vassal_warden
+		hidden_tooltip = { character_event = { id = warden.3 } }
+	}
+
+	option = {
+		name = WARDEN2OPTF #It shall go to the most capable person
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		trigger = { #at least one other lord paramount
+			any_courtier_or_vassal = {
+				liege = { character = ROOT }
+				demesne_size = 1
+				prisoner = no
+				is_female = no
+				age = 16
+				martial = 12
+				NOT = { has_landed_title = k_the_most_devout }
+				NOT = {
+					AND = {
+						has_landed_title = k_north
+						ROOT = { has_character_flag = assign_north }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_vale
+						ROOT = { has_character_flag = assign_east }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_westerlands
+						ROOT = { has_character_flag = assign_west }
+					}
+				}
+				NOT = {
+					AND = {
+						has_landed_title = k_reach
+						ROOT = { has_character_flag = assign_south }
+					}
+				}
+			}
+			#regents always get traditional title
+			NOT = {
+				AND = {
+					has_character_flag = assign_north
+					k_north = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_east
+					k_vale = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_south
+					k_reach = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_west
+					k_westerlands = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}			
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			k_north = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			k_vale = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			k_westerlands = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			k_reach = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+		set_character_flag = assign_martial_warden
+		hidden_tooltip = { character_event = { id = warden.3 } }
+	}
+	
+	option = {
+		name = WARDEN2OPTG #I will pick one later
+		trigger = { 
+			ai = no 
+			#regents always get traditional title
+			NOT = {
+				AND = {
+					has_character_flag = assign_north
+					k_north = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_east
+					k_vale = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_south
+					k_reach = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}	
+			NOT = {
+				AND = {
+					has_character_flag = assign_west
+					k_westerlands = { 
+						holder_scope = { 
+							vassal_of = ROOT 
+							prisoner = no 
+							NOT = { character = ROOT }
+							liege = { regent = { character = PREVPREV } }
+						} 
+					}
+				}
+			}
+		}
+		custom_tooltip = { text = TOOLTIPWARDENSELFASSIGN }
+		if = {
+			limit = { has_character_flag = assign_north }
+			set_character_flag = warden_north_self_assign 
+			clr_character_flag = assign_north
+			k_north = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			set_character_flag = warden_east_self_assign 
+			clr_character_flag = assign_east
+			k_vale = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			set_character_flag = warden_west_self_assign 
+			clr_character_flag = assign_west
+			k_westerlands = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			set_character_flag = warden_south_self_assign 
+			clr_character_flag = assign_south
+			k_reach = {
+				holder_scope = {
+					if = {
+						limit = { vassal_of = ROOT prisoner = no NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_denied_traditional_title
+							years = 20
+						}
+						hidden_tooltip = { character_event = { id = warden.9 } }
+					}	
+				}
+			}
+		}
+	}
+}
+#King chooses warden
+character_event = {
+	id = warden.3
+	
+	desc = {
+		text = WARDEN3DESC #based on opinion
+		trigger = { has_character_flag = assign_vassal_warden }
+	}	
+	desc = {
+		text = WARDEN4DESC #based on martial
+		trigger = { has_character_flag = assign_martial_warden }
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = { has_landed_title = e_iron_throne }
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = assign_vassal_warden }
+			random_vassal = {
+				limit = {
+					demesne_size = 1	
+					prisoner = no				
+					is_female = no
+					age = 16
+					reverse_opinion = { who = ROOT value = 25 }
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+					NOT = { has_character_flag = warden_candidate }
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						reverse_opinion = { who = ROOT value = 50 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_1
+			}
+			random_vassal = {
+				limit = {
+					demesne_size = 1	
+					prisoner = no				
+					is_female = no
+					age = 16
+					reverse_opinion = { who = ROOT value = 25 }
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+					NOT = { has_character_flag = warden_candidate }
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						reverse_opinion = { who = ROOT value = 50 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_2
+			}
+			random_vassal = {
+				limit = {
+					demesne_size = 1	
+					prisoner = no				
+					is_female = no
+					age = 16
+					reverse_opinion = { who = ROOT value = 25 }
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+					NOT = { has_character_flag = warden_candidate }
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						reverse_opinion = { who = ROOT value = 50 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_3
+			}
+			random_vassal = {
+				limit = {
+					demesne_size = 1	
+					prisoner = no				
+					is_female = no
+					age = 16
+					reverse_opinion = { who = ROOT value = 25 }
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+					NOT = { has_character_flag = warden_candidate }
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						reverse_opinion = { who = ROOT value = 50 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_4
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_martial_warden }
+			random_courtier_or_vassal = {
+				limit = {
+					liege = { character = ROOT }
+					demesne_size = 1
+					prisoner = no				
+					is_female = no
+					age = 16
+					martial = 12
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						martial = 16
+						reverse_opinion = { who = ROOT value = 25 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_1
+			}
+			random_courtier_or_vassal = {
+				limit = {
+					liege = { character = ROOT }
+					demesne_size = 1
+					prisoner = no				
+					is_female = no
+					age = 16
+					martial = 12
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						martial = 16
+						reverse_opinion = { who = ROOT value = 25 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_2
+			}
+			random_courtier_or_vassal = {
+				limit = {
+					liege = { character = ROOT }
+					demesne_size = 1
+					prisoner = no				
+					is_female = no
+					age = 16
+					martial = 12
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						martial = 16
+						reverse_opinion = { who = ROOT value = 25 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_3
+			}
+			random_courtier_or_vassal = {
+				limit = {
+					liege = { character = ROOT }
+					demesne_size = 1
+					prisoner = no				
+					is_female = no
+					age = 16
+					martial = 12
+					NOT = { has_landed_title = k_the_most_devout }
+					NOT = {
+						AND = {
+							has_landed_title = k_north
+							ROOT = { has_character_flag = assign_north }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_vale
+							ROOT = { has_character_flag = assign_east }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_westerlands
+							ROOT = { has_character_flag = assign_west }
+						}
+					}
+					NOT = {
+						AND = {
+							has_landed_title = k_reach
+							ROOT = { has_character_flag = assign_south }
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						tier = KING
+						martial = 16
+						reverse_opinion = { who = ROOT value = 25 }
+						is_close_relative = ROOT
+					}
+				}
+				set_character_flag = warden_candidate
+				save_event_target_as = candidate_4
+			}
+		}	
+	}
+
+	option = {
+		name = WARDEN3OPTA #Candidate 1
+		trigger = { 
+			event_target:candidate_1 = { always = yes }
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0.33
+				event_target:candidate_1 = {
+					OR = {
+						has_minor_title = warden_north 
+						has_minor_title = warden_south
+						has_minor_title = warden_east
+						has_minor_title = warden_west
+					}
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_1 = {
+					martial = 12
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_1 = {
+					martial = 15
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_1 = {
+					martial = 18
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_1 = {
+					martial = 21
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_1 = {
+					martial = 24
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_1 = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_1 = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					reverse_opinion = { who = ROOT value = 75 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					reverse_opinion = { who = ROOT value = 100 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_1 = {
+					tier = DUKE
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_1 = {
+					tier = KING
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_1 = {
+					dynasty = ROOT
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			event_target:candidate_1 = {
+				set_character_flag = warden_of_the_north
+				give_minor_title = warden_north 
+				hidden_tooltip = { character_event = { id = warden.5 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_north
+						years = 100
+					}
+				}	
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			event_target:candidate_1 = {
+				set_character_flag = warden_of_the_east
+				give_minor_title = warden_east 
+				hidden_tooltip = { character_event = { id = warden.6 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_east
+						years = 100
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			event_target:candidate_1 = {
+				set_character_flag = warden_of_the_west
+				give_minor_title = warden_west
+				hidden_tooltip = { character_event = { id = warden.7 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_west
+						years = 100
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			event_target:candidate_1 = {
+				set_character_flag = warden_of_the_south
+				give_minor_title = warden_south
+				hidden_tooltip = { character_event = { id = warden.8 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_south
+						years = 100
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = WARDEN3OPTB #Candidate 2
+		trigger = { 
+			event_target:candidate_2 = { always = yes }
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0.33
+				event_target:candidate_2 = {
+					OR = {
+						has_minor_title = warden_north 
+						has_minor_title = warden_south
+						has_minor_title = warden_east
+						has_minor_title = warden_west
+					}
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_2 = {
+					martial = 12
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_2 = {
+					martial = 15
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_2 = {
+					martial = 18
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_2 = {
+					martial = 21
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_2 = {
+					martial = 24
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_2 = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_2 = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					reverse_opinion = { who = ROOT value = 75 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					reverse_opinion = { who = ROOT value = 100 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_2 = {
+					tier = DUKE
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_2 = {
+					tier = KING
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_2 = {
+					dynasty = ROOT
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			event_target:candidate_2 = {
+				set_character_flag = warden_of_the_north
+				give_minor_title = warden_north 
+				hidden_tooltip = { character_event = { id = warden.5 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_north
+						years = 100
+					}
+				}	
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			event_target:candidate_2 = {
+				set_character_flag = warden_of_the_east
+				give_minor_title = warden_east 
+				hidden_tooltip = { character_event = { id = warden.6 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_east
+						years = 100
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			event_target:candidate_2 = {
+				set_character_flag = warden_of_the_west
+				give_minor_title = warden_west
+				hidden_tooltip = { character_event = { id = warden.7 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_west
+						years = 100
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			event_target:candidate_2 = {
+				set_character_flag = warden_of_the_south
+				give_minor_title = warden_south
+				hidden_tooltip = { character_event = { id = warden.8 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_south
+						years = 100
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = WARDEN3OPTC #Candidate 3
+		trigger = { 
+			event_target:candidate_3 = { always = yes }
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0.33
+				event_target:candidate_3 = {
+					OR = {
+						has_minor_title = warden_north 
+						has_minor_title = warden_south
+						has_minor_title = warden_east
+						has_minor_title = warden_west
+					}
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_3 = {
+					martial = 12
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_3 = {
+					martial = 15
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_3 = {
+					martial = 18
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_3 = {
+					martial = 21
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_3 = {
+					martial = 24
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_3 = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_3 = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					reverse_opinion = { who = ROOT value = 75 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					reverse_opinion = { who = ROOT value = 100 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_3 = {
+					tier = DUKE
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_3 = {
+					tier = KING
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_3 = {
+					dynasty = ROOT
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			event_target:candidate_3 = {
+				set_character_flag = warden_of_the_north
+				give_minor_title = warden_north 
+				hidden_tooltip = { character_event = { id = warden.5 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_north
+						years = 100
+					}
+				}	
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			event_target:candidate_3 = {
+				set_character_flag = warden_of_the_east
+				give_minor_title = warden_east 
+				hidden_tooltip = { character_event = { id = warden.6 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_east
+						years = 100
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			event_target:candidate_3 = {
+				set_character_flag = warden_of_the_west
+				give_minor_title = warden_west
+				hidden_tooltip = { character_event = { id = warden.7 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_west
+						years = 100
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			event_target:candidate_3 = {
+				set_character_flag = warden_of_the_south
+				give_minor_title = warden_south
+				hidden_tooltip = { character_event = { id = warden.8 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_south
+						years = 100
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = WARDEN3OPTD #Candidate 4
+		trigger = { 
+			event_target:candidate_4 = { always = yes }
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0.33
+				event_target:candidate_4 = {
+					OR = {
+						has_minor_title = warden_north 
+						has_minor_title = warden_south
+						has_minor_title = warden_east
+						has_minor_title = warden_west
+					}
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_4 = {
+					martial = 12
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_4 = {
+					martial = 15
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_4 = {
+					martial = 18
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_4 = {
+					martial = 21
+				}
+			}
+			modifier = {
+				factor = 1.25
+				event_target:candidate_4 = {
+					martial = 24
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_4 = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 0.66
+				event_target:candidate_4 = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					reverse_opinion = { who = ROOT value = 75 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					reverse_opinion = { who = ROOT value = 100 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				event_target:candidate_4 = {
+					tier = DUKE
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_4 = {
+					tier = KING
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:candidate_4 = {
+					dynasty = ROOT
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_north }
+			event_target:candidate_4 = {
+				set_character_flag = warden_of_the_north
+				give_minor_title = warden_north 
+				hidden_tooltip = { character_event = { id = warden.5 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_north
+						years = 100
+					}
+				}	
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_east }
+			event_target:candidate_4 = {
+				set_character_flag = warden_of_the_east
+				give_minor_title = warden_east 
+				hidden_tooltip = { character_event = { id = warden.6 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_east
+						years = 100
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = assign_west }
+			event_target:candidate_4 = {
+				set_character_flag = warden_of_the_west
+				give_minor_title = warden_west
+				hidden_tooltip = { character_event = { id = warden.7 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_west
+						years = 100
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = assign_south }
+			event_target:candidate_4 = {
+				set_character_flag = warden_of_the_south
+				give_minor_title = warden_south
+				hidden_tooltip = { character_event = { id = warden.8 } }
+				tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_warden_south
+						years = 100
+					}
+				}
+			}
+		}
+	}
+	
+	after = {
+		hidden_tooltip = {
+			event_target:candidate_1 = { clr_character_flag = warden_candidate }
+			event_target:candidate_2 = { clr_character_flag = warden_candidate }
+			event_target:candidate_3 = { clr_character_flag = warden_candidate }
+			event_target:candidate_4 = { clr_character_flag = warden_candidate }
+			clr_character_flag = assign_north
+			clr_character_flag = assign_east
+			clr_character_flag = assign_west
+			clr_character_flag = assign_south
+		}
+	}
+}
+#Notify Warden of the North
+letter_event = {
+	id = warden.5
+	desc ="WARDEN5DESC" 
+	
+	trigger = { FROM = { has_landed_title = e_iron_throne } }
+
+	is_triggered_only = yes
+
+	option = {
+		name = WARDEN5OPTA 
+	}
+}
+#Notify Warden of the East
+letter_event = {
+	id = warden.6
+	desc ="WARDEN6DESC" 
+
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_landed_title = e_iron_throne } }
+
+	option = {
+		name = WARDEN5OPTA 
+	}
+}
+#Notify Warden of the West
+letter_event = {
+	id = warden.7
+	desc ="WARDEN7DESC" 
+
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_landed_title = e_iron_throne } }
+
+	option = {
+		name = WARDEN5OPTA 
+	}
+}
+#Notify Warden of the South
+letter_event = {
+	id = warden.8
+	desc ="WARDEN8DESC" 
+
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_landed_title = e_iron_throne } }
+
+	option = {
+		name = WARDEN5OPTA 
+	}
+}
+#Notify not given rightful title
+character_event = {
+	id = warden.9
+	desc = "WARDEN9DESC"
+
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_landed_title = e_iron_throne } }
+
+	option = {
+		name = "WARDEN9OPTA" 
+	}
+}
+#Post mega wars reassign titles
+character_event = {
+	id = warden.10
+	desc = WARDEN10DESC #A Warden position stands empty. This is an ancient and venerable duty, and must be fulfilled.
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_landed_title = e_iron_throne
+		OR = {
+			has_character_flag = mega_war_wardens_reset
+			any_courtier_or_vassal = { has_character_flag = warden_of_the_north }	
+			any_courtier_or_vassal = { has_character_flag = warden_of_the_east }	
+			any_courtier_or_vassal = { has_character_flag = warden_of_the_west }	
+			any_courtier_or_vassal = { has_character_flag = warden_of_the_south }
+		}
+	}
+	
+	immediate = {
+		clr_character_flag = mega_war_wardens_reset
+		random_courtier_or_vassal = {
+			limit = { 
+				liege = { character = ROOT }
+				has_character_flag = warden_of_the_north		
+				NOT = { has_minor_title = warden_north }
+			}
+			give_minor_title = warden_north 
+		}
+		random_courtier_or_vassal = {
+			limit = { 
+				liege = { character = ROOT }
+				has_character_flag = warden_of_the_east	
+				NOT = { has_minor_title = warden_east }
+			}
+			give_minor_title = warden_east
+		}
+		random_courtier_or_vassal = {
+			limit = { 
+				liege = { character = ROOT }
+				has_character_flag = warden_of_the_west		
+				NOT = { has_minor_title = warden_west }
+			}
+			give_minor_title = warden_west
+		}
+		random_courtier_or_vassal = {
+			limit = { 
+				liege = { character = ROOT }
+				has_character_flag = warden_of_the_south	
+				NOT = { has_minor_title = warden_south }
+			}
+			give_minor_title = warden_south 
+		}
+	}
+	
+	option = { 
+		name = WARDEN10OPTA 		
+	}
+}

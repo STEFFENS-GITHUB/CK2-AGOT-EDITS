@@ -1,0 +1,736 @@
+decisions = {
+	
+	convert_to_liege_religion = {
+		ai = no
+		potential = {
+			ai = no
+			is_playable = yes
+			liege = {
+				NOT = { character = ROOT }
+				NOT = { religion = ROOT }
+				religion_group = ROOT
+			}
+			OR = {
+				liege = {
+					NOT = {
+						OR = {
+							religion_group = westerosi_religion
+							religion_group = drowned_god_group
+						}
+					}
+				}
+				NOT = {
+					OR = {
+						religion_group = westerosi_religion
+						religion_group = drowned_god_group
+					}
+				}
+			}
+			controls_religion = no
+			holy_order = no
+		}
+		allow = {
+			is_incapable = no
+			age = 16
+			NOT = { trait = zealous }
+			prestige = 400
+		}
+		effect = {
+			if = {
+				limit = {
+					liege = {
+						NOT = { religion_group = ROOT }
+					}
+				}
+				prestige = -400
+				piety = 250
+			}
+			religion_authority = {
+				modifier = ruler_converted_from
+			}
+			any_vassal = {
+				limit = {
+					religion = ROOT
+					age = 16
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_adopted_foreign_ways
+					years = 10
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						is_ruler = no
+						religion = ROOT
+						age = 16
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_adopted_foreign_ways
+						years = 10
+					}
+				}	
+			}	
+			add_sympathy_trait_effect = yes
+			liege = {
+				reverse_religion = ROOT
+			}
+			hidden_tooltip = {			
+				religion_authority = {
+					modifier = ruler_converted_to
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	convert_to_liege_culture = {
+		ai = no
+		potential = {
+			ai = no
+			is_playable = yes
+			liege = {
+				NOT = { character = ROOT }
+				NOT = { culture = ROOT }
+				OR = { #Half Southrons do not convert to Northmen
+					NOT = { culture = northman }
+					ROOT = { NOT = { culture = half_southron } }
+				}
+			}
+			#Valyrian restrictions
+			trigger_if = {
+				limit = { has_game_rule = { name = high_valyrian_cull value = on } }
+				#Convert to east/west
+				trigger_if = {
+					limit = { liege = { low_valyrian_culture_trigger = yes } }
+					NOT = { culture = high_valyrian }
+					OR = {
+						low_valyrian_culture_trigger = yes
+						father_even_if_dead = { true_valyrian_culture_trigger = yes }
+						mother_even_if_dead = { true_valyrian_culture_trigger = yes }						
+					}
+				}				
+				trigger_else_if = {
+					limit = { 
+						liege = { culture = high_valyrian } 
+						low_valyrian_culture_trigger = no
+					}
+					OR = {
+						father_even_if_dead = { true_valyrian_culture_trigger = yes }
+						mother_even_if_dead = { true_valyrian_culture_trigger = yes }					
+					}
+				}
+				#Convert to high
+				trigger_else_if = {
+					limit = { 
+						liege = { culture = high_valyrian } 
+						low_valyrian_culture_trigger = yes
+					}
+					OR = {
+						father_even_if_dead = { culture = high_valyrian }
+						mother_even_if_dead = { culture = high_valyrian }				
+					}
+				}
+			}
+		}
+		allow = {
+			is_incapable = no
+			age = 16
+			prestige = 200
+		}
+		effect = {
+			if = {
+				limit = { liege = { NOT = { culture_group = ROOT } } }
+				prestige = -200
+				any_vassal = {
+					limit = {
+						culture_group = ROOT
+						age = 16
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_adopted_foreign_ways
+						years = 10
+					}
+					hidden_tooltip = { character_event = { id = 55011 } }
+				}
+				hidden_tooltip = {
+					any_courtier = {
+						limit = {
+							is_ruler = no
+							culture_group = ROOT
+							age = 16
+							NOT = { trait = slave }
+							NOT = { trait = dragon }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_adopted_foreign_ways
+							years = 10
+						}
+					}
+				}	
+			}
+			liege = {
+				if = { #Andals can turn into half southrons
+					limit = { 
+						culture = northman
+						ROOT = { culture_group = andal }
+					}
+					ROOT = { culture = half_southron }
+				}
+				else_if = { #May convert to east/west valyrian
+					limit = { 
+						culture = high_valyrian
+						ROOT = { 
+							NOR = {
+								father_even_if_dead = { culture = high_valyrian }
+								mother_even_if_dead = { culture = high_valyrian }						
+							}
+						}
+					}
+					ROOT = { 
+						if = {
+							limit = {
+								OR = {
+									capital_scope = { region = world_westeros }
+									AND = {
+										is_ruler = no
+										liege = { capital_scope = { region = world_westeros } }
+									}	
+								}
+							}	
+							culture = western_valyrian
+						}	
+						else = {
+							culture = eastern_valyrian
+						}
+					}
+				}
+				else = {
+					ROOT = { culture = PREV }
+				}				
+			}
+			if = {
+				limit = { culture = high_valyrian }
+				set_character_flag = high_valyrian
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	convert_to_local_culture = {
+		ai = no
+		potential = {
+			ai = no
+			is_playable = yes
+			is_nomadic = no
+			demesne_size = 1
+			capital_scope = {
+				NOT = { culture = ROOT }
+				OR = { #Half Southrons do not convert to Northmen
+					NOT = { culture = northman }
+					ROOT = { NOT = { culture = half_southron } }
+				}
+			}	
+			#Valyrian restrictions
+			trigger_if = {
+				limit = { has_game_rule = { name = high_valyrian_cull value = on } }
+				#Convert to east/west
+				trigger_if = {
+					limit = { capital_scope = { low_valyrian_culture_trigger = yes } }
+					NOT = { culture = high_valyrian }
+					OR = {
+						low_valyrian_culture_trigger = yes
+						father_even_if_dead = { true_valyrian_culture_trigger = yes }
+						mother_even_if_dead = { true_valyrian_culture_trigger = yes }						
+					}
+				}				
+				trigger_else_if = {
+					limit = { 
+						capital_scope = { culture = high_valyrian } 
+						low_valyrian_culture_trigger = no
+					}
+					OR = {
+						father_even_if_dead = { true_valyrian_culture_trigger = yes }
+						mother_even_if_dead = { true_valyrian_culture_trigger = yes }					
+					}
+				}
+				#Convert to high
+				trigger_else_if = {
+					limit = { 
+						capital_scope = { culture = high_valyrian } 
+						low_valyrian_culture_trigger = yes
+					}
+					OR = {
+						father_even_if_dead = { culture = high_valyrian }
+						mother_even_if_dead = { culture = high_valyrian }				
+					}
+				}
+			}			
+			holy_order = no
+			#has_dlc = "Rajas of India"
+		}
+		allow = {					
+			OR = {
+				custom_tooltip = {
+					text = TOOLTIPINDEPENDENTCONDITION
+					hidden_tooltip = {
+						independent = yes
+						OR = {
+							tier = EMPEROR
+							primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+						}	
+					}
+				}
+				liege = { NOT = { culture_group = ROOT } }
+				capital_scope = { culture_group = ROOT }
+			}
+			prestige = 200
+			is_incapable = no
+			age = 16
+		}
+		effect = {		
+			if = {
+				limit = { capital_scope = { NOT = { culture_group = ROOT } } }
+				prestige = -200
+				any_vassal = {
+					limit = {
+						culture_group = ROOT
+						age = 16
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_adopted_foreign_ways
+						years = 10
+					}
+					hidden_tooltip = { character_event = { id = 55011 } }
+				}
+				hidden_tooltip = {
+					any_courtier = {
+						limit = {
+							is_ruler = no
+							culture_group = ROOT
+							age = 16
+							NOT = { trait = slave }
+							NOT = { trait = dragon }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_adopted_foreign_ways
+							years = 10
+						}
+					}
+				}	
+			}
+			capital_scope = {
+				if = { #Andals can turn into half southrons
+					limit = { 
+						culture = northman
+						ROOT = { culture_group = andal }
+					}
+					ROOT = { culture = half_southron }
+				}
+				else_if = { #May convert to east/west valyrian
+					limit = { 
+						culture = high_valyrian
+						ROOT = { 
+							NOR = {
+								father_even_if_dead = { culture = high_valyrian }
+								mother_even_if_dead = { culture = high_valyrian }						
+							}
+						}
+					}
+					ROOT = { 
+						if = {
+							limit = {
+								OR = {
+									capital_scope = { region = world_westeros }
+									AND = {
+										is_ruler = no
+										liege = { capital_scope = { region = world_westeros } }
+									}	
+								}
+							}	
+							culture = western_valyrian
+						}	
+						else = {
+							culture = eastern_valyrian
+						}
+					}
+				}
+				else = {
+					ROOT = { culture = PREV }
+				}			
+			}
+			if = {
+				limit = { culture = high_valyrian }
+				set_character_flag = high_valyrian
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	convert_to_local_religion = {
+		only_playable = yes
+		potential = {
+			is_playable = yes
+			is_nomadic = no
+			demesne_size = 1
+			capital_scope = {
+				NOT = { religion = ROOT }
+				# OR = {
+					# ROOT = { trait = nightswatch }
+					# ROOT = {
+						# NOT = {
+							# OR = {
+								# religion_group = westerosi_religion
+								# religion_group = drowned_god_group
+							# }
+						# }
+					# }
+					# NOT = {
+						# OR = {
+							# religion_group = westerosi_religion
+							# religion_group = drowned_god_group
+						# }
+					# }
+				# }
+			}
+			
+				
+			controls_religion = no
+			holy_order = no
+			
+			#has_dlc = "Rajas of India"
+		}
+		allow = {		
+			NOT = { trait = zealous }
+			OR = {
+				custom_tooltip = {
+					text = TOOLTIPINDEPENDENTCONDITION
+					hidden_tooltip = {
+						independent = yes
+						OR = {
+							tier = EMPEROR
+							primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+						}	
+					}
+				}
+				liege = {
+					NOT = { religion = ROOT }
+				}
+			}
+			prestige = 400
+			is_incapable = no
+			age = 16
+		}
+		effect = {
+			if = {
+				limit = {
+					capital_scope = {
+						NOT = { religion_group = ROOT }
+					}
+				}
+				prestige = -400
+				piety = 250
+			}
+			religion_authority = {
+				modifier = ruler_converted_from
+			}
+			any_vassal = {
+				limit = {
+					religion = ROOT
+					age = 16
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_adopted_foreign_ways
+					years = 10
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						is_ruler = no
+						religion = ROOT
+						age = 16
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_adopted_foreign_ways
+						years = 10
+					}
+				}	
+			}	
+			add_sympathy_trait_effect = yes
+			capital_scope = {
+				ROOT = { religion = PREV }
+			}
+			hidden_tooltip = {			
+				religion_authority = {
+					modifier = ruler_converted_to
+				}			
+			}
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.02
+			}
+			modifier = {
+				factor = 0
+				capital_scope = { NOT = { religion_group = ROOT } }
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 4
+				trait = cynical
+			}
+			modifier = {
+				factor = 4
+				culture_group = andal
+				capital_scope = { religion = the_seven }
+			}
+			modifier = {
+				factor = 4
+				culture_group = first_men
+				capital_scope = { 
+					OR = {
+						religion = old_gods_reformed
+						religion = old_gods 
+					}	
+				}
+			}
+		}
+	}
+	# # Weak or unreformed religions are allowed to convert to the attacker's religion when under Holy War
+	# convert_to_attacker_religion = {
+		# only_playable = yes
+		
+		# is_high_prio = yes
+		
+		# potential = {
+			# is_playable = yes
+			# # OR = {
+				# # AND = {
+					# # religion_group = pagan_group
+					# # is_reformed_religion = no
+					# # NOT = { religion_authority = 0.4 }
+				# # }
+				# NOT = { religion_authority = 0.3 }
+			# #}
+			# controls_religion = no
+			
+			# war = yes
+			# any_war = {
+				# defender = { character = ROOT }
+				# attacker = {
+					# NOT = { religion = ROOT }
+					# religion_authority = 0.5
+					# # OR = {
+						# # NOT = { religion_group = pagan_group }
+						# # is_reformed_religion = yes
+					# # }
+				# }
+				# OR = {
+					# #using_cb = crusade
+					# #using_cb = religious
+					# #using_cb = muslim_invasion
+					# #using_cb = buddhist_holy_war
+					# using_cb = pagan_holy_war
+				# }
+			# }
+		# }
+		
+		# allow = {
+			# NOT = { trait = zealous }
+		# }
+		
+		# effect = {
+			# prestige = -500
+			# piety = 100
+			# religion_authority = {
+				# modifier = ruler_converted_from
+			# }
+			
+			# hidden_tooltip = {
+				# any_war = {
+					# limit = {
+						# defender = { character = ROOT }
+						# attacker = {
+							# NOT = { religion = ROOT }
+							# religion_authority = 0.5
+							# OR = {
+								# NOT = { religion_group = pagan_group }
+								# is_reformed_religion = yes
+							# }
+						# }
+						# OR = {
+							# using_cb = crusade
+							# using_cb = religious
+							# using_cb = muslim_invasion
+							# using_cb = buddhist_holy_war
+							# using_cb = pagan_holy_war
+						# }
+					# }
+					# attacker = {
+						# save_event_target_as = enemy_attacker
+					# }
+				# }
+			# }
+			
+			# if = {
+				# limit = { event_target:enemy_attacker = { NOT = { religion_group = ROOT } } }
+				# if = {
+					# limit = { religion_group = pagan_group }
+					# add_trait = sympathy_pagans
+				# }
+				
+				# if = {
+					# limit = { religion_group = zoroastrian_group }
+					# add_trait = sympathy_zoroastrianism
+				# }
+				
+				# if = {
+					# limit = { religion_group = christian }
+					# add_trait = sympathy_christendom
+				# }
+				
+				# if = {
+					# limit = { religion_group = muslim }
+					# add_trait = sympathy_islam
+				# }
+				
+				# if = {
+					# limit = { religion_group = jewish_group }
+					# add_trait = sympathy_judaism
+				# }
+				
+				# if = {
+					# limit = { religion_group = indian_group }
+					# add_trait = sympathy_indian
+				# }
+			# }
+			
+			# event_target:enemy_attacker = {
+				# hidden_tooltip = {
+					# letter_event = { id = 62800 }
+					# ROOT = {
+						# any_courtier = {
+							# limit = {
+								# religion = ROOT
+								# employer = { character = ROOT }
+							# }
+							# religion = PREVPREV
+						# }
+						# any_vassal = {
+							# limit = {
+								# is_playable = no
+								# religion = ROOT
+							# }
+							# religion = PREVPREV
+						# }
+						# capital_scope = {
+							# if = {
+								# limit = { religion = ROOT }
+								# religion = PREVPREV
+							# }
+						# }
+					# }
+				# }
+				# reverse_religion = ROOT 
+			# }
+			
+			# hidden_tooltip = {
+				# religion_authority = {
+					# modifier = ruler_converted_to
+				# }
+			# }
+		# }
+		
+		# ai_will_do = {
+			# factor = 1
+			# modifier = {
+				# factor = 0.1
+			# }
+			# modifier = {
+				# factor = 0.05
+				# is_hard_to_convert = yes
+			# }
+			# modifier = {
+				# factor = 0
+				# NOT = {
+					# any_war = {
+						# defender = { character = ROOT }
+						# attacker = {
+							# NOT = { religion = ROOT }
+							# religion_authority = 0.45
+							# OR = {
+								# NOT = { religion_group = pagan_group }
+								# is_reformed_religion = yes
+							# }
+						# }
+						# OR = {
+							# using_cb = crusade
+							# using_cb = religious
+							# using_cb = muslim_invasion
+							# using_cb = buddhist_holy_war
+							# using_cb = pagan_holy_war
+						# }
+						# war_score = 50
+						# thirdparty_title_scope = {
+							# ROOT = {
+								# primary_title = {
+									# title = PREVPREV
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# any_war = {
+					# defender = { character = ROOT }
+					# attacker = {
+						# NOT = { religion = ROOT }
+						# religion_authority = 0.45
+						# OR = {
+							# NOT = { religion_group = pagan_group }
+							# is_reformed_religion = yes
+						# }
+					# }
+					# OR = {
+						# using_cb = crusade
+						# using_cb = religious
+						# using_cb = muslim_invasion
+						# using_cb = buddhist_holy_war
+						# using_cb = pagan_holy_war
+					# }
+					# war_score = 75
+					# thirdparty_title_scope = {
+						# ROOT = {
+							# primary_title = {
+								# title = PREVPREV
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
+}

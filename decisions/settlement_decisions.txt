@@ -1,0 +1,865 @@
+# Settlement decisions are possible vs _all_ settlements and are shown in the Settlement Diplomacy View, not the Intrigue View. The taker is in the FROM scope.
+#
+# filter = [capital/owned/vassal_owned/sub_realm_owned/realm_owned/dynasty_owned/all]
+# ai_target_filter = [capital/owned/vassal_owned/sub_realm_owned/realm_owned/dynasty_owned/all] (which settlements for which the AI evaluates the decision.)
+#	owned: all settlements owned by the AI
+#	vassal_owned: all settlements owned by direct vassal rulers of the AI's employer
+#	sub_realm_owned: all settlements below the AI's employer
+#	realm_owned: all settlements in the same top realm as the AI
+#	dynasty_owned: all settlements owned by members of the same dynasty
+#	all: all settlements (Avoid if possible. VERY CPU-HEAVY!)
+#	
+
+settlement_decisions = {
+
+	make_primary = {
+		filter = owned
+		ai_target_filter = owned
+		only_playable = yes
+		
+		potential = {
+			is_capital = no
+			holder_scope = {
+				character = FROM
+			}
+			dejure_liege_title = {
+				holder_scope = {
+					character = FROM
+				}
+			}
+		}
+		allow = {
+			#OR = {
+				FROM = {
+					is_merchant_republic = no
+					is_nomadic = no
+				}
+				# location = {
+					# FROM = {
+						# capital_scope = {
+							# NOT = { province_id = PREVPREV }
+						# }
+					# }	
+				# }	
+			#}
+		}
+		effect = {
+			make_capital_holding = yes
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			
+			modifier = { # Not if this settlement is not allowed
+				factor = 0
+				NOT = { is_allowed_holding_type = FROM }
+			}
+			
+			modifier = { # Not if existing capital is preferred
+				factor = 0
+				defacto_liege_title = {
+					is_preferred_holding_type = FROM
+				}
+			}
+			
+			modifier = { # Not if this settlement is not preferred and another settlement is
+				factor = 0
+				NOT = { is_preferred_holding_type = FROM }
+				defacto_liege_title = {
+					any_direct_de_jure_vassal_title = {
+						holder = FROM
+						is_preferred_holding_type = FROM
+					}
+				}
+			}
+		}
+	}
+	
+	revoke_primary = {
+		filter = owned
+		ai_target_filter = owned
+		only_playable = yes
+		
+		from_potential = {
+			is_nomadic = yes
+			has_dlc = "Horse Lords"
+		}
+		
+		potential = {
+			is_capital = yes
+			holder_scope = {
+				character = FROM
+				capital_holding = {
+					NOT = {
+						title = PREVPREV
+					}
+				}
+			}
+			capital_scope = {
+				has_empty_holding = yes
+			}
+			NOT = { holding_type = nomad }
+		}
+		effect = {
+			revoke_capital_holding = yes
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	pillage_settlement = {
+		only_independent = yes
+		filter = owned
+		ai_target_filter = owned
+		is_high_prio = yes
+		
+		from_potential = {
+			is_playable = yes
+			is_nomadic = yes
+			has_dlc = "Horse Lords"
+		}
+		
+		potential = {
+			NOT = { holding_type = nomad }
+			owner = { character = FROM }
+			NAND = { #jogos nhai do not make war on eachother
+				location = { owner = { has_jogos_nhai_war_block_trigger = yes } }
+				FROM = { has_jogos_nhai_war_block_trigger = yes }
+			}
+		}
+		allow = {
+			NOT = { has_holding_modifier = recently_burnt_the_land }
+			owner = { independent = yes }
+			has_siege = no
+			custom_tooltip = {
+				text = stop_pillaging_custom_tooltip
+				hidden_tooltip = {
+					NOT = { has_holding_modifier = stop_burning_land }
+				}
+			}
+		}
+		effect = {
+			
+			hidden_tooltip = {
+				location = { save_event_target_as = nickname_target }
+				FROM = {
+					save_event_target_as = nickname_receiver
+					if = {
+						limit = {
+							has_nickname = no
+							is_adult = yes
+							NOT = { trait = incapable }
+						}
+						random_list = {
+							5 = {
+								give_nickname = nick_the_destroyer
+							}
+							5 = {
+								give_nickname = nick_the_scourge_of_god
+								modifier = {
+									factor = 0
+									event_target:nickname_target = { religion = ROOT_FROM }
+								}
+							}
+							5 = {
+								give_nickname = nick_the_slayer_of_culture
+								modifier = {
+									factor = 0
+									event_target:nickname_target = { culture = ROOT_FROM }
+								}
+							}
+							5 = {
+								give_nickname = nick_the_terror_of_provincename
+							}
+							5 = {
+								give_nickname = nick_the_culture_marauder
+								modifier = {
+									factor = 0
+									event_target:nickname_target = { culture = ROOT_FROM }
+								}
+							}
+							250 = {}
+						}
+					}
+				}	
+			}
+			
+			if = {
+				limit = { NOT = { holding_type = tribal } }
+				FROM = {
+					wealth = 50
+				}
+				# custom_tooltip = {
+					# text = gain_tech_custom_tooltip
+					# hidden_tooltip = {
+						# FROM = {
+							# random_list = {
+								# 10 = { military_techpoints = 5 }
+								# 10 = { economy_techpoints = 5 }
+								# 10 = { culture_techpoints = 5 }
+							# }
+						# }
+					# }
+				# }
+			}
+			if = {
+				limit = { holding_type = tribal }
+				FROM = { 
+					wealth = 25 
+					population = 150 
+				}
+			}
+			
+			custom_tooltip = {
+				text = "PILLAGE_DESTROY_BUILDINGS"
+				hidden_tooltip = {
+					if = {
+						limit = {
+							OR = {
+								holding_type = castle
+								holding_type = city
+							}
+						}
+						holder_scope = {
+							character_event = { id = siege_agot.8 }
+						}
+					}	
+					if = {
+						limit = {
+							NOR = {
+								holding_type = castle
+								holding_type = city
+							}
+						}
+						destroy_random_building = THIS
+						destroy_random_building = THIS
+					}	
+					add_holding_modifier = {
+						modifier = recently_burnt_the_land
+						months = 7
+					}
+				}
+			}
+			
+			hidden_tooltip = {		
+				location = {
+					add_province_modifier = {
+						modifier = rampaging_nomads
+						years = 10
+					}
+					add_province_modifier = {
+						modifier = burnt_the_land
+						years = 10
+					}
+					if = {
+						limit = { has_dlc = "Reapers" }
+						if = {
+							limit = { check_variable = { which = prosperity_value value = 50 } }
+							change_variable = { which = prosperity_value value = -50 }
+						}
+						if = {
+							limit = { NOT = { check_variable = { which = prosperity_value value = 50 } } }
+							set_variable = { which = prosperity_value value = 0 }
+						}
+						if = {
+							limit = {
+								has_province_modifier = prosperity_modifier_3
+								NOT = { check_variable = { which = prosperity_value value = 500 } }	
+							}
+							remove_province_modifier = prosperity_modifier_3
+							add_province_modifier = { name = prosperity_modifier_2 duration = -1 }
+						}
+						if = {
+							limit = {
+								has_province_modifier = prosperity_modifier_2
+								NOT = { check_variable = { which = prosperity_value value = 250 } }	
+							}
+							remove_province_modifier = prosperity_modifier_2
+							add_province_modifier = { name = prosperity_modifier_1 duration = -1 }
+						}
+						if = {
+							limit = {
+								has_province_modifier = prosperity_modifier_1
+								NOT = { check_variable = { which = prosperity_value value = 100 } }	
+							}
+							remove_province_modifier = prosperity_modifier_1
+						}					
+					}	
+				}
+				FROM = {
+					if = {
+						limit = {							
+							NOT = { has_character_modifier = pillage_cooldown }
+						}
+						character_event = { id = HL.4800 days = 180 }
+						add_character_modifier = {
+							modifier = pillage_cooldown
+							hidden = yes
+							months = 6
+						}
+					}
+				}	
+			}
+			
+			#Chance of turning province into a ruin
+			if = {
+				limit = {
+					is_capital = yes
+					OR = {
+						holding_type = castle
+						holding_type = city
+					}
+					NOR = {
+						has_building = ca_wall_q_1
+						has_building = ca_wall_1
+						has_building = ca_keep_1
+						has_building = ca_town_1
+						
+						has_building = ct_wall_q_1
+						has_building = ct_wall_1
+						has_building = ct_marketplace_1
+						has_building = ct_port_1
+						location = {
+							OR = {
+								has_province_modifier = prosperity_modifier_1
+								has_province_modifier = prosperity_modifier_2
+								has_province_modifier = prosperity_modifier_3
+							}	
+						}
+					}
+				}
+				hidden_tooltip = {
+					location = {
+						random = {
+							chance = 5
+							modifier = {
+								factor = 1.5
+								has_province_modifier = depopulated_1
+							}
+							modifier = {
+								factor = 2
+								has_province_modifier = depopulated_2
+							}
+							modifier = {
+								factor = 3
+								has_province_modifier = depopulated_3
+							}
+							province_event = { id = HL.4814 days = 2 random = 2 }
+						}
+					}	
+				}
+			}
+			
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = honorable 
+						trait = patient
+						trait = kind
+					}
+					NOR = {
+						trait = ruthless
+						trait = cruel
+						trait = greedy
+					}					
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = wroth }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = cruel }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = greedy }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = honorable }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = kind }
+			}
+			modifier = {
+				factor = 10
+				holding_type = tribal
+			}
+		}
+	}
+	stop_pillage_settlement = {
+		only_playable = yes
+		filter = owned
+		ai_target_filter = owned
+		
+		from_potential = {
+			is_playable = yes
+			is_nomadic = yes
+			has_dlc = "Horse Lords"
+		}
+		
+		potential = {
+			has_holding_modifier = recently_burnt_the_land
+			NOT = { has_holding_modifier = stop_burning_land }
+			NOT = { holding_type = nomad }
+			owner = { character = FROM }
+		}
+		
+		allow = {
+			has_holding_modifier = recently_burnt_the_land
+			hidden_tooltip = {
+				NOT = { has_holding_modifier = stop_burning_land }
+			}
+		}
+		
+		effect = {		
+			hidden_tooltip = {
+				add_holding_modifier = {
+					modifier = stop_burning_land
+					hidden = yes
+					years = 1
+				}
+			}
+			
+		}
+
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.01
+			}
+			modifier = {
+				factor = 0
+				holding_type = tribal
+			}
+			modifier = {
+				factor = 10 #risk of ruin
+				is_capital = yes
+				OR = {
+					holding_type = castle
+					holding_type = city
+				}
+				NOR = {
+					has_building = ca_wall_q_1
+					has_building = ca_wall_1
+					has_building = ca_keep_1
+					has_building = ca_town_1
+					
+					has_building = ct_wall_q_1
+					has_building = ct_wall_1
+					has_building = ct_marketplace_1
+					has_building = ct_port_1
+					location = {
+						OR = {
+							has_province_modifier = prosperity_modifier_1
+							has_province_modifier = prosperity_modifier_2
+							has_province_modifier = prosperity_modifier_3
+						}	
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = wroth }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = cruel }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = greedy }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = honorable }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = kind }
+			}
+		}
+	}
+	nomad_adopt_feudalism = {
+		filter = owned
+		ai_target_filter = owned
+		is_high_prio = yes
+		only_playable = yes
+		
+		from_potential = {
+			is_nomadic = yes
+			has_dlc = "Horse Lords"
+		}
+		potential = {
+			holding_type = castle
+			holder_scope = {
+				#OR = {
+					character = FROM
+					# AND = {
+						# any_liege = {
+							# character = FROM
+						# }
+						# NOR = {
+							# is_nomadic = yes
+							# any_liege = {
+								# NOT = { character = FROM }
+								# is_nomadic = yes
+							# }
+						# }
+					# }
+				#}
+			}
+		}
+		allow = {
+			# OR = {
+				# is_capital = yes
+				# capital_scope = {
+					# holder_scope = {
+						# character = FROM
+					# }
+				# }
+			# }
+			has_siege = no
+			FROM = {
+				independent = yes
+				war = no
+			}
+		}
+		effect = {
+			# Change culture and religion of new capital province and possibly more provinces depending on nomad population_and_manpower
+			location = {
+				# if = {
+					# limit = {
+						# NOT = { culture = FROM }
+					# }
+					# culture = FROM
+				# }
+				if = {
+					limit = {
+						NOT = { religion = FROM }
+					}
+					religion = FROM
+				}
+			}
+				
+			# Spawn event troops based on amount of empty holdings abandoned.
+			custom_tooltip = {
+				text = NOMAD_CONVERSION_TROOP_SPAWN
+				hidden_tooltip = {
+					location = {
+						FROM = {
+							any_realm_province = {
+								limit = {
+									NOT = {
+										any_province_holding = {
+											NOT = { holding_type = nomad }
+										}
+									}
+								}
+								ROOT_FROM = {
+									spawn_unit = {
+										province = PREVPREVPREV
+										owner = THIS
+										troops = {
+											light_cavalry = { 140 140 }
+											horse_archers = { 60 60 }
+										}
+										attrition = 1
+										merge = yes
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			if = {
+				limit = { NOT = { holder = FROM } }
+				usurp_title = FROM
+			}
+			
+			if = {
+				limit = { is_capital = no }
+				make_capital_holding = yes
+			}
+		
+			FROM = {
+				capital = PREV
+				
+				primary_title = {
+					ROOT_FROM = {
+						custom_tooltip = { 
+							text = TT_KHAN_INDEPENDENCE
+						}
+						most_prestigious_clan_vassal = {
+							custom_tooltip = { 
+								text = TT_NEW_KHAN
+							}
+						}
+					}
+				}
+			
+				if = {
+					limit = {
+						ai = no
+					}
+					chronicle = {
+						entry = CHRONICLE_NOMAD_ADOPTED_FEUDALISM
+						picture = GFX_evt_castle_construction
+					}
+				}
+				set_government_type = feudal_government			
+				
+				# if = {
+					# limit = {
+						# higher_tier_than = king
+					# }
+					# primary_title = {
+						# add_law = feudal_administration
+					# }
+				# }
+				
+				if = {
+					limit = {
+						higher_tier_than = DUKE
+					}
+					primary_title = {
+						add_law = centralization_0
+					}
+				}
+				
+				any_playable_ruler = {
+					limit = {
+						NOT = { character = FROM }
+						ai = no
+					}
+					narrative_event = { id = HL.1 }
+				}
+			}
+		}
+		
+
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1 # On average ca 1 year before taken
+			
+			modifier = {
+				factor = 0
+				FROM = {
+					trait = content
+					NOT = { num_of_subrealm_castles = 10 }
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				FROM = {
+					trait = ambitious
+					NOT = { num_of_subrealm_castles = 20 }
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				FROM = {
+					NOR = {
+						trait = content
+						trait = ambitious
+					}
+					NOT = { num_of_subrealm_castles = 15 }
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = {
+					FROM = {
+						holding_diff = {
+							first_type = castle
+							first_count_vassals = yes
+							second_type = none
+							value = 1.5
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	upgrade_holding = {
+		filter = sub_realm_owned
+		ai_target_filter = sub_realm_owned
+		only_playable = yes
+		is_high_prio = yes
+		
+		potential = {
+			OR = {
+				holding_type = castle
+				holding_type = city
+			}					
+			holder_scope = {
+				OR = {
+					character = FROM
+					AND = {
+						tier = BARON
+						vassal_of = FROM
+					}
+				}
+			}	
+			location = {
+				county = {
+					NOR = {
+						title = c_castle_black
+						title = c_eastwatch
+						title = c_shadow_tower
+					}
+				}
+			}
+			#AI optimisation
+			OR = {
+				FROM = { ai = no }
+				AND = {
+					FROM = {
+						NOR = {
+							war = yes
+							has_character_flag = loan_taken
+							has_character_modifier = loan_timer
+						}
+					}
+					OR = {
+						NOT = { base_value_1_trigger = yes }
+						FROM = { wealth = 1200 }
+					}
+				}
+			}
+			NOT = { has_holding_modifier = upgrade_bv }
+			NOT = { base_value_6_trigger = yes }
+		}
+		allow = {		
+			conditional_tooltip = {
+				trigger = { NOT = { base_value_1_trigger = yes } }
+				FROM = { wealth = 500 show_scope_change = no }
+			}
+			conditional_tooltip = {
+				trigger = {
+					base_value_1_trigger = yes
+					NOT = { base_value_2_trigger = yes }
+				}
+				FROM = { wealth = 1000 show_scope_change = no }
+			}
+			conditional_tooltip = {
+				trigger = {
+					base_value_2_trigger = yes
+					NOT = { base_value_3_trigger = yes }
+				}
+				FROM = { wealth = 2000 show_scope_change = no }
+			}
+			conditional_tooltip = {
+				trigger = {
+					base_value_3_trigger = yes
+					NOT = { base_value_4_trigger = yes }
+				}
+				FROM = { wealth = 4000 show_scope_change = no }
+			}
+			conditional_tooltip = {
+				trigger = {
+					base_value_4_trigger = yes
+					NOT = { base_value_5_trigger = yes }
+				}
+				FROM = { wealth = 7000 show_scope_change = no }
+			}
+			conditional_tooltip = {
+				trigger = {
+					base_value_5_trigger = yes
+				}
+				FROM = { wealth = 10000 show_scope_change = no }
+			}
+			FROM = {
+				show_scope_change = no 
+				conditional_tooltip = {
+					trigger = {  
+						wildling_culture_trigger = yes
+						NOT = { culture = thenn }
+					}
+					NOT = { trait = wildling }
+				}
+			}
+		}
+		effect = {
+			hidden_tooltip = {
+				FROM = { character_event = { id = 20951 days = 5 } }
+			}
+			if = {
+				limit = { NOT = { base_value_1_trigger = yes } }
+				FROM = { wealth = -500 }
+			}
+			else_if = {
+				limit = {
+					NOT = { base_value_2_trigger = yes }
+				}
+				FROM = { wealth = -1000 }
+			}
+			else_if = {
+				limit = {
+					NOT = { base_value_3_trigger = yes }
+				}
+				FROM = { wealth = -2000 }
+			}
+			else_if = {
+				limit = {
+					NOT = { base_value_4_trigger = yes }
+				}
+				FROM = { wealth = -4000 }
+			}
+			else_if = {
+				limit = {
+					NOT = { base_value_5_trigger = yes }
+				}
+				FROM = { wealth = -7000 }
+			}
+			else = {
+				FROM = { wealth = -10000 }
+			}
+			add_holding_modifier = {
+				name = upgrade_bv
+				duration = -1
+			}
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

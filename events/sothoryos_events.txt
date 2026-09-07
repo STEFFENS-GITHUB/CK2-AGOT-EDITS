@@ -1,0 +1,931 @@
+namespace = sothoryos
+
+###The Red Death###
+#Red Death appears in a province
+province_event = {
+	id = sothoryos.1
+	
+	hide_window = yes
+
+	trigger = {
+		NOT = { has_dlc = "Reapers" } #uses new epidemic system
+		owner = { NOT = { culture_group = unoccupied_group } }
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}
+		NOT = { has_province_modifier = red_death }
+		OR = { #4 year cooldown
+			NOT = { has_province_flag = red_death_outbreak }
+			had_province_flag = { flag = red_death_outbreak days = 1460 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 500
+		
+		modifier = { #Much more likely in Sothoryos
+			factor = 0.15
+			region = world_sothoryos
+		}
+		modifier = {
+			factor = 0.33
+			province_id = 747 #Gogossos
+		}
+		modifier = { #Outbreak
+			factor = 0.01
+			OR = {
+				any_neighbor_province = { has_province_modifier = red_death }
+				AND = { #can travel between islands
+					port = yes
+					region = world_basilisk_isles
+					any_neighbor_province = { any_neighbor_province = { has_province_modifier = red_death } }
+				}
+			}
+		}
+	}	
+	
+	immediate = {
+		add_province_modifier = {
+			name = red_death
+			duration = 365
+		}
+		clr_province_flag = red_death_outbreak
+		set_province_flag = red_death_outbreak
+		if = { #Potentially destroy colony
+			limit = {				
+				has_province_flag = ruined_province
+				has_province_flag = colony_province
+			}
+			random = {
+				chance = 10
+				province_event = { id = sothoryos.3 days = 180 random = 100 }
+			}
+		}
+		if = { #Potentially destroy non-colony
+			limit = {	
+				NAND = {
+					has_province_flag = ruined_province
+					has_province_flag = colony_province
+				}	
+			}
+			random = {
+				chance = 1
+				modifier = {
+					factor = 0.5
+				}
+				province_event = { id = sothoryos.3 days = 180 random = 100 }
+			}
+		}
+		owner = {
+			character_event = { id = sothoryos.2 }
+		}
+		any_province_character = {
+			limit = {
+				ai = no
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			character_event = { id = sothoryos.2 }
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}
+#Inform province characters (also triggered from 00_disease)
+character_event = {
+	id = sothoryos.2
+	desc = "EVTDESCsothoryos.2"
+	picture = GFX_evt_pale_rider
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAothoryos.2"
+		if = {
+			limit = { NOT = { has_dlc = "Reapers" } }
+			tooltip = {
+				FROM = {
+					add_province_modifier = {
+						name = red_death
+						duration = 365
+					}
+				}
+			}
+		}	
+	}
+}
+
+#Colony is dissolved (also triggered from 00_disease)
+province_event = {
+	id = sothoryos.3
+	desc = "EVTDESCsothoryos.3"
+	picture = "GFX_evt_siege"
+	
+	is_triggered_only = yes
+	
+	trigger = {		
+		OR = { #can happen in sothoryos/goggosos even if not colony
+			AND = {
+				has_province_flag = ruined_province
+				has_province_flag = colony_province
+			}	
+			region = world_sothoryos
+			province_id = 747
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAsothoryos.3" #Yes
+		owner = { prestige = -150 }
+		make_province_ruin_effect = yes	
+	}
+}	
+
+#Catch Red Death (Non-DLC)
+character_event = {
+	id = sothoryos.4
+	desc = EVTDESCsothoryos.4
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	lacks_dlc = "Reapers"
+	hide_window = yes
+	
+	trigger = {
+		location = { has_province_modifier = red_death }
+		has_epidemic = no
+		NOT_mythical_creature_trigger = yes
+		NOT = { has_character_flag = immune_red_death }
+	}
+	
+	mean_time_to_happen = {
+		months = 3
+		
+		modifier = {
+			factor = 4
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 0.5
+			is_ill = yes
+		}
+		modifier = {
+			factor = 0.2
+			prisoner = yes
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 0.4
+			prisoner = yes
+			has_character_modifier = the_dungeon
+		}
+		modifier = {
+			factor = 5
+			culture = brindlemen
+		}	
+		modifier = {
+			factor = 1.5
+			base_health = 6
+		}
+		modifier = {
+			factor = 2.0
+			base_health = 7
+		}
+		modifier = {
+			factor = 2.0
+			base_health = 8
+		}
+	}
+	
+	immediate = { character_event = { id = sothoryos.7 } }
+	
+	option = {
+		name = EVTOPTAsothoryos.4
+		#add_trait = has_red_death
+	}
+}
+
+#Remove Red Death
+character_event = {
+	id = sothoryos.5
+	desc = EVTDESCsothoryos.5
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	
+	trigger = {
+		trait = has_red_death
+	}
+	
+	mean_time_to_happen = {
+		months = 4
+		
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 5
+			location = { 
+				OR = {
+					has_province_modifier = red_death 
+					disease = red_death
+				}	
+			}
+		}
+		modifier = {
+			factor = 2.0
+			trait = depressed
+		}
+		modifier = {
+			factor = 2.0
+			trait = stressed
+		}
+		modifier = {
+			factor = 4.0
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.0
+			has_character_modifier = the_dungeon
+		}		
+		modifier = {
+			factor = 0.2
+			base_health = 5
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7
+		}
+	}
+	
+	option = {
+		name = EVTOPTAsothoryos.5
+		remove_trait = has_red_death
+		if = {
+			limit = { has_dlc = "Reapers" }	
+			clear_disease_level_effect = yes
+			clr_character_flag = developing_illness
+			clr_character_flag = got_red_death
+			hidden_tooltip = {
+				remove_treatment_modifiers_effect = yes
+			}
+		}			
+		#clr_character_flag = manifest_red_death
+		set_character_flag = immune_red_death		
+	}
+}
+#Reapers DLC symptoms: cough diarrhea fever malaise vomiting
+character_event = { 
+	id = sothoryos.6
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #Optimisation: If not important, skip symptoms
+			limit = {
+				NOR = {
+					ai = no
+					father_even_if_dead = { ai = no }
+					mother_even_if_dead = { ai = no }
+					higher_tier_than = DUKE
+					liege = {					
+						OR = {
+							ai = no
+							higher_tier_than = DUKE
+						}
+					}
+				}
+			}
+			character_event = { id = sothoryos.7 } #Disease develops
+			break = yes
+		}
+		random_list = {
+			100 = {
+				modifier = {
+					factor = 0
+					num_of_symptoms = 3
+				}
+				add_red_death_symptom_effect = yes #Disease effect
+			}
+			50 = {
+				modifier = {
+					factor = 0
+					NOR = {
+						trait = cough
+						trait = diarrhea
+						trait = fever
+						trait = malaise
+						trait = vomiting
+					}
+				}
+				character_event = { id = sothoryos.7 days = 20 random = 20 } #Disease develops
+			}
+		}
+	}
+}
+#Catch Red Death
+character_event = { 
+	id = sothoryos.7
+	desc = EVTDESCsothoryos.4
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAsothoryos.4
+		add_trait = has_red_death
+		#set_character_flag = manifest_red_death
+		if = {
+			limit = { has_dlc = "Reapers" }			
+			add_disease_level_effect = yes
+			blessing_removes_disease_effect = yes
+			deaths_gift_removes_disease_effect = yes
+			clr_character_flag = developing_illness
+			clr_character_flag = got_red_death
+		}	
+		if = {
+			limit = {
+				trait = fever
+			}
+			remove_trait = fever
+		}
+		if = {
+			limit = {
+				trait = cramps
+			}
+			remove_trait = cramps
+		}
+		if = {
+			limit = {
+				trait = malaise
+			}
+			remove_trait = malaise
+		}
+		if = {
+			limit = {
+				trait = cough
+			}
+			remove_trait = cough
+		}
+		if = {
+			limit = {
+				trait = chest_pain
+			}
+			remove_trait = chest_pain
+		}
+		if = {
+			limit = {
+				trait = fatigue
+			}
+			remove_trait = fatigue
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { has_dlc = "Reapers" }
+				seek_treatment_from_physician_effect = yes
+			}	
+			father = {
+				if = {
+					limit = { ai = no }
+					set_character_flag = announce_red_death
+					character_event = { id = RIP.5060 }
+				}
+			}
+			mother = {
+				if = {
+					limit = { ai = no }
+					set_character_flag = announce_red_death
+					character_event = { id = RIP.5060 }
+				}
+			}
+			any_spouse = {
+				limit = { 
+					ai = no 
+					NOT = { has_character_flag = announce_red_death }
+				}
+				set_character_flag = announce_red_death
+				character_event = { id = RIP.5060 }
+			}
+			any_child = {
+				limit = { 
+					ai = no 
+					NOT = { has_character_flag = announce_red_death }
+				}
+				set_character_flag = announce_red_death
+				character_event = { id = RIP.5060 }
+			}
+			any_sibling = {
+				limit = { 
+					ai = no 
+					NOT = { has_character_flag = announce_red_death }
+				}
+				set_character_flag = announce_red_death
+				character_event = { id = RIP.5060 }
+			}
+			any_liege = {
+				if = {
+					limit = { 
+						current_heir = { character = ROOT } 
+						NOT = { has_character_flag = announce_red_death }
+					}
+					set_character_flag = announce_red_death
+					character_event = { id = RIP.5060 }
+				}	
+			}
+		}
+	}
+}
+###Misc Sothoryos Dangers###
+character_event = {
+	id = sothoryos.10
+	picture = GFX_sothoryos
+	
+	min_age = 10
+	capable_only = yes
+	prisoner = no
+	
+	desc = {
+		text = EVTDESCsothoryos.10A #Crocodile
+		trigger = { age = 16 }
+	}
+	desc = {
+		text = EVTDESCsothoryos.10B #Crocodile (Child)
+		trigger = { NOT = { age = 16 } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.10C #Carnivorous fish
+		trigger = { age = 16 }
+	}
+	desc = {
+		text = EVTDESCsothoryos.10D #Carnivorous fish (Child)
+		trigger = { NOT = { age = 16 } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.10E #Snake
+	}
+	desc = {
+		text = EVTDESCsothoryos.10F #Insect Eggs
+	}
+	desc = {
+		text = EVTDESCsothoryos.10G #Basilisk
+		trigger = { location = { province_id = 746 } } #Basilisk Point
+	}
+	desc = {
+		text = EVTDESCsothoryos.10H #Large Apes
+	}
+	
+	trigger = {
+		OR = {
+			AND = {
+				location = {
+					region = world_sothoryos
+				}	
+				NOT = { is_inaccessible_trigger = yes }
+			}	
+			has_character_flag = wikid_sothoryos_trigger
+		}	
+		NOT = { culture_group = unoccupied_group }
+		NOT = { in_battle = yes }	
+	}
+	
+	fail_trigger_effect = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	mean_time_to_happen = {
+		years = 150
+		
+		modifier = {
+			factor = 0.25
+			in_command = yes
+		}		
+		modifier = {
+			factor = 5
+			OR = {
+				culture = brindlemen
+				is_ill = yes
+				has_epidemic = yes
+				has_severe_disability_trigger = yes
+			}
+		}
+	}
+
+	immediate = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	option = {
+		name = OPTAsothoryos.10
+		hidden_tooltip = {
+			liege = {
+				if = {
+					limit = { 
+						ai = no 
+						NOT = { character = ROOT }
+					}
+					character_event = { id = sothoryos.11 }
+				}
+			}
+			any_realm_lord = {
+				limit = { 
+					ai = no 
+				}
+				character_event = { id = sothoryos.11 }
+			}
+		}
+		random_list = {
+			50 = {
+				if = {
+					limit = { 
+						NOT = { is_maimed_trigger = yes } 
+						NOT = { trait = wounded } 
+					}
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 } }
+				}
+			}
+			30 = {
+				if = {
+					limit = { NOT = { is_maimed_trigger = yes } }
+					add_maimed_trait_effect = yes
+				}
+			}
+			20 = {
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = { death_reason = death_accident }
+			}
+		}
+	}
+}
+character_event = {
+	id = sothoryos.11
+	picture = GFX_sothoryos
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCsothoryos.11A #Crocodile
+		trigger = { FROM = { age = 16 } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.11B #Crocodile (Child)
+		trigger = { FROM = { NOT = { age = 16 } } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.11C #Carnivorous fish
+		trigger = { FROM = { age = 16 } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.11D #Carnivorous fish (Child)
+		trigger = { FROM = { NOT = { age = 16 } } }
+	}
+	desc = {
+		text = EVTDESCsothoryos.11E #Snake
+	}
+	desc = {
+		text = EVTDESCsothoryos.11F #Insect Eggs
+	}
+	desc = {
+		text = EVTDESCsothoryos.11G #Basilisk
+		trigger = { FROM = { location = { province_id = 746 } } }#Basilisk Point
+	}
+	desc = {
+		text = EVTDESCsothoryos.11H #Large Apes
+	}
+
+	option = {
+		name = OPTAsothoryos.11
+	}
+}
+###Wyvern Attack!###
+character_event = {
+	id = sothoryos.15
+	picture = GFX_wyvern
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	desc = {
+		text = EVTDESCsothoryos.15A #Brindled wyverns
+	}
+	desc = {
+		text = EVTDESCsothoryos.15B #Brownbelly Pack
+	}
+	desc = {
+		text = EVTDESCsothoryos.15C #Shadow-wing
+	}
+	
+	trigger = {
+		OR = {
+			AND = {
+				location = {
+					region = world_sothoryos
+				}	
+				NOT = { is_inaccessible_trigger = yes }
+			}	
+			has_character_flag = wikid_sothoryos_trigger
+		}		
+		NOT = { culture_group = unoccupied_group }
+		NOT = { in_battle = yes }
+	}
+	
+	fail_trigger_effect = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 0.2
+			culture = brindlemen
+		}
+	}	
+	
+	immediate = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	option = {
+		name = OPTAsothoryos.15
+		random_list = {
+			1 = {
+				modifier = {
+					factor = 2.3
+					trait = poor_warrior
+				}
+				modifier = {
+					factor = 6
+					trait = trained_warrior
+				}
+				modifier = {
+					factor = 18
+					trait = skilled_warrior
+				}
+				modifier = {
+					factor = 50
+					trait = master_warrior
+				}
+				character_event = { id = sothoryos.16 tooltip = TOOLTIPsothoryos.16 }
+			}
+			9 = {
+				character_event = { id = sothoryos.17 tooltip = TOOLTIPsothoryos.17 }
+			}
+		}
+	}
+}
+#Wyvern Slayed
+character_event = {
+	id = sothoryos.16
+	desc = "EVTDESCsothoryos.16"
+	picture = GFX_wyvern
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAothoryos.16"
+		prestige = 200
+		if = {
+			limit = { has_nickname = no }
+			give_nickname = nick_wyvernsbane
+		}
+	}
+}
+#Wyvern mauls you
+character_event = {
+	id = sothoryos.17
+	desc = "EVTDESCsothoryos.17"
+	picture = GFX_wyvern
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAothoryos.17"
+		random_list = {
+			50 = {
+				if = {
+					limit = { 
+						NOT = { is_maimed_trigger = yes } 
+						NOT = { trait = wounded } 
+					}
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 } }
+				}
+			}
+			30 = {
+				if = {
+					limit = { NOT = { is_maimed_trigger = yes } }
+					add_maimed_trait_effect = yes
+				}
+			}
+			20 = {
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = { death_reason = death_accident_wyvern }
+			}
+		}
+	}
+}
+###Find valuable Items###
+character_event = {
+	id = sothoryos.20
+	picture = GFX_sothoryos
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	desc = {
+		text = EVTDESCsothoryos.20A #Gold
+	}
+	desc = {
+		text = EVTDESCsothoryos.20B #Pearls
+	}
+	desc = {
+		text = EVTDESCsothoryos.20C #Spices
+	}
+	
+	trigger = {
+		OR = {
+			AND = {
+				location = {
+					region = world_sothoryos
+				}	
+				NOT = { is_inaccessible_trigger = yes }
+			}	
+			has_character_flag = wikid_sothoryos_trigger
+		}		
+		NOT = { culture_group = unoccupied_group }
+		NOT = { in_battle = yes }
+	}
+	
+	fail_trigger_effect = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	mean_time_to_happen = {
+		years = 50
+		
+		modifier = {
+			factor = 2
+			culture = brindlemen
+		}
+	}	
+	
+	immediate = { clr_character_flag = wikid_sothoryos_trigger }
+	
+	option = {
+		name = OPTAsothoryos.20
+		wealth = 250
+	}
+}
+###Yeen###
+long_character_event = {
+	id = sothoryos.25
+	picture = GFX_yeen
+	desc = EVTDESCsothoryos.25
+	
+	only_playable = yes
+	min_age = 12
+	
+	trigger = {
+		location = {
+			province_id = 740
+		}	
+		NOT = { culture_group = unoccupied_group }
+		NOT = { in_battle = yes }
+		NOT = { is_inaccessible_trigger = yes }
+		NOT = { has_character_flag = yeen_visited }
+	}
+	
+	mean_time_to_happen = {
+		months = 2
+	}	
+	
+	option = {
+		name = OPTAsothoryos.25
+		set_character_flag = yeen_visited
+		random_list = {
+			10 = {
+				if = {
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic
+					hidden_tooltip = { character_event = { id = 38304 } }
+				}
+			}
+			10 = {
+				if = {
+					limit = { NOT = { trait = possessed } }
+					add_trait = possessed
+					hidden_tooltip = { character_event = { id = 38315 } }
+				}
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					OR = {
+						has_character_flag = immune_typhus
+						trait = greyscale_scarred
+					}
+				}
+				if = {
+					limit = { has_epidemic = no }
+					add_trait = has_greyscale
+					hidden_tooltip = { character_event = { id = 6464 } }
+				}
+			}
+			10 = {
+				if = {
+					limit = { has_epidemic = no }
+					add_trait = has_red_death
+				}
+			}
+			40 = { }
+		}
+	}
+}
+#Everyone in colony dies
+province_event = {
+	id = sothoryos.26
+
+	hide_window = yes
+	has_flag = ruined_province
+	
+	trigger = {
+		province_id = 740		
+		has_province_flag = colony_province
+		owner = { 
+			NOT = { culture_group = unoccupied_group }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 60
+	}
+	
+	immediate = { owner = { character_event = { id = sothoryos.27 } } }
+
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = sothoryos.27
+	desc = "EVTDESCsothoryos.27"
+	picture = GFX_yeen
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { location = { province_id = 740 } }
+			set_character_flag = death_yeen
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAsothoryos.27" 
+		custom_tooltip = {
+			text = TOOLTIPsothoryos.27
+			hidden_tooltip = {
+				any_playable_ruler = {
+					limit = { 
+						ai = no
+						NOT = { character = ROOT }
+					}
+					character_event = { id = sothoryos.28 }
+				}
+				740 = {
+					any_province_character = {
+						limit = {
+							ai = yes
+							NOT = { character = ROOT }
+							NOT = { trait = dragon }
+							NOT = { culture_group = unoccupied_group }
+						}
+						red_god_resurrect_effect = yes #check for rhllor resurrection
+						death = { death_reason = death_accident }
+					}
+					make_province_ruin_effect = yes
+				}
+			}	
+		}
+		if = {
+			limit = { has_character_flag = death_yeen }
+			red_god_resurrect_effect = yes #check for rhllor resurrection
+			death = { death_reason = death_accident }
+		}	
+	}
+}
+character_event = { #Inform World
+	id = sothoryos.28
+	desc = "EVTDESCsothoryos.28"
+	picture = GFX_yeen
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAsothoryos.28" 
+	}
+}	

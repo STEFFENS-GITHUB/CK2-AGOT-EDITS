@@ -1,0 +1,2472 @@
+#if the prisoner being rescued is no longer living or a prisoner, end the war
+namespace = rescue_prisoner
+
+# character_event = { #prisoner is dead
+	# id = rescue_prisoner.1
+	# picture = GFX_battle_promotion
+	# desc = EVTDESC6000001 #With no prisoner left to rescue, this war seems pointless.
+	# is_triggered_only = yes
+	# option = {
+		# name = "OK"
+	# }
+# }
+#Captor is issued demand to release
+letter_event = {
+	id = rescue_prisoner.2
+	desc = "EVTDESCrescue_prisoner.2"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.2"
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				relative_power = {
+					who = FROM
+					power = 2
+				}
+			}
+			modifier = {
+				factor = 1.5
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.8
+					}
+				}	
+			}
+			modifier = {
+				factor = 2
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.5
+					}
+				}	
+			}
+			modifier = {
+				factor = 2
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.25
+					}
+				}	
+			}
+			modifier = {
+				factor = 2
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.1
+					}
+				}	
+			}
+			modifier = {
+				factor = 1.25
+				trait = weak
+			}
+			modifier = {
+				factor = 1.25
+				trait = craven
+			}
+			modifier = {
+				factor = 1.25
+				trait = humble
+			}
+			modifier = {
+				factor = 1.25
+				trait = kind
+			}
+			modifier = {
+				factor = 1.25
+				trait = charitable
+			}
+			modifier = {
+				factor = 1.25
+				trait = patient
+			}
+			modifier = {
+				factor = 1.25
+				trait = content
+			}
+		}
+		prestige = -100
+		hidden_tooltip = {
+			FROM = {
+				letter_event = { id = rescue_prisoner.3 }
+			}
+		}
+		FROM = {
+			plot_target_char = {	
+				set_character_flag = rescued_prisoner
+				if = {
+					limit = { prisoner = yes }
+					prisoner = no	
+					clr_character_flag = captured_in_battle
+					clr_character_flag = kidnapped_by_plot
+					clr_character_flag = lost_trial_by_combat
+					if = {
+						limit = {
+							is_ruler = no
+							liege = { character = ROOT }
+						}
+						move_character = PREV
+					}
+				}
+				if = {
+					limit = { trait = salt_wife }
+					remove_trait = salt_wife
+					clr_character_flag = no_court_invites
+					hidden_tooltip = { move_character = PREV }
+				}
+				if = {
+					limit = { trait = slave }
+					tooltip = { remove_trait = slave }
+					hidden_tooltip = { character_event = { id = slavery.0 } }
+					hidden_tooltip = { move_character = PREV }
+				}						
+				if = {
+					limit = { is_consort = yes }
+					consort = { remove_consort = PREV }
+					hidden_tooltip = { move_character = PREV }
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBrescue_prisoner.2"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				relative_power = {
+					who = FROM
+					power = 1
+				}
+			}
+			modifier = {
+				factor = 2
+				relative_power = {
+					who = FROM
+					power = 1.5
+				}	
+			}
+			modifier = {
+				factor = 1.25
+				trait = strong
+			}
+			modifier = {
+				factor = 1.25
+				trait = brave
+			}
+			modifier = {
+				factor = 1.25
+				trait = proud
+			}
+			modifier = {
+				factor = 1.25
+				trait = envious
+			}
+			modifier = {
+				factor = 1.25
+				trait = greedy
+			}
+			modifier = {
+				factor = 1.25
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.9 #CK2+
+				FROM = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { plot_power = 1.75 }
+			}
+			modifier = {
+				factor = 0.5 #CK2+
+				FROM = { plot_power = 2.0 }
+			}
+			modifier = {
+				factor = 2 #
+				higher_tier_than = DUKE
+				FROM = { NOT = { higher_tier_than = COUNT } }
+			}
+			modifier = {
+				factor = 0.5 #
+				NOT = { higher_tier_than = DUKE }
+				FROM = { higher_tier_than = COUNT }
+			}
+		}
+		FROM = {
+			letter_event = { id = rescue_prisoner.4 days = 3 tooltip = "EVTTOOLTIPrescue_prisoner.4" }
+			any_plot_backer = {
+				tooltip = { show_portrait = yes }
+			}
+		}
+	}
+}
+#Inform accept
+letter_event = {
+	id = rescue_prisoner.3
+	desc = "EVTDESCrescue_prisoner.3"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBrescue_prisoner.3"
+	}
+}
+
+# Inform rejected
+letter_event = {
+	id = rescue_prisoner.4
+	desc = "EVTDESCrescue_prisoner.4"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.4"
+		ai_chance = { 
+			factor = 75 
+			modifier = {
+				factor = 1.5
+				relative_power = {
+					who = FROM
+					power = 1
+				}
+			}
+			modifier = {
+				factor = 2
+				relative_power = {
+					who = FROM
+					power = 1.5
+				}	
+			}
+			modifier = {
+				factor = 2
+				relative_power = {
+					who = FROM
+					power = 2
+				}	
+			}
+			modifier = {
+				factor = 1.25
+				trait = brave
+			}
+			modifier = {
+				factor = 1.25
+				trait = proud
+			}
+			modifier = {
+				factor = 1.25
+				trait = envious
+			}
+			modifier = {
+				factor = 1.25
+				trait = greedy
+			}
+			modifier = {
+				factor = 1.25
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				trait = ambitious
+			}
+		}
+		hidden_tooltip = { reveal_plot = yes }
+		plot_target_char = { 
+			set_character_flag = prisoner_rescue_target
+		}		
+		FROM = {
+			reverse_war = {
+				target = ROOT
+				casus_belli = rescue_prisoner
+				plot_backers = yes
+			}
+		}
+		set_character_flag = launched_rescue_war
+	}
+	option = {
+		name = "EVTOPTBrescue_prisoner.4"
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 2
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.8
+					}
+				}	
+			}
+			modifier = {
+				factor = 3
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.5
+					}
+				}	
+			}
+			modifier = {
+				factor = 3
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.25
+					}
+				}	
+			}
+			modifier = {
+				factor = 10
+				NOT = {
+					relative_power = {
+						who = FROM
+						power = 0.1
+					}
+				}	
+			}
+			modifier = {
+				factor = 1.25
+				trait = craven
+			}
+			modifier = {
+				factor = 1.25
+				trait = humble
+			}
+			modifier = {
+				factor = 1.25
+				trait = kind
+			}
+			modifier = {
+				factor = 1.25
+				trait = charitable
+			}
+			modifier = {
+				factor = 1.25
+				trait = patient
+			}
+			modifier = {
+				factor = 1.25
+				trait = content
+			}
+		}
+		prestige = -100
+		any_plot_backer = {
+			opinion = {
+				modifier = opinion_coward
+				who = ROOT
+				years = 5
+			}
+			hidden_tooltip = {
+				letter_event = { id = 8120 }
+			}
+		}
+		cancel_plot = plot_rescue_prisoner
+	}
+}	
+
+### STEALTH PRISON BREAK
+# The plotter sees an opportunity - Prison Break
+character_event = {
+	id = rescue_prisoner.5	
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	is_part_of_plot = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.5" #standard
+		trigger = { NOT = { has_character_flag = bodyguard_prison_break } }
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.5B" #bodyguard
+		trigger = { 
+			has_character_flag = bodyguard_prison_break
+			event_target:bodyguard_prison_break = { has_minor_title = title_bodyguard }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.5C" #kingsguard
+		trigger = { 
+			has_character_flag = bodyguard_prison_break
+			event_target:bodyguard_prison_break = { trait = kingsguard }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.5D" #bloodrider
+		trigger = { 
+			has_character_flag = bodyguard_prison_break
+			event_target:bodyguard_prison_break = { has_minor_title = title_bloodrider }
+		}
+	}
+						
+	trigger = {
+		has_plot = plot_rescue_prisoner
+		NOT = { has_character_flag = prison_break_in_motion }
+		NOT = { has_character_flag = launched_rescue_war }
+		plot_power_contribution = 
+		{
+			plotter = ROOT
+			power = 0.025
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 2400
+		
+		modifier = {
+			factor = 0.5
+			plot_target_char = { at_location = ROOT }
+		}
+		modifier = {
+			factor = 0.75
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+			plot_target_char = {
+				host = { is_liege_of = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.10
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.20
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.30
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.40
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.50
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.60
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.70
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.80
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 0.90
+			}
+		}
+		modifier = {
+			factor = 0.7
+			plot_power_contribution = 
+			{
+				plotter = ROOT
+				power = 1.5
+			}
+		}
+		
+		modifier = {
+			factor = 0.33
+			plot_power = 1.0
+		}
+		modifier = {
+			factor = 0.33
+			plot_power = 1.5
+		}
+		modifier = {
+			factor = 0.33
+			plot_power = 2.0
+		}
+	}
+	
+	immediate = {
+		#Skilled bodyguard can perhaps take on mission
+		if = {
+			limit = { 
+				has_landed_title = e_iron_throne 
+				kingsguard = { is_alive = yes }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					OR = {
+						AND = {
+							intrigue = 8
+							trait = skilled_warrior
+						}	
+						trait = master_warrior
+					}
+					prisoner = no
+					NOT = { has_severe_disability_trigger = yes }
+					is_ill = no
+				}
+				random = {
+					chance = 33
+					modifier = {
+						factor = 1.5
+						trait = master_warrior
+					}
+					modifier = {
+						factor = 1.5
+						trait = brave
+					}
+					modifier = {
+						factor = 0.66
+						trait = craven
+					}
+					modifier = {
+						factor = 1.5
+						intrigue = 10
+					}
+					modifier = {
+						factor = 1.5
+						intrigue = 14
+					}
+					modifier = {
+						factor = 1.5
+						intrigue = 18
+					}
+					ROOT = { set_character_flag = bodyguard_prison_break }
+					save_event_target_as = bodyguard_prison_break
+				}
+			}
+			break = yes
+		}
+		random_courtier = {
+			limit = {
+				OR = {
+					has_minor_title = title_bodyguard
+					has_minor_title = title_bloodrider
+				}
+				liege = { character = ROOT }
+				OR = {
+					AND = {
+						intrigue = 8
+						trait = skilled_warrior
+					}	
+					trait = master_warrior
+				}
+				prisoner = no
+				NOT = { has_severe_disability_trigger = yes }
+				is_ill = no
+			}
+			random = {
+				chance = 330
+				modifier = {
+					factor = 1.5
+					trait = master_warrior
+				}
+				modifier = {
+					factor = 1.5
+					trait = brave
+				}
+				modifier = {
+					factor = 0.66
+					trait = craven
+				}
+				modifier = {
+					factor = 1.5
+					intrigue = 10
+				}
+				modifier = {
+					factor = 1.5
+					intrigue = 14
+				}
+				modifier = {
+					factor = 1.5
+					intrigue = 18
+				}
+				ROOT = { set_character_flag = bodyguard_prison_break }
+				save_event_target_as = bodyguard_prison_break
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.5" # The conspirators get the man inside
+		trigger = {
+			plot_power = 1.0
+			NOT = { has_character_flag = bodyguard_prison_break }
+		}
+		hidden_tooltip = {
+			any_plot_backer = {
+				character_event = { id = rescue_prisoner.7 days = 1 }
+			}
+		}
+		
+		set_character_flag = prison_break_in_motion
+		plot_target_char = { 
+			hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+			character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+		}
+	}
+	option = {
+		name = "EVTOPTBrescue_prisoner.5" # Hire gang
+		trigger = {
+			NOT = { plot_power = 0.5 }
+			NOT = { intrigue = 10 }
+			NOT = { has_character_flag = bodyguard_prison_break }
+		}
+		if = {
+			limit = { NOT = { yearly_income = 30 } }
+			wealth = -30
+		}	
+		if = {
+			limit = { 
+				yearly_income = 30
+				NOT = { yearly_income = 250 } 
+			}
+			scaled_wealth = -1.0
+		}	
+		if = {
+			limit = { yearly_income = 250 } 
+			wealth = -250
+		}		
+		hidden_tooltip = {
+			any_plot_backer = {
+				character_event = { id = rescue_prisoner.17 days = 1 }
+			}
+		}
+		
+		set_character_flag = prison_break_in_motion
+		plot_target_char = { 
+			hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 25 } } 
+			character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+		}
+	}
+	option = {
+		name = "EVTOPTBrescue_prisoner.5" # Hire gang
+		trigger = {
+			plot_power = 0.5
+			NOT = { plot_power = 1.0 }
+			NOT = { intrigue = 10 }
+			NOT = { has_character_flag = bodyguard_prison_break }
+		}
+		if = {
+			limit = { NOT = { yearly_income = 30 } }
+			wealth = -15
+		}	
+		if = {
+			limit = { 
+				yearly_income = 30
+				NOT = { yearly_income = 250 } 
+			}
+			scaled_wealth = -0.5
+		}	
+		if = {
+			limit = { yearly_income = 250 } 
+			wealth = -125
+		}	
+		
+		hidden_tooltip = {
+			any_plot_backer = {
+				character_event = { id = rescue_prisoner.17 days = 1 }
+			}
+		}
+		
+		set_character_flag = prison_break_in_motion
+		plot_target_char = { 
+			hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+			character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+		}
+	}
+	option = {
+		name = "EVTOPTCrescue_prisoner.5" # Knows the man for the job
+		tooltip_info = intrigue
+		trigger = {
+			plot_power = 0.5
+			intrigue = 10
+			NOT = { has_character_flag = bodyguard_prison_break }
+		}
+		
+		hidden_tooltip = {
+			any_plot_backer = {
+				character_event = { id = rescue_prisoner.17 days = 1 }
+			}
+		}
+		
+		set_character_flag = prison_break_in_motion
+		plot_target_char = { 
+			hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+			character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+		}
+	}
+	option = {
+		name = "EVTOPTDrescue_prisoner.5" # I cannot afford this
+		trigger = {
+			ai = no
+			NOT = { intrigue = 10 }
+			NOT = { plot_power = 1.0 }
+			NOT = { has_character_flag = bodyguard_prison_break }
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTErescue_prisoner.5" # Bodyguard
+		trigger = {
+			has_character_flag = bodyguard_prison_break
+		}	
+		hidden_tooltip = {
+			any_plot_backer = {
+				character_event = { id = rescue_prisoner.17 days = 1 }
+			}
+		}	
+		set_character_flag = prison_break_in_motion
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		plot_target_char = { 
+			hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+			character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10B" } 			
+		}
+	}
+	option = { 
+		name = "EVTOPTFrescue_prisoner.5" # Bodyguard No
+		trigger = {
+			ai = no
+			has_character_flag = bodyguard_prison_break
+		}
+		clr_character_flag = bodyguard_prison_break
+		clear_event_target = bodyguard_prison_break
+	}
+}
+
+# A plot backer sees an opportunity - Prison Break
+character_event = {
+	id = rescue_prisoner.6
+	desc = "EVTDESCrescue_prisoner.6"
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	is_part_of_plot = yes
+	
+	trigger = {
+		any_backed_character = {
+			has_plot = plot_rescue_prisoner
+			plot_power = 0.5
+			plot_target_char = { #cannot break own prisoners out
+				NOT = { host = { character = ROOT } }
+			}
+			NOT = { has_character_flag = prison_break_in_motion }
+			ROOT = {
+				plot_power_contribution = 
+				{
+					plotter = PREV
+					power = 0.025
+				}
+			}			
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 2400
+		
+		modifier = {
+			factor = 0.5
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_target_char = {
+					at_location = ROOT
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_target_char = {
+					host = { is_liege_of = ROOT }
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.10
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.20
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.30
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.40
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.50
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.60
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.70
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.80
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 0.6
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				ROOT = {
+					plot_power_contribution = 
+					{
+						plotter = PREV
+						power = 0.90
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.33
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 1.0
+			}
+		}
+		modifier = {
+			factor = 0.33
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 1.5
+			}
+		}
+		modifier = {
+			factor = 0.33
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 2.0
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.5" # The conspirators get the man inside
+		trigger = {
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 1.0
+			}
+		}
+		random_backed_character = {
+			limit = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 1.0
+			}
+			set_character_flag = prison_break_in_motion
+			character_event = { id = rescue_prisoner.15 days = 3 tooltip = "EVTTOOLTIP8160" }
+		}
+	}
+	option = {
+		name = "EVTOPTB8151" # Ask the Plotter for funds
+		trigger = {
+			NOT = { intrigue = 10 }
+			NOT = {
+				any_backed_character = {
+					has_plot = plot_rescue_prisoner
+					plot_power = 1.0
+				}
+			}
+		}
+		random_backed_character = {
+			limit = {
+				has_plot = plot_rescue_prisoner
+				NOT = { plot_power = 1.0 }
+			}
+			set_character_flag = prison_break_in_motion
+			character_event = { id = rescue_prisoner.7 days = 3 tooltip = "EVTTOOLTIP8152" }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBrescue_prisoner.5" # Hire gang
+		trigger = {
+			NOT = { intrigue = 10 }
+			NOT = {
+				any_backed_character = {
+					has_plot = plot_rescue_prisoner
+					plot_power = 1.0
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { yearly_income = 30 } }
+			wealth = -15
+		}	
+		if = {
+			limit = { 
+				yearly_income = 30
+				NOT = { yearly_income = 250 } 
+			}
+			scaled_wealth = -0.5
+		}	
+		if = {
+			limit = { yearly_income = 250 } 
+			wealth = -125
+		}	
+		random_backed_character = {
+			limit = {
+				has_plot = plot_rescue_prisoner
+				NOT = { plot_power = 1.0 }
+			}
+			set_character_flag = prison_break_in_motion
+			character_event = { id = rescue_prisoner.15 days = 3 tooltip = "EVTTOOLTIP8160" }
+		}
+	}
+	option = {
+		name = "EVTOPTCrescue_prisoner.5" # Knows the man for the job
+		tooltip_info = intrigue
+		trigger = {
+			intrigue = 10
+			any_backed_character = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 0.5
+			}
+		}
+		
+		random_backed_character = {
+			limit = {
+				has_plot = plot_rescue_prisoner
+				plot_power = 0.5
+			}
+			set_character_flag = prison_break_in_motion
+			character_event = { id = rescue_prisoner.15 days = 3 tooltip = "EVTTOOLTIP8160" }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTD8150" # I cannot afford this
+		trigger = {
+			ai = no
+			NOT = { intrigue = 10 }
+			NOT = {
+				any_backed_character = {
+					has_plot = plot_rescue_prisoner
+					plot_power = 1.0
+				}
+			}
+		}
+	}
+}
+
+# Prison Break - Plot backer requests funds
+character_event = {
+	id = rescue_prisoner.7
+	desc = "EVTDESCrescue_prisoner.7"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.7"
+		tooltip = {
+			if = {
+				limit = { NOT = { yearly_income = 30 } }
+				wealth = -30
+			}	
+			if = {
+				limit = { 
+					yearly_income = 30
+					NOT = { yearly_income = 250 } 
+				}
+				scaled_wealth = -0.5
+				tooltip = {
+					transfer_scaled_wealth = {
+						from = ROOT
+						to = FROM
+						value = 0.5
+					}
+				}	
+			}	
+			if = {
+				limit = { yearly_income = 250 } 
+				wealth = -250
+			}	
+		}	
+		FROM = { character_event = { id = rescue_prisoner.8 tooltip = "EVTTOOLTIP8153" } }
+	}
+	
+	option = {
+		name = "EVTOPTB8152"
+		FROM = { character_event = { id = rescue_prisoner.9 tooltip = "EVTTOOLTIP8154" } }
+	}
+}
+
+# Prison Break - plot backer receives funds
+character_event = {
+	id = rescue_prisoner.8
+	desc = "EVTDESCrescue_prisoner.8"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"
+		FROM = {
+			if = {
+				limit = { NOT = { yearly_income = 30 } }
+				ROOT = { wealth = 15 }
+			}	
+			if = {
+				limit = { 
+					yearly_income = 30
+					NOT = { yearly_income = 250 } 
+				}
+				transfer_scaled_wealth = {
+					from = THIS
+					to = ROOT
+					value = 0.5
+				}
+			}	
+			if = {
+				limit = { yearly_income = 250 } 
+				ROOT = { wealth = 125 }
+			}	
+		}
+		FROM = { 
+			plot_target_char = { 
+				hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+				character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+			} 
+		}
+	}
+}
+
+# Prison Break - plot backer does NOT receive funds
+character_event = {
+	id = rescue_prisoner.9
+	desc = "EVTDESCrescue_prisoner.9"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA8154" # Pay for it myself
+		if = {
+			limit = { NOT = { yearly_income = 30 } }
+			wealth = -30
+		}	
+		if = {
+			limit = { 
+				yearly_income = 30
+				NOT = { yearly_income = 250 } 
+			}
+			scaled_wealth = -1
+		}	
+		if = {
+			limit = { yearly_income = 250 } 
+			wealth = -250
+		}
+		FROM = { 
+			plot_target_char = { 
+				hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+				character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+			} 
+		}
+	}
+	option = {
+		name = "EVTOPTB8154" # Screw this
+		FROM = { clr_character_flag = prison_break_in_motion }
+	}
+}
+# Determine Prison Break Outcome
+character_event = { #scope to target
+	id = rescue_prisoner.1098
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		# Is the plot still in motion?
+		OR = {
+			FROM = {
+				has_plot = plot_rescue_prisoner
+				plot_target_char = {
+					character = ROOT
+				}
+			}
+			FROM = {
+				FROM = {
+					has_plot = plot_rescue_prisoner
+					plot_target_char = {
+						character = ROOT
+					}
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		c_the_citadel = { holder_scope = { character_event = { id = rescue_prisoner.1099 } } }
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { 
+	id = rescue_prisoner.1099
+	desc = "PRISON BREAK"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = ESCAPE
+		ai_chance = {
+			factor = 50
+			# Target Factors
+			modifier = {
+				factor = 0.5
+				FROM = { has_character_modifier = the_oubliette }
+			}
+			modifier = {
+				factor = 2
+				FROM = { has_character_modifier = house_arrest }
+			}
+			modifier = { #Hard to transport
+				factor = 0.5
+				FROM = { 
+					OR = {
+						NOT = { age = 8 }
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+					}
+				}
+			}
+			
+			# Plotter Factors		
+			modifier = {
+				factor = 0.85
+				FROMFROM = { NOT = { intrigue = 2 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROMFROM = { NOT = { intrigue = 5 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { intrigue = 8 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { intrigue = 11 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { intrigue = 14 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { intrigue = 17 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { intrigue = 20 }
+			}
+			
+			# Captor Factors	
+			modifier = {
+				factor = 0.66
+				FROM = { host = { trait = paranoid } }
+			}	
+			modifier = {
+				factor = 1.5
+				FROM = { host = { trait = trusting } }
+			}			
+			modifier = {
+				factor = 1.2
+				FROM = { host = { NOT = { intrigue = 2 } } }
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { host = { NOT = { intrigue = 5 } } }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { host = { intrigue = 8 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { host = { intrigue = 11 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { host = { intrigue = 14 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { host = { intrigue = 17 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { host = { intrigue = 20 } }
+			}
+			
+			# Bodyguard Factors		
+			modifier = {
+				factor = 1.5
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { trait = skilled_warrior }
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 0.85
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { NOT = { intrigue = 2 } }
+			}
+			modifier = {
+				factor = 0.85
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { NOT = { intrigue = 5 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { intrigue = 8 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { intrigue = 11 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { intrigue = 14 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { intrigue = 17 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { has_character_flag = bodyguard_prison_break }
+				event_target:bodyguard_prison_break = { intrigue = 20 }
+			}
+		}
+		FROM = { set_character_flag = prison_break_escape }
+	}
+	
+	option = {
+		name = FAIL
+		ai_chance = {
+			factor = 50
+		}
+	}
+}	
+# Prison Break - the murder attempt
+character_event = {
+	id = rescue_prisoner.10	
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.10"
+		trigger = { NOT = { FROM = { has_character_flag = bodyguard_prison_break } } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.10B"
+		trigger = { FROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	trigger = {
+		# Is the plot still in motion?
+		OR = {
+			FROM = {
+				has_plot = plot_rescue_prisoner
+				plot_target_char = {
+					character = ROOT
+				}
+			}
+			FROM = {
+				FROM = {
+					has_plot = plot_rescue_prisoner
+					plot_target_char = {
+						character = ROOT
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.10" # Escapes!
+		trigger = {
+			has_character_flag = prison_break_escape
+		}
+		clr_character_flag = prison_break_escape
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		hidden_tooltip = {		
+			FROM = { character_event = { id = rescue_prisoner.18 days = 1 } }
+			FROMFROM = { character_event = { id = rescue_prisoner.18 days = 1 } }	
+			character_event = { id = rescue_prisoner.11 days = 2 }			
+		}
+	}
+	option = {
+		name = "EVTOPTBrescue_prisoner.10" # Does not escape
+		trigger = {
+			NOT = { has_character_flag = prison_break_escape }
+		}
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		hidden_tooltip = {
+			random_list = {
+				50 = {
+					hidden_tooltip = {
+						FROM = { character_event = { id = rescue_prisoner.20 days = 1 } }
+						FROMFROM = { character_event = { id = rescue_prisoner.20 days = 1 } }
+					}
+					character_event = { id = rescue_prisoner.13 days = 1 } # Fails, plotter discovered
+				}
+				50 = {
+					hidden_tooltip = {
+						FROM = { character_event = { id = rescue_prisoner.21 days = 1 } }
+						FROMFROM = { character_event = { id = rescue_prisoner.21 days = 1 } }
+					}
+					character_event = { id = rescue_prisoner.14 days = 1 } # Fails, plotter unknown
+				}
+			}
+		}
+	}
+}
+
+# Prison Break - Escapes!
+character_event = {
+	id = rescue_prisoner.11
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.11"
+		trigger = { NOT = { FROMFROM = { has_character_flag = bodyguard_prison_break } } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.11B"
+		trigger = { FROMFROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.11"
+		set_character_flag = rescued_prisoner
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		if = {
+			limit = { prisoner = yes }
+			prisoner = no	
+			clr_character_flag = captured_in_battle
+			clr_character_flag = kidnapped_by_plot
+			clr_character_flag = lost_trial_by_combat
+		}
+		if = {
+			limit = { trait = salt_wife }
+			remove_trait = salt_wife
+			clr_character_flag = no_court_invites
+		}
+		if = {
+			limit = { trait = slave }
+			tooltip = { remove_trait = slave }
+			hidden_tooltip = { character_event = { id = slavery.0 } }
+		}						
+		if = {
+			limit = { is_consort = yes }
+			consort = { remove_consort = PREV }
+		}		
+	}	
+}
+character_event = { #Inform host
+	id = rescue_prisoner.1199
+	desc = "EVTDESCrescue_prisoner.1199"
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.1199"
+		trigger = {
+			FROMFROM = { has_character_flag = former_prisoner }
+			NOT = { FROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1199B"
+		trigger = {
+			FROMFROM = { has_character_flag = former_slave }
+			NOT = { FROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1199C"
+		trigger = {
+			FROMFROM = { has_character_flag = former_consort }
+			NOT = { FROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1199D"
+		trigger = {
+			FROM = { has_character_flag = bodyguard_prison_break }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.1199"
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		FROMFROM = { 
+			tooltip = { prisoner = no } 
+			clr_character_flag = former_prisoner
+			clr_character_flag = former_slave
+			clr_character_flag = former_consort
+		}
+		FROM = { clr_character_flag = bodyguard_prison_break }
+	}	
+}
+#rescue_prisoner.12 unused
+
+# Prison Break - Fail, plotter discovered
+character_event = {
+	id = rescue_prisoner.13
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.13"
+		trigger = { NOT = { FROMFROM = { has_character_flag = bodyguard_prison_break } } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.13B"
+		trigger = { FROMFROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.13"
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		if = {
+			limit = { prisoner = no }
+			liege = { character_event = { id = rescue_prisoner.1399 days = 1 } }
+		}
+		if = {
+			limit = { prisoner = yes }
+			host = { character_event = { id = rescue_prisoner.1399 days = 1  } }
+		}
+	}
+}
+character_event = { #Inform host
+	id = rescue_prisoner.1399
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.1399"
+		trigger = {
+			FROM = { prisoner = yes }
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1399B"
+		trigger = {
+			FROM = { 
+				prisoner = no
+				trait = slave
+			}
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1399C"
+		trigger = {
+			FROM = { 
+				prisoner = no
+				NOT = { trait = slave }
+				OR = {
+					any_consort = { character = ROOT }
+					trait = salt_wife
+				}
+			}
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1399D"
+		trigger = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.1399" #Back to his quarters
+		trigger = {
+			FROM = {
+				OR = {
+					has_character_modifier = house_arrest
+					prisoner = no
+				}	
+			}
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 4
+				FROM = { prisoner = no }
+			}			
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		FROMFROMFROM = { clr_character_flag = bodyguard_prison_break }		
+	}
+	
+	option = {
+		name = "EVTOPTBrescue_prisoner.1399" #In the dungeon!
+		ai_chance = { 
+			factor = 20 
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+		}		
+		trigger = {
+			FROM = {
+				NOT = { has_character_modifier = the_oubliette }
+			}
+		}			
+		FROM = {
+			if = {
+				limit = { prisoner = no }
+				imprison = ROOT
+			}
+			hidden_tooltip = {
+				remove_character_modifier = house_arrest
+				remove_character_modifier = the_oubliette
+				remove_character_modifier = the_dungeon
+			}
+			add_character_modifier = { 
+				name = the_dungeon
+				duration = -1
+			}
+		}
+		FROMFROMFROM = { clr_character_flag = bodyguard_prison_break }	
+	}
+	
+	option = {
+		name = "EVTOPTCrescue_prisoner.1399" #The oubliette!
+		trigger = {
+			FROM = { prisoner = yes }
+		}
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 0
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = cruel
+			}
+		}
+		
+		FROM = {
+			hidden_tooltip = {
+				remove_character_modifier = house_arrest
+				remove_character_modifier = the_dungeon
+				remove_character_modifier = the_oubliette
+			}
+			add_character_modifier = { 
+				name = the_oubliette
+				duration = -1
+			}
+		}
+		impaler_trait_chance_effect = yes
+		FROMFROMFROM = { clr_character_flag = bodyguard_prison_break }	
+	}	
+	
+	option = {
+		name = "EVTOPTDrescue_prisoner.1399" #Torture
+		trigger = {
+			FROM = { age = 14 }
+			OR = {
+				trait = impaler
+				trait = cruel
+			}
+			NOT = { trait = honorable }
+			NOT = { trait = kind }
+		}
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { trait = lunatic }
+				OR = {
+					dynasty = FROM
+					is_close_relative = FROM
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 1.5
+				trait = impaler
+			}
+			modifier = {
+				factor = 1.5
+				trait = cruel
+			}
+		}	
+		FROM = {
+			tooltip = {
+				if = {
+					limit = { is_female = no }
+					random_list = {
+						25 = { 
+							add_character_modifier = { 
+								name = tortured
+								duration = 60
+							}
+						}
+						25 = { add_trait_silently_wounded_effect = yes }
+						25 = { add_maimed_trait_effect = yes }					
+						10 = { add_crippled_trait_effect = yes }
+						10 = { add_trait = blinded }
+						5 = { add_trait = eunuch }
+					}
+				}
+				if = {
+					limit = { is_female = yes }
+					random_list = {
+						25 = { 
+							add_character_modifier = { 
+								name = tortured
+								duration = 60
+							}
+						}
+						25 = { add_trait_silently_wounded_effect = yes }
+						25 = { add_maimed_trait_effect = yes }					
+						15 = { add_crippled_trait_effect = yes }
+						10 = { add_trait = blinded }
+					}
+				}
+			}	
+			hidden_tooltip = {
+				character_event = { id = mega_wars.71 }
+			}
+			random = {
+				chance = 33
+				tooltip = {
+					death = { death_reason = death_execution_torture killer = ROOT }
+					save_event_target_as = kinslayer_target #check for kinslayer
+					ROOT = { add_kinslayer_trait_effect = yes }
+				}
+			}	
+			FROMFROMFROM = { clr_character_flag = bodyguard_prison_break }	
+		}	
+		impaler_trait_chance_effect = yes
+	}	
+}
+
+# Prison Break - Fail, plotter NOT discovered
+character_event = {
+	id = rescue_prisoner.14
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.14"
+		trigger = { NOT = { FROMFROM = { has_character_flag = bodyguard_prison_break } } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.14B"
+		trigger = { FROMFROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.14"
+		if = {
+			limit = { prisoner = no }
+			liege = { character_event = { id = rescue_prisoner.1499 days = 1 } }
+		}
+		if = {
+			limit = { prisoner = yes }
+			host = { character_event = { id = rescue_prisoner.1499 days = 1  } }
+		}
+	}
+}
+character_event = { #Inform host
+	id = rescue_prisoner.1499	
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.1499"
+		trigger = {
+			FROM = { prisoner = yes }
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1499B"
+		trigger = {
+			FROM = { 
+				prisoner = no
+				trait = slave
+			}
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1499C"
+		trigger = {
+			FROM = { 
+				prisoner = no
+				NOT = { trait = slave }
+				OR = {
+					any_consort = { character = ROOT }
+					trait = salt_wife
+				}
+			}
+			NOT = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+		}
+	}
+	desc = {
+		text = "EVTDESCrescue_prisoner.1499D"
+		trigger = { FROMFROMFROM = { has_character_flag = bodyguard_prison_break } }
+	}
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.1499" #Back to his quarters
+		trigger = {
+			FROM = {
+				OR = {
+					has_character_modifier = house_arrest
+					prisoner = no
+				}	
+			}
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 4
+				FROM = { prisoner = no }
+			}			
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}	
+		hidden_tooltip = { FROMFROMFROM = { clr_character_flag = bodyguard_prison_break } }		
+	}
+	
+	option = {
+		name = "EVTOPTBrescue_prisoner.1499" #In the dungeon!
+		ai_chance = { 
+			factor = 20 
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+		}		
+		trigger = {
+			FROM = {
+				NOT = { has_character_modifier = the_oubliette }
+			}
+		}			
+		FROM = {
+			if = {
+				limit = { prisoner = no }
+				imprison = ROOT
+			}
+			hidden_tooltip = {
+				remove_character_modifier = house_arrest
+				remove_character_modifier = the_oubliette
+				remove_character_modifier = the_dungeon
+			}
+			add_character_modifier = { 
+				name = the_dungeon
+				duration = -1
+			}
+		}
+		hidden_tooltip = { FROMFROMFROM = { clr_character_flag = bodyguard_prison_break } }	
+	}
+	
+	option = {
+		name = "EVTOPTCrescue_prisoner.1499" #The oubliette!
+		trigger = {
+			FROM = { prisoner = yes }
+		}
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 0
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = cruel
+			}
+		}
+		
+		FROM = {
+			hidden_tooltip = {
+				remove_character_modifier = house_arrest
+				remove_character_modifier = the_dungeon
+				remove_character_modifier = the_oubliette
+			}
+			add_character_modifier = { 
+				name = the_oubliette
+				duration = -1
+			}
+		}
+		impaler_trait_chance_effect = yes
+		hidden_tooltip = { FROMFROMFROM = { clr_character_flag = bodyguard_prison_break } }	
+	}	
+}
+# Prison Break - Backer informs Plotter of plan
+character_event = {
+	id = rescue_prisoner.15
+	desc = "EVTDESCrescue_prisoner.15"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.15"
+		set_character_flag = prison_break_in_motion
+		FROM = { character_event = { id = rescue_prisoner.16 tooltip = "EVTTOOLTIP8161" } }
+		hidden_tooltip = {
+			any_plot_backer = {
+				limit = {
+					NOT = { character = FROM }
+				}
+				character_event = { id = rescue_prisoner.17 days = 1 }
+			}
+		}
+	}
+}
+
+# Prison Break - Plotter tells backer to go ahead
+character_event = {
+	id = rescue_prisoner.16
+	desc = "EVTDESCrescue_prisoner.16"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA8161"
+		FROM = { 
+			plot_target_char = { 
+				hidden_tooltip = { character_event = { id = rescue_prisoner.1098 days = 26 } } 
+				character_event = { id = rescue_prisoner.10 days = 27 tooltip = "EVTTOOLTIPrescue_prisoner.10" } 			
+			} 
+		}
+	}
+}
+
+# Prison Break - Initiator informs other plotter
+character_event = {
+	id = rescue_prisoner.17
+	desc = "EVTDESCrescue_prisoner.17"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA8162"
+	}
+}
+
+# Prison Break - Notification: Success
+character_event = {
+	id = rescue_prisoner.18
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.18"
+		trigger = { NOT = { has_character_flag = bodyguard_prison_break } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.18B"
+		trigger = { has_character_flag = bodyguard_prison_break }
+	}
+	
+	immediate = { clr_character_flag = prison_break_in_motion }
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.18"	
+		event_target:bodyguard_prison_break = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = { FROM = { tier = EMPEROR } }
+				prestige = 200
+			}
+			if = {
+				limit = { FROM = { tier = KING } }
+				prestige = 100
+			}
+			if = {
+				limit = { FROM = { lower_tier_than = KING } }
+				prestige = 50
+			}
+			reverse_opinion = {
+				modifier = rescued_my_sorry_ass
+				who = FROM
+			}
+		}
+		FROM = {
+			tooltip = { prisoner = no }
+			if = {
+				limit = { prisoner = yes }
+				set_character_flag = former_prisoner
+				host = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_prison_break
+					}
+					hidden_tooltip = { character_event = { id = rescue_prisoner.1199 days = 2  } }
+				}
+			}	
+			if = {
+				limit = { prisoner = no }
+				if = {
+					limit = { trait = slave }
+					set_character_flag = former_slave
+					tooltip = { remove_trait = slave }
+					ROOT = {
+						if = {
+							limit = { has_antislavery_religion_trigger = yes }
+							piety = 50
+						}
+						if = {
+							limit = { 
+								OR = {
+									has_antislavery_religion_trigger = yes 
+									has_antislavery_culture_trigger = yes
+								}	
+								has_slavery_religion_trigger = no
+								NOT = { trait = liberator }
+								NOT = { trait = cynical }
+							}
+							random = {
+								chance = 25
+								add_trait = liberator
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { 
+						is_consort = yes
+					}
+					tooltip = { consort = { remove_consort = PREV } }
+					set_character_flag = former_consort
+				}
+				if = {
+					limit = { 
+						trait = salt_wife
+					}
+					tooltip = { remove_trait = salt_wife }
+					set_character_flag = former_consort
+				}
+				liege = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_prison_break
+					}
+					hidden_tooltip = { character_event = { id = rescue_prisoner.1199 days = 2  } }
+				}
+			}
+			opinion = {
+				modifier = rescued_my_sorry_ass
+				who = ROOT
+			}
+		}
+		if = {
+			limit = { 
+				has_plot = plot_rescue_prisoner
+				plot_target_char = { 
+					character = FROM 
+					is_ruler = no
+				}
+			}
+			if = {
+				limit = { is_ruler = yes }
+				FROM = { move_character = ROOT }
+			}
+			if = {
+				limit = { is_ruler = no }
+				liege = { FROM = { move_character = PREV } }
+			}
+		}
+	}
+}
+
+#rescue_prisoner.19 unused
+
+# Prison Break - Notification: Failure, and discovered
+character_event = {
+	id = rescue_prisoner.20
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.20"
+		trigger = { NOT = { has_character_flag = bodyguard_prison_break } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.20B"
+		trigger = { has_character_flag = bodyguard_prison_break }
+	}
+	
+	immediate = { clr_character_flag = prison_break_in_motion }
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.20"
+		if = {
+			limit = { has_character_flag = bodyguard_prison_break  }
+			event_target:bodyguard_prison_break = { 
+				random_list = {
+					30 = {
+					}
+					50 = {
+						add_trait_silently_wounded_effect = yes
+					}
+					20 = {
+						add_maimed_trait_effect = yes
+					}
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = { prisoner = yes }
+				host = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_attempted_prison_break
+					}
+				}
+			}	
+			if = {
+				limit = { prisoner = no }
+				liege = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_attempted_prison_break
+					}
+				}
+			}
+		}
+		if = {
+			limit = { 
+				plot_target_char = {
+					character = FROM
+				}
+				has_plot = plot_rescue_prisoner
+			}
+			clr_character_flag = prison_break_in_motion
+			tooltip = { reveal_plot = yes }
+		}
+	}
+}
+
+# Prison Break - Notification: Failure, but NOT discovered
+character_event = {
+	id = rescue_prisoner.21
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCrescue_prisoner.21"
+		trigger = { NOT = { has_character_flag = bodyguard_prison_break } }
+	}	
+	desc = {
+		text = "EVTDESCrescue_prisoner.21B"
+		trigger = { has_character_flag = bodyguard_prison_break }
+	}
+	
+	immediate = { clr_character_flag = prison_break_in_motion }
+	
+	option = {
+		name = "EVTOPTArescue_prisoner.21"	
+		event_target:bodyguard_prison_break = { tooltip = { show_portrait = yes } }
+		if = {
+			limit = { 
+				plot_target_char = {
+					character = FROM
+				}
+				has_plot = plot_rescue_prisoner
+			}
+			clr_character_flag = prison_break_in_motion
+		}
+	}
+}
+	

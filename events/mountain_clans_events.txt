@@ -1,0 +1,1066 @@
+namespace = mountain_clans
+
+#Clans Looting province
+province_event = {
+	id = mountain_clans.1
+
+	hide_window = yes
+	
+	trigger = {
+		region = world_mountains_of_moon
+		NOT = { has_province_modifier = looted_by_clansmen }
+		NOT = { owner = { culture = moon_clansman } }
+		any_independent_ruler = {
+			culture = moon_clansman
+			NOT = { demesne_size = 1 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		modifier = {
+			factor = 0.9
+			owner = { has_regent = yes }
+		}
+		modifier = {
+			factor = 0.9
+			owner = { NOT = { martial = 9 } }
+		}
+		modifier = {
+			factor = 0.9
+			owner = { NOT = { martial = 6 } }
+		}
+		modifier = {
+			factor = 0.9
+			owner = { NOT = { martial = 3 } }
+		}
+		modifier = {
+			factor = 1.1
+			owner = { martial = 15 } 
+		}
+		modifier = {
+			factor = 1.2
+			owner = { martial = 18 } 
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 21 } 
+		}
+	}
+
+	immediate = { 
+		owner = { character_event = { id = mountain_clans.2 } }
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = mountain_clans.2
+	desc = "EVTDESCmountain_clans.2"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.2" #Do Nothing
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		FROM = {
+			add_province_modifier = {
+				name = looted_by_clansmen
+				duration = 730
+			}
+		}
+		prestige = -50
+	}
+	
+	option = {
+		name = "EVTOPTBmountain_clans.2" #Send Master of Arms
+		trigger = {
+			job_marshal = { 
+				in_command = no 
+				prisoner = no
+				NOT = { has_severe_disability_trigger = yes }
+			}
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 3
+				job_marshal = { martial = 15 }
+			}
+		}
+		FROM = {
+			add_province_modifier = {
+				name = looted_by_clansmen
+				duration = 730
+			}
+		}
+		set_character_flag = clansmen_hunt
+		job_marshal = {
+			character_event = { id = mountain_clans.3 tooltip = TOOLTIPmountain_clans.3 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCmountain_clans.2" #Lead party personally
+		trigger = {
+			has_regent = no
+			prisoner = no
+			OR = {
+				is_female = no
+				martial = 15
+			}
+			NOT = { has_severe_disability_trigger = yes }
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.33
+				NOT = { martial = 9 }
+			}
+			modifier = {
+				factor = 3
+				martial = 15
+			}
+		}
+		FROM = {
+			add_province_modifier = {
+				name = looted_by_clansmen
+				duration = 730
+			}
+		}
+		character_event = { id = mountain_clans.4 tooltip = TOOLTIPmountain_clans.4 }
+	}
+	
+	option = {
+		name = "EVTOPTDmountain_clans.2" #Send son
+		trigger = {
+			any_child = {
+				is_alive = yes
+				is_female = no
+				liege = { character = ROOT }
+				is_adult = yes
+				at_location = ROOT
+				prisoner = no
+				martial = 6
+				NOT = { has_severe_disability_trigger = yes }	
+				NOT = { trait = maester }
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0.5
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 0.33
+				job_marshal = { martial = 15 }
+			}
+		}
+		FROM = {
+			add_province_modifier = {
+				name = looted_by_clansmen
+				duration = 730
+			}
+		}
+		random_child = {
+			limit = {
+				is_alive = yes
+				is_female = no
+				liege = { character = ROOT }
+				is_adult = yes
+				at_location = ROOT
+				prisoner = no
+				martial = 6
+				NOT = { has_severe_disability_trigger = yes }	
+				NOT = { trait = maester }
+			}
+			character_event = { id = mountain_clans.3 tooltip = TOOLTIPmountain_clans.3 }
+		}
+	}
+}
+#Master of Arms sent on clansmen hunt
+character_event = {
+	id = mountain_clans.3
+	desc = "EVTDESCmountain_clans.3"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.3"
+		hidden_tooltip = { 
+			FROMFROM = { set_province_flag = clansmen_hunt }
+			set_character_flag = marshal_clansmen_hunt
+			if = {
+				limit = { 
+					NOT = { martial = 9 }
+				}	
+				random_list = {
+					17 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					50 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.7 days = 3 } } #duel
+				}
+			}
+			if = {
+				limit = { 
+					martial = 9
+					NOT = { martial = 15 }
+				}	
+				random_list = {
+					33 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					33 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.7 days = 3 } } #duel
+				}
+			}
+			if = {
+				limit = { 
+					martial = 15
+				}	
+				random_list = {
+					50 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					17 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.7 days = 3 } } #duel
+				}
+			}
+		}
+	}
+}
+#Province owner goes on clansmen hunt
+character_event = {
+	id = mountain_clans.4
+	desc = "EVTDESCmountain_clans.4"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.4"
+		hidden_tooltip = { 
+			FROMFROM = { set_province_flag = clansmen_hunt }
+			if = {
+				limit = { 
+					NOT = { martial = 9 }
+				}	
+				random_list = {
+					17 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					50 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.9 days = 3 } } #duel
+				}
+			}
+			if = {
+				limit = { 
+					martial = 9
+					NOT = { martial = 15 }
+				}	
+				random_list = {
+					33 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					33 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.9 days = 3 } } #duel
+				}
+			}
+			if = {
+				limit = { 
+					martial = 15
+				}	
+				random_list = {
+					50 = { character_event = { id = mountain_clans.5 days = 3 } } #success
+					17 = { character_event = { id = mountain_clans.6 days = 3 } } #failiure
+					33 = { character_event = { id = mountain_clans.9 days = 3 } } #duel
+				}
+			}
+		}
+	}	
+}
+#Successful clansmen hunt
+character_event = {
+	id = mountain_clans.5
+	desc = "EVTDESCmountain_clans.5"
+	picture = "GFX_ARRYN"
+
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.5"
+		prestige = 75
+		if = {
+			limit = { NOT = { has_character_flag = marshal_clansmen_hunt } }
+			random_demesne_province = {
+				limit = { has_province_flag = clansmen_hunt }
+				clr_province_flag = clansmen_hunt
+				add_province_modifier = {
+					name = clansmen_subdued
+					duration = 730
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = marshal_clansmen_hunt }
+			clr_character_flag = marshal_clansmen_hunt
+			liege = { character_event = { id = mountain_clans.7 tooltip = TOOLTIPmountain_clans.7 } }
+		}
+		hunter_trait_chance_effect = yes
+	}
+}	
+#Failiure clansmen hunt
+character_event = {
+	id = mountain_clans.6
+	desc = "EVTDESCmountain_clans.6"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.6"
+		prestige = -35
+		if = {
+			limit = { NOT = { has_character_flag = marshal_clansmen_hunt } }
+			random_demesne_province = {
+				limit = { has_province_flag = clansmen_hunt }
+				clr_province_flag = clansmen_hunt
+			}
+		}	
+		if = {
+			limit = { has_character_flag = marshal_clansmen_hunt }
+			clr_character_flag = marshal_clansmen_hunt
+			liege = { character_event = { id = mountain_clans.8 tooltip = TOOLTIPmountain_clans.8 } }
+		}
+		random_independent_ruler = {
+			limit = {
+				culture = moon_clansman
+				NOT = { demesne_size = 1 }
+			}
+			ROOT = {
+				random_list = {
+					10 = { 
+						death = { 
+							death_reason = death_battle 
+							killer = PREV
+						} 
+					}
+					15 = {
+						add_maimed_trait_effect = yes
+						hidden_tooltip = { 
+							remove_trait = wounded 
+						}
+					}
+					30 = {
+						if = {
+							limit = { NOT = { is_maimed_trigger = yes } }
+							add_trait_silently_wounded_effect = yes
+							hidden_tooltip = { 
+								character_event = { id = 38280 }
+							}
+						}	
+					}
+					45 = { }
+				}
+				if = {
+					limit = { is_alive = yes }
+					random = {
+						chance = 50
+						imprison = PREV 
+					}
+				}
+			}			
+		}	
+	}
+}	
+#Inform marshal succesful hunt
+character_event = {
+	id = mountain_clans.7
+	desc = "EVTDESCmountain_clans.7"
+	picture = "GFX_ARRYN"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.7"
+		random_demesne_province = {
+			limit = { has_province_flag = clansmen_hunt }
+			clr_province_flag = clansmen_hunt
+			add_province_modifier = {
+				name = clansmen_subdued
+				duration = 730
+			}
+		}
+	}
+}
+#Inform marshal hunt faliure
+character_event = {
+	id = mountain_clans.8
+	desc = "EVTDESCmountain_clans.8"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.6"
+	}
+}
+
+#Duel clan chief!
+character_event = {
+	id = mountain_clans.9
+	desc = "EVTDESCmountain_clans.9"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.9"
+		set_character_flag = clansmen_hunt_duel
+		random_independent_ruler = {
+			limit = {
+				culture = moon_clansman
+				NOT = { demesne_size = 1 }
+			}
+			set_character_flag = clansmen_hunt_duel_target
+			character_event = { id = mountain_clans.10 tooltip = TOOLTIPmountain_clans.10 }
+		}	
+	}
+}
+character_event = {
+	id = mountain_clans.10
+	desc = "EVTDESCmountain_clans.10"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.10"
+		e_rebels = { holder_scope = { character_event = { id = duel.0 } } }	
+	}
+}
+#Win duel
+character_event = {
+	id = mountain_clans.11
+	desc = "EVTDESCmountain_clans.11"
+	picture = "GFX_ARRYN"
+
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.11"
+		if = {
+			limit = { NOT = { has_character_flag = marshal_clansmen_hunt } }
+			random_demesne_province = {
+				limit = { has_province_flag = clansmen_hunt }
+				clr_province_flag = clansmen_hunt
+				add_province_modifier = {
+					name = clansmen_subdued
+					duration = 730
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = marshal_clansmen_hunt }
+			clr_character_flag = marshal_clansmen_hunt
+		}
+	}
+}
+#Inform liege
+character_event = {
+	id = mountain_clans.12
+	desc = "EVTDESCmountain_clans.12"
+	picture = "GFX_ARRYN"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.12"
+		FROMFROM = { tooltip = { show_portrait = yes } }
+		random_demesne_province = {
+			limit = { has_province_flag = clansmen_hunt }
+			clr_province_flag = clansmen_hunt
+			add_province_modifier = {
+				name = clansmen_subdued
+				duration = 730
+			}
+		}
+	}
+}
+#Inform liege duel loss
+character_event = {
+	id = mountain_clans.13
+	desc = "EVTDESCmountain_clans.13"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.13"
+		FROM = { tooltip = { show_portrait = yes } }
+	}
+}
+
+###King of the Unified Mountains Clans Invades
+province_event = {
+	id = mountain_clans.14
+	desc = "EVTDESCmountain_clans.14"
+	picture = GFX_evt_mountain_clans
+
+	trigger = {
+		region = world_mountains_of_moon
+		OR = {
+			NOT = { has_global_flag = war_cooldown_period } 
+			had_global_flag = { flag = war_cooldown_period days = 25 } 
+		}
+		k_mountain_clans = { 
+			has_holder = no 
+			OR = { #75 year cooldown
+				NOT = { has_title_flag = clansman_invasion }
+				had_title_flag = { flag = clansman_invasion days = 27375 }
+			}
+		}
+		any_independent_ruler = {
+			culture = moon_clansman
+			NOT = { demesne_size = 1 }
+			ai = yes
+			NOT = { has_character_flag = clansmen_hunt_duel_target }
+		}
+		NOT = {
+			has_game_rule = {
+				name = non_lore_invasions
+				value = off
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 4000
+		
+		modifier = {
+			factor = 3
+			has_game_rule = {
+				name = non_lore_invasions
+				value = rare
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				top_liege = {
+					primary_title = {
+						OR = {
+							title = e_vale
+							title = k_vale
+						}
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				top_liege = {
+					war = yes	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			e_iron_throne = { holder_scope = { war = yes } }
+		}
+	}
+
+	option = {
+		name = "EVTOPTAmountain_clans.14"
+		create_random_soldier = {
+			attributes = {
+				martial = 9
+				diplomacy = 4
+				learning = 2
+			}
+			female = no
+			employer = e_rebels
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = random
+			trait = brave
+			trait = ambitious
+			trait = skilled_tactician
+			historical = yes
+		}
+		custom_tooltip = { text = TOOLTIPmountain_clans.14 }
+		new_character = {
+			prestige = 600
+			random_list = {
+				25 = { add_trait = trained_warrior }
+				75 = { add_trait = skilled_warrior }
+				25 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+			set_character_flag = moon_clansman_invader
+			random_independent_ruler = {
+				limit = {
+					culture = moon_clansman
+					NOT = { demesne_size = 1 }
+					ai = yes
+					NOT = { has_character_flag = clansmen_hunt_duel_target }
+				}
+				abdicate_to = PREV	
+			}
+			activate_title = { title = k_mountain_clans status = yes }
+			k_mountain_clans = {				
+				gain_title = prev
+				clr_title_flag = clansman_invasion
+				set_title_flag = clansman_invasion
+			}
+			character_event = { id = mountain_clans.15 days = 2  }			
+		}
+		hidden_tooltip = {
+			any_playable_ruler = {
+				limit = { 
+					ai = no 
+					NOT = {
+						any_demesne_province = {
+							province_id = ROOT
+						}
+					}	
+					OR = {
+						capital_scope = { region = world_westeros }
+						ROOT = { owner = { same_realm = PREVPREV } }
+					}
+				}
+				character_event = { id = mountain_clans.16 days = 1 } #Notification to other human players. (Mountain Clans)
+			}
+		}
+	}
+}
+#Actually Spawm the Army... 
+character_event = {
+	id = mountain_clans.15
+	desc = "Arrgh!"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok."
+		FROM = {
+			kingdom = {
+				ROOT = {
+					war = {
+						casus_belli = tribal_invasion
+						target = PREVPREV # The top liege of the owner
+						thirdparty_title = PREV # The de jure kingdom
+					}
+				}
+			}
+			ROOT = {
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						light_infantry = { 23 23 }
+						heavy_infantry = { 7 7 }
+						light_cavalry = { 3 3 }
+					}
+					match_min = 2000
+					match_max = 4000
+					attrition = 0.25
+					earmark = clansmen_troops
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						light_infantry = { 23 23 }
+						heavy_infantry = { 7 7 }
+						light_cavalry = { 3 3 }
+					}
+					match_min = 2000
+					match_max = 4000
+					attrition = 0.25
+					earmark = clansmen_troops
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						light_infantry = { 23 23 }
+						heavy_infantry = { 7 7 }
+						light_cavalry = { 3 3 }
+					}
+					match_min = 2000
+					match_max = 4000
+					attrition = 0.25
+					earmark = clansmen_troops
+				}
+			}	
+		}	
+		#Spawn a few courtiers
+		create_random_soldier = {
+			female = no
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+			age = 18
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+			age = 25
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = moon_clansman
+			religion = mountain_old_gods
+			random_traits = yes
+			dynasty = none
+			age = 24
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		any_independent_ruler = {
+			limit = {
+				culture = moon_clansman
+				NOT = { demesne_size = 1 }
+				NOT = { character = ROOT }
+			}
+			set_defacto_liege = ROOT
+		}
+	}
+}
+#Inform the world
+character_event = {
+	id = mountain_clans.16
+	desc = "EVTDESCmountain_clans.14"
+	picture = GFX_evt_mountain_clans
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmountain_clans.14"
+		k_mountain_clans = {
+			holder_scope = { tooltip = { show_portrait = yes } }
+		}
+	}
+}
+###Courtier kidnapped by clans
+character_event = {
+	id = mountain_clans.17
+	
+	hide_window = yes
+	only_playable = yes
+
+	trigger = {
+		capital_scope = {
+			region = world_mountains_of_moon
+		}	
+		NOT = { culture = moon_clansman }
+		any_independent_ruler = {
+			culture = moon_clansman
+			NOT = { demesne_size = 1 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		modifier = {
+			factor = 0.75
+			capital_scope = { has_province_modifier = looted_by_clansmen }
+		}
+		modifier = {
+			factor = 0.9
+			has_regent = yes
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { martial = 9 } 
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { martial = 6 }
+		}
+		modifier = {
+			factor = 0.9
+			NOT = { martial = 3 }
+		}
+		modifier = {
+			factor = 1.1
+			martial = 15 
+		}
+		modifier = {
+			factor = 1.2
+			martial = 18 
+		}
+		modifier = {
+			factor = 1.25
+			martial = 21 
+		}
+	}
+
+	immediate = { 
+		random_courtier = {
+			limit = {
+				OR = {
+					liege = { character = ROOT }
+					character = ROOT
+				}	
+				age = 14
+				in_command = no
+				is_abroad = no
+				prisoner = no
+				NOT = { trait = incapable }
+				NOT = { trait = infirm }
+			}
+			character_event = { id = mountain_clans.18 }
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = mountain_clans.18
+	desc = "EVTDESCmountain_clans.18"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.18" 
+		random_independent_ruler = {
+			limit = {
+				culture = moon_clansman
+				NOT = { demesne_size = 1 }
+			}
+			set_character_flag = captured_in_battle
+			ROOT = { imprison = PREV }	
+		}
+		liege = { 
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = mountain_clans.19 days = 2 } 
+			}	
+		}
+	}
+}	
+character_event = {
+	id = mountain_clans.19
+	desc = "EVTDESCmountain_clans.19"
+	picture = GFX_evt_mountain_clans
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmountain_clans.19" 
+		FROM = {
+			host = { tooltip = { show_portrait = yes } }
+		}	
+	}
+}	

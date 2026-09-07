@@ -1,0 +1,1962 @@
+plot_decisions = {
+	plot_replace_regent_decision = { #petition to be made nominated regent
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_replace_regent
+			NOT = { has_character_flag = flag_plot_replace_regent_decision }
+			liege = { has_regent = no NOT = { character = ROOT } }
+			plot_target_char = { NOT = { is_liege_of = ROOT } }
+		}
+		
+		allow = {			
+			OR = {
+				AND = {
+					num_of_plot_backers = 1
+					any_plot_backer = { same_liege = ROOT }
+				}	
+				AND = {
+					num_of_plot_backers = 2
+					plot_target_char = { 
+						is_ruler = yes
+						is_councillor = no
+						NOT = { is_voter = yes }
+					}
+				}	
+			}	
+			plot_target_char = {
+				NOT = { liege = { regent = { character = PREVPREV } } } 
+				has_minor_title = title_appointed_regent
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			activate_plot = yes
+			set_character_flag = flag_plot_replace_regent_decision
+			liege = { letter_event = { id = regency.8 tooltip = "EVTTOOLTIPCOUNCILPLOT1" days = 3 } }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.4
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = { # Same if the ruler is on board
+				factor = 50000
+				liege = { any_backed_character = { character = ROOT } }
+			}
+					
+			modifier = {
+				factor = 0.001
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.001
+				NOT = { num_of_plot_backers = 2 }
+			}
+			modifier = {
+				factor = 0.01
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 0.01
+				NOT = { num_of_plot_backers = 3 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { num_of_plot_backers = 4 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 2 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { num_of_plot_backers = 5 }
+			}
+		}
+	}
+	
+	plot_replace_regent_duel = { 
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_replace_regent
+			NOT = { has_character_flag = flag_plot_replace_regent_decision }
+			NOT = { has_character_flag = plot_replace_regent_duel }
+			liege = { has_regent = yes }
+			OR = {
+				is_female = no
+				female_get_masculine_event_trigger = yes
+			}
+			NOT = { has_severe_disability_trigger = yes }
+			plot_target_char = {
+				NOT = { is_liege_of = ROOT }
+				liege = { regent = { character = PREVPREV } }
+				NOT = { has_severe_disability_trigger = yes }
+				OR = {
+					is_female = no
+					female_get_masculine_event_trigger = yes
+				}
+				OR = {
+					NOT = { age = 50 }
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}
+		}
+		
+		allow = {
+			show_only_failed_conditions = yes
+			OR = {
+				num_of_plot_backers = 2
+				plot_power = 0.5
+			}
+			in_command = no
+			is_ill = no
+			war =  no
+			NOT = { trait = wounded }
+			NOT = { is_inaccessible_trigger = yes }
+			plot_target_char = {
+				custom_tooltip = {
+					text = TOOLTIPtriarch_imprisonTRIARCH
+					hidden_tooltip = { 
+						NAND = { 
+							has_minor_title = title_triarch 
+							liege = {
+								is_merchant_republic = yes
+								government = triarch_merchant_republic_government	
+							}
+						} 
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			set_character_flag = plot_replace_regent_duel
+			set_character_flag = flag_plot_replace_regent_decision
+			plot_target_char = { 
+				character_event = {	
+					id = 61221 
+					tooltip = EVTTOOLTIP61221
+					days = 2
+				}
+			}
+			pacifists_lose_piety_effect = yes
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}					
+			modifier = {
+				factor = 0.05
+				trait = craven
+			}
+			modifier = {
+				factor = 0.25
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 0.05
+				NOT = { trait = master_warrior }
+				plot_target_char = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 0.05
+				NOT = { trait = master_warrior }
+				NOT = { trait = skilled_warrior }
+				plot_target_char = { trait = skilled_warrior }
+			}
+			modifier = {
+				factor = 0.05
+				NOT = { trait = master_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = trained_warrior }
+				plot_target_char = { trait = trained_warrior }
+			}
+			modifier = {
+				factor = 0.05
+				NOT = { trait = master_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = trained_warrior }
+				plot_target_char = { trait = poor_warrior }
+			}	
+		}
+	}
+	
+	plot_replace_regent_plead_case = { 
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_replace_regent
+			NOT = { has_character_flag = flag_plot_replace_regent_decision }
+			NOT = { has_character_flag = flag_plot_replace_regent_plead_case }
+			NOT = { has_character_flag = duelist_courtier }
+			liege = { has_regent = yes }
+			plot_target_char = { 
+				liege = { regent = { character = PREVPREV } }
+				NOT = { is_liege_of = ROOT }
+			}
+		}
+		
+		allow = {
+			show_only_failed_conditions = yes
+			num_of_plot_backers = 2
+			plot_power = 0.5
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+				custom_tooltip = {
+					text = replace_regent_plead_case_LOCATION
+					hidden_tooltip = { liege = { capital_scope = { ROOT = { location = { province_id = PREVPREV } } } } }
+				}	
+			}		
+			in_command = no
+			is_ill = no
+			war =  no
+			NOT = { is_inaccessible_trigger = yes }
+			plot_target_char = {
+				custom_tooltip = {
+					text = TOOLTIPtriarch_imprisonTRIARCH
+					hidden_tooltip = { 
+						NAND = { 
+							has_minor_title = title_triarch 
+							liege = {
+								is_merchant_republic = yes
+								government = triarch_merchant_republic_government	
+							}
+						} 
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			activate_plot = yes
+			set_character_flag = flag_plot_replace_regent_plead_case
+			set_character_flag = flag_plot_replace_regent_decision
+			plot_target_char = { 
+				character_event = { id = 61216 days = 3 tooltip = EVTTOOLTIP61216 }
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = {
+				factor = 0.25
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = envious
+			}
+			modifier = {
+				factor = 2.0
+				trait = shy
+			}
+			modifier = {
+				factor = 3.0
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 0.75 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 2 }
+			}
+		}
+	}
+	
+	plot_replace_regent_ultimatum = { 
+		is_high_prio = yes
+		only_rulers = yes
+		potential = {
+			has_plot = plot_replace_regent
+			NOT = { has_character_flag = flag_plot_replace_regent_decision }
+			NOT = { has_character_flag = flag_plot_replace_regent_ultimatum }
+			NOT = { has_character_flag = duelist_courtier }
+			is_ruler = yes
+			liege = { has_regent = yes }
+			plot_target_char = { 
+				liege = { regent = { character = PREVPREV } }
+				NOT = { is_liege_of = ROOT }
+			}
+		}
+		
+		allow = {
+			show_only_failed_conditions = yes
+			# custom_tooltip = {
+				# text = replace_regent_ultimatum_PLOTBACKERS
+				# hidden_tooltip = {
+					# any_plot_backer = {
+						# is_ruler = yes
+						# count = 4
+					# }
+				# }	
+			# }	
+			plot_power = 1
+			liege = { 
+				OR = {
+					NOT = { age = 14 }
+					is_incapable = yes
+				}
+			}
+	
+			in_command = no
+			is_ill = no
+			war =  no
+			NOT = { is_inaccessible_trigger = yes }
+			plot_target_char = {
+				custom_tooltip = {
+					text = TOOLTIPtriarch_imprisonTRIARCH
+					hidden_tooltip = { 
+						NAND = { 
+							has_minor_title = title_triarch 
+							liege = {
+								is_merchant_republic = yes
+								government = triarch_merchant_republic_government	
+							}
+						} 
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			activate_plot = yes
+			set_character_flag = flag_plot_replace_regent_ultimatum
+			set_character_flag = flag_plot_replace_regent_decision
+			plot_target_char = { 
+				letter_event = { id = regency.20 days = 3 tooltip = EVTTOOLTIPregency.20 }
+			}
+			if = {
+				limit = { religion = nath_pagan }
+				piety = -40
+				custom_tooltip = { text = nath_pagan_ahimsa_tooltip }
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 0
+				religion = nath_pagan
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0
+				NOT = { 
+					OR = {
+						relative_power_to_liege = 0.1
+						any_plot_backer = { relative_power_to_liege = 0.1 }
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { 
+					OR = {
+						relative_power_to_liege = 0.2
+						any_plot_backer = { relative_power_to_liege = 0.2 }
+					}
+				}
+				plot_target_char = { relative_power_to_liege = 0.2 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { 
+					OR = {
+						relative_power_to_liege = 0.33
+						any_plot_backer = { relative_power_to_liege = 0.33 }
+					}
+				}
+				plot_target_char = { relative_power_to_liege = 0.33 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { 
+					OR = {
+						relative_power_to_liege = 0.5
+						any_plot_backer = { relative_power_to_liege = 0.5 }
+					}
+				}
+				plot_target_char = { relative_power_to_liege = 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 2 }
+			}
+		}
+	}
+	
+	plot_declare_liege_incapable = { 
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_replace_regent
+			NOT = { has_character_flag = flag_plot_replace_regent_decision }
+			plot_target_char = { 
+				is_liege_of = ROOT
+				has_regent = no
+			}
+		}
+		
+		allow = {
+			show_only_failed_conditions = yes
+			plot_target_char = { 
+				OR = {
+					trait = inbred
+					trait = imbecile
+					trait = lunatic
+					is_crippled_trigger = yes
+					trait = infirm
+					has_epidemic = yes
+				}
+				in_command = no
+				is_councillor = no
+				NOT = { is_voter = yes }
+				custom_tooltip = {
+					text = TOOLTIPtriarch_imprisonTRIARCH
+					hidden_tooltip = { 
+						OR = {
+							ROOT = { has_minor_title = title_triarch }
+							NAND = { #Junior Triarchs become regent
+								is_merchant_republic = yes
+								government = triarch_merchant_republic_government		
+							}
+						}
+					}
+				}	
+			}
+			num_of_plot_backers = 5
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+				custom_tooltip = {
+					text = TOOLTIPplot_declare_liege_incapableCOUNCIL
+					hidden_tooltip = {
+						any_plot_backer = { 
+							OR = {
+								is_councillor = yes
+								is_voter = yes
+							}	
+							count = 2
+						}
+					}
+				}	
+				plot_power = 1.0	
+			}	
+			in_command = no
+			war =  no
+			has_epidemic = no
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			activate_plot = yes
+			set_character_flag = plot_replace_regent_decision		
+			plot_target_char = { character_event = { id = regency.27 tooltip = EVTTOOLTIPregency.27 } }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = {
+				factor = 0.25
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = envious
+			}
+			modifier = {
+				factor = 2.0
+				trait = shy
+			}
+			modifier = {
+				factor = 3.0
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 2 }
+			}
+		}
+	}
+}
+
+decisions = {
+	ambition_nominate_regent_decision = { #petition to be made nominated regent, vacant position
+		is_high_prio = yes
+		potential = {
+			has_ambition = obj_become_regent
+			NOT = { has_plot = plot_replace_regent }
+			NOT = { has_character_flag = ambition_nominate_regent_decision }
+			NOT = { has_minor_title = title_appointed_regent }
+			liege = {
+				has_regent = no
+				NOT = { character = ROOT }
+				NOT = {
+					any_courtier = {
+						same_liege = ROOT
+						has_minor_title = title_appointed_regent
+					}
+				}
+				NOT = {
+					any_vassal = {
+						has_minor_title = title_appointed_regent
+					}
+				}
+			}
+			
+		}
+		
+		allow = {
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			set_character_flag = ambition_nominate_regent_decision
+			liege = { letter_event = { id = regency.17 tooltip = "EVTTOOLTIPregency.17" days = 3 } }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+		}
+	}
+}
+# Targetted decisions are possible vs _all_ other characters and shown are in the Diplomacy View, not the Intrigue View. The taker is in the FROM scope.
+#
+# ai_target_filter = [self/court/home_court/vassals/sub_realm/realm/dynasty/all] (which characters for which the AI evaluates the decision.)
+#	court: all characters in the AI's host court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	home_court: all characters in the AI's home court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	vassals: direct vassal rulers of the AI's employer
+#	sub_realm: all characters below the AI's employer
+#	realm: all characters in the same top realm as the AI
+#	dynasty: all members of the same dynasty
+#	rivals: your rivals plus any character you have an opinion modifier with 'crime = yes' set (the same set of characters the 'is_foe' trigger evaluates)
+#	all: all living characters (Avoid if possible. VERY CPU-HEAVY!)
+#	
+
+targetted_decisions = {
+	regent_grant_self_title = {
+		ai_target_filter = self
+		filter = self
+		is_high_prio = yes
+		potential = {
+			#ai = no
+			liege = { 
+				regent = { character = ROOT } 
+			}
+			can_press_claims_trigger = yes
+			
+			OR = {
+				ai = no
+				AND = {
+					NOT = { trait = honorable }
+					NOT = { trait = honest }
+					NOT = { trait = just }
+				}
+			}	
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			NOT = { trait = content }
+			OR = {
+				higher_tier_than = BARON
+				is_patrician = yes
+				custom_tooltip = {
+					text = TOOLTIPgrant_self_titleGENDER
+					hidden_tooltip = {
+						OR = {
+							is_female = no
+							liege = {
+								primary_title = {
+									OR = {
+										has_law = enatic_cognatic_succession
+										has_law = enatic_succession
+									}
+								}
+							}
+							liege = { #Females must be blood relatives to ask for titles under true cognatic
+								dynasty = ROOT
+								primary_title = { has_law = true_cognatic_succession }
+							}
+						}
+						OR = {
+							is_female = yes
+							liege = {
+								primary_title = {
+									OR = {
+										has_law = cognatic_succession
+										has_law = agnatic_succession
+										has_law = true_cognatic_succession
+									}
+								}
+							}
+						}
+					}
+				}
+			}	
+			liege = { 	
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+					AND = {
+						prisoner = yes
+						host = { character = ROOT }
+					}
+				}
+				custom_tooltip = {
+					text = TOOLTIPgrant_self_titleTITLE
+					hidden_tooltip = {
+						any_demesne_title = {
+							can_be_given_away = yes
+							lower_tier_than = PREV
+							controls_religion = no
+							NOT = { has_title_flag = military_command }
+							NOT = { title = c_ghastongrey } #no-one wants this crappy rock
+							OR = {
+								AND = { #countys and baronies
+									lower_tier_than = DUKE
+									holder_scope = { demesne_size = 2 }	
+								}
+								AND = { #dejure duchy
+									tier = DUKE
+									has_de_jure_pretension = ROOT
+								}								
+							}
+							NOT = {
+								holder_scope = {
+									any_demesne_title = {
+										tier = COUNT
+										de_jure_liege_or_above = PREVPREV
+									}
+								}
+							}
+							NOT = { #Not a bloodline title
+								holder_scope = {
+									any_owned_bloodline = {
+										has_bloodline_flag = dynastic_bloodline
+										has_bloodline_flag = dynastic_claim_@PREVPREV
+										ROOT = { NOT = { is_bloodline_member_of = PREV } }
+									}
+								}
+							}
+							NOT = { #Not traditional heir title
+								holder_scope = {
+									higher_tier_than = DUKE
+									is_feudal_monarch_trigger = yes
+									primary_title = {
+										persistent_event_target:heir_title = {
+											title = PREVPREVPREV
+										}
+									}
+								}
+							}
+							NOT = {
+								AND = {
+									tier = COUNT
+									location = { is_capital = yes }						
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		effect = {
+			prestige = -50
+			liege = {
+				random_demesne_title = {
+					limit = {
+						can_be_given_away = yes
+						lower_tier_than = PREV
+						controls_religion = no
+						NOT = { has_title_flag = military_command }
+						NOT = { title = c_ghastongrey } #no-one wants this crappy rock
+						OR = {
+							AND = { #countys and baronies
+								lower_tier_than = DUKE
+								holder_scope = { demesne_size = 2 }	
+							}
+							AND = { #dejure duchy
+								tier = DUKE
+								has_de_jure_pretension = ROOT
+							}								
+						}
+						NOT = {
+							holder_scope = {
+								any_demesne_title = {
+									tier = COUNT
+									de_jure_liege_or_above = PREVPREV
+								}
+							}
+						}
+						NOT = { #Not a bloodline title
+							holder_scope = {
+								any_owned_bloodline = {
+									has_bloodline_flag = dynastic_bloodline
+									has_bloodline_flag = dynastic_claim_@PREVPREV
+									ROOT = { NOT = { is_bloodline_member_of = PREV } }
+								}
+							}
+						}
+						NOT = { #Not traditional heir title
+							holder_scope = {
+								higher_tier_than = DUKE
+								is_feudal_monarch_trigger = yes
+								primary_title = {
+									persistent_event_target:heir_title = {
+										title = PREVPREVPREV
+									}
+								}
+							}
+						}
+						NOT = {
+							AND = {
+								tier = COUNT
+								location = { is_capital = yes }						
+							}
+						}
+					}
+					tooltip = { gain_title = ROOT }
+					hidden_tooltip = { save_event_target_as = regent_title }
+					if = { #If not a claimant this is seen as corrupt
+						limit = { ROOT = { NOT = { has_claim = PREV } } }
+						set_title_flag = grant_weak_claim
+						tooltip = { add_weak_claim = PREV }
+						ROOT = {
+							if = {
+								limit = { trait = honorable }
+								remove_trait = honorable
+							}
+							liege = {
+								any_courtier = {
+									limit = {
+										NOT = { character = ROOT }
+										age = 8
+										NOT = { trait = incapable }
+										OR = {
+											trait = just
+											trait = honorable
+											trait = proud
+										}
+										OR = {
+											is_councillor = yes
+											is_voter = yes
+											is_ruler = yes
+											is_married = PREV
+											is_close_relative = PREV
+											character = PREV
+										}
+										NOT = { is_close_relative = ROOT }
+									}
+									opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+								}
+								any_vassal = {
+									limit = {
+										NOT = { character = PREV }
+										NOT = { character = ROOT }
+										NOT = { host = { character = PREVPREV } }
+										OR = {
+											liege = { tier = DUKE }
+											higher_tier_than = COUNT
+											is_patrician = yes
+										}	
+										age = 16
+										NOT = { trait = incapable }
+										OR = {
+											trait = just
+											trait = honorable
+											trait = proud
+										}
+										NOT = { is_close_relative = ROOT }
+									}
+									opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+								}
+							}
+						}	
+					}
+				}
+				hidden_tooltip = { character_event = { id = 61101 tooltip = EVTTOOLTIP61101 } }
+			}		
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.06
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = honorable
+					trait = content
+					NOR = {
+						trait = greedy
+						trait = arbitrary
+						trait = ruthless
+						trait = ambitious
+					}
+				}	
+				NOT = {
+					liege = {
+						any_demesne_title = {
+							ROOT = { has_claim = PREV }
+							
+							can_be_given_away = yes
+							lower_tier_than = PREV
+							controls_religion = no
+							NOT = { has_title_flag = military_command }
+							NOT = { title = c_ghastongrey } #no-one wants this crappy rock
+							OR = {
+								AND = { #countys and baronies
+									lower_tier_than = DUKE
+									holder_scope = { demesne_size = 2 }	
+								}
+								AND = { #dejure duchy
+									tier = DUKE
+									has_de_jure_pretension = ROOT
+								}								
+							}
+							NOT = {
+								holder_scope = {
+									any_demesne_title = {
+										tier = COUNT
+										de_jure_liege_or_above = PREVPREV
+									}
+								}
+							}
+							NOT = { #Not a bloodline title
+								holder_scope = {
+									any_owned_bloodline = {
+										has_bloodline_flag = dynastic_bloodline
+										has_bloodline_flag = dynastic_claim_@PREVPREV
+										ROOT = { NOT = { is_bloodline_member_of = PREV } }
+									}
+								}
+							}
+							NOT = { #Not traditional heir title
+								holder_scope = {
+									higher_tier_than = DUKE
+									is_feudal_monarch_trigger = yes
+									primary_title = {
+										persistent_event_target:heir_title = {
+											title = PREVPREVPREV
+										}
+									}
+								}
+							}
+							NOT = {
+								AND = {
+									tier = COUNT
+									location = { is_capital = yes }						
+								}
+							}
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 1.33
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.1
+				trait = content
+			}
+		}
+	}
+	
+	regent_lower_crown_authority = {
+		ai_target_filter = self
+		filter = self
+		is_high_prio = yes
+		potential = {
+			NOT = { has_dlc = "Zeus" }
+			is_playable = yes	
+			liege = { 
+				has_regent = yes
+				regent = { character = ROOT } 
+				higher_tier_than = DUKE
+				any_demesne_title = {
+					OR = {
+						tier = EMPEROR
+						AND = {
+							tier = KING
+							NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+						}
+					}
+				}
+			}
+			OR = {
+				ai = no
+				in_faction = faction_lower_crown_authority
+				leads_faction = faction_lower_crown_authority
+			}
+		}
+		allow = {
+			NOT = { trait = content }
+			liege = {
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+					AND = {
+						prisoner = yes
+						host = { character = ROOT }
+					}
+				}
+				custom_tooltip = {
+					text = TOOLTIPregent_lower_crown_authorityFLAG
+					hidden_tooltip = { NOT = { has_character_flag = regent_lowered_CA } }
+				}
+				custom_tooltip = {
+					text = TOOLTIPregent_lower_crown_authorityTITLE
+					hidden_tooltip = { 
+						any_demesne_title = {
+							OR = {
+								tier = EMPEROR
+								AND = {
+									tier = KING
+									NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+								}
+							}	
+							OR = {
+								has_law = centralization_1
+								has_law = centralization_2
+								has_law = centralization_3
+								has_law = centralization_4
+							}
+							ROOT = {
+								OR = {
+									crownlaw_title = { title = PREVPREV }
+									any_demesne_title = { de_jure_liege_or_above = PREVPREV }
+								}
+							}
+						}
+					}
+				}				
+			}
+		}
+		effect = {
+			liege = {
+				random_demesne_title = {
+					limit = {
+						OR = {
+							tier = EMPEROR
+							AND = {
+								tier = KING
+								NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+							}
+						}
+						OR = {
+							has_law = centralization_1
+							has_law = centralization_2
+							has_law = centralization_3
+							has_law = centralization_4
+						}
+						ROOT = {
+							OR = {
+								crownlaw_title = { title = PREVPREV }
+								any_demesne_title = { de_jure_liege_or_above = PREVPREV }
+							}
+						}
+					}
+					if = {
+						limit = { has_law = centralization_1 }
+						add_law = centralization_0
+					}
+					if = {
+						limit = { has_law = centralization_2 }
+						add_law = centralization_1
+					}
+					if = {
+						limit = { has_law = centralization_3 }
+						add_law = centralization_2
+					}
+					if = {
+						limit = { has_law = centralization_4 }
+						add_law = centralization_3
+					}
+					hidden_tooltip = {
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = PREVPREV
+									is_liege_or_above = PREVPREV
+								}
+								NOT = { character = ROOT }
+								NOT = { character = PREVPREV }
+							}
+							opinion = { who = PREVPREV modifier = opinion_lowered_crown_authority months = 60 }
+							opinion = { who = ROOT modifier = opinion_lowered_crown_authority months = 60 }
+						}
+					}
+					custom_tooltip = { text = TOOLTIPregent_lower_crown_authorityPLEASED }
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_regent_lowered_CA
+				}
+				hidden_tooltip = {
+					character_event = { id = 61301 }
+					set_character_flag = regent_lowered_CA
+				}
+			}		
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	# regent_imprison = {
+		# ai_target_filter = realm
+		# filter = realm
+		# from_potential = {
+			# ai = no
+			# is_ruler = yes
+			# liege = { regent = { character = PREVPREV } }	
+		# }
+		# potential = {
+			# NOT = { character = FROM }
+			# NOT = { trait = dragon }
+			# NOT = { culture_group = unoccupied_group }
+			
+			# NOT = { is_liege_or_above = FROM }	
+			# FROM = {
+				# liege = {
+					# is_vassal_or_below = ROOT
+				# }
+			# }
+		# }
+		# allow = {	
+			# FROM = { 
+				# prestige = 50 
+			# }			
+			# custom_tooltip = {
+				# text = TOOLTIPtriarch_imprisonTRIARCH
+				# hidden_tooltip = { NOT = { has_minor_title = title_triarch } }
+			# }		
+			# diplomatic_immunity = no
+			# prisoner = no
+			# NOT = { trait = slave }	
+		# }
+		# effect = {	
+			# hidden_tooltip = { FROM = { character_event = { id = regency.31 } } }
+			# random = {
+				# chance = 50
+				# modifier = {
+					# factor = 0.26
+					# attribute_diff = {
+						# character = FROM
+						# attribute = intrigue
+						# value = 12
+					# }
+				# }
+				# modifier = {
+					# factor = 0.6
+					# attribute_diff = {
+						# character = FROM
+						# attribute = intrigue
+						# value = 9
+					# }
+				# }
+				# modifier = {
+					# factor = 0.74
+					# attribute_diff = {
+						# character = FROM
+						# attribute = intrigue
+						# value = 6
+					# }
+				# }
+				# modifier = {
+					# factor = 0.81
+					# attribute_diff = {
+						# character = FROM
+						# attribute = intrigue
+						# value = 4
+					# }
+				# }
+				# modifier = {
+					# factor = 0.86
+					# attribute_diff = {
+						# character = FROM
+						# attribute = intrigue
+						# value = 2
+					# }
+				# }
+				# modifier = {
+					# factor = 1.14
+					# FROM = {
+						# attribute_diff = {
+							# character = ROOT
+							# attribute = intrigue
+							# value = 2
+						# }
+					# }	
+				# }
+				# modifier = {
+					# factor = 1.14
+					# FROM = {
+						# attribute_diff = {
+							# character = ROOT
+							# attribute = intrigue
+							# value = 4
+						# }
+					# }	
+				# }
+				# modifier = {
+					# factor = 1.14
+					# FROM = {
+						# attribute_diff = {
+							# character = ROOT
+							# attribute = intrigue
+							# value = 6
+						# }
+					# }	
+				# }
+				# modifier = {
+					# factor = 1.14
+					# FROM = {
+						# attribute_diff = {
+							# character = ROOT
+							# attribute = intrigue
+							# value = 9
+						# }
+					# }	
+				# }
+				# modifier = {
+					# factor = 1.14
+					# FROM = {
+						# attribute_diff = {
+							# character = ROOT
+							# attribute = intrigue
+							# value = 12
+						# }
+					# }	
+				# }
+				# custom_tooltip = { text = TOOLTIPtriarch_imprisonCHANCE }
+				# set_character_flag = successful_imprison
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 0
+			# # factor = 0.05
+			
+			# # modifier = {
+				# # factor = 0.05
+				# # reverse_opinion = { who = FROM value = 30 }	
+			# # }
+			# # modifier = {
+				# # factor = 0
+				# # OR = {
+					# # is_friend = FROM	
+					# # AND = {
+						# # is_close_relative = FROM
+						# # NOT = { FROM = { is_foe = ROOT } }
+					# # }
+					# # FROM = { war = yes }
+				# # }	
+			# # }
+			# # modifier = { #Motives
+				# # factor = 0
+				# # NOT = { FROM = { is_foe = ROOT } } #enemy
+				# # OR = { #powerful competitor
+					# # is_ruler = no
+					# # NOT = { relative_power = { who = FROM power = 0.75 } }
+					# # AND = {
+						# # NOT = { trait = elephant }
+						# # NOT = { trait = tiger }
+					# # }
+				# # }
+				# # OR = { #threat to the realm
+					# # is_ruler = no
+					# # NOT = { liege = { is_merchant_republic = yes } }
+					# # NOT = { relative_power_to_liege = 0.5 }
+					# # liege = { reverse_opinion = { who = PREV value = -24 } }
+					# # trait = elephant
+					# # trait = tiger
+				# # }				
+			# # }
+		# }
+	# }
+	
+	regent_fire_councillor = {
+		ai_target_filter = realm
+		filter = realm
+		from_potential = {
+			liege = { regent = { character = PREVPREV } }	
+		}
+		potential = {
+			same_liege = FROM
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+			NOT = { character = FROM }
+			NOT = { trait = dragon }
+			NOT = { culture_group = unoccupied_group }		
+		}
+		allow = {
+			NOT = { trait = maester }
+			NOT = { trait = archmaester }
+			custom_tooltip = {
+				text = TOOLTIPtriarch_imprisonTRIARCH
+				hidden_tooltip = { NOT = { has_minor_title = title_triarch } }
+			}	
+		}
+		effect = {	
+			hidden_tooltip = { 
+				letter_event = { id = regency.50 } 
+				liege = { character_event = { id = regency.51 } }
+				add_character_modifier = {
+					name = fired_from_council_by_regent
+					duration = 730
+				}
+			}
+			if = {
+				limit = { has_job_title = job_castellan }
+				remove_title = job_castellan
+			}
+			if = {
+				limit = { has_job_title = job_chancellor }
+				remove_title = job_chancellor
+			}
+			if = {
+				limit = { has_job_title = job_marshal }
+				remove_title = job_marshal
+			}
+			if = {
+				limit = { has_job_title = job_treasurer }
+				remove_title = job_treasurer
+			}
+			if = {
+				limit = { has_job_title = job_spymaster }
+				remove_title = job_spymaster
+			}
+			if = {
+				limit = { has_job_title = job_physician }
+				remove_title = job_physician
+			}
+			if = {
+				limit = { has_job_title = job_spiritual }
+				remove_title = job_spiritual
+			}
+			if = {
+				limit = { has_minor_title = title_high_admiral }
+				remove_title = title_high_admiral
+			}
+			#if = {
+				#limit = { has_minor_title = title_master_of_ships }
+				#remove_title = title_master_of_ships
+			#}
+			if = {
+				limit = { has_minor_title = title_councilmember_emperor }
+				remove_title = title_councilmember_emperor
+			}
+			if = {
+				limit = { has_minor_title = title_councilmember_king }
+				remove_title = title_councilmember_king
+			}
+			if = {
+				limit = { has_opinion_modifier = { who = FROM modifier = opinion_appointed_to_council } }
+				remove_opinion = { who = FROM modifier = opinion_appointed_to_council }
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			tooltip = { liege = { reverse_opinion = { who = ROOT modifier = opinion_fired_from_council } } }
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 0.1
+			modifier = { #motives
+				factor = 0
+				reverse_opinion = { who = FROM value = -33 } #Hatred
+				
+				NAND = { #Heathen
+					NOT = { religion = FROM }
+					liege = { NOT = { religion = PREV } }
+					FROM = { trait = zealous }
+				}
+				NAND = { #Foreigner
+					NOT = { culture_group = FROM }
+					liege = { NOT = { culture_group = PREV } }
+					FROM = { trait = proud }
+				}
+				FROM = {
+					NOT = { is_foe = ROOT } #enemy
+					NOT = { trait = lunatic } #lunatic!
+				}	
+			}
+			modifier = {
+				factor = 0
+				reverse_opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 0.01
+				FROM = {
+					trait = content
+					NOT = { trait = lunatic }
+				}
+			}
+			
+			modifier = {
+				factor = 4
+				FROM = { trait = ruthless }
+			}	
+			modifier = {
+				factor = 2
+				FROM = { trait = arbitrary }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = cruel }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = envious }
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = ambitious }
+			}
+			
+			modifier = {
+				factor = 0.25
+				FROM = { trait = just }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { trait = honorable }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { trait = craven }
+			}
+			
+			modifier = {
+				factor = 5
+				FROM = { is_foe = ROOT }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+				NOT = { religion = FROM }
+			}
+			
+			modifier = {
+				factor = 1.56
+				NOT = { reverse_opinion = { who = FROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.56
+				NOT = { reverse_opinion = { who = FROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.56
+				NOT = { reverse_opinion = { who = FROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.68
+				NOT = { reverse_opinion = { who = FROM value = -79 } }
+			}
+			modifier = {
+				factor = 2.32
+				NOT = { reverse_opinion = { who = FROM value = -99 } }
+			}
+		}
+	}
+	
+	regent_appoint_councillor = {
+		ai_target_filter = none
+		filter = realm
+		ai = no
+		from_potential = {
+			ai = no
+			liege = { regent = { character = PREVPREV } }	
+			NOT = { trait = nightswatch }
+		}
+		potential = {
+			OR = {
+				character = FROM
+				same_liege = FROM
+			}
+			is_councillor = no
+			NOT = { is_voter = yes }
+			NOT = { trait = dragon }
+			NOT = { culture_group = unoccupied_group }
+			NOT = { culture_group = winter_group }				
+		}
+		allow = {		
+			custom_tooltip = {
+				text = TOOLTIPregent_appoint_councillorSPARE
+				hidden_tooltip = {
+					liege = {
+						OR = {
+							AND = {
+								NOT = { job_castellan = { always = yes } }
+								ROOT = { can_be_castellan_trigger = yes }
+							}	
+							AND = {
+								NOT = { job_chancellor = { always = yes } }
+								ROOT = { can_be_chancellor_trigger = yes }
+							}
+							AND = {
+								NOT = { job_marshal = { always = yes } }
+								ROOT = { can_be_marshal_trigger = yes }
+							}
+							AND = {
+								NOT = { job_treasurer = { always = yes } }
+								ROOT = { can_be_treasurer_trigger = yes }
+							}
+							AND = {
+								NOT = { job_spymaster = { always = yes } }
+								ROOT = { can_be_spymaster_trigger = yes }
+							}
+							AND = {
+								NOT = { job_physician = { always = yes } }
+								ROOT = { can_be_physician_trigger = yes }
+							}
+							AND = {
+								NOT = { job_spiritual = { always = yes } }
+								ROOT = { can_be_spiritual_trigger = yes }
+							}
+							AND = {
+								has_dlc = "Zeus"
+								OR = {
+									AND = {
+										higher_tier_than = DUKE
+										NOT = { has_assigned_minor_title = title_councilmember_king }
+										ROOT = { can_be_advisor_trigger = yes }
+									}	
+									AND = {
+										tier = EMPEROR
+										NOT = { has_assigned_minor_title = title_councilmember_emperor }
+										ROOT = { can_be_advisor_trigger = yes }
+									}
+									AND = {
+										can_assign_admiral_trigger = yes	
+										NOT = { has_assigned_minor_title = title_high_admiral }
+										ROOT = { can_be_admiral_trigger = yes }	
+									}
+								}		
+							}
+						}
+					}
+				}
+			}
+			is_incapable = no
+			is_adult = yes
+			prisoner = no
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {	
+			hidden_tooltip = { 
+				letter_event = { id = regency.52 } 
+				liege = { character_event = { id = regency.53 } }
+				remove_character_modifier = fired_from_council_by_regent
+			}	
+			opinion = { who = FROM modifier = opinion_appointed_to_council }
+			if = {
+				limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+				remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+				opinion = { who = FROM modifier = opinion_job_security_concerns }
+			}			
+			liege = {
+				if = {
+					limit = { 
+						NOT = { job_castellan = { always = yes } } 
+						ROOT = { can_be_castellan_trigger = yes }
+					}
+					ROOT = { give_job_title = job_castellan }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_chancellor = { always = yes } } 
+						ROOT = { can_be_chancellor_trigger = yes }
+					}
+					ROOT = { give_job_title = job_chancellor }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_marshal = { always = yes } } 
+						ROOT = { can_be_marshal_trigger = yes }
+					}
+					ROOT = { give_job_title = job_marshal }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_treasurer = { always = yes } } 
+						ROOT = { can_be_treasurer_trigger = yes }
+					}
+					ROOT = { give_job_title = job_treasurer }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_spymaster = { always = yes } } 
+						ROOT = { can_be_spymaster_trigger = yes }
+					}
+					ROOT = { give_job_title = job_spymaster }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_physician = { always = yes } } 
+						ROOT = { can_be_physician_trigger = yes }
+					}
+					ROOT = { give_job_title = job_physician }
+					break = yes
+				}
+				if = {
+					limit = { 
+						NOT = { job_spiritual = { always = yes } } 
+						ROOT = { can_be_spiritual_trigger = yes }
+					}
+					ROOT = { give_job_title = job_spiritual }
+					break = yes
+				}
+				if = {
+					limit = { 
+						has_dlc = "Zeus"
+						can_assign_admiral_trigger = yes
+						NOT = { has_assigned_minor_title = title_high_admiral }
+						ROOT = { can_be_admiral_trigger = yes }
+					}
+					ROOT = { give_minor_title = title_high_admiral }
+					break = yes
+				}	
+				if = {
+					limit = { 
+						has_dlc = "Zeus"
+						higher_tier_than = DUKE
+						NOT = { has_assigned_minor_title = title_councilmember_king }
+						ROOT = { can_be_advisor_trigger = yes }
+					}
+					ROOT = { give_minor_title = title_councilmember_king }
+					break = yes
+				}
+				if = {
+					limit = { 
+						has_dlc = "Zeus"
+						tier = EMPEROR
+						NOT = { has_assigned_minor_title = title_councilmember_emperor }
+						ROOT = { can_be_advisor_trigger = yes }
+					}
+					ROOT = { give_minor_title = title_councilmember_emperor }
+					break = yes
+				}					
+			}	
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+
+# Title decisions are possible vs _all_ titles and are shown in the Title Diplomacy View, not the Intrigue View. The taker is in the FROM scope.
+#
+# filter = [capital/primary_title/owned/vassal_owned/sub_realm_owned/realm_owned/dynasty_owned/all]
+# ai_target_filter = [capital/primary_title/owned/vassal_owned/sub_realm_owned/realm_owned/dynasty_owned/all] (which titles for which the AI evaluates the decision.)
+#	owned: all titles owned by the AI
+#	vassal_owned: all titles owned by direct vassal rulers of the AI's employer
+#	sub_realm_owned: all titles below the AI's employer
+#	realm_owned: all titles in the same top realm as the AI
+#	dynasty_owned: all titles owned by members of the same dynasty
+#	all: all titles (Avoid if possible. VERY CPU-HEAVY!)
+#	
+title_decisions = {
+	regent_declare_war = {
+		is_high_prio = yes
+		filter = all
+		ai_target_filter = none
+		ai = no
+
+		from_potential = {
+			#NOT = { has_dlc = "Zeus" }
+			ai = no #player only option
+			liege = { 
+				has_regent = yes
+				regent = { character = PREVPREV }
+				OR = {
+					NOT = { age = 16 }
+					prisoner = yes
+					is_incapable = yes
+				}
+				NOT = { trait = nightswatch } 
+				NOT = { trait = kingsguard } 
+			}	
+			NOT = { trait = nightswatch }
+		}
+		
+		potential = {
+			OR = {
+				FROM = { #strong claims
+					#OR = {
+						has_strong_claim = PREV
+						#liege = { has_strong_claim = PREVPREV }
+					#}	
+				}
+				AND = { #weak claims
+					FROM = {
+						#OR = {
+							has_weak_claim = PREV
+							#liege = { has_weak_claim = PREVPREV }
+						#}	
+					}
+					OR = {
+						holder_scope = { has_regent = yes }
+						OR = {
+							AND = {
+								OR = {
+									has_law = cognatic_succession
+									has_law = agnatic_succession
+								}
+								FROM = { liege = { is_female = no } }
+								holder_scope = { is_female = yes }
+							}
+							AND = {
+								OR = {
+									has_law = enatic_succession
+									has_law = enatic_cognatic_succession
+								}
+								FROM = { liege = { is_female = yes } }
+								holder_scope ={ is_female = no }
+							}
+						}	
+						is_contested = yes # Is already being contested in some form of Claim or Succession War
+						holder_scope = { trait = bastard }
+						holder_scope = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_suspected_bastard } }
+					}
+				}	
+			}	
+			holder_scope = {
+				top_liege = {
+					NOT = { culture_group = unoccupied_group } 
+					NOT = { culture_group = winter_group }
+				}
+				NOT = { culture_group = unoccupied_group } 
+				NOT = { culture_group = winter_group }
+				OR = { 
+					FROM = { liege = { same_liege = PREVPREV } } #same liege
+					FROM = { liege = { vassal_of = PREVPREV } } #liege
+					top_liege = { #foreign realms
+						FROM = {
+							liege = {
+								NOT = { same_realm = PREVPREV }
+								OR = { #Cannot attack vassals split by mega war
+									NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } }
+									NOT = { higher_tier_than = PREVPREV }
+								}				
+							}
+						}
+					}
+					any_liege = { #inter realm
+						FROM = {
+							liege = {
+								same_liege = PREVPREV
+								NOT = { is_vassal_or_below = PREVPREV }
+							}
+						}
+					}
+				}	
+			}			
+		}
+
+		allow = {			
+			custom_tooltip = {
+				text = TOOLTIPCBENFORCEDTRUCE_REGENT
+				hidden_tooltip = {
+					holder_scope = {
+						OR = {
+							NOT = { same_realm = FROM }
+							#FROM = { liege = { NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_enforced_truce } } } }
+							FROM = { liege = { NOT = { has_truce = PREVPREV } } }
+						}
+						top_liege = {
+							OR = {
+								NOT = { same_realm = FROM }
+								#FROM = { liege = { NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_enforced_truce } } } }
+								FROM = { liege = { NOT = { has_truce = PREVPREV } } }
+							}
+						}
+					}	
+				}
+			}
+			#OR = {#must either be backing liege's claim, or have support of the council
+				# FROM = { 
+					# NOT = { has_strong_claim = PREV } 
+					# liege = { has_strong_claim = PREVPREV }
+				# }
+				# FROM = { 
+					# NOT = { has_claim = PREV } 
+					# liege = { has_claim = PREVPREV }
+				# }
+				custom_tooltip = {
+					text = TOOLTIPregent_declare_warCOUNCIL
+					hidden_tooltip = {
+						FROM = { 
+							liege = {
+								any_courtier = {
+									count = 4
+									OR = {
+										is_voter = yes
+										is_councillor = yes
+									}	
+									liege = { character = PREVPREV }
+									NOT = { character = ROOT_FROM }
+									#Reasons for
+									OR = {
+										opinion = { who = ROOT_FROM value = 25 }
+										owes_favor_to = ROOT_FROM
+										AND = { #Family will gain
+											is_close_relative = ROOT_FROM
+											NOT = { is_rival = ROOT_FROM }
+											OR = {
+												opinion = { who = ROOT_FROM value = -39 }
+												trait = familyperson
+											}
+										}	
+										AND = { # Glory hound
+											has_position = glory_hound
+											OR = {
+												liege = { #gloriously attacking a powerful enemy
+													ROOT = {
+														holder_scope = {
+															relative_power_including_allies_attacker = {
+																who = PREVPREV
+																power = 0.9
+															}
+														}
+													}
+												}
+												preferred_war_target = {
+													has_landed_title = ROOT
+												}
+											}	
+										}	
+										AND = { #Zealot
+											has_position = zealot
+											ROOT = { 
+												holder_scope = {
+													OR = {
+														NOT = { religion = PREVPREV } #Heathen
+														AND = { #Excommed
+															trait = excommunicated
+															religion = PREVPREV
+														}
+													}
+												}
+											}
+										}											
+									}
+									#Reasons against
+									OR = {
+										owes_favor_to = ROOT_FROM
+										NOR = {
+											ROOT = { #Family will lose
+												holder_scope = {
+													is_close_relative = PREVPREV
+													NOT = { is_rival = PREVPREV }
+													OR = {
+														reverse_opinion = { who = PREVPREV value = -39 }
+														PREVPREV = { trait = familyperson }
+													}
+												}
+											}	
+											AND = { # Attacking a strong opponent risking the safety of the realm
+												has_position = pragmatist
+												liege = {
+													ROOT = {
+														holder_scope = {
+															relative_power_including_allies_attacker = {
+																who = PREVPREV
+																power = 1
+															}
+														}
+													}
+												}	
+											}
+											AND = { # Attacking a weak enemy
+												has_position = glory_hound
+												liege = {
+													ROOT = {
+														holder_scope = {
+															NOT = {
+																relative_power_including_allies_attacker = {
+																	who = PREVPREV
+																	power = 0.3
+																}
+															}	
+														}
+													}
+												}	
+											}
+										}
+									}
+										
+								}
+							}
+						}
+					}
+				}	
+			#}
+			OR = {
+				FROM = { liege = { trait = wildling } }
+				holder_scope = { NOT = { trait = nightswatch } }
+			}
+			OR = {
+				AND = {
+					NOT = { title = d_kingsguard }
+					NOT = { title = b_white_sword_tower }
+				}
+				holder_scope = { NOT = { trait = kingsguard } }
+			}
+		}
+		effect = {
+			custom_tooltip = {
+				text = TOOLTIPregent_declare_war
+				hidden_tooltip = {
+					save_event_target_as = regent_war_title
+					FROM = { 
+						liege = { 
+							character_event = { id = regency.64 }
+						} 
+					}			
+				}
+			}	
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}	

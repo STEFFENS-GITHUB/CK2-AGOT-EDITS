@@ -1,0 +1,5041 @@
+###Special Events for Scenarios
+
+namespace = bleeding_years
+# Bleeding Years Events
+
+#Volantis first action
+character_event = {
+	id = bleeding_years.1
+	desc = "EVTDESCbleeding_years.1"
+	picture = "GFX_evt_volantis_2"
+	
+	hide_from = yes
+	
+	trigger = { 
+		NOT = { year = 7998 } 
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAbleeding_years.1" #Tyrosh
+		k_tyrosh = {		
+			reverse_war = {
+				target = ROOT
+				casus_belli = dejure_kingdom_claim
+			}
+		}	
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_BLEEDING_YEARS
+				picture = GFX_evt_volantis_2
+			}	
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { 
+						NOT = { character = ROOT }
+						OR = {		
+							dynasty = ROOT
+							is_liege_or_above = ROOT
+							capital_scope = { region = world_free_cities }
+						}
+					}
+					chronicle = {
+						entry = CHRONICLE_BLEEDING_YEARS
+						portrait = [Root.GetID]
+					}	
+				}
+			}
+		}	
+	}
+	
+}
+
+# #Volantis decides next action- Free Cities
+# character_event = {
+	# id = bleeding_years.2
+	# desc = "EVTDESCbleeding_years.2"
+	# picture = "GFX_evt_volantis_2"
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# has_landed_title = e_new_valyria
+		# has_global_flag = bleeding_years
+		# NOT = {
+			# any_war = {
+				# using_cb = dejure_kingdom_claim	
+			# }
+		# }
+	# }
+	
+	# immediate = {
+		# any_vassal = { set_character_flag = supporting_king }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAbleeding_years.2" #Pentos
+		# trigger = {
+			# k_pentos = {
+				# NOT = { is_variable_equal = { which = "de_facto_empire" value = 11 } }
+				# holder_scope = {
+					# independent = yes
+					# OR = {
+						# NOT = { has_character_flag = defended_conquest }
+						# had_character_flag = { flag = defended_conquest days = 3650 }
+					# }	
+				# }
+			# }
+		# }
+		# ai_chance = { factor = 55 }
+		# k_pentos = {		
+			# reverse_war = {
+				# target = ROOT
+				# casus_belli = dejure_kingdom_claim
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTBbleeding_years.2" #Norvos
+		# trigger = {
+			# k_norvos = {
+				# NOT = { is_variable_equal = { which = "de_facto_empire" value = 11 } }
+				# holder_scope = {
+					# independent = yes
+					# OR = {
+						# NOT = { has_character_flag = defended_conquest }
+						# had_character_flag = { flag = defended_conquest days = 3650 }
+					# }	
+				# }
+			# }
+		# }
+		# ai_chance = { factor = 5 }
+		# k_norvos = {		
+			# reverse_war = {
+				# target = ROOT
+				# casus_belli = dejure_kingdom_claim
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTCbleeding_years.2" #Qohor
+		# trigger = {
+			# k_qohor = {
+				# NOT = { is_variable_equal = { which = "de_facto_empire" value = 11 } }
+				# holder_scope = {
+					# independent = yes
+					# OR = {
+						# NOT = { has_character_flag = defended_conquest }
+						# had_character_flag = { flag = defended_conquest days = 3650 }
+					# }	
+				# }
+			# }			
+		# }
+		# ai_chance = { factor = 5 }
+		# k_qohor = {		
+			# reverse_war = {
+				# target = ROOT
+				# casus_belli = dejure_kingdom_claim
+			# }
+		# }	
+	# }
+
+	# option = {
+		# name = "EVTOPTDbleeding_years.2" #Lorath
+		# trigger = {
+			# k_lorath = {
+				# NOT = { is_variable_equal = { which = "de_facto_empire" value = 11 } }
+				# holder_scope = {
+					# independent = yes
+					# OR = {
+						# NOT = { has_character_flag = defended_conquest }
+						# had_character_flag = { flag = defended_conquest days = 3650 }
+					# }	
+				# }
+			# }
+		# }
+		# ai_chance = { factor = 5 }
+		# k_lorath = {		
+			# reverse_war = {
+				# target = ROOT
+				# casus_belli = dejure_kingdom_claim
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTEbleeding_years.2" #My Conquest must stop
+		# ai_chance = { 
+			# factor = 1 
+			# modifier = {
+				# factor = 0.01
+				# ai = yes
+			# }
+		# }
+		# set_character_flag = conquest_force_ending
+		# #character_event = { id = bleeding_years.3 days = 4  tooltip = TOOLTIPEVTOPTEbleeding_years.1 } 
+	# }
+# }
+
+#Aegon option to join Volantis
+character_event = {
+	id = bleeding_years.4
+	desc = EVTDESCbleeding_years.4
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		e_new_valyria = {
+			holder_scope = {
+				k_tyrosh = {	
+					holder_scope = {
+						war_with = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAbleeding_years.4" #This madness must end
+		ai_chance = { factor = 90 }	
+		k_tyrosh = {
+			holder_scope = {
+				ROOT = {
+					join_defender_wars = PREV
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_joined_cause
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBbleeding_years.4" #Seems like a fair offer
+		ai_chance = { factor = 10 }
+		e_new_valyria = {
+			holder_scope = {
+				ROOT = {
+					set_defacto_liege = PREV
+					set_character_flag = supporting_king
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_joined_cause
+				}
+			}
+		}
+		# hidden_tooltip = {
+			# e_new_valyria = {
+				# holder_scope = { 
+					# letter_event = { id = bleeding_years.5 } 
+				# }
+			# }
+		# }
+	}
+	
+	option = {
+		name = "EVTOPTCbleeding_years.4" # This is none of my concern
+		trigger = { ai = no }
+		prestige = -50
+	}
+}
+
+#Braavos chooses to help Lys or not.
+character_event = {
+	id = bleeding_years.6
+	desc = "EVTDESCbleeding_years.6"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = { NOT = { year = 7998 } }
+	
+	option = {
+		name = "EVTOPTAbleeding_years.6" #We shall assist you
+		ai_chance = { factor = 80 }	
+		k_lys = {
+			holder_scope = {
+				ROOT = {
+					join_attacker_wars = PREV
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_joined_cause
+				}
+			}
+		}
+		# hidden_tooltip = {
+			# k_lys = {
+				# holder_scope = { 
+					# letter_event = { id = bleeding_years.7 } 
+				# }
+			# }
+		# }	
+	}
+	
+	option = {
+		name = "EVTOPTBbleeding_years.6" #It is none of our concern
+		ai_chance = { factor = 20 }
+	}
+
+}
+
+
+namespace = faith_militant
+##Aenys I/Faith Militant Uprising
+
+#Harren the red rebels
+character_event = {
+	id = faith_militant.1
+	desc = "EVTDESCfaith_militant.1"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = { has_game_rule = { name = shattered_realms value = off } }
+	
+	immediate = {
+		add_trait = peasant_leader
+		create_title = {
+			tier = DUKE
+			landless = yes
+			temporary = yes
+			rebel = yes
+			culture = ROOT
+			name = "NW_DESERTER"
+			holder = THIS
+		}
+		107 = { #Harrenhal
+			ROOT = {
+				spawn_unit = {
+					province = PREV
+					home = PREV
+					owner = THIS
+					leader = THIS
+					scaled_by_biggest_garrison = 0.4
+					troops = {
+						archers = { 6 6 }
+						light_cavalry = { 4 4 }
+						light_infantry = { 10 10 }
+					}
+					attrition = 1.0
+				}
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					age = 30
+					trait = peasant_leader
+					trait = tough_soldier
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+					spawn_unit = {
+						province = PREVPREV
+						home = PREVPREV
+						owner = PREV
+						scaled_by_biggest_garrison = 0.4
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							light_infantry = { 10 10 }
+						}
+						attrition = 1.0
+						disband_on_peace = yes
+					}
+				}
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					age = 31
+					trait = peasant_leader
+					trait = tough_soldier
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+					spawn_unit = {
+						province = PREVPREV
+						home = PREVPREV
+						owner = PREV
+						scaled_by_biggest_garrison = 0.4
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							light_infantry = { 10 10 }
+						}
+						attrition = 1.0
+						disband_on_peace = yes
+					}
+				}
+			}
+			owner = {
+				top_liege = {
+#					set_defacto_vassal = PREVPREVPREV
+					reverse_war = {
+						target = ROOT
+						casus_belli = peasant_revolt
+						thirdparty_title = PREVPREV # The county
+					}
+					reverse_opinion = {
+						who = ROOT
+						modifier = opinion_evil_tyrant
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OK"
+		character_event = { id = feast_for_crows.160 days = 1 } #end siege of harrenhal
+	}
+}
+
+#The Vulture King
+character_event = {
+	id = faith_militant.2
+	desc = "EVTDESCfaith_militant.2"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = { has_game_rule = { name = shattered_realms value = off } }
+	
+	immediate = {
+		add_trait = peasant_leader
+		create_title = {
+			tier = DUKE
+			landless = yes
+			temporary = yes
+			rebel = yes
+			culture = ROOT
+			name = "NW_DESERTER"
+			holder = THIS
+		}
+		307 = { #Nightsong
+			ROOT = {
+				spawn_unit = {
+					province = PREV
+					home = PREV
+					owner = THIS
+					leader = THIS
+					scaled_by_biggest_garrison = 1.6
+					troops = {
+						archers = { 6 6 }
+						light_cavalry = { 4 4 }
+						pikemen = { 5 5 }
+						light_infantry = { 5 5 }
+					}
+					attrition = 1.0
+				}
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					age = 30
+					trait = peasant_leader
+					trait = tough_soldier
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+					spawn_unit = {
+						province = PREVPREV
+						home = PREVPREV
+						owner = PREV
+						scaled_by_biggest_garrison = 1.6
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							pikemen = { 5 5 }
+							light_infantry = { 5 5 }
+						}
+						attrition = 1.0
+						disband_on_peace = yes
+					}
+				}
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					age = 31
+					trait = peasant_leader
+					trait = tough_soldier
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+					spawn_unit = {
+						province = PREVPREV
+						home = PREVPREV
+						owner = PREV
+						scaled_by_biggest_garrison = 1.6
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							pikemen = { 5 5 }
+							light_infantry = { 5 5 }
+						}
+						attrition = 1.0
+						disband_on_peace = yes
+					}
+				}
+			}
+			owner = {
+				top_liege = {
+#					set_defacto_vassal = PREVPREVPREV
+					reverse_war = {
+						target = ROOT
+						casus_belli = peasant_revolt
+						thirdparty_title = PREVPREV # The county
+					}
+					reverse_opinion = {
+						who = ROOT
+						modifier = opinion_evil_tyrant
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "OK"
+	}
+}
+
+namespace = rogue_prince
+##Daemon/The Rogue prince
+
+narrative_event = {
+	id = rogue_prince.1
+	picture = GFX_evt_rogue_prince
+	desc = EVTDESCrogue_prince.1
+	title = EVTTITLErogue_prince.1
+	
+	is_triggered_only = yes
+	hide_new = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		e_three_daughters = { 
+			holder_scope = { 
+				character_event = { id = rogue_prince.4 } 
+			} 
+		}
+		e_iron_throne = { 
+			holder_scope = { 
+				ROOT = { set_defacto_liege = PREV } #to prevent slavery
+			} 
+		}
+		any_courtier = {
+			limit = {
+				culture = high_valyrian
+				has_game_rule = { name = high_valyrian_cull value = on }
+				dynasty = 0
+				is_ruler = no
+				NOT = { father_even_if_dead = { always = yes } }
+				NOT = { has_dynasty_flag = high_valyrian }
+				NOT = { has_character_flag = high_valyrian }
+			}
+			culture = western_valyrian
+			set_graphical_culture = western_valyrian
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = random
+			religion = the_seven
+			culture = crownlander
+			female = no
+			trait = knight
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = random
+			religion = the_seven
+			culture = riverlander
+			female = no
+			trait = knight
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = random
+			religion = the_seven
+			culture = stormlander
+			female = no
+			trait = knight
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = none
+			religion = the_seven
+			culture = western_valyrian
+			female = no
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = none
+			religion = the_seven
+			culture = crownlander
+			female = no
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = none
+			religion = the_seven
+			culture = riverlander
+			female = no
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = none
+			religion = the_seven
+			culture = stormlander
+			female = no
+		}
+		new_character = { 
+			set_character_flag = new_courtier 
+			random_list = {
+				15 = { add_trait = poor_warrior }
+				65 = { add_trait = trained_warrior }				
+				20 = { add_trait = skilled_warrior }
+			}
+			give_minor_title = title_commander
+		}
+		any_courtier = {
+			limit = { has_character_flag = new_courtier }
+			clr_character_flag = new_courtier
+			if = {
+				limit = { trait = knight }
+				set_special_character_title = title_ser
+			}
+			remove_trait = weak
+			remove_trait = imbecile
+			remove_trait = dwarf
+			remove_trait = clubfooted
+			remove_trait = hunchback
+			remove_trait = inbred
+		}
+		if = {
+			limit = { ai = no }
+			spawn_unit = {
+				province = 220 #Driftmark
+				home = 220
+				owner = ROOT
+				leader = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+			spawn_unit = {
+				province = 220
+				home = 220
+				owner = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+			spawn_unit = {
+				province = 220
+				home = 220
+				owner = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+		}
+		if = {
+			limit = { ai = yes } #ai is too derp to transport troops from Driftmark, send straight to Bloodstone
+			spawn_unit = {
+				province = 358 #Bloodstone
+				home = 220
+				owner = ROOT
+				leader = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+			spawn_unit = {
+				province = 358
+				home = 220
+				owner = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+			spawn_unit = {
+				province = 358
+				home = 220
+				owner = ROOT
+				troops = {
+					archers = { 66 66 }
+					heavy_infantry = { 1800 1800 }
+					light_infantry = { 800 800 }	
+					light_cavalry = { 400 400 }		
+					knights = { 50 50 }						
+				}
+				attrition = 1.0
+				earmark = duchy_adventure
+			}
+		}	
+		spawn_fleet = {
+			province = 930 #The Gullet
+			home = 220
+			owner = ROOT
+			disband_on_peace = yes
+			troops =
+			{
+				galleys = { 100 100 }
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTArogue_prince.1	
+		# random_sibling = {  
+			# character_event = { id = rogue_prince.20 } 
+		# }		
+	}
+}	
+#Adventurer asks for funding
+character_event = {
+	id = rogue_prince.2
+	desc = EVTDESCrogue_prince.2
+	picture = GFX_evt_rogue_prince
+
+	is_triggered_only = yes
+	
+	trigger = {
+		c_779496 = { is_alive = yes }
+		has_game_rule = { name = shattered_realms value = off }
+	}
+		
+	option = {
+		name = "EVTOPTArogue_prince.2" #Yes
+		ai_chance = {
+			factor = 1							
+		}
+		wealth = -100
+		c_779496 = { #Daemon
+			tooltip = { wealth = 100 }
+			hidden_tooltip = {
+				letter_event = { id = rogue_prince.3 }
+			}
+			opinion = {
+				who = ROOT
+				modifier = opinion_backed_adventure
+			}
+			opinion = {
+				modifier = in_non_aggression_pact
+				years = 5
+				who = ROOT
+			}
+		}					
+	}
+	option = {
+		name = "EVTOPTBrogue_prince.2" #No
+		ai_chance = {
+			factor = 0
+		}
+		prestige = -100
+	}	
+}	
+letter_event = {
+	id = rogue_prince.3
+	desc = EVTDESCrogue_prince.3
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTArogue_prince.3"
+		wealth = 100
+		FROM = {
+			opinion = {
+				modifier = in_non_aggression_pact
+				years = 5
+				who = ROOT
+			}
+		}
+	}
+}
+#Three daughters event
+character_event = {
+	id = rogue_prince.4
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		e_dorne = { holder_scope = { letter_event = { id = rogue_prince.5 } } }
+	}
+	
+	option = {
+		name = OK			
+	}
+}
+#dorne called to arms
+letter_event = { 
+	id = rogue_prince.5
+	desc = EVTDESCrogue_prince.5
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		war = no
+		has_game_rule = { name = shattered_realms value = off }
+	}
+		
+	option = {
+		name = "EVTOPTAdiplomatic.31" #Yes
+		ai_chance = {
+			factor = 100							
+		}
+		FROM = { 
+			hidden_tooltip = {
+				letter_event = { id = rogue_prince.6 }
+				FROM = { character_event = { id = rogue_prince.7 } }
+			}
+		}				
+		join_defender_wars = FROM
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.31" #No
+		ai_chance = {
+			factor = 0
+		}
+	}	
+}	
+letter_event = { #inform three daughters
+	id = rogue_prince.6
+	desc = EVTDESCrogue_prince.6
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAdiplomatic.32"
+	}
+}
+character_event = { #inform daemon
+	id = rogue_prince.7
+	desc = EVTDESCrogue_prince.7
+	picture = GFX_evt_rogue_prince
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAdiplomatic.33"
+	}
+}
+#Invade the Disputed Lands?
+character_event = {
+	id = rogue_prince.8
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		c_779496 = { character = ROOT }
+		has_landed_title = k_stepstones
+		e_three_daughters = {
+			has_holder = yes
+			holder_scope = { NOT = { war_with = ROOT } }
+		}
+		NOT = { has_game_rule = { name = dragon_hatching_taming value = off } }
+	}
+	
+	immediate = { 
+		c_26052 = {
+			character_event = { id = rogue_prince.9 }
+		}
+	}
+
+	option = {
+		name = OK
+	}	
+}
+character_event = {
+	id = rogue_prince.9
+	desc = EVTDESCrogue_prince.9
+	picture = GFX_evt_rogue_prince
+
+	is_triggered_only = yes
+	
+	trigger = { is_alive = yes }
+		
+	option = {
+		name = "EVTOPTArogue_prince.9" #Yes
+		ai_chance = {
+			factor = 1							
+		}
+		FROM = { character_event = { id = rogue_prince.10 tooltip = TOOLTIProgue_prince.10 } }
+	}
+	option = {
+		name = "EVTOPTBrogue_prince.9" #No
+		ai_chance = {
+			factor = 0
+		}
+	}	
+}
+character_event = {
+	id = rogue_prince.10
+	desc = EVTDESCrogue_prince.10
+	picture = GFX_evt_rogue_prince
+
+	is_triggered_only = yes
+	
+	trigger = {
+		character = 779496 
+		has_landed_title = k_stepstones
+		e_three_daughters = {
+			has_holder = yes
+			holder_scope = { NOT = { war_with = ROOT } }
+		}
+	}
+			
+	option = {
+		name = "EVTOPTArogue_prince.10" #Yes
+		ai_chance = {
+			factor = 1							
+		}
+		e_three_daughters = {	
+			reverse_war = {
+				target = ROOT
+				casus_belli = dragon_conquest
+			}
+		}
+		spawn_fleet = {
+			province = 930 #The Gullet
+			home = 220
+			owner = ROOT
+			disband_on_peace = yes
+			troops =
+			{
+				galleys = { 100 100 }
+			}
+		}	
+		wealth = -100
+		FROM = { 
+			join_attacker_wars = ROOT 
+			wealth = 100
+		}	
+		hidden_tooltip = {
+			any_demesne_title = {
+				limit = { tier = BARON }
+				refill_holding_levy = yes
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBrogue_prince.10" #No
+		ai_chance = {
+			factor = 0
+		}
+	}	
+}
+
+namespace = dance_of_dragons
+##Dance of the Dragons
+character_event = {
+	id = dance_of_dragons.1
+	title = EVTNAMEdance_of_dragons.1
+	desc = "EVTDESCdance_of_dragons.1"
+	picture=GFX_evt_dance_of_the_dragons
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		any_demesne_title = { #fixes strange iron throne cognatic bug
+			gender_succ = agnatic
+		}
+		recalc_succession = yes
+		c_6000933 = { character_event = { id = mega_wars.110 days = 30 } }
+	}
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.1" #Yes		
+		hidden_tooltip = {
+			any_vassal = {
+				set_character_flag = supporting_king
+			}
+		}
+		# any_playable_ruler = {
+			# limit = {
+				# tier = KING
+				# NOT = { war_with = root }
+				# war = no
+				# NOT = {
+					# liege = { 
+						# tier = EMPEROR
+					# }
+				# }
+				# OR = {
+					# NOT = { has_landed_title = k_the_most_devout }
+					# any_demesne_title = { tier = COUNT }
+				# }
+				# has_character_flag = neutral
+			# }
+			# clr_character_flag = neutral
+			# letter_event = { id = mega_wars.7 days=1 tooltip = EVTTOOLTIPmega_wars.7 }	
+		# }
+		# hidden_tooltip = {
+			# any_vassal = { #Non-LP's banners called
+				# limit = {
+					# NOT = { tier = KING }
+
+					# NOT = { war_with = root }
+					# NOT = { has_landed_title = d_kingsguard }
+					# NOT = { #not split when outside force is claiming title
+						# any_demesne_title = {
+							# any_war = { 
+								# attacker = {
+									# NOT = { any_liege = { has_landed_title = e_iron_throne } }
+								# }
+							# }
+						# }
+					# }
+					# NOT = { primary_title = { title = d_poor_fellows } }
+					# NOT = { primary_title = { title = d_warriors_sons } }
+				# }
+				# letter_event = { id = 999900935 days=1 }	
+			# }	
+		# }
+	}
+}
+character_event = {
+	id = dance_of_dragons.2
+	title = EVTNAMEdance_of_dragons.1
+	desc = "EVTDESCdance_of_dragons.2"
+	picture=GFX_evt_dance_of_the_dragons
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	# immediate = {
+		# random_child = { #Lucerys betrothal
+			# limit = { character = 33562496 }
+			# hidden_tooltip = {
+				# liege = {
+					# random_courtier = {
+						# limit = { character = 31052 } #Rhaena Targaryen
+						# add_betrothal = PREVPREV #betrothal command is broken
+						# # ROOT = { add_betrothal = PREV }
+					# }
+				# }
+			# }	
+		# }
+	# }
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.2" #Yes	
+		custom_tooltip = { text = TOOLTIPdance_of_dragons.2 }
+		c_33562496 = { #Lucerys is sent to Storm's End
+			if = {
+				limit = { is_alive = yes }
+				character_event = { id = dance_of_dragons.8 tooltip = TOOLTIPdance_of_dragons.8 }	
+			}
+		}	
+	}
+}
+#Peace
+character_event = {
+	id = dance_of_dragons.3
+	desc = "EVTDESCdance_of_dragons.3"
+	picture=GFX_evt_dance_of_the_dragons
+	
+	only_independent = yes
+	only_women = yes
+	has_global_flag = dance_of_the_dragons
+	is_married = no
+	
+	trigger = {
+		has_landed_title = e_iron_throne			
+		dynasty = 496
+		NOT = {
+			c_77014 = { #aemond targaryen
+				is_alive = yes
+			}
+		}
+		d_dragonstone = {
+			holder_scope = {
+				is_female = no
+				is_married = no
+				war_with = ROOT
+				dynasty = ROOT
+			}
+		}
+		OR = {
+			NOT = { has_character_flag = DoD_peace }
+			had_character_flag = { flag = DoD_peace days = 400 }
+		}
+	}
+	
+	immediate = { set_character_flag = DoD_peace }
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.3" #Yes	
+		ai_chance = {
+			factor = 50
+		}
+		d_dragonstone = {
+			holder_scope = {
+				letter_event = { id = dance_of_dragons.4 tooltip = tooltipdance_of_dragons.4 }
+				custom_tooltip = { text = TOOLTIPdance_of_dragons.3A }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdance_of_dragons.3" #No
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+letter_event = {
+	id = dance_of_dragons.4
+	desc = "EVTDESCdance_of_dragons.4"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.4" #Yes	
+		ai_chance = {
+			factor = 100
+		}
+		set_character_flag = no_wedding_event
+		FROM = { set_character_flag = no_wedding_event }
+		add_spouse = FROM
+		clr_character_flag = no_wedding_event
+		FROM = { clr_character_flag = no_wedding_event }
+		
+		FROM = {
+			any_demesne_title = {
+				gain_title = ROOT
+			}
+			if = {
+				limit = { age = 16 }
+				give_job_title = job_castellan	
+				#give_minor_title = title_hand_of_the_king
+			}	
+		}
+		e_iron_throne = { 
+			hidden_tooltip = { add_law_w_cooldown = agnatic_succession }
+			custom_tooltip = { text = TOOLTIPDoDAGNATIC }
+		}
+		prestige = 250
+		FROM = {
+			letter_event = { id = dance_of_dragons.5 tooltip = tooltipdance_of_dragons.5 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdance_of_dragons.4" #No
+		ai_chance = {
+			factor = 0
+		}
+		FROM = {
+			letter_event = { id = dance_of_dragons.6 tooltip = tooltipdance_of_dragons.5 }
+		}
+	}
+}
+#Inform accept
+letter_event = {
+	id = dance_of_dragons.5
+	desc = "EVTDESCdance_of_dragons.5"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.5" #Yes	
+	}
+}	
+#Inform reject
+letter_event = {
+	id = dance_of_dragons.6
+	desc = "EVTDESCdance_of_dragons.6"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.6" #Yes	
+	}
+}	
+#Rhaenyra's Velaryon heir temporarily made Targaryen so player can continue play
+character_event = {
+	id = dance_of_dragons.7
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { 
+		dynasty = 52 
+		character_event = { id = dynamic_coa.1 }
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Lucerys is sent to Storm's End
+character_event = {
+	id = dance_of_dragons.8
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { 
+		k_stormlands = {
+			holder_scope = {
+				character_event = { id = dance_of_dragons.9 days = 3 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Lord Baratheon responds
+narrative_event = {
+	id = dance_of_dragons.9
+	title = EVTNAMEdance_of_dragons.1
+	desc = "EVTDESCdance_of_dragons.9"
+	picture=GFX_evt_dance_of_the_dragons
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = { #find marriage target
+			random_child = {
+				limit = {
+					age = 12
+					is_alive = yes
+					is_female = yes
+					is_married = no
+					is_betrothed = no
+					NOT = { c_650317 = { character = PREV } }
+				}
+				save_event_target_as = marriage_target
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.9" #Support Rhaenyra
+		ai_chance = { factor = 10 }
+		clr_character_flag = neutral
+		set_character_flag = against_king
+		hidden_tooltip = {
+			any_vassal = { 
+				clr_character_flag = neutral
+				set_character_flag = against_king
+			}
+		}
+		c_dragonstone = {
+			holder_scope = { 
+				opinion = {
+					who = ROOT
+					modifier = opinion_joined_cause
+				}
+				hidden_tooltip = {
+					letter_event = { id = mega_wars.30 }
+					reverse_opinion = {
+						modifier = opinion_with_rebel_leader
+						who = ROOT
+						years = 100
+					}
+				}	
+				ROOT = {
+					join_attacker_wars = PREV
+				}
+			}
+		}
+		e_iron_throne = {
+			holder_scope = { 
+				opinion = {
+					modifier = opinion_joined_rebellion
+					who = ROOT
+					years = 20
+				}
+				clr_character_flag = ignore_kg #can now appoint aemond to kingsguard
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBdance_of_dragons.9" #Support Aegon
+		ai_chance = { factor = 90 }
+		clr_character_flag = neutral
+		set_character_flag = supporting_king
+		hidden_tooltip = {
+			any_vassal = { 
+				clr_character_flag = neutral
+				set_character_flag = supporting_king
+			}
+		}	
+		e_iron_throne = {
+			holder_scope = { 
+				ROOT = {
+					join_defender_wars = PREV
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_loyal_to_crown
+					years = 5
+				}
+				hidden_tooltip = {
+					letter_event = { id = mega_wars.34 }
+					reverse_opinion = {
+						who = ROOT
+						modifier = opinion_with_king
+						years = 100
+					}
+				}
+				c_77014 = {
+					if = {
+						limit = { is_alive = yes }
+						hidden_tooltip = {
+							remove_title = job_chancellor	
+							remove_title = job_treasurer
+							remove_title = job_marshal	
+							remove_title = job_spymaster
+							remove_title = job_castellan	
+						}
+						set_character_flag = no_wedding_event
+						event_target:marriage_target = { set_character_flag = no_wedding_event }
+						add_spouse = event_target:marriage_target					
+						clr_character_flag = no_wedding_event
+						event_target:marriage_target = { clr_character_flag = no_wedding_event }
+						
+						hidden_tooltip = { 
+							event_target:marriage_target = {
+								move_character = PREVPREV
+								add_character_modifier = { name = "wedding" duration = 60 }
+							}	
+							move_character = PREV
+							add_character_modifier = { name = "wedding" duration = 60 }
+						}
+					}
+				}
+				clr_character_flag = ignore_kg #can now appoint aemond to kingsguard
+			}
+		}	
+		#Spawn units so they can dragon duel
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { has_game_rule = { name = dragon_hatching_taming value = off } } }
+				e_iron_throne = {
+					holder_scope = {
+						c_77014 = {
+							give_minor_title = title_commander
+						}
+						spawn_unit = { #Spawn Aemond
+							province =303
+							owner = THIS
+							leader = 77014
+							disband_on_peace = yes
+							troops = {
+								archers = { 50 50 }
+								heavy_infantry = { 160 160 }
+								light_infantry = { 150 150 }	
+								light_cavalry = { 40 40 }		
+								knights = { 100 100 }						
+							}
+							attrition = 1.0
+						}	
+					}
+				}
+				c_dragonstone = {
+					holder_scope = { 
+						c_33562496 = {
+							give_minor_title = title_commander
+						}
+						spawn_unit = { #Spawn Lucerys
+							province =303
+							owner = THIS
+							leader = 33562496
+							disband_on_peace = yes
+							troops = {
+								archers = { 25 25 }
+								heavy_infantry = { 80 80 }
+								light_infantry = { 75 75 }	
+								light_cavalry = { 20 20 }		
+								knights = { 50 50 }			
+							}
+							attrition = 1.0
+						}	
+						character_event = { id = dance_of_dragons.10 days = 30 }
+					}
+				}
+			}	
+			FROM = { #start dragon duel, repeat to make sure it happens
+				character_event = { id = dragon.43 days = 1 }
+				character_event = { id = dragon.43 days = 2 }
+				character_event = { id = dragon.43 days = 3 }
+			}			
+		}
+	}
+}
+#Inform Rhaenyra of Lucerys' death, son for a son
+character_event = {
+	id = dance_of_dragons.10
+	desc = "EVTDESCdance_of_dragons.10"
+	picture=GFX_evt_dance_of_the_dragons
+	
+	show_from_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			FROM = {
+				#OR = {
+					#AND = {
+						is_alive = no
+						death_reason = death_dragon_duel
+						killer = { character = 77014 }
+					#}
+					# AND = {
+						# OR = {
+							# trait = crippled
+							# trait = maimed
+						# }
+						# dragon = {
+							# character = 77990015
+							# death_reason = death_duel
+							# killer = { character = 77990003 }
+						# }
+					# }	
+				#}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.10"
+		FROM = {
+			FROM = {
+				killer = { tooltip = { show_portrait = yes } }
+			}
+		}
+		c_77990015 = {
+			tooltip = { show_portrait = yes }
+			killer = { tooltip = { show_portrait = yes } }
+		}
+		spouse = { 
+			tooltip = { show_portrait = yes } 
+			hidden_tooltip = { character_event = { id = dance_of_dragons.11 } }
+		}
+		random = {
+			chance = 33
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+	}
+}
+#Prince Daemon kills son of Aegon
+character_event = {
+	id = dance_of_dragons.11
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { 
+		e_iron_throne = {
+			holder_scope = {
+				if = {
+					limit = { 
+						character = 77013 
+						current_heir = {
+							is_female = no
+							is_child_of = PREV
+						}
+					}
+					current_heir = { character_event = { id = dance_of_dragons.12 days = 30 } }
+				}
+				if = {
+					limit = { 
+						is_female = no
+						father_even_if_dead = { character = 77013 }
+					}
+					character_event = { id = dance_of_dragons.12 days = 30 }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Son is killed
+narrative_event = {
+	id = dance_of_dragons.12
+	title = EVTNAMEdance_of_dragons.12
+	desc = "EVTDESCdance_of_dragons.12"
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		mother = {
+			opinion = {
+				who = FROM
+				modifier = opinion_vengeance
+			}
+			add_trait = depressed
+			character_event = { id = dance_of_dragons.13 }	
+		}
+		father = {
+			opinion = {
+				who = FROM
+				modifier = opinion_vengeance
+			}	
+			character_event = { id = dance_of_dragons.13 }	
+			any_sibling = {
+				limit = { NOT = { is_married = FROM } }
+				opinion = {
+					who = FROM
+					modifier = opinion_vengeance
+				}	
+				character_event = { id = dance_of_dragons.13 }					
+			}
+		}
+		any_sibling = {
+			opinion = {
+				who = FROM
+				modifier = opinion_vengeance
+			}
+			character_event = { id = dance_of_dragons.13 }				
+		}
+		c_779496 = {
+			add_trait = familial_kinslayer
+			set_variable = { which = "dishonorable" value = 10 }
+			hidden_tooltip = { character_event = { id = maintenance.3 } }#dishonour trait
+		}
+		c_dragonstone = { holder_scope = { character_event = { id = dance_of_dragons.14 } } }	
+	}
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.12"
+		death = {
+			death_reason = death_murder
+			killer = FROM
+		}
+	}
+}
+#Inform Aegon & family
+narrative_event = {
+	id = dance_of_dragons.13
+	title = EVTNAMEdance_of_dragons.12
+	desc = "EVTDESCdance_of_dragons.13"
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.13"
+		FROM = {
+			FROM = {
+				tooltip = { show_portrait = yes } 
+			}
+		}
+	}
+}
+#Inform Rhaenyra
+narrative_event = {
+	id = dance_of_dragons.14
+	title = EVTNAMEdance_of_dragons.12
+	desc = "EVTDESCdance_of_dragons.14"
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.14"
+		FROM = {
+			FROM = {
+				tooltip = { show_portrait = yes } 
+			}
+		}
+	}
+}
+#King's Landing Riot
+province_event = {
+	id = dance_of_dragons.15
+	title = EVTNAMEdance_of_dragons.15
+	desc = EVTDESCdance_of_dragons.15	
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	has_global_flag = dance_of_the_dragons
+	
+	trigger = {		
+		province_id = 226		
+	
+		NOT = { # Not if there is already an ongoing peasant revolt for this province
+			owner = {
+				top_liege = {
+					war = yes					
+					any_war = {
+						defender = { character = PREV }
+						AND = {
+							using_cb = peasant_revolt
+							war_title = ROOT # The county
+						}
+					}
+				}
+			}
+		}
+		NOT = { has_province_flag = kings_landing_riot }
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	mean_time_to_happen = {
+		years = 10
+		modifier = {
+			factor = 0.5
+			b_red_keep = {
+				controller = {
+					NOT = { has_landed_title = e_iron_throne }
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		set_province_flag = kings_landing_riot
+		b_warriors_sons = { 
+			holder_scope = {
+				if = {
+					limit = {
+						c_30509008 = { #Perkin of the Flea
+							is_alive = yes
+							prisoner = no
+							is_incapable = no
+							is_ruler = no
+						}
+						c_30509009 = { #Trystane Truefyre
+							is_alive = yes
+							prisoner = no
+							is_incapable = no
+							is_ruler = no
+						}
+					}
+					ROOT = { set_province_flag = truefyre_found }
+					c_30509008 = {
+						create_title = {
+							tier = DUKE
+							landless = yes
+							temporary = yes
+							rebel = yes
+							culture = ROOT
+							name = "PEASANT_REVOLT"
+							holder = THIS
+						}
+						set_character_flag = kings_landing_riot
+						add_trait = dead_target
+						c_30509009 = { #Trystane Truefyre							
+							e_iron_throne = { add_weak_claim = PREV }
+							set_guardian = PREV
+							move_character = PREV
+							set_character_flag = kings_landing_riot
+							dynasty = 501 # Truefyre
+						}
+					}	
+				}
+				
+			}
+		}	
+		if = {
+			limit = { NOT = { has_province_flag = truefyre_found } }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = ROOT
+				female = no
+				age = 35
+				attributes = {
+					martial = 5
+				}
+				trait = peasant_leader
+				trait = tough_soldier
+				trait = ambitious
+				trait = knight
+			}
+			new_character = {		
+				random_list = {
+					10 = { add_trait = skilled_warrior }
+					30 = { add_trait = trained_warrior }
+					60 = { add_trait = poor_warrior }
+				}
+				create_title = {
+					tier = DUKE
+					landless = yes
+					temporary = yes
+					rebel = yes
+					culture = ROOT
+					name = "PEASANT_REVOLT"
+					holder = THIS
+				}
+				set_character_flag = kings_landing_riot
+				add_trait = dead_target
+				#The Prentender
+				create_character = {
+					random_traits = yes
+					dynasty = random
+					religion = ROOT
+					culture = high_valyrian
+					female = no
+					age = 15
+					attributes = {
+						martial = 5
+					}
+					trait = squire
+					trait = bastard
+					historical = yes
+				}
+				new_character = {
+					culture=crownlander
+					e_iron_throne = { add_weak_claim = PREV }
+					set_guardian = PREV
+					random_list = {
+						50 = { add_trait = trained_warrior }
+						50 = { add_trait = poor_warrior }
+					}
+					set_character_flag = kings_landing_riot
+					character_event = { id = dance_of_dragons.16 }
+				}
+			}
+		}
+		clr_province_flag = truefyre_found
+		dead_target = {
+			limit=  { has_character_flag = kings_landing_riot }
+			remove_trait = dead_target
+			random_list = {
+				17 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.75
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							light_infantry = { 10 10 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 4 4 }
+								light_infantry = { 10 10 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 4 4 }
+								light_infantry = { 10 10 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+				17 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.5
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 4 4 }
+							light_infantry = { 10 10 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 4 4 }
+								light_infantry = { 10 10 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 4 4 }
+								light_infantry = { 10 10 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+				16 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.75
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 3 3 }
+							light_infantry = { 11 11 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 3 3 }
+								light_infantry = { 11 11 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 3 3 }
+								light_infantry = { 11 11 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+				17 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.5
+						troops = {
+							archers = { 6 6 }
+							light_cavalry = { 3 3 }
+							light_infantry = { 11 11 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 3 3 }
+								light_infantry = { 11 11 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_cavalry = { 3 3 }
+								light_infantry = { 11 11 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+				16 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.75
+						troops = {
+							archers = { 6 6 }
+							light_infantry = { 14 14 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_infantry = { 14 14 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.75
+							troops = {
+								archers = { 6 6 }
+								light_infantry = { 14 14 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+				17 = {
+					spawn_unit = {
+						province = ROOT
+						home = ROOT
+						owner = THIS
+						leader = THIS
+						scaled_by_biggest_garrison = 0.5
+						troops = {
+							archers = { 6 6 }
+							light_infantry = { 14 14 }
+						}
+						attrition = 1.0
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 30
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_infantry = { 14 14 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						religion = THIS
+						culture = THIS
+						female = no
+						age = 31
+						trait = peasant_leader
+						trait = tough_soldier
+						trait = knight
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							30 = { add_trait = trained_warrior }
+							60 = { add_trait = poor_warrior }
+						}
+						spawn_unit = {
+							province = ROOT
+							home = ROOT
+							owner = PREV
+							scaled_by_biggest_garrison = 0.5
+							troops = {
+								archers = { 6 6 }
+								light_infantry = { 14 14 }
+							}
+							attrition = 1.0
+							disband_on_peace = yes
+						}
+					}
+				}
+			}
+			
+			# DoW on the province top liege
+			ROOT = {
+				owner = {
+					top_liege = {
+#						set_defacto_vassal = PREVPREVPREV
+						reverse_war = {
+							target = PREVPREVPREV
+							casus_belli = peasant_revolt
+							thirdparty_title = ROOT # The county
+						}
+						reverse_opinion = {
+							who = PREVPREVPREV
+							modifier = opinion_evil_tyrant
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.15"
+	}
+}
+#Give pretender real father as Viserys
+character_event = {
+	id = dance_of_dragons.16
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		c_77009 = {
+			ROOT = { set_real_father = PREV }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+#Dalton Greyjoy message
+character_event = {
+	id = dance_of_dragons.17
+	desc = "EVTDESCdance_of_dragons.17"
+	
+	hide_from = yes
+
+	trigger = { 
+		NOT = { year = 8130 } 
+		war = no	#so not if his invasion is already triggered via history/wars
+		has_game_rule = { name = shattered_realms value = off }
+	}
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdance_of_dragons.17" #I shall raid the Westerlands
+		ai_chance = { factor = 80 }	
+		d_dragonstone = {
+			show_scope_change = no
+			holder_scope = {
+				show_scope_change = no
+				# ROOT = {
+					# join_attacker_wars = PREV		# well he never precisely helped her. He just used it as a reason to invade Westerlands
+				# }
+				opinion = {
+					who = ROOT
+					modifier = opinion_joined_cause
+				}
+			}
+		}	
+		k_westerlands = {
+			show_scope_change = no
+			holder_scope = {
+				show_scope_change = no
+				reverse_unsafe_war = {
+					target = ROOT
+					casus_belli = invasion_ironborn
+					thirdparty_title = d_fair_isle
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBdance_of_dragons.17" #This is not my concern
+		ai_chance = { factor = 20 }
+	}
+
+}
+# ##8157- Conquest of Dorne
+
+namespace = conquest_of_dorne
+
+# ##Martells declare war
+# character_event = {
+	# id = conquest_of_dorne.1
+	# desc = "EVTDESCconquest_of_dorne.1"
+
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAconquest_of_dorne.1" #No		
+		# k_dorne = {
+			# reverse_war = {
+				# target = ROOT
+				# casus_belli = claim_on_liege
+				# #casus_belli = claim
+			# }
+		# }
+		# #hidden_tooltip = { set_defacto_liege = ROOT }
+		# FROM = {
+			# any_realm_lord = {
+				# limit = {
+					# culture_group = dornish
+					# NOT = { character = ROOT }
+					# higher_tier_than = BARON
+				# }
+				# tooltip = { join_attacker_wars = ROOT }
+				# hidden_tooltip = { character_event = { id = conquest_of_dorne.2 days = 1 } }
+			# }
+			# hidden_tooltip = { character_event = { id = conquest_of_dorne.3 days = 2 } }
+		# }
+		# hidden_tooltip = {
+			# primary_title = { add_law = empire_e_iron_throne }
+			# # e_iron_throne = {
+				# # holder_scope = {
+					# # reverse_opinion = { who = ROOT modifier = opinion_de_facto_liege years = 25 }
+				# # }
+			# # }
+		# }
+	# }
+# }
+# ##Rest of Dorne piles in
+# character_event = {
+	# id = conquest_of_dorne.2
+	# desc = "EVTDESCconquest_of_dorne.2"
+
+	# is_triggered_only = yes
+	
+	# # immediate = { 
+		# # if = {
+			# # limit = { liege = { character = FROMFROM } }
+			# # set_defacto_liege = ROOT 
+		# # }	
+	# # } 
+	
+	# option = {
+		# name = "EVTOPTAconquest_of_dorne.2" #No
+		# join_attacker_wars = FROM
+		# hidden_tooltip = {
+			# primary_title = { add_law = empire_e_iron_throne }
+			# # e_iron_throne = {
+				# # holder_scope = {
+					# # reverse_opinion = { who = ROOT modifier = opinion_de_facto_liege years = 25 }
+				# # }
+			# # }
+		# }
+	# }
+# }
+# ##Tyrell event
+# character_event = {
+	# id = conquest_of_dorne.3
+	# desc = "EVTDESCconquest_of_dorne.3"
+
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAconquest_of_dorne.3" 
+	# }
+# }
+
+# Daeron "The Young Dragon" Targaryen
+character_event = {
+	id = conquest_of_dorne.10
+	desc = EVTDESCconquest_of_dorne.10
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAconquest_of_dorne.10
+	}
+}
+# Maerence Martell
+character_event = {
+	id = conquest_of_dorne.11
+	desc = EVTDESCconquest_of_dorne.11
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAconquest_of_dorne.11
+	}
+}
+# Lord Paramounts
+character_event = {
+	id = conquest_of_dorne.12
+	desc = EVTDESCconquest_of_dorne.12
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAconquest_of_dorne.12
+	}
+}
+# Dornish vassals
+character_event = {
+	id = conquest_of_dorne.13
+	desc = EVTDESCconquest_of_dorne.13
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAconquest_of_dorne.13
+	}
+}
+# Who to give Dorne to?
+character_event = {
+	id = conquest_of_dorne.14
+	desc = EVTDESCconquest_of_dorne.14
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		set_global_flag = dorne_supressed
+		k_dorne = {
+			holder_scope = {
+				any_realm_lord = {
+					limit = { 
+						culture_group = dornish 
+						NOT = {
+							has_opinion_modifier = { modifier = opinion_targaryen_loyalist who = ROOT }
+						}
+					}
+					opinion = {
+						modifier = opinion_foreign_conqueror
+						who = ROOT
+						years = 20
+					}
+				}
+				save_event_target_as = old_dorne_holder
+			}	
+		}
+		k_reach = {
+			holder_scope = {
+				save_event_target_as = reach_holder
+			}
+		}
+		k_stormlands = {
+			holder_scope = {
+				save_event_target_as = stormlands_holder
+			}
+		}
+		#find courtier holder
+		random_courtier = {
+			limit = {
+				is_ruler = no
+				is_liege_or_above = ROOT
+				is_adult = yes
+				is_female = no
+				prisoner = no
+				is_incapable = no
+				can_press_claims_trigger = yes
+				reverse_opinion = { who = ROOT value = 0 }
+				opinion = { who = ROOT value = 0 }
+				OR = {
+					martial = 10
+					stewardship = 10
+				}
+				NOT = { dynasty = ROOT }
+				NOT = { just_execution_reason_PREV_trigger = yes }
+			}
+			save_event_target_as = courtier_holder
+		}
+		#find targaryen holder
+		c_77019  = { #Viserys
+			if = {
+				limit = {
+					is_alive = yes
+					dynasty = ROOT
+					
+					is_ruler = no
+					is_liege_or_above = ROOT
+					is_adult = yes
+					is_female = no
+					prisoner = no
+					is_incapable = no
+					can_press_claims_trigger = yes
+					reverse_opinion = { who = ROOT value = -20 }
+					opinion = { who = ROOT value = -20 }
+					NOT = { just_execution_reason_PREV_trigger = yes }
+				}
+				save_event_target_as = dynasty_holder
+				break = yes
+			}
+		}	
+		random_dynasty_member = {
+			limit = {	
+				is_ruler = no
+				is_liege_or_above = ROOT
+				is_adult = yes
+				is_female = no
+				prisoner = no
+				is_incapable = no
+				can_press_claims_trigger = yes
+				reverse_opinion = { who = ROOT value = 0 }
+				opinion = { who = ROOT value = 0 }
+				OR = {
+					martial = 10
+					stewardship = 10
+				}	
+				NOT = { just_execution_reason_PREV_trigger = yes }
+			}
+			save_event_target_as = dynasty_holder
+			break = yes
+		}
+		random_dynasty_member = {
+			limit = {	
+				is_ruler = no
+				is_liege_or_above = ROOT
+				is_adult = yes
+				is_female = no
+				prisoner = no
+				is_incapable = no
+				can_press_claims_trigger = yes
+				reverse_opinion = { who = ROOT value = -20 }
+				opinion = { who = ROOT value = -20 }
+				OR = {
+					martial = 8
+					stewardship = 8
+				}
+				NOT = { just_execution_reason_PREV_trigger = yes }
+			}
+			save_event_target_as = dynasty_holder
+			break = yes
+		}
+	}
+	
+	option = { # I will allow the Martells to keep it
+		name = EVTOPTAconquest_of_dorne.14
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0.1
+				event_target:old_dorne_holder = {
+					OR = {
+						NOT = { reverse_opinion = { who = ROOT value = -20 } }
+						NOT = { opinion = { who = ROOT value = -20 } }
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+		}
+		event_target:old_dorne_holder = {
+			opinion = {
+				modifier = opinion_grateful
+				who = ROOT
+				years = 20
+			}
+			hidden_tooltip = {
+				set_character_flag = allowed_to_keep_dorne
+				character_event = { id = conquest_of_dorne.15 }
+			}
+		}
+		piety = 150
+	}
+	option = { # Direct rule
+		name = EVTOPTFconquest_of_dorne.14
+		ai_chance = { factor = 1 }
+		k_dorne = {
+			grant_title = ROOT
+			add_pressed_claim = event_target:old_dorne_holder
+		}
+		hidden_tooltip = {
+			character_event = { id = conquest_of_dorne.15 }
+		}
+		recalc_succession = yes
+	}
+	option = { # The Tyrells should rule over it
+		name = EVTOPTBconquest_of_dorne.14
+		trigger = {
+			event_target:reach_holder = { 
+				NOT = { war_with = ROOT } 
+				NOT = { just_execution_reason_PREV_trigger = yes }
+			}
+		}
+		ai_chance = { 
+			factor = 50 
+			modifier = {
+				factor = 0.25
+				event_target:reach_holder = { NOT = { has_character_flag = supporting_king } }
+			}
+			modifier = {
+				factor = 0
+				event_target:reach_holder = {
+					OR = {
+						is_adult = no
+						is_incapable = no
+						NOT = { reverse_opinion = { who = ROOT value = -70 } }
+						NOT = { opinion = { who = ROOT value = -70 } }
+					}
+				}
+			}
+		}
+		event_target:reach_holder = {
+			hidden_tooltip = {
+				character_event = { id = conquest_of_dorne.15 days = 2 } # The Dornish vassals will dislike him and may rebel
+			}
+			k_dorne = {
+				grant_title = PREV
+				add_pressed_claim = event_target:old_dorne_holder
+			}
+			if = {
+				limit = { 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } } 
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_kingdom
+				}
+			} 
+			hidden_tooltip = {
+				letter_event = { id = 63078 tooltip = EVTTOOLTIP63078 days = 1 }
+			}
+			recalc_succession = yes
+		}
+	}
+	option = { # grant to dynast
+		name = EVTOPTDconquest_of_dorne.14
+		ai_chance = { factor = 20 }
+		trigger = {
+			event_target:dynasty_holder = { always = yes }
+		}
+		event_target:dynasty_holder = {	
+			hidden_tooltip = {
+				character_event = { id = conquest_of_dorne.15 days = 2 } # The Dornish vassals will dislike him and may rebel
+			}
+			c_plankytown = {
+				hidden_tooltip = { holder_scope = { save_event_target_as = old_plankytown_holder } }
+				usurp_title = PREV
+			}
+			k_dorne = {
+				grant_title = PREV
+				add_pressed_claim = event_target:old_dorne_holder
+				hidden_tooltip = { 
+					set_variable = { which = "lord_paramount_status" value = 1 }
+					if = {
+						limit = { has_law = privilege_vassal_king }
+						revoke_law = privilege_vassal_king
+					}					
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } } 
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_kingdom
+				}
+			} 
+			hidden_tooltip = {
+				set_government_type = feudal_government_LP
+				letter_event = { id = 63078 tooltip = EVTTOOLTIP63078 days = 1 }
+			}
+			recalc_succession = yes
+		}
+	}
+	option = { # The Baratheons should rule over it
+		name = EVTOPTCconquest_of_dorne.14
+		trigger = {
+			event_target:stormlands_holder = { 
+				NOT = { war_with = ROOT } 
+				NOT = { just_execution_reason_PREV_trigger = yes }
+			}
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 0.25
+				event_target:stormlands_holder = { NOT = { has_character_flag = supporting_king } }
+			}
+			modifier = {
+				factor = 0
+				event_target:stormlands_holder = {
+					OR = {
+						is_adult = no
+						is_incapable = no
+						NOT = { reverse_opinion = { who = ROOT value = -70 } }
+						NOT = { opinion = { who = ROOT value = -70 } }
+					}
+				}
+			}
+		}
+		event_target:stormlands_holder = {
+			hidden_tooltip = {
+				character_event = { id = conquest_of_dorne.15 days = 2 } # The Dornish vassals will dislike him and may rebel
+			}
+			k_dorne = {
+				grant_title = PREV
+				add_pressed_claim = event_target:old_dorne_holder
+			}
+			if = {
+				limit = { 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } } 
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_kingdom
+				}
+			} 
+			hidden_tooltip = {
+				letter_event = { id = 63078 tooltip = EVTTOOLTIP63078 days = 1 }
+			}
+			recalc_succession = yes
+		}
+	}	
+	option = { # grant to courtier
+		name = EVTOPTEconquest_of_dorne.14
+		ai_chance = { factor = 5 }
+		trigger = {
+			event_target:courtier_holder = { always = yes }
+		}
+		event_target:courtier_holder = {	
+			hidden_tooltip = {
+				character_event = { id = conquest_of_dorne.15 days = 2 } # The Dornish vassals will dislike him and may rebel
+			}
+			c_plankytown = {
+				hidden_tooltip = { holder_scope = { save_event_target_as = old_plankytown_holder } }
+				usurp_title = PREV
+			}
+			k_dorne = {
+				grant_title = PREV
+				add_pressed_claim = event_target:old_dorne_holder
+				hidden_tooltip = { 
+					set_variable = { which = "lord_paramount_status" value = 1 }
+					if = {
+						limit = { has_law = privilege_vassal_king }
+						revoke_law = privilege_vassal_king
+					}					
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } } 
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_kingdom
+				}
+			} 
+			hidden_tooltip = {
+				set_government_type = feudal_government_LP
+				letter_event = { id = 63078 tooltip = EVTTOOLTIP63078 days = 1 }
+			}
+			recalc_succession = yes
+		}
+	}
+	after = {
+		hidden_tooltip = { 
+			k_dorne = { 
+				remove_claim = ROOT 
+				if = {
+					limit = { NOT = { has_law = succ_primogeniture } }
+					succession = primogeniture
+					if = {
+						limit = { e_iron_throne = { has_law = agnatic_succession } }
+						gender_succ = agnatic
+					}	
+					if = {
+						limit = { e_iron_throne = { has_law = cognatic_succession } }
+						gender_succ = cognatic
+					}
+					if = {
+						limit = { e_iron_throne = { has_law = true_cognatic_succession } }
+						gender_succ = true_cognatic
+					}
+				}	
+			} 
+		}
+	}
+}
+# Informed of being in control of Dorne
+character_event = {
+	id = conquest_of_dorne.15
+	
+	desc = { # Martells
+		text = EVTDESCAconquest_of_dorne.15
+		trigger = { 
+			has_character_flag = allowed_to_keep_dorne
+			NOT = { has_landed_title = e_iron_throne }
+		}
+	}
+	desc = { # Tyrells/Barathones/Targaryens
+		text = EVTDESCBconquest_of_dorne.15
+		trigger = { 
+			NOT = { has_character_flag = allowed_to_keep_dorne } 
+			NOT = { has_landed_title = e_iron_throne }
+		}
+	}
+	desc = { # Tyrells/Barathones/Targaryens
+		text = EVTDESCCconquest_of_dorne.15
+		trigger = { 
+			has_landed_title = e_iron_throne
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	option = { # In time we shall see
+		name = EVTOPTAconquest_of_dorne.15
+		trigger = { has_character_flag = allowed_to_keep_dorne }
+		custom_tooltip = {
+			text = TOOLTIPconquest_of_dorne.16
+			hidden_tooltip = {
+				liege = {
+					any_realm_lord = {
+						limit = { 
+							capital_scope = { region = world_dorne } 
+							NOT = { character = ROOT }
+							culture_group = dornish
+						}
+						opinion = {
+							modifier = opinion_loyal
+							who = ROOT
+							years = 20
+						}
+					}
+				}
+			}
+		}
+	}
+	option = { # I must try to keep the Dornish under control
+		name = EVTOPTBconquest_of_dorne.15
+		trigger = { NOT = { has_character_flag = allowed_to_keep_dorne } }
+		custom_tooltip = {
+			text = TOOLTIPconquest_of_dorne.15
+			hidden_tooltip = {
+				any_realm_lord = {
+					limit = { 
+						capital_scope = { region = world_dorne } 
+						culture_group = dornish
+						NOT = {
+							has_opinion_modifier = { modifier = opinion_targaryen_loyalist who = FROM }
+						}
+					}
+					opinion = {
+						modifier = opinion_foreign_conqueror
+						who = ROOT
+						years = 20
+					}
+				}
+				d_brokenarm = {
+					holder_scope = {
+						character_event = { id = conquest_of_dorne.16 }
+					}
+				}
+			}
+		}
+	}
+	after = {
+		clr_character_flag = allowed_to_keep_dorne
+	}
+}
+#Dornish vassals may rebel
+character_event = {
+	id = conquest_of_dorne.16
+	desc = EVTDESCconquest_of_dorne.16
+	picture = GFX_MARTELL
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAconquest_of_dorne.16
+		custom_tooltip = {
+			text = TOOLTIPconquest_of_dorne.16
+			hidden_tooltip = {
+				liege = {
+					any_realm_lord = {
+						limit = { 
+							capital_scope = { region = world_dorne } 
+							NOT = { character = ROOT }
+							culture_group = dornish
+						}
+						opinion = {
+							modifier = opinion_loyal
+							who = ROOT
+							years = 20
+						}
+					}
+				}
+			}
+		}
+	}
+}
+#Dornish vassals join rebellion
+character_event = {
+	id = conquest_of_dorne.17
+	desc = EVTDESCconquest_of_dorne.17
+	picture = GFX_MARTELL
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		any_demesne_title = {
+			limit = { 
+				NOT = { tier = BARON } 
+				NOT = { tier = EMPEROR }
+			}				
+			set_variable = { which = "de_facto_empire" which = 1 } 
+			set_variable = { which = "de_facto_kingdom" which = 7 } 
+		}
+	}
+	
+	option = {
+		name = EVOPTAconquest_of_dorne.17
+		if = {
+			limit = { 
+				FROM = { higher_tier_than = DUKE } 
+				k_dorne = { holder_scope = { tier = EMPEROR } }
+			}
+			set_character_flag = against_king
+			clr_character_flag = neutral
+			clr_character_flag = supporting_king
+			clr_character_flag = inherit_war
+			clr_character_flag = mega_war_remove_leader
+			hidden_tooltip = {
+				opinion = {
+					modifier = opinion_with_rebel_leader
+					who = FROM
+					years = 100
+				}
+			}	
+		}	
+		hidden_tooltip = { 
+			liege = {
+				liege = {
+					if = {
+						limit = { character = PREV }
+						ROOT = { set_defacto_liege = THIS }
+					}
+					if = {
+						limit = { NOT = { character = PREV } }
+						ROOT = { set_defacto_liege = PREV }
+					}
+				}
+			}
+		}
+		join_attacker_wars = FROM
+		if = { #only give extra troops if lord of dorne has another kingdom
+			limit = {
+				k_dorne = {
+					holder_scope = {
+						OR = {
+							tier = EMPEROR
+							num_of_king_titles = 2
+						}
+					}
+				}	
+			}
+			capital_scope = {
+				ROOT = {
+					spawn_unit = {
+						province = PREV
+						owner = ROOT
+						leader = none
+						earmark = conquest_of_dorne_troops
+						troops = {
+							light_infantry = { 750 75 }
+							heavy_infantry = { 350 350 }
+							pikemen = { 150 150 }
+						}
+						disband_on_peace = yes
+						attrition = 0.5
+						maintenance = no
+					}
+				}
+			}
+		}	
+	}
+}
+#Successful rebellion
+character_event = {
+	id = conquest_of_dorne.18
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		k_dorne = {
+			set_variable = { which = "de_facto_empire" value = 0 }
+			gender_succ = true_cognatic 
+			remove_claim = FROMFROM
+		}
+		add_character_modifier = {
+			name = "indep_faction_won"
+			duration = 20
+		}
+		any_realm_lord = {
+			any_demesne_title = { 
+				limit = { 
+					NOT = { tier = BARON } 
+					NOT = { tier = EMPEROR }
+				}
+				set_variable = { which = "de_facto_empire" value = 0 } 
+			}
+		}
+		hidden_tooltip = { activate_title = { status = yes title = e_dorne } }
+		set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+		e_dorne = {
+			gain_title = ROOT
+			copy_title_laws = k_dorne
+			ROOT = {
+				if = {
+					limit = { ai = no }
+					chronicle = {
+						entry = CHRONICLE_CREATE_KINGDOM
+						picture = GFX_evt_coronation
+					}	
+				}
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPcreate_e_dorne
+			hidden_tooltip = {
+				k_dorne = {
+					destroy_landed_title = THIS
+					de_jure_liege = e_dorne
+				}
+				character_event = { id = diplomatic.50 days = 1 }
+			}	
+		}
+		# e_iron_throne = {
+			# holder_scope = {
+				# any_realm_lord = {	
+					# limit = { 
+						# capital_scope = { region = world_dorne } 
+						# liege = { has_landed_title = e_iron_throne } # Only direct vassals of the LP join sides
+						# NOT = { character = ROOT }
+					# }
+					# set_defacto_liege = ROOT
+				# }
+			# }
+		# }
+		clr_character_flag = changing_westerosi_kingdom_tier
+		clr_global_flag = conquest_of_dorne
+	}
+	
+	option = {
+		name =OK
+	}
+}
+
+##8195- Blackfyre Rebellion
+
+namespace = blackfyre_rebellion
+
+#Daeron Targaryen
+character_event = {
+	id = blackfyre_rebellion.1
+	desc = "EVTDESCblackfyre_rebellion.1"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBblackfyre_rebellion.1" #No
+	}
+}
+
+#Daemon Blackfyre
+character_event = {
+	id = blackfyre_rebellion.2
+	desc = "EVTDESCblackfyre_rebellion.2"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		set_defacto_liege = ROOT
+		any_courtier = {
+			limit = {
+				culture = high_valyrian
+				has_game_rule = { name = high_valyrian_cull value = on }
+				dynasty = 0
+				is_ruler = no
+				NOT = { father_even_if_dead = { always = yes } }
+				NOT = { has_dynasty_flag = high_valyrian }
+				NOT = { has_character_flag = high_valyrian }
+			}
+			death = yes
+		}
+		spawn_unit = {
+			province = 107 #Harrenhal
+			home = 107
+			owner = ROOT
+			leader = ROOT
+			troops = {
+				archers = { 562 562 }
+				heavy_infantry = { 1840 1840 }
+				light_infantry = { 1784 1784 }	
+				light_cavalry = { 716 716 }		
+				knights = { 98 98 }					
+			}
+			attrition = 1.0
+			earmark = dummy #needs or else it will CTD for some reason
+		} 
+		spawn_unit = {
+			province = 107 #Harrenhal
+			home = 107
+			owner = ROOT
+			leader = 77025 #Bittersteel
+			troops = {
+				archers = { 562 562 }
+				heavy_infantry = { 1840 1840 }
+				light_infantry = { 1784 1784 }	
+				light_cavalry = { 716 716 }		
+				knights = { 98 98 }					
+			}
+			attrition = 1.0
+			earmark = dummy #needs or else it will CTD for some reason
+		} 
+		spawn_unit = {
+			province = 107 #Harrenhal
+			home = 107
+			owner = ROOT
+			leader = 88187 #Fireball
+			troops = {
+				archers = { 562 562 }
+				heavy_infantry = { 1840 1840 }
+				light_infantry = { 1784 1784 }	
+				light_cavalry = { 716 716 }		
+				knights = { 98 98 }					
+			}
+			attrition = 1.0
+			earmark = dummy #needs or else it will CTD for some reason
+		} 	
+		# #Give bramsfort to iron throne
+		# if = {
+			# limit = { has_landed_title = c_bramsfort }
+			# c_bramsfort = { e_iron_throne = { holder_scope = { gain_title = PREVPREV } } }
+		# }			
+		#Daemon having no land causes CTD, give Bramsfort huge fort level instead
+		b_venatfort = {
+			add_holding_modifier = {
+				name = abandoned_holding
+				duration = -1
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTAblackfyre_rebellion.2" #Yes				
+	}
+}
+
+# #Leo Tyrell
+# character_event = {
+	# id = 999999204
+	# desc = "EVTDESC999999204"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999204" #Yes	
+	# }
+
+# }
+
+# #Damon Lannister
+# character_event = {
+	# id = 999999205
+	# desc = "EVTDESC999999205"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999205" #Yes	
+	# }
+
+# }
+
+# #Medgar Tully
+# character_event = {
+	# id = 999999206
+	# desc = "EVTDESC999999206"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999206" #Yes	
+	# }
+
+# }
+
+# #Harrold Arryn
+# character_event = {
+	# id = 999999207
+	# desc = "EVTDESC999999207"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999207" #Yes	
+	# }
+
+# }
+
+# #Brandon Stark
+# character_event = {
+	# id = 999999208
+	# desc = "EVTDESC999999208"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999208" #Yes	
+	# }
+
+# }
+
+# #Victarion Greyjoy
+# character_event = {
+	# id = 999999209
+	# desc = "EVTDESC999999209"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999209" #Yes	
+	# }
+
+# }
+
+# #Orys Baratheon
+# character_event = {
+	# id = 999999210
+	# desc = "EVTDESC999999210"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999210" #Yes	
+	# }
+
+# }
+
+# #Maron Martell
+# character_event = {
+	# id = 999999211
+	# desc = "EVTDESC999999211"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999211" #Yes	
+	# }
+
+# }
+
+#Inform realm of founding of Golden Company
+character_event = {
+	id = blackfyre_rebellion.100
+	desc = "EVTDESCblackfyre_rebellion.100"
+	picture = "GFX_evt_blackfyre"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBAblackfyre_rebellion.100" 
+		any_playable_ruler = {
+			limit = { 
+				ai = no 
+				NOT = { character = ROOT } 
+			}
+			character_event = { id = blackfyre_rebellion.101 days = 7 } #Inform realm
+		}
+	}
+}
+character_event = {
+	id = blackfyre_rebellion.101
+	desc = "EVTDESCblackfyre_rebellion.101"
+	picture = "GFX_evt_blackfyre"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OK" 
+		FROM = {
+			FROM = {
+				hidden_tooltip = { prestige = 0 }
+				tooltip = { show_portrait = yes }
+			}
+		}
+	}
+}
+#Inform King they have recovered Blackfyre
+character_event = {
+	id = blackfyre_rebellion.102
+	desc = "EVTDESCblackfyre_rebellion.102"
+	picture = "GFX_evt_valyrian_steel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBAblackfyre_rebellion.102" 
+		tooltip = { add_artifact = blackfyre }
+	}
+}
+#The Peake Uprising
+character_event = {
+	id = blackfyre_rebellion.103
+	title = "EVTTITLEblackfyre_rebellion.103"
+	desc = "EVTDESCblackfyre_rebellion.103"
+	picture = "GFX_evt_blackfyre"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	option = {
+		name = "EVTOPTAblackfyre_rebellion.103" 
+		trigger = {
+			NOT = { has_landed_title = e_iron_throne }
+		}
+		liege = {
+			reverse_war = {
+				target = ROOT
+				casus_belli = overthrow_ruler
+			}
+			character_event = { id = 45431 } #other vassals may join
+		}
+	}
+	option = {
+		name = "EVTOPTBAblackfyre_rebellion.103" 
+		trigger = {
+			has_landed_title = e_iron_throne
+		}
+	}
+}
+#Destroy temp titles after daeron the good legitimise/bastardise
+character_event = {
+	id = blackfyre_rebellion.104
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		if = {
+			limit = { has_landed_title = k_daemon_blackfyres_host }
+			activate_title = { status = no title = k_daemon_blackfyres_host }
+			k_daemon_blackfyres_host = { 
+				destroy_landed_title = THIS
+			}
+		}	
+		if = {
+			limit = { has_landed_title = d_daemons_host }
+			activate_title = { status = no title = d_daemons_host }
+			d_daemons_host = { 
+				destroy_landed_title = THIS
+			}
+		}	
+	}
+	
+	option = {
+		name = OK
+	}
+}
+##8259- War of the Ninepenny Kings
+
+namespace = ninepenny_kings
+
+#Aegon V Targaryen
+long_character_event = {
+	id = ninepenny_kings.1
+	desc = "EVTDESCninepenny_kings.1"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAninepenny_kings.1" #No
+	}
+}
+
+#Maelys Blackfyre
+narrative_event = {
+	id = ninepenny_kings.2
+	desc = "EVTDESCninepenny_kings.2"
+	title = "EVTTITLEninepenny_kings.2"
+	picture = GFX_evt_battle
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		set_defacto_liege = ROOT
+		any_vassal = {
+			limit = { has_character_flag = band_of_nine }
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_band_of_nine
+				years = 20
+			}
+			ROOT = {
+				any_vassal = {
+					limit = { 
+						has_character_flag = band_of_nine 
+						NOT = { character = PREVPREV }
+					}
+					opinion = {
+						who = PREVPREV
+						modifier = opinion_band_of_nine
+						years = 20
+					}
+					reverse_opinion = {
+						who = PREVPREV
+						modifier = opinion_band_of_nine
+						years = 20
+					}
+				}
+			}
+		}
+		d_golden_company = {
+			holder_scope = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_band_of_nine
+					years = 20
+				}
+				reverse_opinion = {
+					who = ROOT
+					modifier = opinion_band_of_nine
+					years = 20
+				}
+				ROOT = {
+					any_vassal = {
+						limit = { has_character_flag = band_of_nine }
+						opinion = {
+							who = PREVPREV
+							modifier = opinion_band_of_nine
+							years = 20
+						}
+						reverse_opinion = {
+							who = PREVPREV
+							modifier = opinion_band_of_nine
+							years = 20
+						}
+					}
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = "EVTOPTAninepenny_kings.2" #Yes
+		custom_tooltip = { text = TOOLTIPBANDOFNINE }
+		# c_tyrosh = {
+			# holder_scope = {
+				# custom_tooltip = { text = TOOLTIPBANDOFNINE }
+			# }
+		# }	
+		d_golden_company = {
+			holder_scope = {
+				custom_tooltip = { text = TOOLTIPBANDOFNINE }
+			}
+		}	
+		any_vassal = {
+			limit = { has_character_flag = band_of_nine }
+			custom_tooltip = { text = TOOLTIPBANDOFNINE }
+		}	
+	}
+
+}
+#Laughing Storm broken betrothal events
+narrative_event = {
+	id = ninepenny_kings.3
+	desc = "EVTDESCninepenny_kings.3"
+	title = "EVTTITLEninepenny_kings.3"
+
+	is_triggered_only = yes
+	
+	trigger = { 
+		NOT = { any_child = { spouse = { dynasty = 496 } } }
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	immediate = {
+		opinion = {
+			who = FROM
+			modifier = opinion_betrothal_broken
+			multiplier = 3
+		}
+		liege = {
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_betrothal_broken
+				multiplier = 3
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAninepenny_kings.3" #Rebel!
+		liege = {
+			letter_event = { id = ninepenny_kings.4 tooltip = TOOLTIPninepenny_kings.4 }
+		}		
+	}
+	option = {
+		name = "EVTOPTBninepenny_kings.3" #Oh well
+		ai_chance = { factor = 0 }
+		prestige = -200	
+	}
+}
+letter_event = { #Egg responds
+	id = ninepenny_kings.4
+	desc = "EVTDESCninepenny_kings.4"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.4" #Fine!
+		ai_chance = { factor = 20 }
+		reverse_war = {
+			target = FROM
+			casus_belli = bid_for_independence
+		}		
+	}
+	option = {
+		name = "EVTOPTBninepenny_kings.4" #Offer trial by combat
+		trigger = {
+			any_child = {
+				is_female = yes
+				is_alive = yes
+				is_married = no
+				is_betrothed = no
+				is_ruler = no
+			}
+		}
+		ai_chance = { factor = 80 }
+		FROM = { letter_event = { id = ninepenny_kings.5 days = 2 tooltip = TOOLTIPninepenny_kings.5 } }
+		random_child = {
+			limit = {
+				is_female = yes
+				is_alive = yes
+				is_married = no
+				is_betrothed = no
+				is_ruler = no
+			}
+			hidden_tooltip = { add_trait = forbid_marriage	}		
+		}
+	}
+}
+letter_event = { #Laughing Storm responds to trial offer
+	id = ninepenny_kings.5
+	desc = "EVTDESCninepenny_kings.5"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.5" #OK
+		ai_chance = { factor = 80 }
+		set_character_flag = laughing_storm_duel
+		d_kingsguard = {
+			holder_scope = {
+				character_event = { id = ninepenny_kings.8 tooltip = TOOLTIPninepenny_kings.8 }
+			}
+		}
+		FROM = { letter_event = { id = ninepenny_kings.6 } }
+	}
+	option = {
+		name = "EVTOPTBninepenny_kings.5" #No!
+		ai_chance = { factor = 20 }
+		hidden_tooltip = { FROM = { letter_event = { id = ninepenny_kings.7 } } }
+		war = {
+			target = FROM
+			casus_belli = bid_for_independence
+		}
+	}
+}
+letter_event = { #Inform accept
+	id = ninepenny_kings.6
+	desc = "EVTDESCninepenny_kings.6"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.6"
+	}
+}
+letter_event = { #Inform reject
+	id = ninepenny_kings.7
+	desc = "EVTDESCninepenny_kings.7"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.7"
+		random_child = {
+			limit = {
+				is_female = yes
+				is_married = no
+				is_betrothed = no
+				trait = forbid_marriage
+			}
+			hidden_tooltip = { remove_trait = forbid_marriage }		
+		}
+	}
+}
+character_event = { #Start duel
+	id = ninepenny_kings.8
+	desc = "EVTDESCninepenny_kings.8"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.8"
+		set_character_flag = laughing_storm_duel
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+	}
+}
+character_event = { #Inform King they won
+	id = ninepenny_kings.9
+	desc = "EVTDESCninepenny_kings.9"
+
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = {
+		FROMFROM = {
+			random_child = {
+				limit = {
+					is_female = no
+					is_alive = yes
+					is_married = no
+					is_betrothed = no
+					is_ruler = no
+					OR = {
+						has_landed_title = k_stormlands
+						is_primary_heir = yes
+					}	
+				}
+				save_event_target_as = ls_marriage_target
+				break = yes
+			}
+			random_child = {
+				limit = {
+					is_female = no
+					is_alive = yes
+					is_married = no
+					is_betrothed = no
+					is_ruler = no
+				}
+				save_event_target_as = ls_marriage_target
+				#break = yes
+			}
+		}	
+	}
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.9" #reconcile
+		ai_chance = { factor = 1 }
+		random_child = {
+			limit = {
+				is_female = yes
+				is_married = no
+				is_betrothed = no
+				trait = forbid_marriage
+			}
+			save_event_target_as = ls_marriage_daughter
+			set_character_flag = no_wedding_event
+			event_target:ls_marriage_target = {
+				# if = {
+					# limit = {
+						# age = 14
+						# PREV = { age = 14 }
+					# }
+					# hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_recent_marriage months = 1 } }
+					# add_spouse = PREV
+				# }
+				# if = {
+					# limit = {
+						# OR = {
+							# NOT = { age = 14 }
+							# PREV = { NOT = { age = 14 } }
+						# }	
+					# }
+					# add_betrothal = PREV #####probably broken
+				# }
+				set_character_flag = no_wedding_event
+				hidden_tooltip = { 
+					reverse_opinion = { who = ROOT modifier = opinion_recent_marriage months = 1 } 
+					add_character_modifier = {
+						name = "wedding"
+						duration = 60
+					}
+				}
+				add_spouse = PREV
+				hidden_tooltip = { child_fertility_debuff = yes }
+				PREV = { hidden_tooltip = { child_fertility_debuff = yes } }
+				clr_character_flag = no_wedding_event
+			}
+			clr_character_flag = no_wedding_event
+			hidden_tooltip = { 
+				remove_trait = forbid_marriage 
+				add_character_modifier = {
+					name = "wedding"
+					duration = 60
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROMFROM = { is_alive = yes }
+			}
+			FROMFROM = {
+				remove_opinion = {
+					who = ROOT
+					modifier = opinion_betrothal_broken
+				}
+			}
+			hidden_tooltip = { FROMFROM = { character_event = { id = ninepenny_kings.10 } } }				
+		}
+	}
+	option = {
+		name = "EVTOPTBninepenny_kings.9" #imprison
+		trigger = { FROMFROM = { is_alive = yes } }
+		ai_chance = { factor = 0 }
+		FROMFROM = {
+			imprison = ROOT
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_traitor
+			}
+		}
+		hidden_tooltip = {
+			random_child = {
+				limit = {
+					is_female = yes
+					is_married = no
+					is_betrothed = no
+					trait = forbid_marriage
+				}
+				remove_trait = forbid_marriage
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTCninepenny_kings.9" #imprison
+		trigger = { FROMFROM = { is_alive = no } }
+		ai_chance = { factor = 0 }
+		k_stormlands = {
+			holder_scope = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_betrothal_broken
+					multiplier = 3
+				}
+			}
+		}
+		hidden_tooltip = {
+			random_child = {
+				limit = {
+					is_female = yes
+					is_married = no
+					is_betrothed = no
+					trait = forbid_marriage
+				}
+				remove_trait = forbid_marriage
+			}
+		}	
+	}
+}
+character_event = { #Inform laughing storm lost
+	id = ninepenny_kings.10
+	desc = "EVTDESCninepenny_kings.10"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.10"
+		event_target:ls_marriage_daughter = {			
+			event_target:ls_marriage_target = {
+				hidden_tooltip = { FROM = { opinion = { who = ROOT modifier = opinion_recent_marriage months = 1 } } }
+				tooltip = { add_spouse = PREV }
+			}
+		}	
+	}
+}
+character_event = { #Inform laughing storm won
+	id = ninepenny_kings.11
+	desc = "EVTDESCninepenny_kings.11"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.11"
+		liege = { character_event = { id = ninepenny_kings.12 } }
+		prestige = 300
+		set_defacto_liege = THIS
+		hidden_tooltip = { 
+			any_demesne_title = { 
+				limit = { 
+					NOT = { tier = BARON } 
+					NOT = { tier = EMPEROR }
+				}
+				set_variable = { which = "de_facto_empire" value = 0 } 
+			}
+			any_realm_lord = { 
+				any_demesne_title = { 
+					limit = { 
+						NOT = { tier = BARON } 
+						NOT = { tier = EMPEROR }
+					}
+					set_variable = { which = "de_facto_empire" value = 0 } 
+				}
+			}
+			add_character_modifier = {
+				name = "indep_faction_won"
+				duration = 20
+			}
+		}
+	}
+}
+character_event = { #Inform king lost
+	id = ninepenny_kings.12
+	desc = "EVTDESCninepenny_kings.12"
+
+	is_triggered_only = yes
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.12"
+		prestige = -300
+		tooltip = { FROM = { set_defacto_liege = THIS } }
+		random_child = {
+			limit = {
+				is_female = yes
+				is_married = no
+				is_betrothed = no
+				trait = forbid_marriage
+			}
+			hidden_tooltip = { remove_trait = forbid_marriage }		
+		}
+	}
+}
+#Reyne rebellion
+long_character_event = {
+	id = ninepenny_kings.13
+	desc = "EVTDESCninepenny_kings.13"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = shattered_realms value = off }
+	}
+		
+	option = {
+		name = "EVTOPTAninepenny_kings.13"
+		ai_chance = { factor = 100 }
+		set_character_flag = reynes_of_castamere
+		k_westerlands = { 		
+			reverse_war = {
+				target = ROOT
+				casus_belli = claim
+			}
+			holder_scope = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_traitor
+				}
+				hidden_tooltip = {
+					c_tarbeck_hall = {
+						holder_scope = {
+							reverse_opinion = {
+								who = PREVPREV
+								modifier = opinion_traitor
+							}
+						}
+					}
+				}
+				current_heir = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_traitor
+					}
+					hidden_tooltip = {
+						c_tarbeck_hall = {
+							holder_scope = {
+								reverse_opinion = {
+									who = PREVPREV
+									modifier = opinion_traitor
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
+	}
+	option = {
+		name = "EVTOPTBninepenny_kings.13"
+		ai_chance = { factor = 0 }
+		k_westerlands = {
+			holder_scope = {
+				ROOT = { 
+					imprison = PREV 
+					any_vassal = {
+						limit = { tier = COUNT }
+						imprison = PREVPREV
+						spouse = { imprison = PREVPREVPREV }
+					}
+					hidden_tooltip = {
+						set_defacto_liege = PREV
+						clr_character_flag = neutral
+					}
+				}			
+			}
+		}
+	}
+}
+#Events related to period of the book 'Game of Thrones'
+namespace = game_of_thrones
+
+#Viserys and Daenerys go to Pentos
+character_event = {
+	id = game_of_thrones.1
+	
+	is_triggered_only = yes
+	has_character_flag = daenerys_targaryen
+	prisoner = no
+	only_rulers = no
+	capable_only = yes
+	
+	trigger = {
+		has_character_flag = exiled_royal_family
+		year = 8297
+		is_married = no
+		k_pentos = { 
+			holder_scope = { 
+				has_character_flag = has_dany_dragon_eggs 
+				NOT = { is_liege_of = ROOT }
+			} 
+		}
+		has_game_rule = { name = shattered_realms value = off }
+	}
+	
+	option = {
+		k_pentos = {
+			holder_scope = {
+				ROOT = { move_character = PREV }
+				if = { 
+					limit = { 
+						c_77040 = { 
+							is_alive = yes 
+							is_ruler = no
+						} 
+					}
+					c_77040 = { move_character = PREV }
+				}
+			}
+		}
+	}
+}
+
+# #Steffon Tyrell
+# character_event = {
+	# id = 999999204
+	# desc = "EVTDESC999999204"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999999204" #Yes	
+	# }
+
+# }
+
+# #Hoster Tully
+# character_event = {
+	# id = 999990205
+	# desc = "EVTDESC999990205"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990205" #Yes	
+	# }
+
+# }
+
+# #Jon Arryn
+# character_event = {
+	# id = 999990206
+	# desc = "EVTDESC999990206"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990206" #Yes	
+	# }
+
+# }
+
+# #Tytos Lannister
+# character_event = {
+	# id = 999990207
+	# desc = "EVTDESC999990207"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990207" #Yes	
+	# }
+
+# }
+
+# #Edwyle Stark
+# character_event = {
+	# id = 999990208
+	# desc = "EVTDESC999990208"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990208" #Yes	
+	# }
+
+# }
+
+# #Luthor Tyrell
+# character_event = {
+	# id = 999990209
+	# desc = "EVTDESC999990209"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990209" #Yes	
+	# }
+
+# }
+
+# #Quellon Greyjoy
+# character_event = {
+	# id = 999990210
+	# desc = "EVTDESC999990210"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990210" #Yes	
+	# }
+
+# }
+
+# #Obera Martell
+# character_event = {
+	# id = 999990211
+	# desc = "EVTDESC999990211"
+	
+	# hide_from = yes
+
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# set_defacto_liege = ROOT
+	# }
+
+	# option = {
+		# name = "EVTOPTA999990211" #Yes	
+	# }
+
+# }
+
+namespace = century_of_blood
+# Century of Blood Events
+
+#Emperor Aurion decides action
+narrative_event = {
+	id = century_of_blood.1
+	desc = EVTDESCcentury_of_blood.1
+	title = EVTTITLEcentury_of_blood.1
+	picture = "GFX_evt_dragon_riding_2"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAcentury_of_blood.1" #Take host to reclaim Valyria!
+		ai_chance = { factor = 40 }
+		hidden_tooltip = {
+			b_qohorwalls = { k_qohor = { holder_scope = { gain_title = PREVPREV } } }
+		}
+		k_qohor = { 
+			holder_scope = { 			
+				hidden_tooltip = {
+					opinion = { who = ROOT modifier = in_non_aggression_pact years = 10 }
+					reverse_opinion = { who = ROOT modifier = in_non_aggression_pact years = 10 }
+				}
+				add_alliance = { who = ROOT years = 10 } 
+			} 
+		}	
+		narrative_event = { id = century_of_blood.3 tooltip = TOOLTIPcentury_of_blood.3 }
+	}
+	
+	option = {
+		name = "EVTOPTBcentury_of_blood.1" #Start new valyrian empire
+		ai_chance = { factor = 50 }	
+		set_global_flag = aurions_conquest
+		476 = {
+			ROOT = {
+				tooltip = { #tooltip, army added in divisable units below
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 500 500 }						
+							light_infantry = { 11281 11281 }
+							heavy_infantry = { 12035 12035 }
+							archers = { 3343 3343 }
+							light_cavalry = { 2507 2507 }
+							knights = { 334 334 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}	
+			}
+		}	
+		spawn_fleet = {
+			province = closest # closest sea zone
+			owner = ROOT
+			troops = {
+				galleys = { 300 300 }
+			}
+			earmark = aurions_fleet
+			cannot_inherit = yes
+		}
+		k_qohor = { 
+			holder_scope = { 			
+				hidden_tooltip = {
+					opinion = { who = ROOT modifier = in_non_aggression_pact years = 10 }
+					reverse_opinion = { who = ROOT modifier = in_non_aggression_pact years = 10 }
+				}
+				add_alliance = { who = ROOT years = 10 } 
+			}
+		}
+		hidden_tooltip = {
+			b_qohorwalls = { k_qohor = { holder_scope = { gain_title = PREVPREV } } }
+			476 = {
+				ROOT = {
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 }
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 417 417 }
+							light_cavalry = { 313 313 }
+							knights = { 41 41 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}	
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 }					
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 418 418 }
+							light_cavalry = { 313 313 }
+							knights = { 41 41 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 }
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 418 418 }
+							light_cavalry = { 313 313 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 }				
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 418 418 }
+							light_cavalry = { 313 313 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 }
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 418 418 }
+							light_cavalry = { 313 313 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 }
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1505 1505 }
+							archers = { 418 418 }
+							light_cavalry = { 314 314 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 }
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1505 1505 }
+							archers = { 418 418 }
+							light_cavalry = { 314 314 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 }				
+							light_infantry = { 1411 1411 }
+							heavy_infantry = { 1505 1505 }
+							archers = { 418 418 }
+							light_cavalry = { 314 314 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}
+			}
+		}
+		e_new_valyria = {
+			add_pressed_claim = ROOT
+			reverse_war = {
+				target = ROOT
+				casus_belli = dragon_conquest
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCcentury_of_blood.1" # Become king of qohor
+		ai_chance = { factor = 10 }
+		k_qohor = { gain_title = ROOT }
+		476 = {
+			ROOT = {
+				tooltip = { #tooltip, army added in divisable units below
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 250 250 }						
+							light_infantry = { 5640 5640 }
+							heavy_infantry = { 6018 6018 }
+							archers = { 1671 1671 }
+							light_cavalry = { 1254 1254 }
+							knights = { 167 167 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}	
+			}
+		}
+		hidden_tooltip = {
+			activate_title = { status = no title = e_aurions_host }
+			e_aurions_host = { destroy_landed_title = ROOT }
+			d_qohor = {
+				holder_scope = {
+					set_defacto_liege = ROOT
+					save_event_target_as = d_qohor_holder
+				}
+			}
+			c_qohor = { gain_title = ROOT }
+			b_qohorwalls = {
+				province_capital = yes
+				ROOT = { capital = PREV }
+			}	
+			b_qohor = {
+				gain_title = event_target:d_qohor_holder
+				event_target:d_qohor_holder = { capital = PREV }
+			}
+			any_vassal = {
+				limit = {
+					is_patrician = yes
+					lower_tier_than = event_target:d_qohor_holder
+				}
+				set_defacto_liege = event_target:d_qohor_holder
+			}
+			476 = {
+				ROOT = {
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 }				
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 417 417 }
+							light_cavalry = { 313 313 }
+							knights = { 41 41 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}	
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 } 				
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1505 1505 }
+							archers = { 418 418 }
+							light_cavalry = { 314 314 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 }					
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1504 1504 }
+							archers = { 418 418 } 
+							light_cavalry = { 313 313 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 } 				
+							light_infantry = { 1410 1410 }
+							heavy_infantry = { 1505 1505 }
+							archers = { 418 418 }
+							light_cavalry = { 314 314 }
+							knights = { 42 42 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}
+			}
+		}	
+	}
+}
+#Opening event for other rulers, triggered from aurions entry
+narrative_event = {
+	id = century_of_blood.2
+	desc = EVTDESCcentury_of_blood.1
+	title = EVTTITLEcentury_of_blood.1
+	picture = "GFX_evt_dragon_riding_2"
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAcentury_of_blood.2"
+	}
+}	
+#Alternate wikid quest start, to claim Valyria
+narrative_event = {
+	id = century_of_blood.3
+	desc = EVTDESCcentury_of_blood.3
+	title = "EVTTITLEcentury_of_blood.3"
+	picture = GFX_evt_monk_illuminating_book
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAcentury_of_blood.3"  
+		ai_chance = { factor = 100 }
+		narrative_event = { id = wikid.4 days = 1 tooltip = TOOLTIPwikid.4 }
+		wealth = -100
+		clr_character_flag = wikid_quest_started 
+		set_character_flag = wikid_quest_started	
+		set_character_flag = wikid_quest_claim_valyria	
+	}
+	option = {
+		name = "EVTOPTBcentury_of_blood.3"  #No
+		trigger = { NOT = { character = 50012300 } }
+		ai_chance = { factor = 0 }
+	}
+}
+#Aurion gains host after surviving quest to valyria
+character_event = {
+	id = century_of_blood.4
+	desc = EVTDESCcentury_of_blood.4
+	picture = "GFX_evt_dragon_riding_2"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random_independent_ruler = { #find somewhere to land
+			limit = {
+				higher_tier_than = COUNT
+				ai = yes
+				capital_scope = { 
+					region = world_north_valyria 
+					port = yes
+				}
+			}
+			save_event_target_as = aurions_landing_target
+			capital_scope = {
+				save_event_target_as = aurions_landing_location
+			}
+			1014 = { #western slaver's bay
+				save_event_target_as = aurions_ship_location
+			}
+			break = yes
+		}
+		random_independent_ruler = {
+			limit = {
+				higher_tier_than = COUNT
+				ai = yes
+				capital_scope = { 
+					OR = {
+						region = world_tyrosh
+						region = world_lys
+						region = world_myr
+					}	
+					port = yes
+				}
+			}
+			save_event_target_as = aurions_landing_target
+			capital_scope = {
+				save_event_target_as = aurions_landing_location
+			}
+			964 = { #tyroshi coast
+				save_event_target_as = aurions_ship_location
+			}
+			break = yes
+		}
+		random_independent_ruler = {
+			limit = {
+				higher_tier_than = COUNT
+				ai = yes
+				capital_scope = { 
+					region = world_slavers_bay
+					port = yes
+				}
+			}
+			save_event_target_as = aurions_landing_target
+			capital_scope = {
+				save_event_target_as = aurions_landing_location
+			}
+			1015 = { #eastern slavers bay
+				save_event_target_as = aurions_ship_location
+			}
+			break = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcentury_of_blood.4"
+		set_global_flag = aurions_conquest
+		event_target:aurions_landing_location = {
+			ROOT = {
+				tooltip = { #tooltip, army added in dividable untis below
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 250 250 }						
+							light_infantry = { 5640 5640 }
+							heavy_infantry = { 6018 6018 }
+							archers = { 1671 1671 }
+							light_cavalry = { 1254 1254 }
+							knights = { 167 167 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}	
+				spawn_fleet = {
+					province = event_target:aurions_ship_location
+					owner = ROOT
+					troops =
+					{
+						galleys = { 150 150 }
+					}
+					earmark = aurions_fleet
+					cannot_inherit = yes
+				}
+			}
+		}
+		hidden_tooltip = {
+			event_target:aurions_landing_location = {
+				ROOT = {
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1504 1504 } #3
+							archers = { 417 417 } #7
+							light_cavalry = { 313 313 } #3
+							knights = { 41 41 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}	
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1505 1505 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 314 314 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1504 1504 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 313 313 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1505 1505 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 314 314 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}
+			}
+		}
+		e_new_valyria = {
+			if = {
+				limit = { has_holder = yes }
+				add_pressed_claim = ROOT
+				reverse_war = {
+					target = ROOT
+					casus_belli = dragon_conquest
+				}
+				hidden_tooltip = { #failsafe claim war
+					reverse_war = {
+						target = ROOT
+						casus_belli = claim
+					}
+				}
+			}	
+			if = {
+				limit = { has_holder = no }
+				gain_title = ROOT
+				k_volantis = {
+					holder_scope = {
+						primary_title = {
+							reverse_war = {
+								target = ROOT
+								casus_belli = dragon_conquest
+							}
+						}
+					}
+				}
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBcentury_of_blood.4" # Claim lordship of landing location
+		ai_chance = { factor = 10 }
+		event_target:aurions_landing_target = {
+			primary_title = { usurp_title = ROOT }
+		}	
+		event_target:aurions_landing_location = {
+			ROOT = {
+				tooltip = { #tooltip, army added in dividable untis below
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 250 250 }						
+							light_infantry = { 5640 5640 }
+							heavy_infantry = { 6018 6018 }
+							archers = { 1671 1671 }
+							light_cavalry = { 1254 1254 }
+							knights = { 167 167 }
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}
+				spawn_fleet = {
+					province = event_target:aurions_ship_location
+					owner = ROOT
+					troops =
+					{
+						galleys = { 150 150 }
+					}
+					earmark = aurions_fleet
+					cannot_inherit = yes
+				}				
+			}
+		}
+		hidden_tooltip = {
+			activate_title = { status = no title = e_aurions_host }
+			e_aurions_host = { destroy_landed_title = ROOT }
+			event_target:aurions_landing_target = {
+				if = { #retain merchant republic
+					limit = { is_merchant_republic = yes }
+					any_vassal = {
+						limit = {
+							is_patrician = yes
+						}
+						set_character_flag = patrician
+					}
+				}	
+				capital_scope = { 
+					county = { gain_title = ROOT }
+					if = { #if capital is city, take castle and give back to republic as vassal
+						limit = { capital_holding = { holding_type = city } }
+						capital_holding = { save_event_target_as = city_holding }
+						random_province_holding = {
+							limit = { holding_type = castle }
+							gain_title = ROOT
+							province_capital = yes
+							ROOT = { capital = PREV }
+						}					
+						event_target:city_holding = {
+							gain_title = event_target:aurions_landing_target
+							event_target:aurions_landing_target = { capital = PREV }
+						}
+					}				 
+				}
+				set_defacto_liege = ROOT
+				ROOT = {
+					any_vassal = {
+						limit = {
+							has_character_flag = patrician
+						}
+						clr_character_flag = patrician
+						set_defacto_liege = event_target:aurions_landing_target
+					}
+				}	
+				any_vassal = {
+					limit = {
+						has_character_flag = patrician
+					}
+					clr_character_flag = patrician
+				}
+			}
+			event_target:aurions_landing_location = {
+				ROOT = {
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1504 1504 } #3
+							archers = { 417 417 } #7
+							light_cavalry = { 313 313 } #3
+							knights = { 41 41 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}	
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 62 62 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1505 1505 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 314 314 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1504 1504 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 313 313 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+					spawn_unit = {
+						province = PREV
+						home = PREV
+						owner = ROOT
+						troops = {
+							unsullied = { 63 63 } #4						
+							light_infantry = { 1410 1410 } #1
+							heavy_infantry = { 1505 1505 } #3
+							archers = { 418 418 } #7
+							light_cavalry = { 314 314 } #3
+							knights = { 42 42 } #6
+						}
+						attrition = 1
+						earmark = aurions_host
+					}
+				}
+			}
+		}	
+	}
+}	

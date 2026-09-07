@@ -1,0 +1,1090 @@
+###################################
+#
+# Events for Coronation
+#
+namespace = coronation
+#
+###################################
+
+# Written by Van Diemen & asoiaf adapted by Tompalmer
+
+# Coronation inform Emperor
+character_event = {
+	id = coronation.1
+	picture = GFX_evt_greatsept
+	#border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes # decision coronation
+	
+	desc = {
+		text = EVTDESCcoronation.1
+		trigger = { 
+			OR = {
+				religion = the_seven
+				is_old_gods_religion_trigger = yes
+				religion = pirate
+				religion = corsair
+			}
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.1A
+		trigger = { religion = rhllor }
+	}
+	desc = {
+		text = EVTDESCcoronation.1B
+		trigger = { is_drowned_god_religion_trigger = yes }
+	}
+	desc = {
+		text = EVTDESCcoronation.1C
+		trigger = { religion = dothraki_pagan }		
+	}
+	desc = {
+		text = EVTDESCcoronation.1D
+		trigger = { 
+			NOT = { religion = the_seven }
+			NOT = { is_old_gods_religion_trigger = yes }
+			NOT = { religion = pirate }
+			NOT = { religion = corsair }
+			NOT = { religion = rhllor }
+			NOT = { is_drowned_god_religion_trigger = yes }
+			NOT = { religion = dothraki_pagan }
+		}
+	}
+	
+	immediate = {
+		hidden_tooltip = {
+			any_realm_lord = { clr_character_flag = attend_coronation }
+			if = {
+				limit = {
+					OR = {
+						religion = the_seven
+						religion = bearded_priests
+					}	
+				}
+				rightful_religious_head_scope = { save_event_target_as = priest_coronation }
+				break = yes
+			}	
+			if = {
+				limit = {
+					OR = {
+						is_old_gods_religion_trigger = yes
+						religion = pirate
+						religion = corsair
+						religion = dothraki_pagan
+					}	
+					k_the_most_devout = { has_holder = yes }
+				}
+				k_the_most_devout = { holder_scope = { save_event_target_as = priest_coronation } }
+				break = yes
+			}
+			if = {
+				limit = { job_spiritual = { religion = ROOT } }
+				job_spiritual = { save_event_target_as = priest_coronation }
+				break = yes
+			}
+			random_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						is_priest = yes
+						has_priest_trait_trigger = yes
+					}	
+				}
+				save_event_target_as = priest_coronation
+				break = yes
+			}
+			capital_scope = {
+				ROOT = {
+					random_list = {
+						50 = {
+							trigger = { religion_allows_male_temple_holders = yes }
+							create_random_priest = {
+								random_traits = yes
+								dynasty = NONE
+								religion = ROOT
+								female = no
+							}
+						}
+						50 = {
+							trigger = { religion_allows_female_temple_holders = yes }
+							create_random_priest = {
+								random_traits = yes
+								dynasty = NONE
+								religion = ROOT
+								female = yes
+							}
+						}
+					}
+					new_character = {
+						save_event_target_as = priest_coronation
+						add_priest_trait_effect = yes	
+						remove_trait = imbecile
+						remove_trait = inbred
+						remove_trait = slow
+						remove_trait = incapable
+						remove_trait = leper
+						remove_trait = possessed
+						remove_trait = ill
+						remove_trait = pneumonic
+						remove_trait = maimed
+						if = {
+							limit = { 
+								culture_group = hyrkoon_group
+							}
+							add_trait = eunuch
+						}			
+					}
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.1" # I will ask the pope
+		event_target:priest_coronation = {
+			letter_event = { id = coronation.2 }
+		}
+	}
+}
+
+# Asking the pope for coronation
+letter_event = {
+	id = coronation.2
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcoronation.2
+		trigger = { 
+			FROM = {
+				OR = {
+					religion = the_seven
+					is_old_gods_religion_trigger = yes
+					religion = pirate
+					religion = corsair
+				}
+			}	
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.2A
+		trigger = { FROM = { religion = rhllor } }
+	}
+	desc = {
+		text = EVTDESCcoronation.2B
+		trigger = { FROM = { is_drowned_god_religion_trigger = yes } }
+	}
+	desc = {
+		text = EVTDESCcoronation.2C
+		trigger = { FROM = { religion = dothraki_pagan }	 }
+	}
+	desc = {
+		text = EVTDESCcoronation.2D
+		trigger = { 
+			FROM = {
+				NOT = { religion = the_seven }
+				NOT = { is_old_gods_religion_trigger = yes }
+				NOT = { religion = pirate }
+				NOT = { religion = corsair }
+				NOT = { religion = rhllor }
+				NOT = { is_drowned_god_religion_trigger = yes }
+				NOT = { religion = dothraki_pagan }
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.2"	# Accept
+		wealth = 100
+		FROM = {
+			letter_event = { id = coronation.3 }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2.0
+				liege = { character = FROM }
+			}
+			modifier = {
+				factor = 4
+				liege = { character = FROM }
+				religion = the_seven
+				FROM = { crownlaw_title = { has_law = investiture_law_1 } }
+			}
+			modifier = {
+				factor = 10
+				religion = rhllor
+				FROM = { trait = chosen_by_rhllor }
+			}
+			modifier = {
+				factor = 4
+				religion = rhllor
+				FROM = { trait = favored_by_rhllor }
+			}
+			modifier = {
+				factor = 4
+				is_drowned_god_religion_trigger = yes
+				FROM = { trait = drowned }
+			}
+			modifier = {
+				factor = 4
+				religion = the_seven
+				FROM = { trait = septon }
+			}
+			
+			modifier = {
+				factor = 2
+				FROM = { trait = dragon_rider }
+			}
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					opinion = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					opinion = {
+						who = FROM
+						value = 40
+					}
+				}
+			}
+			modifier = {
+				factor = 2.0
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 2.0
+				FROM = { trait = septon }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 400 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 600 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 800 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 1000 }
+			}
+		}
+	}
+        
+    option = {
+		name = "EVTOPTAcoronation.2"	# Reject
+		trigger = {
+			OR = {
+				FROM = { crownlaw_title = { NOT = { has_law = investiture_law_0 } } }
+				NOT = { liege = { character = FROM } }
+			}	
+		}
+		FROM = {
+			letter_event = { id = coronation.4 }
+		}
+		FROM = {
+			opinion = {
+				modifier = coronation_rejected # should maybe be a new opinion called "Crowned by Pope"
+				who = ROOT
+				years = 5
+			}
+		}
+		ai_chance = {
+			factor = 0.5
+			modifier = {
+				factor = 2
+				NOT = { religion_group = FROM }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 0.01
+				ROOT = {
+					opinion = {
+						who = FROM
+						value = 50
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = -99
+						}
+					}
+				}
+			}			
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = -79
+						}
+					}
+				}
+			}			
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = -59
+						}
+					}
+				}
+			}			
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = -39
+						}
+					}
+				}
+			}			
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = -19
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				ROOT = {
+					NOT = {
+						opinion = {
+							who = FROM
+							value = 0
+						}
+					}
+				}
+			}			
+			modifier = {
+				factor = 2.0
+				FROM = { trait = lunatic }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = suspected_kinslayer }
+			}
+			modifier = {
+				factor = 3.0
+				FROM = { is_any_kinslayer_trigger = yes }
+			}
+			modifier = {
+				factor = 2.0
+				FROM = { trait = bastard }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = legit_bastard }
+			}
+			modifier = {
+				factor = 2.0
+				FROM = { trait = cynical }
+			}
+			modifier = {
+				factor = 2.0
+				NOT = { piety = 0 }
+			}
+			#Abomination of Incest
+			modifier = {
+				factor = 3
+				FROM = { 
+					has_character_modifier = abomination_of_incest
+				}
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { 
+					has_character_modifier = grandchild_of_incest
+				}
+			}
+		}
+	}
+}
+
+# Inform Emperor Pope accepts coronation + send out the invites to realm lords
+letter_event = {
+	id = coronation.3
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcoronation.3
+		trigger = { 
+			OR = {
+				religion = the_seven
+				is_old_gods_religion_trigger = yes
+				religion = pirate
+				religion = corsair
+			}
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.3A
+		trigger = { religion = rhllor }
+	}
+	desc = {
+		text = EVTDESCcoronation.3B
+		trigger = { is_drowned_god_religion_trigger = yes }
+	}
+	desc = {
+		text = EVTDESCcoronation.3C
+		trigger = { religion = dothraki_pagan }		
+	}
+	desc = {
+		text = EVTDESCcoronation.3D
+		trigger = { 
+			NOT = { religion = the_seven }
+			NOT = { is_old_gods_religion_trigger = yes }
+			NOT = { religion = pirate }
+			NOT = { religion = corsair }
+			NOT = { religion = rhllor }
+			NOT = { is_drowned_god_religion_trigger = yes }
+			NOT = { religion = dothraki_pagan }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.3"	# Excellent, now invite all the lords
+		clr_character_flag = unblessed_king
+		add_character_modifier = {
+			name = holding_large_feast
+			duration = 365
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = {
+					age = 16
+					NOT = { character = FROM }
+					NOT = { character = ROOT }
+					OR = {
+						#tier = count
+						tier = duke
+						tier = king
+					}
+					NOT = { trait = excommunicated }
+					religion_group = westerosi_religion
+					NOT = { is_heretic = yes }
+					NOT = { trait = incapable }
+					prisoner = no	
+				}
+				letter_event = { id = coronation.5 } # Invitation to coronation
+			}
+			character_event = { id = 72003 days = 4 } #Food prep	
+			character_event = { id = feast.1 } #Random Events
+			character_event = { id = coronation.799 days = 20 tooltip = TOOLTIPcoronation.7 } # guests arrive
+			character_event = { id = coronation.8 days = 20 } # Coronation cancelled
+		}
+	}
+}
+
+# Inform Emperor pope rejects coronation
+letter_event = {
+	id = coronation.4
+
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcoronation.4
+		trigger = { 
+			religion = the_seven
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.4A
+		trigger = { religion = rhllor }
+	}
+	desc = {
+		text = EVTDESCcoronation.4B
+		trigger = { is_drowned_god_religion_trigger = yes }
+	}
+	desc = {
+		text = EVTDESCcoronation.4C
+		trigger = { 
+			OR = {
+				religion = dothraki_pagan 
+				is_old_gods_religion_trigger = yes
+				religion = pirate
+				religion = corsair
+			}
+		}		
+	}
+	desc = {
+		text = EVTDESCcoronation.4D
+		trigger = { 
+			NOT = { religion = the_seven }
+			NOT = { is_old_gods_religion_trigger = yes }
+			NOT = { religion = pirate }
+			NOT = { religion = corsair }
+			NOT = { religion = rhllor }
+			NOT = { is_drowned_god_religion_trigger = yes }
+			NOT = { religion = dothraki_pagan }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.4"	# Maybe we should try again later
+		prestige = -50
+		FROM = {
+			opinion = {
+				modifier = coronation_rejected # should maybe be a new opinion called "Crowned by Pope"
+				who = ROOT
+				years = 5
+			}
+		}
+		set_character_flag = unblessed_king
+		clr_character_flag = wants_coronation
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_CORONATION_REJECTED
+				portrait = [From.GetID]
+			}
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = {
+						NOT = { character = ROOT }
+						OR = {		
+							dynasty = ROOT
+							is_liege_or_above = ROOT
+							any_demesne_title = {
+								ROOT = {
+									any_demesne_title = {
+										tier = EMPEROR
+										is_variable_equal = { which = "de_facto_empire" which = PREVPREV }
+									}
+								}
+							}
+						}
+					}
+					chronicle = {
+						entry = CHRONICLE_CORONATION_REJECTED
+						portrait = [Root.GetID]
+					}
+				}
+			}
+		}	
+	}
+}
+
+# Coronation invites to realm lords
+letter_event = {
+	id = coronation.5
+	#picture = GFX_evt_heretic
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcoronation.5
+		trigger = { 
+			FROM = {
+				OR = {
+					religion = the_seven
+					is_old_gods_religion_trigger = yes
+					religion = pirate
+					religion = corsair
+				}
+			}	
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.5A
+		trigger = { FROM = { religion = rhllor } }
+	}
+	desc = {
+		text = EVTDESCcoronation.5B
+		trigger = { FROM = { is_drowned_god_religion_trigger = yes } }
+	}
+	desc = {
+		text = EVTDESCcoronation.5C
+		trigger = { FROM = { religion = dothraki_pagan }	 }
+	}
+	desc = {
+		text = EVTDESCcoronation.5D
+		trigger = { 
+			FROM = {
+				NOT = { religion = the_seven }
+				NOT = { is_old_gods_religion_trigger = yes }
+				NOT = { religion = pirate }
+				NOT = { religion = corsair }
+				NOT = { religion = rhllor }
+				NOT = { is_drowned_god_religion_trigger = yes }
+				NOT = { religion = dothraki_pagan }
+			}	
+		}
+	}
+	
+	trigger = {
+		FROM = {
+			has_landed_title = e_iron_throne
+			NOT = { character = ROOT }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.5"	# I will attend the ceremony
+		set_character_flag = attend_coronation
+		ai_chance = {
+			factor = 0.8
+
+			modifier  = {
+				factor = 3
+				dynasty = FROM
+			}
+			modifier  = {
+				factor = 3
+				is_close_relative = FROM
+			}
+			modifier  = {
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier  = {
+				factor = 2
+				opinion = { who = FROM value = 30 }
+			}
+			
+			
+			modifier  = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier  = {
+				factor = 1.5
+				trait = hedonist
+			}
+			modifier  = {
+				factor = 1.5
+				trait = just
+			}
+			modifier  = {
+				factor = 1.5
+				trait = honorable
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBcoronation.5"	# I have more important things to do
+		FROM = {
+			opinion = {
+				modifier = insulted
+				who = ROOT
+				months = 60
+			}
+		}
+		FROM = {
+			letter_event = { id = coronation.6 }
+		}
+		ai_chance = {
+			factor = 0.2		
+			
+			modifier  = {
+				factor = 0
+				OR = {
+					opinion = { who = FROM value = 50 }
+					AND = {
+						NOT = { trait = shy }
+						OR = {
+							opinion = { who = FROM value = 20 }
+							AND = {
+								opinion = { who = FROM value = -20 }
+								OR = {
+									is_close_relative = FROMFROM
+									FROMFROM = { spouse = { is_close_relative = ROOT } } 
+									is_close_relative = FROM
+									is_liege_or_above = FROM
+								}
+							}
+						}
+					}
+				}	
+			}
+			modifier  = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier  = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier  = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier  = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+	
+		
+			modifier  = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier  = {
+				factor = 1.5
+				trait = arbitrary
+			}
+			modifier  = {
+				factor = 1.5
+				trait = ruthless
+			}
+		}
+	}
+}
+
+# Inform Emperor of not attending ceremony
+letter_event = {
+	id = coronation.6
+	desc = "EVTDESCcoronation.6"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAcoronation.6"	# I have no words for such dishonour
+	}
+}
+
+#The guests have arrived
+character_event = {
+	id = coronation.799
+	desc = EVTDESCcoronation.799
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAcoronation.799
+		set_character_flag = host_feast_started
+		if = { # Abbreviate list if too many people
+			limit = { ai = no }
+			if = { 
+				limit = {
+					any_realm_lord = {
+						has_character_flag = attend_coronation
+						count = 40
+					}
+				}
+				custom_tooltip = { text = TOOLTIPdynasty.23ARRIVEDB } # No need to make my own one
+				any_realm_lord = {
+					limit = {
+						has_character_flag = attend_coronation
+						OR = { # Show important ones
+							ai = no
+							higher_tier_than = COUNT
+							AND = {
+								liege = { higher_tier_than = COUNT }
+								liege = { regent = { character = PREVPREV } }
+							}
+							AND = { #Closely related dynasts
+								dynasty = ROOT
+								is_close_relative = ROOT
+							}
+						}
+					}
+					custom_tooltip = { text = EVTTOOLTIPdynasty.24 }
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_realm_lord = {
+							has_character_flag = attend_coronation
+							count = 40
+						}
+					}
+				}
+				custom_tooltip = { text = TOOLTIPdynasty.23ARRIVED } # No need to make my own one
+				any_realm_lord = {
+					limit = {
+						has_character_flag = attend_coronation
+					}
+					custom_tooltip = { text = EVTTOOLTIPdynasty.24 }
+				}
+			}	
+		}	
+		hidden_tooltip = { 
+			any_realm_lord = {
+				limit = {
+					has_character_flag = attend_coronation
+				}
+				set_character_flag = guest_feast_started
+				character_event = { id = coronation.798 } #inform
+				character_event = { id = feast.3 } #random events			
+			}		
+			narrative_event = { id = coronation.7 days = 20 tooltip = TOOLTIPcoronation.7 } # the coronation
+			character_event = { id = feast.2 days = 1 } #Random Events
+		}	
+	}
+}
+character_event = { #inform guest arrived
+	id = coronation.798
+	desc = EVTDESCcoronation.798
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAcoronation.798
+	}
+}	
+# Emperor crowned by pope
+narrative_event = {
+	id = coronation.7
+	title = "EVTNAMEcoronation.7"
+	picture = GFX_evt_ironthrone
+	border = "GFX_event_narrative_frame_religion"
+	sound = church_bells
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = { has_landed_title = e_iron_throne }
+	
+	desc = {
+		text = EVTDESCcoronation.7
+		trigger = { 
+			OR = {
+				religion = the_seven
+				is_old_gods_religion_trigger = yes
+				religion = pirate
+				religion = corsair
+			}
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.7A
+		trigger = { religion = rhllor }
+	}
+	desc = {
+		text = EVTDESCcoronation.7B
+		trigger = { is_drowned_god_religion_trigger = yes }
+	}
+	desc = {
+		text = EVTDESCcoronation.7C
+		trigger = { religion = dothraki_pagan }		
+	}
+	desc = {
+		text = EVTDESCcoronation.7D
+		trigger = { 
+			NOT = { religion = the_seven }
+			NOT = { is_old_gods_religion_trigger = yes }
+			NOT = { religion = pirate }
+			NOT = { religion = corsair }
+			NOT = { religion = rhllor }
+			NOT = { is_drowned_god_religion_trigger = yes }
+			NOT = { religion = dothraki_pagan }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAcoronation.7"	# This is the happiest day of my life
+		set_character_flag = crowned_by_high_septon
+		prestige = 150
+		hidden_tooltip = {
+			character_event = { id = 72999 } #clear feast flags
+			FROMFROM = {
+				reverse_opinion = {
+					modifier = opinion_grateful
+					who = ROOT
+					months = 60
+				}
+				narrative_event = { id = coronation.11 }
+			}
+			any_realm_lord = {
+				limit = {
+					has_character_flag = attend_coronation
+					NOT = { character = ROOT }
+				}
+				#character_event = { id = coronation.9 }
+				opinion = {
+					modifier = opinion_attended_ceremony # should maybe be a new opinion called "Crowned by Pope"
+					who = ROOT
+					years = 5
+				}
+			}
+			clr_character_flag = wants_coronation
+			
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_CORONATED
+					picture = GFX_evt_ironthrone
+				}
+			}
+		}
+	}
+}
+
+# Coronation cancelled
+character_event = {
+	id = coronation.8
+	desc = "EVTDESCcoronation.8"
+
+	is_triggered_only = yes
+	
+	trigger = { NOT = { has_landed_title = e_iron_throne } }
+	
+	option = {
+		name = "EVTOPTAcoronation.8"	
+		clr_character_flag = wants_coronation
+	}
+}
+
+# # Emperor crowned by pope - attended realm lord inform ceremony
+# character_event = {
+	# id = coronation.9
+	# desc = "EVTDESCcoronation.9"
+	# picture = GFX_evt_ironthrone
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAcoronation.9"	# The coronation was beautiful
+		# prestige = 20
+		# clr_character_flag = attend_coronation
+	# }
+# }
+
+# # Emperor crowned by pope - non-attended realm lord inform
+# letter_event = {
+	# id = coronation.10
+	# desc = "EVTDESCcoronation.10"
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "OK"	# Ok
+	# }
+# }
+narrative_event = { #stylish
+	id = coronation.11
+	title = "EVTNAMEcoronation.11"
+	picture = GFX_evt_ironthrone
+	border = "GFX_event_narrative_frame_religion"
+	sound = church_bells
+
+	major = yes
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcoronation.11
+		trigger = { 
+			FROM = {
+				OR = {
+					religion = the_seven
+					is_old_gods_religion_trigger = yes
+					religion = pirate
+					religion = corsair
+				}
+			}	
+		}
+	}
+	desc = {
+		text = EVTDESCcoronation.11A
+		trigger = { FROM = { religion = rhllor } }
+	}
+	desc = {
+		text = EVTDESCcoronation.11B
+		trigger = { FROM = { is_drowned_god_religion_trigger = yes } }
+	}
+	desc = {
+		text = EVTDESCcoronation.11C
+		trigger = { FROM = { religion = dothraki_pagan }	 }
+	}
+	desc = {
+		text = EVTDESCcoronation.11D
+		trigger = { 
+			FROM = {
+				NOT = { religion = the_seven }
+				NOT = { is_old_gods_religion_trigger = yes }
+				NOT = { religion = pirate }
+				NOT = { religion = corsair }
+				NOT = { religion = rhllor }
+				NOT = { is_drowned_god_religion_trigger = yes }
+				NOT = { religion = dothraki_pagan }
+			}	
+		}
+	}
+	
+	major_trigger = {
+		NOT = { character = FROM }
+		OR = {
+			ai = no
+			has_character_flag = attend_coronation
+		}
+		OR = {
+			is_liege_or_above = FROM
+			primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } } #Iron Throne
+			capital_scope = { region = world_westeros }
+			culture_group = andal
+			culture_group = iron_isles_culture
+			culture_group = dornish
+			culture = western_valyrian
+			culture_group = first_men
+			culture_group = free_folk
+		}
+	}
+	
+	option = {
+		trigger = {
+			has_character_flag = attend_coronation
+		}
+		name = "EVTOPTAcoronation.9"	# The coronation was beautiful
+		clr_character_flag = attend_coronation
+		clr_character_flag = guest_feast_started
+	}
+	
+	option = {
+		trigger = {
+			NOT = { has_character_flag = attend_coronation }
+			OR = {
+				is_liege_or_above = FROM
+				primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } } #Iron Throne
+			}	
+		}
+		name = "OK"	
+	}
+	
+	option = {
+		trigger = {
+			NOT = { has_character_flag = attend_coronation }
+			NOR = {
+				is_liege_or_above = FROM
+				primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } } #Iron Throne
+			}	
+		}
+		name = "EVTOPTAcoronation.11"	
+	}
+}

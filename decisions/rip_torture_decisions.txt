@@ -1,0 +1,1364 @@
+targetted_decisions = {
+	prisoner_torture = {
+		only_playable = yes
+		filter = court
+		ai_target_filter = court
+		diplomacy_icon = GFX_decision_torture
+		
+		from_potential = {
+			has_dlc = "Reapers"
+			is_ruler = yes
+			OR = {
+				trait = cruel
+				trait = lunatic
+				trait = impaler
+				has_cutthroat_religion_trigger = yes
+			}
+			is_adult = yes
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+
+		potential = {
+			prisoner = yes
+			host = { character = FROM }
+			NOT = { trait = dragon }
+			NOT = { culture_group = winter_group }	
+			NOT = { culture_group = unoccupied_group }
+			OR = {
+				NOT = { has_character_flag = tortured }
+				had_character_flag = { flag = tortured days = 365 }
+			}	
+			age = 13
+		}
+
+		allow = {
+			conditional_tooltip = {
+				trigger = { NOT = { has_dlc = "Zeus" } }
+				FROM = {
+					OR = {
+						has_regent = no				
+						regent = { 
+							NOT = { opinion = { who = ROOT value = -25 } }
+							NOT = { trait = kind }
+							NOT = { trait = just }
+							NOT = { trait = honorable }
+						}
+					}
+				}
+			}				
+			NOT = { diplomatic_immunity = yes }
+			prisoner = yes
+		}
+
+		effect = {
+			hidden_tooltip = {
+				if = {
+					limit = {
+						FROM = { 
+							has_nickname = no
+							is_adult = yes
+							NOT = { trait = incapable }
+						}
+					}
+					random_list = {
+						5 = {
+							FROM = { give_nickname = nick_the_cruel }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_evil }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_tormentor }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_depraved }
+						}
+						100 = {}
+					}
+				}
+			}
+			hidden_tooltip = {
+				clr_character_flag = torture_confession
+				if = {
+					limit = {
+						NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_confessed } }
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = suspected_kinslayer
+							AND = {
+								OR = {
+									trait = excommunicated
+									NOT = { piety = -150 }
+								}
+								FROM = {
+									OR = {
+										is_theocracy = yes
+										trait = zealous
+									}
+									trigger_if = {
+										limit = { NOT = { has_religion_feature = religion_dogmatic } }
+										NOR = {
+											religion = moonsingers
+											religion = moonsingers_reformed
+											religion = valyrian_rel
+											religion = valyrian_rel_reformed
+											pacifist = yes
+											religion = pirate
+											religion = corsair
+											has_religion_feature = religion_cosmopolitan
+											has_religion_feature = religion_peaceful
+											has_religion_feature = religion_feature_nath_pagan
+										}
+									}							
+								}						
+							}
+							reverse_has_opinion_modifier = { who = FROM modifier = scheming_bastard }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_corrupt }
+							reverse_has_opinion_modifier = { who = FROM modifier = suspect_of_murder }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_blackmailed }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_unfaithful_wife }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_unfaithful_husband }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_charge_infidel }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_charge_deviant }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_charge_slanderer }
+							reverse_has_opinion_modifier = { who = FROM modifier = abuse_of_office }
+							reverse_has_opinion_modifier = { who = FROM modifier = attempted_kidnapping }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_disinherited_me }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_conspired_against_me }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_conspired_against_child }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_ignored_my_judgement }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_cuckolded_AGOT }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_murderer }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_prison_break }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_attempted_prison_break }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_slaver }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_upon_me }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_upon_kin }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_upon_lover }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_upon_friend }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_upon_spouse }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_aborted_my_child }
+							reverse_has_opinion_modifier = { who = FROM modifier = declared_me_insane }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_marriage }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_marriage_child }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_marriage_kin }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_forced_marriage_lover }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_assaulted_me }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_peasant_hunting }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_executed_realm_character }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_refused_prisoner_transfer }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_unfaithful_consort }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_slept_with_my_consort }
+							reverse_has_opinion_modifier = { who = FROM modifier = devious_plotter }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_warden_no_defend }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_illegal_slave_trader }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_enslaved_close_relative }
+							reverse_has_opinion_modifier = { who = FROM modifier = opinion_enslaved_me }
+						}
+					}
+					set_character_flag = torture_confession
+					FROM = { set_character_flag = torture_confession }
+				}
+			}
+			hidden_tooltip = {
+				random_list = {
+					#Normal torture options
+					10 = { 
+						random_list = {
+							50 = {
+								# AGOT event
+								FROM = { character_event = { id = 50051 } }
+								character_event = { id = 50052 } 
+							}
+							10 = {
+								# Racks
+								FROM = { character_event = { id = RIP.20001 } }
+								character_event = { id = RIP.20002 } 
+							}
+
+							10 = {
+								# Whipping
+								FROM = { character_event = { id = RIP.20003 } }
+								character_event = { id = RIP.20004 } 
+							}
+
+							10 = {
+								# Rats
+								FROM = { character_event = { id = RIP.20005} }
+								character_event = { id = RIP.20006 } 
+							}
+							
+							20 = {
+								# Heat exposure
+								modifier = {
+									factor = 0
+									OR = {
+										capital_scope = { has_province_modifier = asoiaf_mild_winter }
+										capital_scope = { has_province_modifier = asoiaf_normal_winter }
+										capital_scope = { has_province_modifier = asoiaf_harsh_winter }
+										capital_scope = { region = world_beyond_the_wall }
+										capital_scope = { region = world_the_wall }
+										capital_scope = { region = world_north }
+									}
+								}
+								FROM = { character_event = { id = RIP.20009 } }
+								character_event = { id = RIP.20010 } 
+							}
+							20 = {
+								# Cold exposure
+								modifier = {
+									factor = 0
+									NOR = {
+										capital_scope = { has_province_modifier = asoiaf_mild_winter }
+										capital_scope = { has_province_modifier = asoiaf_normal_winter }
+										capital_scope = { has_province_modifier = asoiaf_harsh_winter }
+										capital_scope = { region = world_beyond_the_wall }
+										capital_scope = { region = world_the_wall }
+										capital_scope = { region = world_north }
+									}
+								}
+								FROM = { character_event = { id = RIP.20011 } }
+								character_event = { id = RIP.20012 }
+							}
+						}
+						hidden_tooltip = {
+							opinion = {
+								who = FROM
+								modifier = opinion_tortured_me
+							}
+							father = { 
+								opinion = { who = FROM modifier = opinion_tortured_kin } 
+								if = {
+									limit = { ai = no }
+									character_event = { id = 50053 }
+								}
+							}
+							mother = { 
+								opinion = { who = FROM modifier = opinion_tortured_kin } 
+								if = {
+									limit = { ai = no }
+									character_event = { id = 50053 }
+								}
+							}
+							any_dynasty_member = {
+								limit = {
+									is_close_relative = ROOT
+									NOT = { is_parent_of = ROOT } 
+								}
+								opinion = { who = FROM modifier = opinion_tortured_kin }
+								if = {
+									limit = { ai = no }
+									character_event = { id = 50053 }
+								}
+							}
+							any_spouse = {
+								limit = { opinion = { who = ROOT value = -25 } }
+								opinion = { who = FROM modifier = opinion_tortured_kin }
+							}
+							any_spouse = {
+								limit = { ai = no }
+								character_event = { id = 50053 }
+							}
+							any_lover = { 
+								limit = { 
+									NOT = { is_parent_of = ROOT } 
+									NAND = {
+										dynasty = ROOT
+										is_close_relative = ROOT
+									}
+									NOT = { is_married = ROOT }
+								}
+								opinion = { who = FROM modifier = opinion_tortured_lover } 
+								if = {
+									limit = { ai = no }
+									character_event = { id = 50053 }
+								}
+							}
+							any_friend = { 
+								limit = { 
+									NOT = { is_parent_of = ROOT } 
+									NAND = {
+										dynasty = ROOT
+										is_close_relative = ROOT
+									}
+									NOT = { is_married = ROOT }
+									NOT = { is_lover = ROOT }
+								}
+								opinion = { who = FROM modifier = opinion_tortured_friend } 
+								if = {
+									limit = { ai = no }
+									character_event = { id = 50053 }
+								}
+							}
+							
+							liege = {
+								if = {
+									limit = { 
+										ai = no 
+										NOT = { is_parent_of = ROOT } 
+										NAND = {
+											dynasty = ROOT
+											is_close_relative = ROOT
+										}
+										NOT = { is_married = ROOT }
+										NOT = { is_lover = ROOT }
+										NOT = { is_friend = ROOT }
+									}
+									character_event = { id = 50053 }
+								}	
+							}
+							if = {
+								limit = { is_ruler = yes }
+								any_realm_lord = {
+									limit = { 
+										ai = no 
+										NOT = { is_parent_of = ROOT } 
+										NAND = {
+											dynasty = ROOT
+											is_close_relative = ROOT
+										}
+										NOT = { is_married = ROOT }
+										NOT = { is_lover = ROOT }
+										NOT = { is_friend = ROOT }
+									}
+									character_event = { id = 50053 }
+								}
+							}	
+						}
+					}
+
+					2 = {
+						# Lunatic option
+						modifier = {
+							factor = 0
+							NOT = { FROM = { trait = lunatic } }
+						}
+
+						FROM = { character_event = { id = RIP.20007 } }
+						character_event = { id = RIP.20008 } 
+					}
+				}	
+			}
+			tooltip = {
+				add_character_modifier = { name = tortured duration = 180 }
+				opinion = {
+					modifier = opinion_tortured_me
+					who = FROM
+				}
+			}
+			set_character_flag = tortured
+			add_fear_torture_effect = yes
+			FROM = {
+				if = {
+					limit = {
+						NOR = {
+							trait = cruel
+							trait = kind
+						}
+					}
+					random = {
+						chance = 25
+						add_trait = cruel
+						hidden_tooltip = { character_event = { id = 38259 } }
+					}
+				}
+
+				if = {
+					limit = { trait = kind }
+					random = { 
+						chance = 50
+						remove_trait = kind
+						hidden_tooltip = {
+							character_event = { id = 38307 }
+						}
+					}
+					hidden_tooltip = {
+						random_list = {
+							30 = {
+								add_trait = stressed
+								hidden_tooltip = { character_event = { id = 38282 } }
+							}
+							10 = {
+								add_trait = depressed
+								hidden_tooltip = { character_event = { id = 38288 } }
+							}
+							60 = {
+								#nothing
+							}
+						}
+					}
+				}
+				piety = -20
+			}
+			FROM = {
+				if = {
+					limit = { NOT = { is_naathi_harmony_religion_trigger = yes } }
+					piety = -30
+				}
+				if = {
+					limit = { is_naathi_harmony_religion_trigger = yes }
+					piety = -60
+					custom_tooltip = { text = nath_pagan_ahimsa_tooltip }
+				}
+			}
+		}
+
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.03 # Less likely to do it
+			}
+			modifier = {
+				factor = 0
+				is_naathi_harmony_religion_trigger = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0
+				reverse_opinion = { who = FROM value = 20 }
+				FROM = { NOT = { trait = lunatic } }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = kind 
+						trait = just
+						trait = honorable 
+					}	
+				}
+			}
+			modifier = { #trying to inspire fear
+				factor = 2
+				FROM = {
+					OR = {
+						trait = ruthless
+						trait = cruel
+					}
+					OR = {
+						is_close_relative = ROOT
+						is_vassal_or_below = ROOT
+						ROOT = { liege = { liege_before_war = { character = ROOT_FROM } } }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					is_lover = FROM
+					any_consort = { character = FROM }
+					is_married = FROM
+				}	
+			}
+			modifier = {
+				factor = 0.1 #Enemy has your relative
+				FROM = {
+					any_current_enemy = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+						any_courtier = {
+							is_close_relative = FROM
+							dynasty = FROM
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0 #Is your enemy and can enforce a victory
+				FROM = {
+					any_current_enemy = {
+						character = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = wroth }
+			}		
+			modifier = {
+				factor = 1.5
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = cruel }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = impaler }
+			}
+			modifier = {
+				factor = 0.33
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -50 } }
+			}
+		}
+	}
+
+	prisoner_mutilate = {
+		only_playable = yes
+
+		filter = court
+		ai_target_filter = court
+		
+		diplomacy_icon = GFX_prisoner_mutilate
+		from_potential = {
+			has_dlc = "Reapers"
+			is_playable = yes
+			is_adult = yes
+			prisoner = no
+			NOT = { trait = incapable }
+			AND = {
+				OR = {
+					trait = cruel
+					trait = impaler
+					trait = wroth
+					trait = arbitrary
+					AND = {
+						trait = envious
+						has_ugly_trait_trigger = yes
+					}
+					has_cutthroat_religion_trigger = yes
+				}
+				NOT = { trait = kind }
+			}
+		}
+
+		potential = {
+			host = { character = FROM }
+			prisoner = yes
+			age = 13
+
+			NOT = {
+				AND = {
+					trait = one_legged
+					trait = one_handed
+					trait = disfigured
+					OR = {
+						trait = one_eyed
+						trait = blinded
+					}
+					OR = {
+						is_female = yes
+						trait = eunuch
+					}
+				}
+			}
+		}
+
+		allow = {
+			prisoner = yes
+			NOT = { diplomatic_immunity = yes }
+		}
+
+		effect = {
+			hidden_tooltip = {
+				if = {
+					limit = {
+						FROM = { 
+							has_nickname = no
+							is_adult = yes
+							NOT = { trait = incapable }
+						}
+					}
+					random_list = {
+						5 = {
+							FROM = { give_nickname = nick_the_evil }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_tormentor }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_butcher }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_mutilator }
+						}
+						5 = {
+							FROM = { give_nickname = nick_the_monster }
+						}
+						5 = {
+							FROM = { give_nickname = nick_son_of_evilgod }
+						}
+						100 = {}
+					}
+				}
+			}
+		
+			hidden_tooltip = {
+				random_list = {
+					10 = {
+						# One-legged
+						modifier = {
+							factor = 0
+							trait = one_legged
+						}
+						FROM = { character_event = { id = RIP.20013 } }
+						character_event = { id = RIP.20014 } 
+					}
+
+					10 = {
+						# One-handed
+						modifier = {
+							factor = 0
+							trait = one_handed
+						}
+						FROM = { character_event = { id = RIP.20015 } }
+						character_event = { id = RIP.20016 }
+
+					}
+
+					10 = {
+						# One-eyed
+						modifier = {
+							factor = 0
+							OR = {
+								trait = one_eyed
+								trait = blinded
+							}
+						}
+						FROM = { character_event = { id = RIP.20017 } }
+						character_event = { id = RIP.20018 } 
+
+					}
+
+					10 = {
+						# Disfigured
+						modifier = {
+							factor = 0
+							trait = disfigured
+						}
+						FROM = { character_event = { id = RIP.20019 } }
+						character_event = { id = RIP.20020 }
+					}	
+
+					10 = {
+						# Castrate
+						modifier = {
+							factor = 0
+							OR = {
+								is_female = yes
+								trait = eunuch 
+							}
+						}
+						FROM = { character_event = { id = RIP.20021 } }
+						character_event = { id = RIP.20022 } 
+					}
+				}
+			}
+			
+			if = {
+				limit = { 
+					has_game_rule = {
+						name = punishment_release_prisoner
+						value = on
+					}
+				}
+				prisoner = no
+			}
+			
+			opinion = {
+				modifier = opinion_mutilated_me
+				who = FROM
+			}
+			add_fear_torture_effect = yes
+			FROM = {
+				piety = -50
+				if = {
+					limit = {
+						NOR = {
+							trait = cruel
+							trait = kind
+						}
+					}
+					random = {
+						chance = 25
+						add_trait = cruel
+						hidden_tooltip = { character_event = { id = 38259 } }
+					}
+				}
+
+				if = {
+					limit = { trait = kind }
+					random = { 
+						chance = 50
+						remove_trait = kind
+						hidden_tooltip = {
+							character_event = { id = 38307 }
+						}
+					}
+					hidden_tooltip = {
+						random_list = {
+							30 = {
+								add_trait = stressed
+								hidden_tooltip = { character_event = { id = 38282 } }
+							}
+							10 = {
+								add_trait = depressed
+								hidden_tooltip = { character_event = { id = 38288 } }
+							}
+							60 = {
+								#nothing
+							}
+						}
+					}
+				}
+			}
+			
+			hidden_tooltip = {
+				mother = {
+					opinion = {
+						modifier = opinion_mutilated_close_kin
+						who = FROM
+					}
+				}
+				father = {
+					opinion = {
+						modifier = opinion_mutilated_close_kin
+						who = FROM
+					}
+				}
+				spouse = {
+					opinion = {
+						modifier = opinion_mutilated_close_kin
+						who = FROM
+					}
+				}
+				any_child = {
+					opinion = {
+						modifier = opinion_mutilated_close_kin
+						who = FROM
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							NOT = { dynasty = ROOT }
+							NOT = { sibling = ROOT }
+						}
+					}
+					any_sibling = {
+						opinion = {
+							modifier = opinion_mutilated_close_kin
+							who = FROM
+						}
+					}
+					any_dynasty_member = {
+						opinion = {
+							modifier = opinion_mutilated_family
+							who = FROM
+						}
+					}
+				}
+				
+				FROM = {
+					hidden_tooltip = { clear_prison_reasons = ROOT }
+				}
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.03 # Less likely to do it
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					NOR = {
+						trait = cruel
+						trait = impaler
+						trait = wroth
+						is_rival = ROOT
+						trait = arbitrary
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				is_naathi_harmony_religion_trigger = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0
+				reverse_opinion = { who = FROM value = 20 }
+				FROM = { NOT = { trait = lunatic } }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = kind 
+						trait = just
+						trait = honorable
+						trait = patient
+						trait = shy
+						trait = greedy
+					}	
+				}
+			}	
+			modifier = { #trying to inspire fear
+				factor = 2
+				FROM = {
+					OR = {
+						trait = ruthless
+						trait = cruel
+					}
+					OR = {
+						is_close_relative = ROOT
+						is_vassal_or_below = ROOT
+						ROOT = { liege = { liege_before_war = { character = ROOT_FROM } } }
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					is_lover = FROM
+					any_consort = { character = FROM }
+					is_married = FROM
+				}	
+			}			
+			modifier = {
+				factor = 0.1 #Enemy has your relative
+				FROM = {
+					any_current_enemy = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+						any_courtier = {
+							is_close_relative = FROM
+							dynasty = FROM
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0 #Is your enemy and can enforce a victory
+				FROM = {
+					any_current_enemy = {
+						character = ROOT
+					}
+				}
+			}
+			modifier = { #would prefer an execution
+				factor = 0.2
+				FROM = {
+					ROOT = { just_execution_reason_PREV_trigger = yes }
+				}	
+			}	
+			modifier = {
+				factor = 0.2 #Has high ransom value
+				has_game_rule = { name = punishment_release_prisoner value = on }
+				OR = {
+					higher_tier_than = BARON
+					father_even_if_dead = { higher_tier_than = COUNT }
+					mother_even_if_dead = { higher_tier_than = COUNT }
+				}
+				NAND = { 
+					is_ruler = no
+					liege = { character = FROM }
+				}	
+				FROM = {
+					NOT = { trait = impaler }
+					NOT = { trait = lunatic }
+					NAND = { #already rich anyway
+						ROOT = { lower_tier_than = KING }
+						wealth = 400
+					}
+				}
+			}			
+			modifier = {
+				factor = 2
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = wroth }
+			}		
+			modifier = {
+				factor = 1.5
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = cruel }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = impaler }
+			}
+			modifier = {
+				factor = 0.33
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -50 } }
+			}
+		}
+	}
+
+	prisoner_read_poetry = {
+		only_playable = yes
+		filter = court
+		ai_target_filter = court
+		diplomacy_icon = GFX_prisoner_read_poetry
+		
+		from_potential = {
+			has_dlc = "Reapers"
+			is_playable = yes
+			is_adult = yes
+			prisoner = no
+			NOT = { trait = incapable }
+			trait = poet
+		}
+
+		potential = {
+			host = { character = FROM }
+			prisoner = yes
+			age = 13
+		}
+
+		allow = {
+			prisoner = yes
+			NOT = { diplomatic_immunity = yes }
+		}
+
+		effect = {
+			hidden_tooltip = {
+
+				FROM = {
+
+					random_list = {
+						10 = {
+							# Poem 1
+							character_event = { id = RIP.20023 }
+							ROOT = { character_event = { id = RIP.20024 } }
+							
+						}
+
+						10 = {
+							# Poem 2
+							character_event = { id = RIP.20025 }
+							ROOT = { character_event = { id = RIP.20026 } }
+
+						}
+
+						10 = {
+							# Poem 3
+							character_event = { id = RIP.20027 } 
+							ROOT = { character_event = { id = RIP.20028 } }
+						}
+					}
+				}
+			}
+
+			#prisoner = no
+			opinion = {
+				modifier = opinion_bad_poetry
+				who = FROM
+			}
+
+			# hidden_tooltip = {
+				# FROM = {
+					#hidden_tooltip = { clear_prison_reasons = ROOT }
+				# }
+			# }
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Less likely to do it
+			}
+			modifier = {
+				factor = 0
+				reverse_opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = cruel
+						trait = envious
+						is_rival = ROOT
+						trait = arbitrary
+						trait = ruthless
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.1 #Enemy has your relative
+				FROM = {
+					any_current_enemy = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+						any_courtier = {
+							is_close_relative = FROM
+							dynasty = FROM
+						}
+					}
+				}
+			}
+		}
+	}
+
+	#Humiliate
+	prisoner_humiliation = {
+		only_playable = yes
+		filter = court
+		ai_target_filter = court
+	
+		from_potential = {
+			has_dlc = "Reapers"
+			is_playable = yes
+			is_adult = yes
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+	
+		potential = {
+			host = { character = FROM }
+			prisoner = yes
+			age = 13
+		}
+		allow = {
+			prisoner = yes
+			NOT = { diplomatic_immunity = yes }
+		}
+		effect = {
+			hidden_tooltip = {
+				FROM = {
+					random_list = {
+						# Tar 'n' feathers
+						33 = {
+						modifier = {
+							factor = 0
+							ROOT = {
+								OR = {
+									has_character_modifier = incestuous_adulterer
+									has_character_modifier = incestuous_adulteress
+									has_character_modifier = adulterer
+									has_character_modifier = adulteress
+									has_character_modifier = known_sodomite
+									has_character_modifier = cradle_robber
+									has_character_modifier = adulterous_priest
+								}
+							}
+						}
+						modifier = {
+							factor = 0
+							OR = {
+								is_nomadic = yes
+								is_tribal = yes
+							}
+						}
+
+						character_event = { id = RIP.15001}
+						ROOT = { character_event = { id = RIP.15002} }
+						}
+
+						# Tar 'n' feathers NOMAD
+						33 = {
+						modifier = {
+							factor = 0
+							ROOT = {
+								OR = {
+									has_character_modifier = incestuous_adulterer
+									has_character_modifier = incestuous_adulteress
+									has_character_modifier = adulterer
+									has_character_modifier = adulteress
+									has_character_modifier = known_sodomite
+									has_character_modifier = cradle_robber
+									has_character_modifier = adulterous_priest
+								}
+							}
+						}
+						modifier = {
+							factor = 0
+							NOR = {
+								is_nomadic = yes
+								is_tribal = yes
+							}
+						}
+
+						character_event = { id = RIP.15007}
+						ROOT = { character_event = { id = RIP.15008} }
+						}
+						
+						# the Stocks
+						33 = {
+							modifier = {
+								factor = 0
+								ROOT = {
+									OR = {
+										has_character_modifier = incestuous_adulterer
+										has_character_modifier = incestuous_adulteress
+										has_character_modifier = adulterer
+										has_character_modifier = adulteress
+										has_character_modifier = known_sodomite
+										has_character_modifier = cradle_robber
+										has_character_modifier = adulterous_priest
+									}
+								}
+							}
+							modifier = {
+								factor = 0
+								OR = {
+									is_nomadic = yes
+									is_tribal = yes
+								}
+							}
+							character_event = { id = RIP.15003}
+							ROOT = { character_event = { id = RIP.15004} }
+						}
+							
+						# walk of shame
+						33 = {
+							modifier = {
+								factor = 0
+								ROOT = {
+									NOT = { 
+										OR = {
+											has_character_modifier = incestuous_adulterer
+											has_character_modifier = incestuous_adulteress
+											has_character_modifier = adulterer
+											has_character_modifier = adulteress
+											has_character_modifier = known_sodomite
+											has_character_modifier = cradle_robber
+											has_character_modifier = adulterous_priest
+										}
+									}
+								}
+							}
+							character_event = { id = RIP.15005}
+							ROOT = { character_event = { id = RIP.15006} }
+						}
+					}
+				}
+			}
+				
+			if = {
+				limit = { 
+					has_game_rule = {
+						name = punishment_release_prisoner
+						value = on
+					}
+				}
+				prisoner = no
+			}
+			add_character_modifier = {
+				name = publicly_humiliated
+				years = 10
+			}
+
+			opinion = {
+				modifier = opinion_humiliated_me
+				who = FROM
+			}
+			hidden_tooltip = {
+				mother = {
+					opinion = {
+						modifier = opinion_humiliated_close_kin
+						who = FROM
+					}
+				}
+				father = {
+					opinion = {
+						modifier = opinion_humiliated_close_kin
+						who = FROM
+					}
+				}
+				spouse = {
+					opinion = {
+						modifier = opinion_humiliated_close_kin
+						who = FROM
+					}
+				}
+				any_child = {
+					opinion = {
+						modifier = opinion_humiliated_close_kin
+						who = FROM
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							NOT = { dynasty = ROOT }
+							NOT = { sibling = ROOT }
+						}
+					}
+					any_sibling = {
+						opinion = {
+							modifier = opinion_humiliated_close_kin
+							who = FROM
+						}
+					}
+					any_dynasty_member = {
+						opinion = {
+							modifier = opinion_humiliated_family
+							who = FROM
+						}
+					}
+				}
+				FROM = {
+					hidden_tooltip = { clear_prison_reasons = ROOT }
+				}
+			}
+		}
+		
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.015 # Less likely to do it
+			}
+			modifier = {
+				factor = 0
+				reverse_opinion = { who = FROM value = 20 }
+				FROM = { NOT = { trait = lunatic } }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = kind 
+						trait = honorable
+						trait = greedy
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					is_lover = FROM
+					any_consort = { character = FROM }
+					is_married = FROM
+				}	
+			}	
+			modifier = {
+				factor = 0.1 #Enemy has your relative
+				FROM = {
+					any_current_enemy = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+						any_courtier = {
+							is_close_relative = FROM
+							dynasty = FROM
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0 #Is your enemy and can enforce a victory
+				FROM = {
+					any_current_enemy = {
+						character = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0 #Has high ransom value
+				has_game_rule = { name = punishment_release_prisoner value = on }
+				OR = {
+					higher_tier_than = BARON
+					father_even_if_dead = { higher_tier_than = COUNT }
+					mother_even_if_dead = { higher_tier_than = COUNT }
+				}
+				NAND = { 
+					is_ruler = no
+					liege = { character = FROM }
+				}	
+				FROM = { 
+					NOT = { trait = lunatic }
+					NOT = { trait = wroth }
+					NAND = { #already rich anyway
+						ROOT = { lower_tier_than = KING }
+						wealth = 400
+					}
+				}
+			}
+			modifier = { #would prefer an execution
+				factor = 0.2
+				FROM = {
+					ROOT = { just_execution_reason_PREV_trigger = yes }
+				}	
+			}		
+			modifier = {
+				factor = 1.5
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = wroth }
+			}		
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 0.33
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -50 } }
+			}
+		}
+	}
+}

@@ -1,0 +1,2282 @@
+##AGOT SOCIETIES##
+
+alchemists_guild = {
+	primary_attribute = learning
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +10
+	opinion_per_rank_above = +5
+	sound = hermetic_society_interface
+	is_secret = no
+	indestructible = yes
+	non_interference = {
+		always = yes
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = alchemists_guild
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		has_alchemists_guild_prerequisites = yes
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		age = 16
+		is_nomadic = no
+		OR = { #wildlings can only join if south of The Wall
+			NOT = { trait = wildling }
+			capital_scope = { NOT = { region = world_beyond_the_wall } }
+			AND = {
+				is_ruler = no
+				liege = { capital_scope = { NOT = { region = world_beyond_the_wall } } }
+			}
+		}
+	}
+	
+	society_rank = { #PATRON (unlanded: APPRENTICE)
+		level = 1
+		limit = 100
+		startup_limit = 20
+		modifier = {
+		}
+		decisions = {		
+			donate_to_alchemist_guild
+			hire_alchemist
+			make_wildfire			
+		}
+		custom_tooltip = alchemists_guild_powers_rank_1
+		#Power: Use stocks of wildfire in siege (existing events)
+	}
+	
+	society_rank = { #ACOLYTE
+		level = 2
+		limit = 75
+		startup_limit = 20
+		modifier = { 
+			learning = 1
+		}
+		decisions = {
+			create_fake_valuables				
+		}
+		custom_tooltip = alchemists_guild_powers_rank_2
+		#Discount on level 1 powers
+		#Can travel to learn from a Wisdom	
+	}
+	
+	society_rank = { #WISDOM
+		level = 3
+		limit = 40
+		startup_limit = 10
+		modifier = {
+			learning = 2
+		}
+		decisions = {		
+		}
+		custom_tooltip = alchemists_guild_powers_rank_3
+		#Can Study knowledge stores
+		#Power: Transmutation, make gold (after rediscovery, see above)
+		#Power: Flame Creatures, (use stocks of wildfire to create flame creatures for battle)
+		#Power: Cure ailments (after rediscovery)
+	}
+
+	society_rank = { #GRAND MASTER
+		level = 4
+		limit = 10
+		startup_limit = 2
+		modifier = { 
+			learning = 3
+		}
+		decisions = {
+			
+		}
+		custom_tooltip = alchemists_guild_powers_rank_4
+		#Power: Create an elixir of immortality (after rediscovery)
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_hermetics
+		
+		per_attribute = {
+    		name = learning
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = fire_obsessed
+		}
+		has_trait = {
+			value = 1
+			trait = scholar
+		}
+		has_trait = {
+			value = 1
+			trait = mystic
+		}
+		has_trait = {
+			value = 1
+			trait = erudite
+		}
+		has_trait = {
+			value = 1
+			trait = stubborn
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = fire_obsessed
+		}
+		modifier = {
+			factor = 1.5
+			trait = scholar
+		}
+		modifier = {
+			factor = 1.5
+			trait = mystic
+		}
+		modifier = {
+			factor = 1.5
+			trait = erudite
+		}
+		modifier = {
+			factor = 1.5
+			trait = stubborn
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no	
+		}
+	}
+}
+
+##BANKS##
+# MISSIONS
+# Spend time working at bank
+# Go as an envoy to collect debt
+# Invest cash in ships/merchants/guilds etc #NOT DONE, possible idea:
+#		I suppose it is a mission for high level members of a bank (shareholder+).
+#		So what I came up with is a mission where you are asked to invest some of the banks money in a specific province (you might get 4 options to choose from).
+#		An investment will cost an amount of money depending on that provinces economy and it will give a province modifier to increase the tax value. In exchange the investing bank will receive a little share of that provinces tax value per year.
+#		Any „distraction“ like occupation, raids or deseases might lead to the investment beeing lost, so you should anticipate such dangers when investing.
+# Build bank fortifications
+
+
+# RANKS & POWERS:
+# ENVOY
+# Spend time working at the bank
+# Can be sent to negoatiate loans and collect debts
+# Power: Recruit banker
+# Power: Reduce loan interest
+
+# KEYHOLDER
+# Investment of gold needed to advance to this level
+# +1 Stewardship
+# Owns 1 share in the bank
+# Discount on level 1 powers
+
+# SHAREHOLDER
+# +2 Stewardship
+# Investment of gold needed to advance to this level
+# Owns 5 shares
+# Power: Offer cheap loan to an enemy of a debtor to rival rank
+
+# HIGH COUNCILLOR
+# +3 Stewardship
+# Can take on mission to recover debts from low value debtors, or choose to delegate
+# Can vote on high value debt defaulters
+# Can gift Keyholder rank to Envoys
+# Grandmaster decides interest rate
+
+iron_bank = {
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = iron_bank_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = iron_bank
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+rogare_bank = {
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = rogare_bank_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = rogare_bank
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+qarth_bank = {
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = qarth_bank_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = qarth_bank
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+valyria_bank = {
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = valyria_bank_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = valyria_bank
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+bank_1 = { #Dynamic bank 1
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = bank_1_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = bank_1
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+bank_2 = { #Dynamic bank 2
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = bank_2_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = bank_2
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+bank_3 = { #Dynamic bank 3
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = bank_3_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = bank_3
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+bank_4 = { #Dynamic bank 4
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = bank_4_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = bank_4
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}
+bank_5 = { #Dynamic bank 5
+	primary_attribute = stewardship
+	society_ranks_gfx = generic_ranks
+	opinion_to_other_members = +5
+	opinion_per_rank_above = +2
+	sound = secret_cults_interface
+	is_secret = no
+	#indestructible = yes
+	non_interference = {
+		always = no
+	}
+	
+	active = {
+		has_global_flag = bank_5_founded
+	}
+	
+	can_join_society = {
+		hidden_trigger = {
+			NAND = {
+				ai = yes
+				is_society_rank_full = { 
+					society = bank_5
+					rank = 1
+				}
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		age = 16 #seperate so children can inherit shares
+		is_incapable = no
+		has_bank_society_prerequisites = yes
+		custom_tooltip = {
+			text = TOOLTIP_NOTDISHONOUREDLOAN
+			NOT = { has_character_flag = offended_moneylenders }
+		}			
+		conditional_tooltip = {
+			trigger = { is_ruler = no }		
+			OR = {
+				stewardship = 8
+				prestige = 200
+				wealth = 75
+			}
+		}	
+		hidden_trigger = {
+			NOT = { has_character_flag = society_join_block }
+		}
+		trigger_if = {
+			limit = { prisoner = yes }
+			prisoner = no
+		}
+	}
+
+	show_society = {
+		
+	}
+	
+	potential = {
+		OR = {
+			AND = {
+				age = 16
+				is_incapable = no
+				is_nomadic = no
+				can_press_claims_trigger = yes
+			}	
+			society_rank > 1
+		}			
+	}
+	
+	society_rank = { #ENVOY
+		level = 1
+		limit = 50
+		startup_limit = 25
+		modifier = {
+		}
+		decisions = {	
+			reduce_loan_interest
+			hire_banker
+		}
+		custom_tooltip = bank_powers_rank_1
+	}
+	
+	society_rank = { #KEYHOLDER
+		level = 2
+		limit = 100
+		startup_limit = 25
+		modifier = { 
+			stewardship = 1
+		}
+		decisions = {	
+		}
+		custom_tooltip = bank_powers_rank_2
+	}
+	
+	society_rank = { #SHAREHOLDER
+		level = 3
+		limit = 50
+		startup_limit = 10
+		modifier = {
+			stewardship = 2
+		}
+		decisions = {	
+			offer_cheap_loan
+		}
+		custom_tooltip = bank_powers_rank_3
+	}
+
+	society_rank = { #HIGH COUNCILLOR
+		level = 4
+		limit = 5
+		startup_limit = 2
+		modifier = { 
+			stewardship = 3
+		}
+		decisions = {
+			rename_bank
+		}
+		custom_tooltip = bank_powers_rank_4
+	}
+	
+	plots = {
+	}
+	
+	monthly_currency_gain = {
+		name = currency_name_bank
+		
+		per_attribute = {
+    		name = stewardship
+    		value = 0.5
+    	}
+		has_trait = {
+			value = 2
+			trait = diligent
+		}
+		has_trait = {
+			value = 1
+			trait = administrator
+		}
+		has_trait = {
+			value = 1
+			trait = architect
+		}
+		has_trait = {
+			value = 1
+			trait = patient
+		}
+		has_trait = {
+			value = 1
+			trait = genius
+		}
+		has_trait = {
+			value = 1
+			trait = quick
+		}
+		has_trait = {
+			value = 1
+			trait = shrewd
+		}
+		has_trait = {
+			value = 1
+			trait = ambitious
+		}
+		society_rank = {
+			rank = 4
+			value = 10
+		}
+		triggered_gain = {
+			desc = currency_is_adult_no
+			trigger = {
+				is_adult = no
+			}
+			value = -20
+		}
+		triggered_gain = {
+			desc = TOOLTIP_DEFAULTEDLOAN
+			trigger = {
+				OR = {
+					has_character_flag = has_had_loan_default
+					has_character_flag = personal_loan_default
+				}
+			}
+			value = -10
+		}
+	}
+
+	member_score_per_attribute = 3
+	member_score_per_rank = 100
+
+	member_score = {
+		value = 10
+		
+		additive_modifier = {
+			value = -50
+			is_adult = no
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = administrator
+		}
+		modifier = {
+			factor = 1.5
+			trait = architect
+		}
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			is_smart_incl_genius_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = ambitious
+		}
+	}
+	
+	startup_populate = {
+	    trigger = {
+			always = no
+		}
+	}
+}

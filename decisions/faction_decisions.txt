@@ -1,0 +1,2198 @@
+plot_decisions = {
+	faction_increase_council_power_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_increase_council_power
+			OR = {
+				NOT = { has_character_flag = faction_council_power_ultimatum_taken }
+				had_character_flag = { flag = faction_council_power_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		
+		effect = {
+			liege = {
+				letter_event = { id = 8215 days = 3 tooltip = EVTTOOLTIP8005 }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_council_power_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_increase_council_power
+						power = 0.75
+					}
+				}
+			}			
+			modifier = {
+				factor = 0.1
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_increase_council_power
+						power = 1.0
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_increase_council_power
+						power = 1.5
+					}
+				}
+			}			
+			modifier = {
+				factor = 0
+				liege = {
+					any_war = {
+						OR = {
+							AND = {
+								defender = { character = PREV }
+								NOT = { using_cb = depose_liege }
+								NOT = { using_cb = overthrow_ruler }
+								NOT = { using_cb = overthrow_ruler_no_calls }
+							}
+							AND = {
+								attacker = { character = PREV }
+								OR = {
+									using_cb = invasion
+									using_cb = tribal_invasion
+									using_cb = claim_all
+									using_cb = claim
+									using_cb = other_claim
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	faction_claimant_regent_coup = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			is_ruler = yes
+			leads_faction = faction_claimant
+			OR = {
+				NOT = { has_character_flag = faction_claimant_ultimatum_taken }
+				had_character_flag = { flag = faction_claimant_ultimatum_taken days = 7 }
+			}
+			liege = {
+				NOT = { has_character_flag = danys_eastern_quest }
+			}	
+		}
+		
+		allow = {		
+			custom_tooltip = {
+				text = TOOLTIPfaction_claimant_regent_coupREGENT
+				liege = {
+					has_regent = yes
+					regent = { character = ROOT }
+				}
+			}
+			faction_power = { faction = faction_claimant power = 1.5 }
+			war = no
+			prisoner = no
+			liege = {
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+				}
+				hidden_tooltip = {
+					OR = {
+						NOT = { has_character_flag = kingsmoot }
+						had_character_flag = { flag = kingsmoot days = 365 }
+					}
+				}	
+			}
+			OR = {
+				custom_tooltip = { #Supporting self
+					text = TOOLTIPfaction_claimant_ultimatumA
+					hidden_tooltip = {
+						supported_claimant = { character = ROOT }
+					}
+				}
+				custom_tooltip = { #Landed vassals of liege have to be backing faction
+					text = TOOLTIPfaction_claimant_ultimatumB
+					hidden_tooltip = {
+						supported_claimant = {
+							demesne_size = 1
+							in_faction = faction_claimant
+						}	
+					}
+				}
+				custom_tooltip = { #Claimant cannot be in liege's court	
+					text = TOOLTIPfaction_claimant_ultimatumC
+					hidden_tooltip = {
+						supported_claimant = { NOT = { same_liege = ROOT } }
+					}
+				}
+			}	
+			custom_tooltip = { 
+				text = TOOLTIPfaction_claimant_ultimatumD 
+				hidden_tooltip = {
+					supported_claimant = { ROOT = { liege = { NOT = { war_with = PREVPREV } } } }
+				}	
+			}	
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}	
+			supported_claimant = {
+				is_alive = yes
+			}
+		}
+		effect = {
+			liege = {
+				letter_event = { id = faction_event_new.80 days = 3 tooltip = "EVTTOOLTIPfaction_event_new.80" }
+			}
+			set_character_flag = faction_claimant_ultimatum_taken
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	
+	faction_republic_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_republic
+			OR = {
+				NOT = { has_character_flag = faction_republic_ultimatum_taken }
+				had_character_flag = { flag = faction_republic_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					independent = yes
+					crownlaw_title = {
+						OR = {
+							has_law = centralization_0
+							has_law = centralization_1
+						}
+					}
+					custom_tooltip = {
+						text = TOOLTIPfaction_republic_ultimatumA
+						hidden_tooltip = {
+							AND = {
+								NOT = { crownlaw_title = { always = yes } }
+								top_liege = {
+									primary_title = {
+										OR = {
+											has_law = centralization_0
+											has_law = centralization_1
+										}
+									}
+								}
+							}
+						}	
+					}	
+				}
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		
+		effect = {
+			liege = {
+				letter_event = { id = faction_event_new.60 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_republic_ultimatum_taken
+			}
+		}	
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_republic
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_republic
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_republic
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_republic
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_republic
+						power = 4
+					}
+				}
+			}
+		}
+	}
+	faction_depose_liege_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_depose_liege
+			OR = {
+				NOT = { has_character_flag = faction_depose_liege_ultimatum_taken }
+				had_character_flag = { flag = faction_depose_liege_ultimatum_taken days = 7 }
+			}
+			liege = {
+				in_revolt = no
+				NOT = { has_character_modifier = new_rebel_leader }
+				liege = {
+					in_revolt = no
+					liege = {
+						in_revolt = no
+					}
+				}
+			}	
+		}
+		
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		effect = {
+			liege = {
+				letter_event = { id = plot_event.42 days = 3 tooltip = "EVTTOOLTIP8005" }
+				if = {
+					limit = {
+						current_heir = {
+							NOT = { character = ROOT }
+							OR = {
+								NOT = { same_liege = ROOT }
+								NOT = { in_faction = faction_depose_liege }
+							}
+						}
+					}
+					current_heir = {
+						letter_event = { id = plot_event.47 days = 1 } 
+					}
+				}
+			}		
+			set_character_flag = faction_depose_liege_ultimatum_taken
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_depose_liege
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_depose_liege
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_depose_liege
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_depose_liege
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_depose_liege
+						power = 4
+					}
+				}
+			}
+			
+			modifier = { #if I'm heir reluctance if realm is in a winning war
+				factor = 0
+				liege = {
+					current_heir = { character = ROOT }
+					war = yes
+					OR = {
+						any_war = {
+							defender = { character = PREVPREV }
+							NOT = { war_score = -40 }
+						}
+						any_war = {
+							attacker = { character = PREVPREV }
+							war_score = 40
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	faction_succ_seniority_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_succ_seniority
+			OR = {
+				NOT = { has_character_flag = faction_succ_seniority_ultimatum_taken}
+				had_character_flag = { flag = faction_succ_seniority_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}	
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		effect = {
+			liege = {
+				letter_event = { id = 8005 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_succ_seniority_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_seniority
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_seniority
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_seniority
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_seniority
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_seniority
+						power = 4
+					}
+				}
+			}
+		}
+	}
+	
+	faction_succ_primogeniture_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_succ_primogeniture
+			OR = {
+				NOT = { has_character_flag = faction_succ_primogeniture_ultimatum_taken }
+				had_character_flag = { flag = faction_succ_primogeniture_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}	
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		effect = {
+			liege = {
+				letter_event = { id = 8010 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_succ_primogeniture_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_primogeniture
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_primogeniture
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_primogeniture
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_primogeniture
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_primogeniture
+						power = 4
+					}
+				}
+			}
+		}
+	}
+	
+	faction_succ_feudal_elective_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_succ_feudal_elective
+			
+			OR = {
+				NOT = { has_character_flag = faction_succ_feudal_elective_ultimatum_taken }
+				had_character_flag = { flag = faction_succ_feudal_elective_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}	
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		effect = {
+			liege = {
+				letter_event = { id = 8015 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_succ_feudal_elective_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_feudal_elective
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_feudal_elective
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_feudal_elective
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_succ_feudal_elective
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_succ_feudal_elective
+						power = 4
+					}
+				}
+			}	
+		}
+	}
+	
+	# faction_succ_gavelkind_ultimatum = {
+		# is_high_prio = yes
+		
+		# potential = {
+			# leads_faction = faction_succ_gavelkind
+			# OR = {
+				# NOT = { has_character_flag = faction_succ_gavelkind_ultimatum_taken }
+				# had_character_flag = { flag = faction_succ_gavelkind_ultimatum_taken days = 7 }
+			# }
+		# }
+		# allow = {
+			# war = no
+			# prisoner = no
+			# liege = {
+				# NOT = { war_with = ROOT }
+				# NOT = { reverse_has_truce = ROOT }
+				# OR = {
+					# NOT = { has_character_flag = kingsmoot }
+					# had_character_flag = { flag = kingsmoot days = 365 }
+				# }	
+			# }
+			# NOT = {
+				# any_realm_title = {
+					# is_occupied = yes
+				# }
+			# }
+		# }
+		# effect = {
+			# liege = {
+				# letter_event = { id = 8020 days = 3 tooltip = "EVTTOOLTIP8005" }
+			# }
+			# hidden_tooltip = {
+				# set_character_flag = faction_succ_gavelkind_ultimatum_taken
+			# }
+		# }
+		
+		# ai_will_do = {
+			# factor = 1
+			# modifier = {
+				# factor = 0
+				# NOT = { 
+					# faction_power = 
+					# {
+						# faction = faction_succ_gavelkind
+						# power = 0.75
+					# }
+				# }
+			# }
+			
+			# modifier = {
+				# factor = 0.25 # Slow it down a bit
+			# }
+			
+			# modifier = {
+				# factor = 0.75
+				# trait = patient
+			# }
+			# modifier = {
+				# factor = 1.25
+				# trait = wroth
+			# }
+			
+			# modifier = {
+				# factor = 0
+				# NOT = { higher_tier_than = DUKE }
+				# liege = {
+					# tier = EMPEROR
+					# trait = civil_war
+					# war = yes
+				# }
+				# NOT = { 
+					# faction_power = 
+					# {
+						# faction = faction_succ_gavelkind
+						# power = 4.5
+					# }
+				# }
+			# }
+			
+			# modifier = {
+				# factor = 0
+				# liege = {
+					# any_war = {
+						# OR = {
+							# AND = {
+								# defender = { character = PREVPREV }
+								# NOT = { using_cb = depose_liege }
+								# NOT = { using_cb = overthrow_ruler }
+								# NOT = { using_cb = overthrow_ruler_no_calls }
+							# }
+							# AND = {
+								# attacker = { character = PREVPREV }
+								# OR = {
+									# using_cb = invasion
+									# #using_cb = religious
+									# using_cb = tribal_invasion
+									# using_cb = invasion_ironborn
+									# using_cb = claim_all
+									# using_cb = claim
+									# using_cb = other_claim
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
+	
+	faction_lower_crown_authority_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_lower_crown_authority
+			OR = {
+				NOT = { has_character_flag = faction_lower_CA_ultimatum_taken }
+				had_character_flag = { flag = faction_lower_CA_ultimatum_taken days = 7 }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}	
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		
+		effect = {
+			liege = {
+				if = {
+					limit = {
+						has_regent = no
+					}
+					letter_event = { id = 8025 days = 3 tooltip = EVTTOOLTIP8005 }
+				}
+				if = {
+					limit = {
+						has_regent = yes
+					}
+					random_courtier = {
+						limit = { liege = { regent = { character = PREVPREV } } }
+						letter_event = { id = 8026 days = 3 tooltip = EVTTOOLTIP8005 }
+					}	
+				}
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_lower_CA_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_lower_crown_authority
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_lower_crown_authority
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_lower_crown_authority
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_lower_crown_authority
+						power = 4
+					}
+				}
+			}
+		}
+	}
+	
+	# faction_lower_tribal_organization_ultimatum = {
+		# is_high_prio = yes
+		
+		# potential = {
+			# leads_faction = faction_lower_tribal_organization
+			# OR = {
+				# NOT = { has_character_flag = faction_lower_TO_ultimatum_taken }
+				# had_character_flag = { flag = faction_lower_TO_ultimatum_taken days = 7 }
+			# }
+		# }
+		# allow = {
+			# war = no
+			# prisoner = no
+			# liege = {
+				# NOT = { war_with = ROOT }
+				# NOT = { reverse_has_truce = ROOT }
+			# }
+			# NOT = {
+				# any_realm_title = {
+					# is_occupied = yes
+				# }
+			# }
+		# }
+		
+		# effect = {
+			# liege = {
+				# if = {
+					# limit = {
+						# has_regent = no
+					# }
+					# letter_event = { id = 8027 days = 3 tooltip = EVTTOOLTIP8005 }
+				# }
+				# if = {
+					# limit = {
+						# has_regent = yes
+					# }
+					# letter_event = { id = 8031 days = 3 tooltip = EVTTOOLTIP8005 }
+				# }
+			# }
+			# hidden_tooltip = {
+				# set_character_flag = faction_lower_TO_ultimatum_taken
+			# }
+		# }
+		
+		# ai_will_do = {
+			# factor = 1
+			# modifier = {
+				# factor = 0
+				# NOT = { 
+					# faction_power = 
+					# {
+						# faction = faction_lower_tribal_organization
+						# power = 0.75
+					# }
+				# }
+			# }			
+			# modifier = {
+				# factor = 0.1
+				# NOT = { 
+					# faction_power = 
+					# {
+						# faction = faction_lower_tribal_organization
+						# power = 1.0
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.1
+				# NOT = { 
+					# faction_power = 
+					# {
+						# faction = faction_lower_tribal_organization
+						# power = 1.5
+					# }
+				# }
+			# }			
+			
+			# modifier = {
+				# factor = 0.5 # Slow it down a bit
+			# }
+			
+			# modifier = {
+				# factor = 0
+				# liege = {
+					# any_war = {
+						# OR = {
+							# AND = {
+								# defender = { character = PREV }
+								# NOT = { using_cb = depose_liege }
+								# NOT = { using_cb = overthrow_ruler }
+								# NOT = { using_cb = overthrow_ruler_no_calls }
+								# NOT = { using_cb = succession_on_liege }
+								# NOT = { using_cb = other_succession_on_liege }
+							# }
+							# AND = {
+								# attacker = { character = PREV }
+								# OR = {
+									# using_cb = invasion
+									# using_cb = religious
+									# using_cb = tribal_invasion
+									# #using_cb = muslim_invasion
+									# using_cb = viking_invasion
+									# using_cb = claim_all
+									# using_cb = claim
+									# using_cb = other_claim
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
+	
+
+	faction_independence_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_independence
+			OR = {
+				NOT = { has_character_flag = faction_independence_ultimatum_taken }
+				had_character_flag = { flag = faction_independence_ultimatum_taken days = 7 }
+			}
+			OR = {			
+				NOT = { has_character_flag = faction_independence_defect_taken }
+				had_character_flag = { flag = faction_independence_defect_taken days = 7 }
+			}
+			liege = {
+				independent = yes
+				NOT = { has_character_flag = danys_eastern_quest }
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}
+			}
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+		}
+		
+		effect = {
+			liege = {
+				letter_event = { id = 8035 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_independence_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+			
+			modifier = { #wait for claimant plot
+				factor = 0
+				OR = {
+					AND = {
+						has_plot = plot_gain_liege_title
+						plot_target_char = { is_liege_of = ROOT }
+					}
+					any_backed_character = {
+						has_plot = plot_gain_liege_title
+						plot_target_char = { is_liege_of = ROOT }
+					}
+				}
+			}
+			modifier = { #wait for potential claimant plot?
+				factor = 0.1
+				liege = {
+					NOT = { culture_group = ROOT }
+					any_demesne_title = {
+						tier = PREV
+						culture = ROOT
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_independence
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_independence
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 4
+					}
+				}
+			}
+		}
+	}
+	
+	faction_claimant_ultimatum = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_claimant
+			OR = {
+				NOT = { has_character_flag = faction_claimant_ultimatum_taken }
+				had_character_flag = { flag = faction_claimant_ultimatum_taken days = 7 }
+			}
+			liege = {
+				in_revolt = no
+				NOT = { has_character_modifier = new_rebel_leader }
+				liege = {
+					in_revolt = no
+					liege = {
+						in_revolt = no
+					}
+				}
+				NOT = { has_character_flag = danys_eastern_quest }
+			}	
+		}
+		
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { has_character_flag = kingsmoot }
+					had_character_flag = { flag = kingsmoot days = 365 }
+				}
+			}
+			OR = {
+				custom_tooltip = { #Supporting self
+					text = TOOLTIPfaction_claimant_ultimatumA
+					hidden_tooltip = {
+						supported_claimant = { character = ROOT }
+					}
+				}
+				custom_tooltip = { #Landed vassals of liege have to be backing faction
+					text = TOOLTIPfaction_claimant_ultimatumB
+					hidden_tooltip = {
+						supported_claimant = {
+							demesne_size = 1
+							in_faction = faction_claimant
+						}	
+					}
+				}
+				custom_tooltip = { #Claimant cannot be in liege's court	
+					text = TOOLTIPfaction_claimant_ultimatumC
+					hidden_tooltip = {
+						supported_claimant = { NOT = { same_liege = ROOT } }
+					}
+				}
+			}	
+			custom_tooltip = { 
+				text = TOOLTIPfaction_claimant_ultimatumD 
+				hidden_tooltip = {
+					supported_claimant = { ROOT = { liege = { NOT = { war_with = PREVPREV } } } }
+				}	
+			}	
+			custom_tooltip = { 
+				text = TOOLTIPfaction_ultimatum_capital
+				hidden_tooltip = {
+					NOT = { capital_holding = { is_occupied = yes } }
+				}	
+			}
+			# custom_tooltip = {
+				# text = TOOLTIPCBENFORCEDTRUCEB
+				# hidden_tooltip = {
+					# liege = {
+						# NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+					# }	
+				# }
+			# }
+			supported_claimant = {
+				is_alive = yes
+			}
+		}
+		effect = {
+			liege = {
+				letter_event = { id = 8036 days = 3 tooltip = "EVTTOOLTIP8005" }
+			}
+			if = {
+				limit = {
+					supported_claimant = {
+						NOT = { character = ROOT }
+						OR = {
+							NOT = { same_liege = ROOT }
+							NOT = { in_faction = faction_claimant }
+							NOT = { supported_claimant = { character = PREV } }
+						}
+					}
+				}
+				supported_claimant = {
+					letter_event = { id = 8037 days = 1 }
+				}
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_claimant_ultimatum_taken
+			}
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.15 # Slow it down a bit
+			}
+					
+			modifier = { #wait for palace coup
+				factor = 0
+				liege = {
+					has_regent = yes
+					regent = { character = ROOT }
+					OR = {
+						NOT = { age = 16 }
+						is_incapable = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_claimant
+						power = 0.8
+					}
+				}
+			}
+			modifier = {
+				factor = 0.2
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_claimant
+						power = 1
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_claimant
+					power = 1.5
+				}
+			}
+			modifier = {
+				factor = 2
+				faction_power = 
+				{
+					faction = faction_claimant
+					power = 2
+				}
+			}
+			
+			modifier = { #Liege is defending against foreigners
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = { #Liege is defending against external threats
+				factor = 0
+				NOT = { trait = ruthless }
+				liege = {
+					any_war = {
+						defender = { character = PREVPREV }
+						attacker = { 
+							demesne_size = 1 #exclude rebellions
+							NOT = {
+								OR = {
+									liege_before_war = { character = PREVPREVPREV }
+									AND = {
+										lower_tier_than = PREVPREV
+										has_opinion_modifier = { who = PREVPREV modifier = opinion_de_facto_liege } 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			#Small lords wont rebel against Iron Throne mid mega war without large power
+			modifier = {
+				factor = 0
+				NOT = { higher_tier_than = DUKE }
+				liege = {
+					tier = EMPEROR
+					trait = civil_war
+					war = yes
+				}
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_claimant
+						power = 4
+					}
+				}
+			}
+					
+			modifier = {
+				factor = 0
+				faction_claimant = {
+					has_elective_law_trigger = yes
+				}
+				liege = {
+					ROOT = {
+						supported_claimant = {
+							religion = PREVPREV
+							culture = PREVPREV
+						}
+					}
+				}
+			}
+		}
+	}
+	faction_invite_claimant = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_claimant			
+			supported_claimant = { 
+				is_ruler = no 
+				NOT = { liege = { character = ROOT } }
+			}
+			OR = {
+				NOT = { has_character_flag = faction_invite_claimant_taken }
+				had_character_flag = { flag = faction_invite_claimant_taken days = 365 }
+			}
+		}
+		
+		allow = {
+			war = no
+			prisoner = no
+			supported_claimant = {
+				age = 16
+				prisoner = no
+				is_alive = yes
+				NOT = { is_inaccessible_trigger = yes }
+				NOT = { trait = content }
+				NOT = { trait = incapable }
+				liege = { 
+					NOT = { is_married = PREV }
+					NOT = { reverse_opinion = { who = PREV value = 30 } }
+					NOT = { supported_claimant = { character = PREVPREV } }
+				}				
+			}
+		}
+		effect = {
+			set_character_flag = faction_invite_claimant_taken
+			supported_claimant = {
+				letter_event = { id = faction_event_new.1 days = 1 tooltip = TOOLTIPfaction_event_new.1 }
+			}		
+		}
+
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_claimant
+						power = 0.8
+					}
+				}
+			}		
+			modifier = {
+				factor = 0
+				faction_claimant = {
+					has_elective_law_trigger = yes
+				}
+				liege = {
+					ROOT = {
+						supported_claimant = {
+							religion = PREVPREV
+							culture = PREVPREV
+						}
+					}
+				}
+			}
+		}
+	}
+	faction_kidnap_claimant = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_claimant			
+			supported_claimant = { 
+				is_ruler = no 
+				NOT = { liege = { character = ROOT } }
+			}
+			OR = {
+				NOT = { has_character_flag = faction_kidnap_claimant_taken }
+				had_character_flag = { flag = faction_kidnap_claimant_taken days = 365 }
+			}
+		}
+		
+		allow = {
+			war = no
+			prisoner = no
+			supported_claimant = {
+				custom_tooltip = { text = TOOLTIPfaction_kidnap_claimantA }
+				OR = {
+					trait = content 
+					trait = incapable 
+					liege = { 
+						OR = {
+							reverse_opinion = { who = PREV value = 30 }
+							is_married = PREV
+						}	
+					} 
+					NOT = { age = 16 }
+					hidden_tooltip = { ROOT = { has_character_flag = claimant_rejects_invite } }
+				}	
+				NOT = { is_inaccessible_trigger = yes }
+				prisoner = no	
+				hidden_tooltip = { is_alive = yes }
+			}
+		}
+		effect = {
+			random_list = {
+				20 = {
+					modifier = {
+						factor = 0.66
+						has_character_flag = kidnapped_failed
+					}
+					modifier = {
+						factor = 0.75
+						job_spymaster = {
+							NOT = { intrigue = 10 }
+						}
+					}
+					modifier = {
+						factor = 1.65
+						job_spymaster = {
+							intrigue = 14
+							NOT = { intrigue = 18 }
+						}
+					}
+					modifier = {
+						factor = 2.5
+						job_spymaster = {
+							intrigue = 18
+							NOT = { intrigue = 22 }
+						}
+					}
+					modifier = {
+						factor = 3.0
+						job_spymaster = {
+							intrigue = 22
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 2 } }
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 4 } }
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 6 } }
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 8 } }
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 10 } }
+					}
+					modifier = {
+						factor = 0.5
+						supported_claimant = { trait = genius }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { trait = paranoid }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { is_strong_trigger = yes }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { trait = quick }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { trait = shrewd }
+					}
+					modifier = {
+						factor = 1.2
+						supported_claimant = { trait = trusting }
+					}
+					modifier = {
+						factor = 1.2
+						supported_claimant = { trait = lunatic }
+					}
+					modifier = {
+						factor = 1.2
+						supported_claimant = { trait = drunkard }
+					}
+					modifier = {
+						factor = 1.2
+						supported_claimant = { is_weak_trigger = yes }
+					}
+					modifier = {
+						factor = 1.2
+						supported_claimant = {
+							OR = {
+								trait = infirm
+								trait = incapable
+								is_ill = yes
+								is_adult = no
+							}
+						}
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { martial = 12 }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { martial = 18 }
+					}
+					modifier = {
+						factor = 0.8
+						supported_claimant = { war = yes }
+					}
+					supported_claimant = {
+						hidden_tooltip = { 
+							ROOT = { reverse_banish = PREV }	
+						}
+						character_event = { id = faction_event_new.4 days = 1 tooltip = TOOLTIPfaction_event_new.4 }						
+					}
+				}
+				30 = {
+					modifier = {
+						factor = 1.1
+						job_spymaster = {
+							intrigue = 14
+							NOT = { intrigue = 18 }
+						}
+					}
+					modifier = {
+						factor = 0.8
+						job_spymaster = {
+							intrigue = 18
+							NOT = { intrigue = 22 }
+						}
+					}
+					modifier = {
+						factor = 0.65
+						job_spymaster = {
+							intrigue = 22
+						}
+					}
+					modifier = {
+						factor = 1.1
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 2 } }
+					}
+					modifier = {
+						factor = 1.1
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 4 } }
+					}
+					modifier = {
+						factor = 1.1
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 6 } }
+					}
+					modifier = {
+						factor = 1.1
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 8 } }
+					}
+					modifier = {
+						factor = 1.1
+						supported_claimant = { attribute_diff = { character = ROOT attribute = intrigue value = 10 } }
+					}
+					custom_tooltip = { text = TOOLTIPfaction_event_new.5 }
+					hidden_tooltip = {
+						character_event = { id = faction_event_new.5 days = 7 }	
+					}
+				}
+				50 = {
+					modifier = {
+						factor = 0.68
+						job_spymaster = {
+							intrigue = 14
+							NOT = { intrigue = 18 }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						job_spymaster = {
+							intrigue = 18
+							NOT = { intrigue = 22 }
+						}
+					}
+					modifier = {
+						factor = 0.4
+						job_spymaster = {
+							intrigue = 22
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = {
+							ROOT = { attribute_diff = { character = PREV attribute = intrigue value = 2 } }
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = {
+							ROOT = { attribute_diff = { character = PREV attribute = intrigue value = 4 } }
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = {
+							ROOT = { attribute_diff = { character = PREV attribute = intrigue value = 6 } }
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = {
+							ROOT = { attribute_diff = { character = PREV attribute = intrigue value = 8 } }
+						}
+					}
+					modifier = {
+						factor = 0.9
+						supported_claimant = {
+							ROOT = { attribute_diff = { character = PREV attribute = intrigue value = 10 } }
+						}
+					}
+					supported_claimant = {
+						character_event = { id = faction_event_new.6 days = 1 tooltip = TOOLTIPfaction_event_new.6 }
+					}
+				}
+			}
+			set_character_flag = faction_kidnap_claimant_taken
+		}
+		
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.09 # Slow it down a bit
+			}
+			modifier = {
+				factor = 6
+				OR = {
+					trait = ruthless
+					trait = ambitious
+					trait = wroth
+				}
+			}
+			modifier = {
+				factor = 0.17
+				OR = {
+					trait = honorable
+					trait = content
+					trait = patient
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_claimant
+						power = 0.8
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				faction_claimant = {
+					has_elective_law_trigger = yes
+				}
+				liege = {
+					ROOT = {
+						supported_claimant = {
+							religion = PREVPREV
+							culture = PREVPREV
+						}
+					}
+				}
+			}
+		}
+	}	
+}

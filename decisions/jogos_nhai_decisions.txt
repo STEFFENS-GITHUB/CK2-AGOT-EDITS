@@ -1,0 +1,420 @@
+decisions = {
+	become_jhattar = {
+		is_high_prio = yes
+		only_independent = yes
+		potential = {			
+			independent = yes
+			government = nomadic_government
+			culture = jogos_nhai
+			NOT = { has_character_modifier = jhattar_of_jogos_nhai }
+		}
+		
+		allow = {
+			culture = jogos_nhai
+			government = nomadic_government
+			OR = {
+				num_of_count_titles_in_realm = 20
+				custom_tooltip = { #has unified all dothraki
+					text = TOOLTIPbecome_jhattarA
+					hidden_tooltip = {
+						NOT = {
+							any_independent_ruler = {
+								culture = dothraki
+								government = nomadic_government
+								tier = EMPEROR
+								NOT = { character = ROOT }
+							}
+						}
+					}	
+				}	
+			}
+			prestige = 1000
+			is_adult = yes
+			martial = 10
+			diplomacy = 10
+			combat_rating = 5
+			prisoner = no
+			is_tributary = no
+			NOT = { has_severe_disability_trigger = yes }
+			NOT = { is_weak_trigger = yes }
+			NOT = { trait = imbecile }
+			NOT = { trait = dwarf }
+			NOT = { trait = clubfooted }
+			NOT = { trait = eunuch }
+			NOT = { trait = craven }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {			
+			set_special_character_title = emperor_jogos_nhai
+			prestige = 500
+			if = {
+				limit = {
+					NOT = {
+						any_owned_bloodline = {
+							has_bloodline_flag = jhattar_of_jogos_nhai
+						}
+					}
+				}
+				create_bloodline = {
+					type = jhattar_of_jogos_nhai
+				}
+			}
+			add_character_modifier = {
+				name = jhattar_of_jogos_nhai
+				duration = -1
+			}
+			if = {
+				limit = {
+					e_jkhalasar = {
+						has_holder = no
+					}
+				}
+				any_demesne_title = {
+					limit = {
+						tier = EMPEROR
+						is_titular = yes
+					}
+					set_title_flag = to_be_destroyed
+				}
+				e_jkhalasar = {
+					hidden_tooltip = {
+						activate_title = { title = THIS status = yes }
+					}
+					grant_title = PREV
+				}
+				any_demesne_title = {
+					limit = {
+						has_title_flag = to_be_destroyed
+					}
+					clr_title_flag = to_be_destroyed
+					activate_title = { title = THIS status = no }
+					destroy_landed_title = THIS
+				}
+			}
+			if = {
+				limit = {
+					ai = yes
+				}
+				character_event = { id = 60530 } # ai reinforcements
+				population = 25000
+			}
+			hidden_tooltip = {
+				any_playable_ruler = {
+					limit = { 
+						ai = no 
+						NOT = { character = ROOT }
+					}
+					character_event = { id = jogos_nhai.10 } # notify the world
+				}
+				character_event = { id = jogos_nhai.10 } # and myself
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+
+targetted_decisions = {
+	jogos_nhai_annex_clan = {
+		ai_target_filter = independent_rulers
+		filter = independent_rulers
+		only_independent = yes
+		diplomacy_icon = GFX_offer_annexation
+		
+		from_potential = {		
+			is_nomadic = yes
+			culture = jogos_nhai
+			independent = yes	
+			OR = { #AI restriction
+				ai = no
+				NOT = { trait = content }
+			}
+		}
+		potential = {
+			independent = yes	
+			is_nomadic = yes
+			culture = jogos_nhai
+			NOT = { character = FROM }
+			NOT = { has_character_modifier = jhattar_of_jogos_nhai }
+			
+			OR = { #AI restriction
+				FROM = { ai = no }
+				FROM = { trait = ambitious }
+				AND = {
+					FROM = { num_of_count_titles_in_realm = 10 }
+					NOT = { num_of_count_titles_in_realm = 8 }
+				}	
+				AND = {
+					FROM = { num_of_count_titles_in_realm = 3 }
+					NOT = { num_of_count_titles_in_realm = 2 }
+				}
+				is_close_relative = FROM
+				is_allied_with = FROM
+				has_non_aggression_pact_with = FROM
+				is_friend = FROM
+				opinion = { who = FROM value = 50 }
+			}
+		}
+		allow = {
+			FROM = {
+				is_adult = yes
+				prisoner = no
+				has_regent = no
+				is_ill = no
+				prestige = 250
+				custom_tooltip = {
+					text = TOOLTIPjogos_nhai_annex_clanASKING
+					hidden_tooltip = {
+						OR = {
+							NOT = { has_character_flag = jogos_annexation_in_progress }
+							had_character_flag = { flag = jogos_annexation_in_progress days = 20 }
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = TOOLTIPjogos_nhai_annex_clanNEIGHBOUR
+				hidden_tooltip = {
+					any_realm_province = {
+						any_neighbor_province = {
+							owner = { same_realm = FROM }
+						}
+					}
+				}
+			}
+			OR = {
+				ai = no
+				opinion = { who = FROM value = 0 }
+				AND = {
+					prisoner = yes
+					host = { character = FROM }
+				}
+			}	
+			custom_tooltip = {
+				text = TOOLTIPjogos_nhai_annex_clanCLAN
+				hidden_tooltip = {
+					NOT = {
+						any_vassal = {
+							is_nomadic = yes
+							ai = yes
+							NOT = { opinion = { who = FROM value = 0 } }
+						}
+					}
+				}
+			}
+			OR = {
+				prisoner = no
+				host = { character = FROM }
+			}	
+			NOT = { trait = incapable }
+			war = no
+			NOT = { has_character_modifier = in_seclusion }
+			NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_rejected_jogos_nhai_annex_clan } }	
+		}
+		effect = {
+			FROM = { set_character_flag = jogos_annexation_in_progress }
+			character_event = { id = jogos_nhai.2 tooltip = TOOLTIPjogos_nhai.2 days = 5 }
+			if = {
+				limit = { 
+					ai = yes 
+					NAND = {
+						prisoner = yes
+						host = { character = FROM }
+					}
+				}
+				tooltip = {
+					random_list = {
+						25 = {
+							custom_tooltip = {
+								text = TOOLTIPjogos_nhai_annex_clanSUCCESS
+							}
+							modifier = { #Must have motive to join
+								factor = 0
+								NOR = {
+									NOT = { relative_power = { who = FROM power = 1 } }#Has a smaller realm
+									is_close_relative = FROM
+									is_allied_with = FROM
+									has_non_aggression_pact_with = FROM
+									is_friend = FROM
+									opinion = { who = FROM value = 50 }
+								}	
+							}
+							modifier = {
+								factor = 0
+								relative_power = { who = FROM power = 1.33 }
+								NOT = { opinion = { who = FROM value = 100 } }
+							}
+							modifier = {
+								factor = 1.5
+								is_close_relative = FROM
+							}
+							modifier = {
+								factor = 1.5
+								is_allied_with = FROM
+							}
+							modifier = {
+								factor = 1.25
+								has_non_aggression_pact_with = FROM
+							}
+							modifier = {
+								factor = 1.5
+								is_friend = FROM
+							}
+							modifier = {
+								factor = 0
+								is_rival = FROM
+							}
+							modifier = {
+								factor = 1.5
+								opinion = { who = FROM value = 20 }	
+							}
+							modifier = {
+								factor = 1.5
+								opinion = { who = FROM value = 40 }	
+							}
+							modifier = {
+								factor = 1.5
+								opinion = { who = FROM value = 60 }	
+							}
+							modifier = {
+								factor = 1.5
+								opinion = { who = FROM value = 80 }	
+							}
+							modifier = {
+								factor = 1.5
+								opinion = { who = FROM value = 100 }	
+							}
+							modifier = {
+								factor = 1.5
+								NOT = { relative_power = { who = FROM power = 0.8 } }	
+							}
+							modifier = {
+								factor = 2
+								NOT = { relative_power = { who = FROM power = 0.5 } }	
+							}
+							modifier = {
+								factor = 2
+								NOT = { relative_power = { who = FROM power = 0.25 } }	
+							}
+							modifier = {
+								factor = 2
+								NOT = { relative_power = { who = FROM power = 0.1 } }	
+							}
+							
+							modifier = {
+								factor = 1.5
+								trait = content
+							}
+							modifier = {
+								factor = 1.5
+								trait = craven
+							}
+							modifier = {
+								factor = 1.5
+								trait = humble
+							}
+							modifier = {
+								factor = 1.5
+								trait = patient
+							}
+							
+							modifier = {
+								factor = 1.33
+								FROM = { martial = 15 }
+							}
+							modifier = {
+								factor = 1.33
+								FROM = { martial = 18 }
+							}
+							modifier = {
+								factor = 1.33
+								FROM = { martial = 21 }
+							}
+							modifier = {
+								factor = 1.33
+								FROM = { martial = 24 }
+							}
+						}
+						75 = {												
+							modifier = {
+								factor = 1.5
+								FROM = { is_female = yes }
+							}						
+							modifier = {
+								factor = 1.5
+								NOT = { opinion = { who = FROM value = -19 } }
+							}
+							modifier = {
+								factor = 1.5
+								NOT = { opinion = { who = FROM value = -39 } }
+							}
+							modifier = {
+								factor = 1.5
+								NOT = { opinion = { who = FROM value = -59 } }
+							}
+							modifier = {
+								factor = 1.5
+								NOT = { opinion = { who = FROM value = -79 } }
+							}
+							modifier = {
+								factor = 1.5
+								NOT = { opinion = { who = FROM value = -99 } }
+							}
+							modifier = {
+								factor = 1.5
+								relative_power = { who = FROM power = 2 }
+							}
+							modifier = {
+								factor = 1.5
+								relative_power = { who = FROM power = 3 }	
+							}
+							modifier = {
+								factor = 1.5
+								relative_power = { who = FROM power = 4 }	
+							}
+							modifier = {
+								factor = 3
+								trait = ambitious
+							}
+							modifier = {
+								factor = 1.5
+								trait = brave
+							}
+							modifier = {
+								factor = 2
+								trait = proud
+							}
+							modifier = {
+								factor = 1.5
+								trait = zealous
+							}
+							modifier = {
+								factor = 1.5
+								trait = wroth
+							}		
+							modifier = {
+								factor = 1.33
+								FROM = { NOT = { martial = 9 } }
+							}
+							modifier = {
+								factor = 1.33
+								FROM = { NOT = { martial = 6 } }
+							}
+							modifier = {
+								factor = 1.33
+								FROM = { NOT = { martial = 3 } }
+							}
+						}	
+					}
+				}
+			}	
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}	

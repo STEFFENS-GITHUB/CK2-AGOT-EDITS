@@ -1,0 +1,1347 @@
+decisions = {
+	nightswatch_calls_for_aid = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = {
+			is_ruler = yes
+			trait = nightswatch
+			primary_title = { title = d_nightswatch }	
+			war = yes
+			is_primary_war_defender = yes			
+			any_war = {
+				defender = { character = ROOT }
+				attacker = {
+					NOT = { trait = white_walker }
+					trait = wildling
+					#higher_tier_than = DUKE
+				}
+			}
+		}
+		
+		allow = {
+			custom_tooltip = {
+				text = TOOLTIPflag_called_for_aid
+				hidden_tooltip = {
+					OR = {
+						NOT = { has_character_flag = flag_nights_watch_called_for_aid }
+						had_character_flag = { flag = flag_nights_watch_called_for_aid days = 500 }
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			save_event_target_as = NW_lord_commander
+			any_playable_ruler = { 
+				limit = {	
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							tier = DUKE
+							any_demesne_province = { kingdom = { title = k_north } }
+						}
+					}
+					nightswatch_culture_trigger = yes
+					NOT = { war_with = ROOT }	
+					NOT = { ROOT = { any_current_enemy = { war_with = PREVPREV } } }
+					NOT = { has_character_modifier = ignored_NW_call }
+					NOT = { any_liege = { war_with = ROOT } }
+					NOT = { any_liege = { ROOT = { any_current_enemy = { war_with = PREVPREV } } } }
+				}
+				if = {
+					limit = { independent = yes }
+					character_event = { id = nightswatch.13 tooltip = "EVTTOOLTIP999900043" }
+				}
+				if = { #ask vassals a couple of days later, in case liege joins
+					limit = { independent = no }
+					character_event = { id = nightswatch.13 days = 2 tooltip = "EVTTOOLTIP999900043" }
+				}
+			}
+			set_character_flag = flag_nights_watch_called_for_aid
+		}
+		
+		ai_will_do = { 
+			factor = 10 
+			modifier = { #Only call for aid if enemy is powerful or is winning
+				factor = 0
+				NOT = {
+					any_war = {
+						defender = { character = ROOT }
+						attacker = {
+							NOT = { trait = white_walker }
+							trait = wildling
+							#higher_tier_than = DUKE
+						}
+						OR = {
+							war_score = 33
+							attacker = { relative_power = { who = ROOT power = 0.9 } }
+						}
+					}
+				}
+			}
+		}
+	}
+	reactivate_castle_black = {
+		only_playable = yes
+		potential = { 
+			is_ruler = yes
+			has_landed_title = d_the_wall
+			c_castle_black = {
+				# any_direct_de_jure_vassal_title = {
+					# holder_scope = { culture = ruin }
+				# }
+				holder_scope = {
+					OR = {
+						character = ROOT
+						is_liege_or_above = ROOT
+					}
+				}
+			}
+			OR = {
+				b_ironmark = { holder_scope = { culture = ruin } }
+				b_the_nightfort = { holder_scope = { culture = ruin } }
+				b_deep_lake = { holder_scope = { culture = ruin } }
+				b_queensgate = { holder_scope = { culture = ruin } }
+				b_oakenshield = { holder_scope = { culture = ruin } }
+				b_woodswatch = { holder_scope = { culture = ruin } }
+			}
+		}
+		allow = { 
+			wealth = 400
+			17 = { NOT = { has_province_modifier = hbuild3 } }
+			NOT = { has_character_modifier = in_seclusion }
+		}
+		effect = {
+			wealth = -400
+			custom_tooltip = { text = TOOLTIPGETCASTLE }
+			hidden_tooltip = {
+				17 = {
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_ironmark = { holder_scope = { culture = ruin } }
+						}
+						b_ironmark = { 
+							gain_title = ROOT 
+							remove_building = ca_sub_barony_ruin
+							clr_title_flag = sub_barony_ruin
+						}
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_the_nightfort = { holder_scope = { culture = ruin } }
+						}
+						b_the_nightfort = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_deep_lake = { holder_scope = { culture = ruin } }
+						}
+						b_deep_lake = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_queensgate = { holder_scope = { culture = ruin } }
+						}
+						b_queensgate = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_oakenshield = { holder_scope = { culture = ruin } }
+						}
+						b_oakenshield = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_woodswatch = { holder_scope = { culture = ruin } }
+						}
+						b_woodswatch = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}			
+				}	
+			}#endhidden
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+				}
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_NW_ACTIVATED_CASTLE
+							picture = GFX_evt_castle_construction
+						}	
+					}
+				}	
+			}	
+		}
+		ai_check_interval = 4
+		ai_will_do = { factor = 1 }
+	}	
+
+	reactivate_shadow_tower = {
+		only_playable = yes
+		potential = { 
+			is_ruler = yes
+			has_landed_title = d_the_wall
+			c_shadow_tower = {
+				# any_direct_de_jure_vassal_title = {
+					# holder_scope = { culture = ruin }
+				# }
+				holder_scope = {
+					OR = {
+						character = ROOT
+						is_liege_or_above = ROOT
+					}
+				}
+			}
+			OR = {
+				b_westwatch = { holder_scope = { culture = ruin } }
+				b_sentinel_stand = { holder_scope = { culture = ruin } }
+				b_greyguard= { holder_scope = { culture = ruin } }
+				b_stonedoor = { holder_scope = { culture = ruin } }
+				b_hoarfrost_hill = { holder_scope = { culture = ruin } }
+			}
+		}
+		allow = { 
+			wealth = 400
+			16 = { NOT = { has_province_modifier = hbuild3 } }
+			NOT = { has_character_modifier = in_seclusion }
+		}
+		effect = {
+			wealth = -400
+			custom_tooltip = { text = TOOLTIPGETCASTLE }
+			hidden_tooltip = {
+				16 = {
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_westwatch = { holder_scope = { culture = ruin } }
+						}
+						b_westwatch = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_sentinel_stand = { holder_scope = { culture = ruin } }
+						}
+						b_sentinel_stand = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_greyguard = { holder_scope = { culture = ruin } }
+						}
+						b_greyguard= { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_stonedoor = { holder_scope = { culture = ruin } }
+						}
+						b_stonedoor = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_hoarfrost_hill = { holder_scope = { culture = ruin } }
+						}
+						b_hoarfrost_hill = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+				}
+			}
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+				}
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_NW_ACTIVATED_CASTLE
+							picture = GFX_evt_castle_construction
+						}	
+					}
+				}	
+			}
+		}
+		ai_check_interval = 4
+		ai_will_do = { factor = 1 }
+	}		
+
+	reactivate_eastwatch = {
+		only_playable = yes
+		potential = { 
+			is_ruler = yes
+			has_landed_title = d_the_wall
+			c_eastwatch = {
+				# any_direct_de_jure_vassal_title = {
+					# holder_scope = { culture = ruin }
+				# }
+				holder_scope = {
+					OR = {
+						character = ROOT
+						is_liege_or_above = ROOT
+					}
+				}
+			}
+			OR = {
+				b_sable_hall = { holder_scope = { culture = ruin } }
+				b_rimegate = { holder_scope = { culture = ruin } }
+				b_the_long_barrow = { holder_scope = { culture = ruin } }
+				b_the_torches = { holder_scope = { culture = ruin } }
+				b_greenguard = { holder_scope = { culture = ruin } }
+			}
+		}
+		allow = { 
+			wealth = 400
+			18 = { NOT = { has_province_modifier = hbuild3 } }
+			NOT = { has_character_modifier = in_seclusion }
+		}
+		effect = {
+			wealth = -400
+			custom_tooltip = { text = TOOLTIPGETCASTLE }
+			hidden_tooltip = {
+				18 = {
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_sable_hall = { holder_scope = { culture = ruin } }
+						}
+						b_sable_hall = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_rimegate = { holder_scope = { culture = ruin } }
+						}
+						b_rimegate = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_the_long_barrow = { holder_scope = { culture = ruin } }
+						}
+						b_the_long_barrow = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_the_torches = { holder_scope = { culture = ruin } }
+						}
+						b_the_torches = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+					if = { 
+						limit = { 
+							NOT = { has_province_modifier = hbuild3 }
+							b_greenguard = { holder_scope = { culture = ruin } }
+						}
+						b_greenguard = { gain_title = ROOT remove_building = ca_sub_barony_ruin clr_title_flag = sub_barony_ruin }
+						add_province_modifier = { name = hbuild3 duration = 180 }
+					}
+				}
+			}	
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+				}
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_NW_ACTIVATED_CASTLE
+							picture = GFX_evt_castle_construction
+						}	
+					}
+				}	
+			}
+		}
+		ai_check_interval = 4
+		ai_will_do = { factor = 1 }
+	}
+	blow_winterhorn = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = { 
+			has_artifact = winterhorn
+			trait = wildling
+			NOT = { 
+				OR = { 
+				has_global_flag = winterhorn_used 
+				has_global_flag = winterhorn_destroyed
+				}
+			}
+		}
+		allow = { 
+		}
+		effect = {
+			prestige = 5000
+			hidden_tooltip = {
+			set_global_flag = winterhorn_used
+			narrative_event = { id = wildling.22 }
+			}
+			16 = {
+				b_shadow_tower = { 
+					remove_building = ca_wallportion
+				}
+			}
+			17 = {
+				b_castle_black = { 
+					remove_building = ca_wallportion
+				}
+			}
+			18 = {
+				b_eastwatch = { 
+					remove_building = ca_wallportion
+				}
+			}
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_BLEW_WINTERHORN
+					picture = "GFX_evt_wildlings"
+				}	
+			}
+			e_rebels = {
+				persistent_event_target:chronicle_player = {
+					if = {
+						limit = { 
+							NOT = { character = ROOT }
+							OR = {							
+								dynasty = ROOT
+								is_liege_or_above = ROOT
+								nightswatch_culture_trigger = yes
+								trait = wildling
+								trait = nightswatch
+							}
+						}
+						chronicle = {
+							entry = CHRONICLE_BLEW_WINTERHORN
+							portrait = [Root.GetID]
+						}	
+					}
+				}
+			}	
+		}
+		ai_check_interval = 4
+	}
+	destroy_winterhorn = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = { 
+			NOT = { 
+				OR = { 
+					has_global_flag = winterhorn_used 
+					has_global_flag = winterhorn_destroyed
+				}
+			}
+			trait = nightswatch
+			has_artifact = winterhorn
+		}
+		allow = { 
+		}
+		effect = {
+			prestige = 1000
+			random_artifact = {
+				limit = { artifact_type = winterhorn }
+				unsafe_destroy_artifact = yes
+			}
+			hidden_tooltip = {
+				set_global_flag = winterhorn_destroyed
+				narrative_event = { id = wildling.24 }
+			}
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_DESTROY_WINTERHORN
+					picture = "GFX_evt_the_wall"
+				}	
+			}
+			e_rebels = {
+				persistent_event_target:chronicle_player = {
+					if = {
+						limit = { 
+							NOT = { character = ROOT }
+							OR = {							
+								dynasty = ROOT
+								is_liege_or_above = ROOT
+								nightswatch_culture_trigger = yes
+								trait = wildling
+								trait = nightswatch
+							}
+						}
+						chronicle = {
+							entry = CHRONICLE_DESTROY_WINTERHORN
+							portrait = [Root.GetID]
+						}	
+					}
+				}
+			}	
+		}
+		ai_check_interval = 4
+	}
+	ai_grants_command = {
+		only_playable = yes
+		potential = { 
+			is_ruler = yes
+			trait = nightswatch
+			ai = yes
+			any_demesne_title = {
+				tier = BARON
+				holding_type = castle
+				NOT = { ROOT = { capital_holding = { title = PREVPREV } } }
+			}
+			any_courtier = {
+				is_female = no
+				trait = nightswatch
+				age = 16
+				is_incapable = no
+				NOT = { trait = maester }
+				NOT = { has_priest_trait_trigger = yes }
+				NOT = { trait = dragon }
+				prisoner = no
+				is_ruler = no
+				martial = 7
+				reverse_opinion = { who = ROOT value = -15 }
+				opinion = { who = ROOT value = -25 }
+				is_primary_heir = no
+			}
+		}
+		allow = { 
+		}
+		effect = {
+			random_courtier = {
+				limit = { 
+					is_female = no
+					trait = nightswatch
+					age = 16
+					is_incapable = no
+					NOT = { trait = maester }
+					NOT = { has_priest_trait_trigger = yes }
+					NOT = { trait = dragon }
+					prisoner = no
+					is_ruler = no
+					martial = 7
+					reverse_opinion = { who = ROOT value = -15 }
+					opinion = { who = ROOT value = -25 }
+					is_primary_heir = no 
+					NOT = { is_inaccessible_trigger = yes }
+				}
+				ROOT = {
+					random_demesne_title = {
+						limit = {
+							tier = BARON
+							holding_type = castle
+							NOT = { ROOT = { capital_holding = { title = PREVPREV } } }
+						}	
+						dejure_liege_title = {
+							if = {
+								limit = {
+									holder_scope = { character = ROOT }
+									location = { is_capital = no }
+								}
+								grant_title = PREVPREVPREV
+								hidden_tooltip = { succession = appointment }
+							}	
+						}
+						grant_title = PREVPREV
+						hidden_tooltip = { succession = appointment }
+					}
+				}
+				set_defacto_liege = ROOT	
+			}
+		}
+		ai_check_interval = 4
+		ai_will_do = { factor = 100 }
+	}
+	# new_lord_commander_elected = {
+		# is_high_prio = yes
+		# potential = {
+			# independent = yes
+			# has_landed_title = d_nightswatch
+            # NOT = { has_character_flag = new_lordcom }
+		# } 
+		# allow = {				
+		# }
+		# effect = {
+			# set_character_flag = new_lordcom
+			# narrative_event = { id = 2002066 }
+		# }
+		# ai_will_do = {
+			# factor = 1000
+		# }
+	# }
+}
+targetted_decisions = {
+	send_son_to_wall_stark = {
+		ai_target_filter = close_relatives
+		filter = close_relatives
+		only_playable = yes
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			#ai = no
+			OR = {
+				has_game_rule = { name = disinheritance_decisions value = unrestricted }	
+				any_owned_bloodline = {
+					has_bloodline_flag = bloodline_easy_monks
+					bloodline_is_active_for = PREV
+				}
+			}
+			dynasty = 59		
+			nightswatch_culture_trigger = yes
+		}
+		potential = {
+			is_child_of = FROM
+			is_liege_or_above = FROM
+			is_female = no
+			age = 10
+			is_ruler = no
+			NOT = { trait = nightswatch }		
+		}
+		allow = {
+			FROM = { 
+				num_of_children = 4
+				is_adult = yes
+				NOT = { is_incapable = yes }
+				prisoner = no
+				NOT = { current_heir = { character = ROOT } }
+			}
+			is_primary_heir = no
+			is_married = no
+			is_betrothed = no			
+			prisoner = no
+			is_incapable = no
+			NOT = { has_minor_title = title_triarch }	
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			FROM = { 
+				piety = 20 
+				hidden_tooltip = { character_event = { id = cold_winds.19 } }
+			}
+			if = {
+				limit = {
+					NOT = { trait = content }
+					is_incapable = no
+					NOT = { trait = honorable }
+					OR = {
+						is_primary_heir = yes
+						trait = ambitious
+						is_councillor = yes
+						is_voter = yes
+						has_ambition = obj_get_married
+						has_ambition = obj_wants_landed_title
+						has_ambition = obj_become_heir
+					}
+				}
+				opinion = { who = FROM modifier = opinion_sent_me_to_nightswatch }
+			}
+			custom_tooltip = { 
+				text = TOOLTIPBANISHTONW 
+				hidden_tooltip = { character_event = { id = nightswatch.20 } }
+			}
+			piety = 20
+		}
+		
+		ai_check_interval = 12
+		ai_will_do = { 
+			factor = 1
+			modifier = {
+				factor = 0.03
+			}
+			modifier = {
+				factor = 0
+				FROM = { #motives
+					reverse_opinion = { who = ROOT value = -79 } #intense dislike
+					OR = { #useless
+						is_adult = no
+						stewardship = 8
+						martial = 8
+						diplomacy = 8
+						intrigue = 8
+					}	
+				}
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						opinion = { who = ROOT value = 25 }					
+						NOT = { #no spare heir
+							any_child = {
+								is_alive = yes
+								reverse_opinion = { who = ROOT value = -79 } #intense dislike
+								OR = { #useless
+									is_adult = no
+									stewardship = 8
+									martial = 8
+									diplomacy = 8
+									intrigue = 8
+								}
+								can_inherit_titles_trigger = yes
+							}
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = { 
+					OR = {
+						trait = ambitious
+						trait = ruthless
+						trait = wroth
+					}	
+				}
+			}
+		}
+	}
+	send_son_to_wall = {
+		ai_target_filter = close_relatives
+		filter = close_relatives
+		only_playable=  yes
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			#ai = no
+			OR = {
+				has_game_rule = { name = disinheritance_decisions value = unrestricted }	
+				any_owned_bloodline = {
+					has_bloodline_flag = bloodline_easy_monks
+					bloodline_is_active_for = PREV
+				}
+			}	
+			nightswatch_culture_trigger = yes
+		}
+		potential = {
+			is_child_of = FROM
+			is_liege_or_above = FROM
+			is_female = no
+			age = 10
+			is_ruler = no
+			is_incapable = no
+			NOT = { trait = nightswatch }		
+		}
+		allow = {
+			FROM = { 	
+				is_adult = yes
+				NOT = { is_incapable = yes }
+				prisoner = no
+			}
+			is_married = no
+			is_betrothed = no			
+			prisoner = no
+			NOT = { has_minor_title = title_triarch }
+			NOT = { is_inaccessible_trigger = yes }			
+		}
+		
+		effect = {
+			FROM = { 
+				piety = 20
+			}
+			if = {
+				limit = {
+					NOT = { trait = content }
+					is_incapable = no
+					NOT = { trait = honorable }
+					OR = {
+						is_primary_heir = yes
+						trait = ambitious
+						is_councillor = yes
+						is_voter = yes
+						has_ambition = obj_get_married
+						has_ambition = obj_wants_landed_title
+						has_ambition = obj_become_heir
+					}
+				}
+				opinion = { who = FROM modifier = opinion_sent_me_to_nightswatch }
+			}
+			custom_tooltip = { 
+				text = TOOLTIPBANISHTONW 
+				hidden_tooltip = { character_event = { id = nightswatch.20 } }
+			}
+			piety = 20
+		}
+		
+		ai_check_interval = 12
+		ai_will_do = { 
+			factor = 1
+			modifier = {
+				factor = 0.03
+			}
+			modifier = {
+				factor = 0
+				FROM = { #motives
+					reverse_opinion = { who = ROOT value = -79 } #intense dislike
+					OR = { #useless
+						is_adult = no
+						stewardship = 8
+						martial = 8
+						diplomacy = 8
+						intrigue = 8
+					}	
+				}
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						opinion = { who = ROOT value = 25 }					
+						NOT = { #no spare heir
+							any_child = {
+								is_alive = yes
+								reverse_opinion = { who = ROOT value = -79 } #intense dislike
+								OR = { #useless
+									is_adult = no
+									stewardship = 8
+									martial = 8
+									diplomacy = 8
+									intrigue = 8
+								}
+								can_inherit_titles_trigger = yes
+							}
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = { 
+					OR = {
+						trait = ambitious
+						trait = ruthless
+						trait = wroth
+					}	
+				}
+			}
+		}
+	}
+	send_bastard_to_family = {
+		ai_target_filter = home_court
+		filter = home_court
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			trait = nightswatch
+		}
+		potential = {
+			is_child_of = FROM
+			NOT = { age = 16 }
+			NOT = { trait = nightswatch }
+			any_liege = { trait = nightswatch }
+			OR = {
+				NOT = { has_character_flag = raised_on_the_wall }
+				FROM = { ai = no }
+			}	
+		}
+		allow = {
+			FROM = { 
+				wealth = 20 
+				any_dynasty_member = {
+					is_alive = yes
+					NOT = { trait = nightswatch }
+					NOT = { trait = kingsguard }
+					NOT = { trait = maester }
+					NOT = { trait = archmaester }
+				}	
+			}
+		}
+		effect = {
+			FROM = {
+				wealth = -20
+				if = {
+					limit = { ai = no }
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { trait = nightswatch }
+							NOT = { trait = kingsguard }
+							NOT = { trait = maester }
+							NOT = { trait = archmaester }
+							demesne_size = 1
+							is_close_relative = FROM
+						}
+						ROOT = { move_character = PREV }
+					}
+					if = {
+						limit = {
+							NOT = {
+								any_dynasty_member = {
+									is_alive = yes
+									NOT = { trait = nightswatch }
+									NOT = { trait = kingsguard }
+									NOT = { trait = maester }
+									NOT = { trait = archmaester }
+									demesne_size = 1
+									is_close_relative = FROM
+								}
+							}
+						}
+						random_dynasty_member = {
+							limit = {
+								is_alive = yes
+								NOT = { trait = nightswatch }
+								NOT = { trait = kingsguard }
+								NOT = { trait = maester }
+								NOT = { trait = archmaester }
+								NOT = { demesne_size = 1 }
+								is_close_relative = FROM
+							}
+							liege = { ROOT = { move_character = PREV } }
+						}
+					}	
+					if = {
+						limit = {
+							NOT = {
+								any_dynasty_member = {
+									is_alive = yes
+									NOT = { trait = nightswatch }
+									NOT = { trait = kingsguard }
+									NOT = { trait = maester }
+									NOT = { trait = archmaester }
+									is_close_relative = FROM
+								}
+							}
+						}
+						random_dynasty_member = {
+							limit = {
+								is_alive = yes
+								NOT = { trait = nightswatch }
+								NOT = { trait = kingsguard }
+								NOT = { trait = maester }
+								NOT = { trait = archmaester }
+							}
+							if = {
+								limit = { demesne_size = 1 }
+								ROOT = { move_character = PREV }
+							}
+							if = {
+								limit = { NOT = { demesne_size = 1 } }
+								liege = { ROOT = { move_character = PREV } }
+							}								
+						}
+					}					
+				}
+				if = {
+					limit = { ai = yes }
+					character_event = { id = nightswatch.24 }
+				}	
+			}	
+		}
+		
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	NW_grant_command = {
+		ai_target_filter = none
+		filter = sub_realm
+		ai = no
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			is_ruler = yes
+			OR = {
+				trait = nightswatch
+				has_landed_title = k_nightswatch
+			}	
+			ai = no
+			demesne_size = 2
+			any_demesne_title = {
+				tier = BARON
+				holding_type = castle
+				NOT = { holder_scope = { capital_holding = { title = PREVPREV } } }
+			}
+		}
+	
+		potential = {
+			is_liege_or_above = FROM		
+			is_ruler = no
+			trait = nightswatch		
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			FROM = { NOT = { has_character_flag = granting_command } }
+			is_female = no
+			trait = nightswatch
+			age = 16
+			is_incapable = no
+			NOR = {
+				trait = maester
+				trait = archmaester
+				has_priest_trait_trigger = yes
+			}
+			prisoner = no
+			is_ruler = no
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = {
+				set_government_type = NW_government
+			}
+			FROM = {
+				if = { #If choice is obvious (or AI) grant it immediately
+					limit = { 
+						OR = {
+							ai = yes
+							NOT = { demesne_size = 3 }
+						}	
+					}
+					random_demesne_title = {
+						limit = {
+							tier = BARON
+							holding_type = castle
+							NOT = { holder_scope = { capital_holding = { title = PREVPREV } } }
+						}	
+						dejure_liege_title = {
+							if = {
+								limit = {
+									holder_scope = { character = PREVPREVPREV }
+									location = { is_capital = no }
+								}
+								grant_title = ROOT
+							}	
+							succession = appointment
+						}
+						holder_scope = {
+							if = {
+								limit = {  ai = no }
+								chronicle = {
+									entry = CHRONICLE_NW_GRANT_COMMAND
+									portrait = [Root.GetID]
+								}	
+							}
+						}
+						grant_title = ROOT
+						succession = appointment							
+					}
+				}
+				if = { #If choice is not obvious trigger event
+					limit = { 
+						demesne_size = 3 
+						ai = no
+					}
+					ROOT = { save_event_target_as = NW_granting_command }
+					set_character_flag = granting_command
+					character_event = { id = nightswatch.32 tooltip = TOOLTIPnightswatch.32 }
+				}
+			}	
+			hidden_tooltip = {
+				remove_title = title_first_ranger
+				remove_title = title_first_steward
+				remove_title = title_first_builder
+				remove_title = title_personal_steward
+				remove_title = title_bodyguard
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.05
+			}
+		}
+	}
+	NW_assign_ranger = {
+		ai_target_filter = none
+		filter = home_court
+		ai = no
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			ai = no
+			is_ruler = yes
+			OR = {
+				trait = nightswatch
+				has_landed_title = k_nightswatch
+			}				
+		}
+	
+		potential = {
+			liege = { character = FROM }	
+			is_ruler = no
+			trait = nightswatch	
+			NOR = {
+				trait = maester
+				trait = archmaester
+				has_priest_trait_trigger = yes
+			}
+			NOR = {
+				has_character_modifier = nw_ranger
+				has_character_modifier = nw_steward
+				has_character_modifier = nw_builder
+			}			
+		}
+		allow = {
+			FROM = { 
+				prisoner = no
+				is_incapable = no
+			}
+			age = 18
+			is_incapable = no
+			prisoner = no
+		}
+		effect = {
+			add_character_modifier = { 
+				name = nw_ranger
+				duration = -1
+			}
+			if = { #dislikes role
+				limit = { 				
+					NOR = { 	#deosn't want to be ranger
+						martial = 8
+						trait = skilled_warrior
+						trait = master_warrior
+						trait = misguided_warrior
+						trait = tough_soldier
+						trait = skilled_tactician
+						trait = brilliant_strategist
+						trait = hunter
+					}
+					OR = {
+						trait = craven
+						trait = just
+						trait = slothful
+						trait = honest
+						stewardship = 8
+						trait = infirm
+						trait = blinded
+						trait = blinded_age
+					}				
+					NOR = {
+						trait = proud
+						trait = ambitious
+						trait = arbitrary
+					}					
+				}	
+				opinion = {
+					who = FROM
+					modifier = opinion_unhappy
+					months = 60
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	NW_assign_steward = {
+		ai_target_filter = none
+		filter = home_court
+		ai = no
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			ai = no
+			is_ruler = yes
+			OR = {
+				trait = nightswatch
+				has_landed_title = k_nightswatch
+			}				
+		}
+	
+		potential = {
+			liege = { character = FROM }	
+			is_ruler = no
+			trait = nightswatch	
+			NOR = {
+				trait = maester
+				trait = archmaester
+				has_priest_trait_trigger = yes
+			}
+			NOR = {
+				has_character_modifier = nw_ranger
+				has_character_modifier = nw_steward
+				has_character_modifier = nw_builder
+			}			
+		}
+		allow = {
+			FROM = { 
+				prisoner = no
+				is_incapable = no
+			}
+			age = 18
+			is_incapable = no
+			prisoner = no
+		}
+		effect = {
+			add_character_modifier = { 
+				name = nw_steward
+				duration = -1
+			}
+			if = { #dislikes role
+				limit = { 
+					OR = {
+						AND = { #would rather be ranger
+							OR = {
+								martial = 12
+								trait = skilled_warrior
+								trait = master_warrior
+								trait = skilled_tactician
+								trait = brilliant_strategist
+							}	
+							OR = {
+								NOT = { stewardship = 8 }
+								trait = brave
+								trait = just
+								trait = diligent
+								trait = wroth
+								trait = ambitious
+								trait = proud
+							}
+							NOR = {
+								trait = humble
+								trait = content
+								trait = honorable
+							}
+						}	
+						AND = { #doesn't want to be steward
+							NOR = { 	
+								stewardship = 8
+								trait = indulgent_wastrel
+								trait = thrifty_clerk
+								trait = fortune_builder
+								trait = midas_touched
+							}
+							OR = {
+								trait = just
+								trait = slothful
+								trait = honest
+								trait = proud
+								trait = wroth
+								martial = 8
+							}	
+						}	
+					}																		
+				}	
+				opinion = {
+					who = FROM
+					modifier = opinion_unhappy
+					months = 60
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	NW_assign_builder = {
+		ai_target_filter = none
+		filter = home_court
+		ai = no
+		diplomacy_icon = GFX_decision_nightswatch
+		
+		from_potential = {
+			ai = no
+			is_ruler = yes
+			OR = {
+				trait = nightswatch
+				has_landed_title = k_nightswatch
+			}				
+		}
+	
+		potential = {
+			liege = { character = FROM }	
+			is_ruler = no
+			trait = nightswatch	
+			NOR = {
+				trait = maester
+				trait = archmaester
+				has_priest_trait_trigger = yes
+			}	
+			NOR = {
+				has_character_modifier = nw_ranger
+				has_character_modifier = nw_steward
+				has_character_modifier = nw_builder
+			}			
+		}
+		allow = {
+			FROM = { 
+				prisoner = no
+				is_incapable = no
+			}
+			age = 18
+			is_incapable = no
+			prisoner = no
+		}
+		effect = {
+			add_character_modifier = { 
+				name = nw_builder
+				duration = -1
+			}
+			if = { #dislikes role
+				limit = { 
+					NOR = {
+						trait = humble
+						trait = content
+						trait = honorable
+					}
+					OR = {
+						AND = { #would rather be ranger
+							OR = {
+								martial = 12
+								trait = skilled_warrior
+								trait = master_warrior
+								trait = skilled_tactician
+								trait = brilliant_strategist
+							}	
+							OR = {
+								NOT = { stewardship = 8 }
+								trait = brave
+								trait = just
+								trait = diligent
+								trait = wroth
+								trait = ambitious
+								trait = proud
+							}
+						}	
+						AND = { #would rather be steward
+							OR = {
+								stewardship = 12
+								trait = fortune_builder
+								trait = midas_touched
+							}
+							OR = {
+								trait = brave
+								trait = just
+								trait = diligent
+								trait = wroth
+								trait = ambitious
+								trait = proud
+							}						
+						}	
+					}																		
+				}	
+				opinion = {
+					who = FROM
+					modifier = opinion_unhappy
+					months = 60
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

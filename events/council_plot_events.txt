@@ -1,0 +1,1816 @@
+namespace = council_plot
+
+#######################
+# Council Plot Events #
+#######################
+# Petition Events: 1-49
+#######################
+# Maintenance Events
+# council_plot.50	You Now Support A New Candidate
+# council_plot.51	A Former Sponsor Has Betrayed You!
+#######################
+# New Sponsor Events
+#######################
+# council_plot.52	You Support A Friend On Your Liege's Council
+# council_plot.53	A Friend Supports You!
+#######################
+
+#Scope to liege and then target decider
+character_event = {
+	id = council_plot.199
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		if = { #check plot is still valid
+			limit = { 
+				NOT = {
+					FROM = {
+						plot_target_char = {
+							liege = { character = ROOT }
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+						}
+					}
+				}
+			}
+			FROM = { clr_character_flag = flag_plot_replace_councillor_decision }
+			break = yes
+		}			
+		if = {
+			limit = { has_regent = no }
+			letter_event = { id = council_plot.1 }
+		}
+		if = { #Regent decides
+			limit = { has_regent = yes }
+			regent = { 
+				if = {
+					limit = {
+						ROOT = { plot_target_char = { character = PREVPREV } }
+					}
+					FROM = { clr_character_flag = flag_plot_replace_councillor_decision }
+					break = yes
+				}	
+				letter_event = { id = council_plot.1 }					
+			} 
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# New Councillor Petition
+letter_event = {
+	id = council_plot.1
+	desc = "EVTDESCCOUNCILPLOT1"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {	
+		name = "EVTOPTACOUNCILPLOT1" #Agree
+		# if = {
+			# limit = {
+				# FROM = {
+					# OR = {
+						# liege = { regent = { character = PREVPREV } }
+						# any_plot_backer = {
+							# liege = { character = ROOT }
+							# liege = { regent = { character = PREVPREV } }
+						# }
+					# }
+				# }
+			# }
+			# custom_tooltip = { text = REGENT_DEMAND }
+		# }
+		if = {
+			limit = {
+				FROMFROM = { any_plot_backer = { character = ROOT } }
+				custom_tooltip = { text = CONFIRM_PLOT }
+			}
+		}
+		
+		#If this is regent's decision, add opinions to liege as well
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { character = FROM } }
+				liege = {
+					FROMFROM = {
+						any_plot_backer = {
+							opinion = { who = PREVPREV modifier = opinion_approved_council_candidate }
+						}
+						plot_target_char = {
+							opinion = { who = PREVPREV modifier = opinion_fired_from_council }
+							liege = {
+								any_realm_character = {
+									limit = { 
+										reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }
+										NOT = { any_backed_character = { character = FROMFROM } }						
+									}
+									if = {
+										limit = { has_opinion_modifier = { who = PREV modifier = opinion_approved_council_candidate } }
+										remove_opinion = { who = PREV modifier = opinion_approved_council_candidate }
+									}	
+									opinion = { who = PREV modifier = opinion_replaced_council_candidate }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		# Supporters
+		FROMFROM = {
+			tooltip = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_ambition_fulfilled
+					months = 120
+				}
+			}	
+			hidden_tooltip = { letter_event = { id = council_plot.2 days = 1 } }
+			any_plot_backer = {
+				opinion = { who = ROOT modifier = opinion_approved_council_candidate }
+				hidden_tooltip = { character_event = { id = council_plot.3 days = 1 } }
+			}
+			# Show opponents
+			plot_target_char = {
+				set_character_flag = flag_replaced_by_plot_event			
+				if = {
+					limit = { has_character_modifier = negotiated_council_postion }
+					opinion = { who = ROOT modifier = opinion_fired_from_council multiplier = 3 }
+				}
+				else = {
+					opinion = { who = ROOT modifier = opinion_fired_from_council }
+				}
+				hidden_tooltip = { letter_event = { id = council_plot.4 days = 1 } }
+				liege = {
+					any_realm_character = {
+						limit = { 
+							reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }
+							NOT = { any_backed_character = { character = PREVPREVPREVPREV } }						
+						}
+						if = {
+							limit = { has_opinion_modifier = { who = ROOT modifier = opinion_approved_council_candidate } }
+							remove_opinion = { who = ROOT modifier = opinion_approved_council_candidate }
+						}	
+						opinion = { who = ROOT modifier = opinion_replaced_council_candidate }
+						hidden_tooltip = { character_event = { id = council_plot.5 } }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				FROMFROM = {
+					is_female = yes
+					NOT = { has_plot = plot_replace_spymaster }
+				}
+				gender_equality_trigger = no			
+			}
+			add_character_modifier = {
+				name = scandalous_councillor_3
+				months = 60
+			}
+		}
+		# Actually make the change
+		hidden_tooltip = { FROMFROM = { remove_title = title_triarch } }
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_castellan } }			
+			FROM = { job_castellan = { remove_title = job_castellan } }
+			FROMFROM = { give_job_title = job_castellan }
+		}	
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_chancellor } }			
+			FROM = { job_chancellor = { remove_title = job_chancellor } }
+			FROMFROM = { give_job_title = job_chancellor }
+		}
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_marshal } }			
+			FROM = { job_marshal = { remove_title = job_marshal } }
+			FROMFROM = { give_job_title = job_marshal }
+		}
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_treasurer } }			
+			FROM = { job_treasurer = { remove_title = job_treasurer } }
+			FROMFROM = { give_job_title = job_treasurer }
+		}
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_spymaster } }			
+			FROM = { job_spymaster = { remove_title = job_spymaster } }
+			FROMFROM = { give_job_title = job_spymaster }
+		}
+		if = {
+			limit = { FROMFROM = { has_plot = plot_replace_councillor } }			
+			FROMFROM = { 
+				plot_target_char = {
+					if = {
+						limit = { has_minor_title = title_councilmember_king }
+						remove_title = title_councilmember_king
+						PREV = { give_minor_title = title_councilmember_king }
+					}
+					if = {
+						limit = { has_minor_title = title_councilmember_emperor }
+						remove_title = title_councilmember_emperor
+						PREV = { give_minor_title = title_councilmember_emperor }
+					}
+					if = {
+						limit = { has_minor_title = title_high_admiral }
+						remove_title = title_high_admiral
+						PREV = { give_minor_title = title_high_admiral }
+					}
+					# if = {
+						# limit = { has_minor_title = title_master_of_ships }
+						# remove_title = title_master_of_ships
+						# PREV = { give_minor_title = title_master_of_ships }
+					# }
+				}
+			}
+		}
+		hidden_tooltip = {
+			FROMFROM = {
+				if = {
+					limit = { has_character_flag = triarch }
+					give_minor_title = title_triarch 
+				}	
+			}
+		}	
+			
+		#Regent inform liege
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { character = FROM } }
+				FROM = { character_event = { id = council_plot.10 } }
+			}
+		}
+		
+		ai_chance = {
+			factor = 100
+			
+			#Councillor was given position as part of a negotiation
+			modifier = { 
+				factor = 0.33
+				NOT = { trait = ruthless }
+				NOT = { trait = arbitrary }
+				FROMFROM = { 
+					plot_target_char = { 
+						has_character_modifier = negotiated_council_postion
+					}
+				}			
+			}
+			modifier = { 
+				factor = 0
+				trait = honorable
+				FROMFROM = { 
+					plot_target_char = { 
+						has_character_modifier = negotiated_council_postion
+					}
+				}			
+			}
+			
+			# Comparative Skill Effects
+			#Castellan
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = {
+						attribute_diff = { character = PREV attribute = stewardship value = 3 }
+						attribute_diff = { character = PREV attribute = martial value = 3 }
+						attribute_diff = { character = PREV attribute = diplomacy value = 3 }
+						reverse_opinion = { who = ROOT value = -49 }
+					}
+				}			
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = stewardship value = 3 } } }
+				}
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = martial value = 3 } } }
+				}
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = diplomacy value = 3 } } }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { attribute_diff = { character = PREV attribute = stewardship value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { attribute_diff = { character = PREV attribute = martial value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { attribute_diff = { character = PREV attribute = diplomacy value = 3 } }
+				}
+			}
+			#Chancellor
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_chancellor 
+					plot_target_char = {
+						attribute_diff = { character = PREV attribute = diplomacy value = 3 }
+						reverse_opinion = { who = ROOT value = -49 }
+					}
+				}			
+			}
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { attribute_diff = { character = PREV attribute = diplomacy value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					has_plot = plot_replace_chancellor 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = diplomacy value = 3 } } }
+				}
+			}
+			#Marshal		
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_marshal
+					plot_target_char = {
+						attribute_diff = { character = PREV attribute = martial value = 3 }
+						reverse_opinion = { who = ROOT value = -49 }
+					}
+				}			
+			}
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					has_plot = plot_replace_marshal
+					plot_target_char = { attribute_diff = { character = PREV attribute = martial value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					has_plot = plot_replace_marshal
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = martial value = 3 } } }
+				}
+			}
+			#Treasurer			
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_treasurer 
+					plot_target_char = {
+						attribute_diff = { character = PREV attribute = stewardship value = 3 }
+						reverse_opinion = { who = ROOT value = -49 }
+					}
+				}			
+			}
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					has_plot = plot_replace_treasurer 
+					plot_target_char = { attribute_diff = { character = PREV attribute = stewardship value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					has_plot = plot_replace_treasurer 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = stewardship value = 3 } } }
+				}
+			}
+			#Spymaster
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_spymaster
+					plot_target_char = {
+						attribute_diff = { character = PREV attribute = intrigue value = 3 }
+						reverse_opinion = { who = ROOT value = -49 }
+					}
+				}								
+			}
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					has_plot = plot_replace_spymaster
+					plot_target_char = { attribute_diff = { character = PREV attribute = intrigue value = 3 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					has_plot = plot_replace_spymaster
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = intrigue value = 3 } } }
+				}
+			}
+			#Master of ships
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					has_plot = plot_replace_councillor
+					plot_target_char = { 
+						has_minor_title = title_high_admiral
+						attribute_diff = { character = PREV attribute = martial value = 3 } 
+					}
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					has_plot = plot_replace_councillor
+					plot_target_char = { 
+						has_minor_title = title_high_admiral
+						ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = martial value = 3 } } 
+					}
+				}
+			}
+			#Female scandal
+			modifier = {
+				factor = 0.5
+				FROMFROM = {
+					is_female = yes
+					NOT = { has_plot = plot_replace_spymaster }
+				}
+				gender_equality_trigger = no
+			}
+			# Personal Opinion Effects
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 100 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 90 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 80 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 70 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 60 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 50 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 40 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 30 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 20 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 10 }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -9 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -19 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -29 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -39 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -49 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -59 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -69 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -79 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -89 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+			}
+			
+			# Power Effects
+			modifier = {
+				factor = 2
+				FROMFROM = { among_most_powerful_vassals = 3 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { relative_power_to_liege = 0.1 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { relative_power_to_liege = 0.2 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { relative_power_to_liege = 0.3 }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { relative_power_to_liege = 0.4 }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { relative_power_to_liege = 0.5 }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { relative_power_to_liege = 0.6 }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { relative_power_to_liege = 0.7 }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { relative_power_to_liege = 0.8 }
+			}
+			
+			# Influence Effects
+			modifier = {
+				factor = 1.25
+				is_married = FROMFROM
+			}
+			modifier = {
+				factor = 1.25
+				is_lover = FROMFROM
+			}
+			modifier = {
+				factor = 1.25
+				is_close_relative = FROMFROM
+			}
+			
+			# Supporter Power Effects
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.1
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.2
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.3
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.4
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.5
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.6
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.7
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					relative_power_to_liege = 0.8
+				}
+			}
+			
+			# Supporter Influence Effects
+			modifier = {
+				factor = 1.5
+				any_courtier = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					any_backed_character = { character = FROMFROM }
+				}
+			}
+			modifier = {
+				factor = 2
+				any_courtier = {
+					count = 3
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					any_backed_character = { character = FROMFROM }
+				}
+			}
+			modifier = {
+				factor = 2
+				any_courtier = {
+					count = 5
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					any_backed_character = { character = FROMFROM }
+				}
+			}
+				
+			# Supporter Personal Opinion Effects
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					reverse_opinion = { who = ROOT value = 90 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					reverse_opinion = { who = ROOT value = 70 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					reverse_opinion = { who = ROOT value = 30 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					reverse_opinion = { who = ROOT value = 10 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					NOT = { reverse_opinion = { who = ROOT value = -9 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					NOT = { reverse_opinion = { who = ROOT value = -29 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					NOT = { reverse_opinion = { who = ROOT value = -49 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					NOT = { reverse_opinion = { who = ROOT value = -69 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					any_backed_character = { character = FROMFROM }
+					NOT = { reverse_opinion = { who = ROOT value = -89 } }
+				}
+			}
+			
+			
+			# Plot Power Effects
+			modifier = {
+				factor = 2
+				FROMFROM = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { plot_power = 1.0 }
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { plot_power = 2.0 }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBCOUNCILPLOT1" #Refuse
+		trigger = { # If the regent or the ruler is the plotter or a plot backer, the plot MUST go through
+			# OR = {
+				# job_castellan = { liege = { regent = { character = PREVPREV } } } # Overrides
+				# AND = {
+					# NOT = {
+						# FROM = {
+							# any_plot_backer = {
+								# liege = { character = ROOT }
+								# liege = { regent = { character = PREVPREV } }
+							# }
+						# }
+					# }
+					# NOT = { any_backed_character = { character = FROM } }
+				# }
+			# }
+			
+			NOT = { any_backed_character = { character = FROMFROM } }
+		}
+		# if = {
+			# limit = { job_castellan = { liege = { regent = { character = PREVPREV } } } }
+			# custom_tooltip = { text = REGENT_DEMAND }
+		# }		
+		# Opponents
+		FROMFROM = {
+			opinion = { who = ROOT modifier = opinion_refused_council }
+			hidden_tooltip = { letter_event = { id = council_plot.6 } }
+			any_plot_backer = {
+				opinion = { who = ROOT modifier = opinion_rejected_council_candidate }
+				hidden_tooltip = { character_event = { id = council_plot.7 } }
+			}
+			
+			# Supporters
+			plot_target_char = {
+				opinion = { who = ROOT modifier = opinion_rejected_rival_council_candidate }
+				hidden_tooltip = { letter_event = { id = council_plot.8 } }
+				liege = {
+					any_realm_character = {
+						limit = { 
+							NOT = { any_backed_character = { character = FROM } }
+							reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } 
+						}
+						hidden_tooltip = { character_event = { id = council_plot.9 } }
+						opinion = { who = ROOT modifier = opinion_rejected_rival_council_candidate }
+					}
+				}	
+			}
+		}
+		ai_chance = {
+			factor = 400
+			
+			# Comparative Skill Effects		
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_castellan 
+					plot_target_char = { 
+						ROOT_FROMFROM = { 
+							attribute_diff = { character = PREV attribute = stewardship value = 3 } 
+							attribute_diff = { character = PREV attribute = martial value = 3 }
+							attribute_diff = { character = PREV attribute = diplomacy value = 3 }
+						} 
+					}
+					reverse_opinion = { who = ROOT value = -49 }
+				}			
+			}
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_chancellor 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = diplomacy value = 3 } } }
+					reverse_opinion = { who = ROOT value = -49 }
+				}			
+			}
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_marshal
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = martial value = 3 } } }
+					reverse_opinion = { who = ROOT value = -49 }
+				}			
+			}
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_treasurer 
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = stewardship value = 3 } } }
+					reverse_opinion = { who = ROOT value = -49 }
+				}			
+			}
+			modifier = {
+				factor = 0
+				trait = just
+				FROMFROM = { 
+					has_plot = plot_replace_spymaster
+					plot_target_char = { ROOT_FROMFROM = { attribute_diff = { character = PREV attribute = intrigue value = 3 } } }
+					reverse_opinion = { who = ROOT value = -49 }
+				}			
+			}
+			# Personal Opinion Effects
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 100 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 90 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 80 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 70 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 60 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 50 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 40 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 30 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 20 } } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = 10 } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -9 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -19 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -29 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -39 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -49 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -59 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -69 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -79 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -89 } } } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { FROMFROM = { plot_target_char = { reverse_opinion = { who = ROOT value = -99 } } } }
+			}
+					
+			# Power Effects
+			modifier = {
+				factor = 2
+				FROMFROM = { plot_target_char = { among_most_powerful_vassals = 3 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.1 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.2 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.3 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.4 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.5 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.6 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.7 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { plot_target_char = { relative_power_to_liege = 0.8 } }
+			}
+			
+			# Influence Effects
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { is_married = ROOT } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { is_lover = ROOT } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROM = { plot_target_char = { is_close_relative = ROOT } }
+			}
+			
+			# Supporter Power Effects
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.1
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.2
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.3
+				}
+			}
+			modifier = {
+				factor = 1.2
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.4
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.5
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.6
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.7
+				}
+			}
+			modifier = {
+				factor = 1.5
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					relative_power_to_liege = 0.8
+				}
+			}
+				
+			# Supporter Influence Effects
+			modifier = {
+				factor = 1.5
+				any_courtier = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+				}
+			}
+			modifier = {
+				factor = 2
+				any_courtier = {
+					count = 3
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+				}
+			}
+			modifier = {
+				factor = 2
+				any_courtier = {
+					count = 5
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						is_married = ROOT
+						is_lover = ROOT
+						is_close_relative = ROOT
+					}
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+				}
+			}
+				
+			# Supporter Personal Opinion Effects
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					reverse_opinion = { who = ROOT value = 90 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					reverse_opinion = { who = ROOT value = 70 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					reverse_opinion = { who = ROOT value = 30 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					reverse_opinion = { who = ROOT value = 10 }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					NOT = { reverse_opinion = { who = ROOT value = -9 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					NOT = { reverse_opinion = { who = ROOT value = -29 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					NOT = { reverse_opinion = { who = ROOT value = -49 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					NOT = { reverse_opinion = { who = ROOT value = -69 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				any_vassal = {
+					FROMFROM = { plot_target_char = { has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor } } }
+					NOT = { reverse_opinion = { who = ROOT value = -89 } }
+				}
+			}		
+		}
+	}
+}
+#Approved - Inform New Councillor
+letter_event = {
+	id = council_plot.2
+	desc = "EVTDESCCOUNCILPLOT2"
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT2"
+		clr_character_flag = flag_plot_replace_councillor_decision
+	}
+}
+#Approved - Inform New Councillor's Supporters
+character_event = {
+	id = council_plot.3
+	desc = "EVTDESCCOUNCILPLOT3"
+	picture = GFX_evt_spymaster
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT3" }
+}
+#Approved - Inform Old Councillor
+letter_event = {
+	id = council_plot.4
+	desc = "EVTDESCCOUNCILPLOT4"
+
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTACOUNCILPLOT4" 
+		ai_chance = { factor = 90 }
+		FROMFROMFROM = { show_portrait = yes }
+	}
+	option = { 
+		name = "EVTOPTBCOUNCILPLOT4" 
+		trigger = { 
+			NOT = { is_rival = FROMFROMFROM } 
+			NOT = { is_friend = FROMFROMFROM }
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0
+				opinion = { who = FROMFROMFROM value = 20 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROMFROM value = -20 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROMFROM value = -40 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROMFROM value = -60 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROMFROM value = -80 } }
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+		}
+		add_rival = FROMFROMFROM
+		hidden_tooltip = { FROMFROMFROM = { character_event = { id = council_plot.11 } } }
+	}
+}
+#Approved - Inform Old Councillor's Supporters
+character_event = {
+	id = council_plot.5
+	desc = "EVTDESCCOUNCILPLOT5"
+	picture = GFX_evt_spymaster
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT5" }
+}
+#Rejected - Inform Petitioner
+letter_event = {
+	id = council_plot.6
+	desc = "EVTDESCCOUNCILPLOT6"
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT6"
+		ai_chance = { 
+			factor = 20
+		}	
+	}
+	option = { 
+		name = "EVTOPTBCOUNCILPLOT6" 
+		trigger = { 
+			plot_target_char = {
+				NOT = { is_rival = ROOT } 
+				NOT = { is_friend = ROOT }
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0
+				plot_target_char = { reverse_opinion = { who = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 2
+				plot_target_char = { NOT = { reverse_opinion = { who = ROOT value = -20 } } }
+			}
+			modifier = {
+				factor = 2
+				plot_target_char = { NOT = { reverse_opinion = { who = ROOT value = -40 } } }
+			}
+			modifier = {
+				factor = 2
+				plot_target_char = { NOT = { reverse_opinion = { who = ROOT value = -60 } } }
+			}
+			modifier = {
+				factor = 2
+				plot_target_char = { NOT = { reverse_opinion = { who = ROOT value = -80 } } }
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+		}
+		plot_target_char = {
+			add_rival = ROOT
+			hidden_tooltip = { character_event = { id = council_plot.12 } }
+		}	
+	}
+	after = {
+		add_character_modifier = {
+			name = failed_council_petition
+			duration = 1095
+		}
+		clr_character_flag = flag_plot_replace_councillor_decision
+		set_character_flag = flag_job_petition_rejected
+	}
+}
+#Rejected - Inform Petitioner's Supporters
+character_event = {
+	id = council_plot.7
+	desc = "EVTDESCCOUNCILPLOT7"
+	picture = GFX_evt_spymaster
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT7" }
+}
+#Rejected - Inform Old Councillor
+letter_event = {
+	id = council_plot.8
+	desc = "EVTDESCCOUNCILPLOT8"
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT8" }
+}
+#Rejected - Inform Old Councillor's Supporters
+character_event = {
+	id = council_plot.9
+	desc = "EVTDESCCOUNCILPLOT9"
+	picture = GFX_evt_spymaster
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT9" }
+}
+#Approved - Inform Liege
+character_event = {
+	id = council_plot.10
+	desc = "EVTDESCCOUNCILPLOT10"
+	picture = GFX_evt_spymaster
+	show_from_from_from = yes
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTACOUNCILPLOT10" }
+}
+
+#Approved - Old Councillor starts Rivalry
+character_event = {
+	id = council_plot.11
+	desc = "EVTDESCCOUNCILPLOT11"
+	picture = GFX_evt_spymaster
+
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTACOUNCILPLOT11" 
+		add_rival = FROM
+	}
+}
+#Rejected - Plotter starts Rivalry
+character_event = {
+	id = council_plot.12
+	desc = "EVTDESCCOUNCILPLOT12"
+	picture = GFX_evt_spymaster
+
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTACOUNCILPLOT12" 
+		add_rival = FROM
+	}
+}
+# MAINTENANCE
+#You Now Support A New Candidate
+character_event = {
+	id = council_plot.50
+	picture = GFX_evt_spymaster
+	desc = "EVTDESCCOUNCILPLOT50"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			plot_target_char = { has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT50"
+		FROM = {
+			plot_target_char = {
+				remove_opinion = { who = ROOT modifier = opinion_council_sponsor }
+				opinion = { who = ROOT modifier = opinion_sponsor_betrayed_me }
+				hidden_tooltip = { character_event = { id = council_plot.51 } }
+			}
+		}
+	}
+}
+
+character_event = {
+	id = council_plot.51
+	desc = "EVTDESCCOUNCILPLOT51"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT51"
+	}
+}
+
+# NEW SPONSOR EVENTS
+#You Support A Friend On Your Liege's Council
+character_event = {
+	id = council_plot.52
+	desc = "EVTDESCCOUNCILPLOT52"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	friends = yes
+	
+	trigger = {
+		NOT = { liege = { character = ROOT } }
+		any_friend = {
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+			}
+			same_liege = ROOT
+			NOT = { ROOT = { plot_target_char = { character = PREVPREV } } }
+			NOT = {
+				ROOT = {
+					any_backed_character = {
+						OR = {
+							has_plot = plot_replace_castellan
+							has_plot = plot_replace_chancellor
+							has_plot = plot_replace_marshal
+							has_plot = plot_replace_treasurer
+							has_plot = plot_replace_spymaster
+							has_plot = plot_replace_councillor
+						}
+						plot_target_char = { character = PREVPREVPREV }
+					}
+				}
+			}
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } }
+		}
+	}
+	
+	immediate = {
+		random_friend = {
+			limit = {
+				OR = {
+					is_councillor = yes
+					is_voter = yes
+				}	
+				same_liege = ROOT
+				NOT = { ROOT = { plot_target_char = { character = PREVPREV } } }
+				NOT = {
+					ROOT = {
+						any_backed_character = {
+							OR = {
+								has_plot = plot_replace_castellan
+								has_plot = plot_replace_chancellor
+								has_plot = plot_replace_marshal
+								has_plot = plot_replace_treasurer
+								has_plot = plot_replace_spymaster
+								has_plot = plot_replace_councillor
+							}
+							plot_target_char = { character = PREVPREVPREV }
+						}
+					}
+				}
+				NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } }
+			}
+			save_event_target_as = councillor_friend
+		}
+	}
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT52"
+		event_target:councillor_friend = {
+			opinion = { who = ROOT modifier = opinion_council_sponsor }
+			hidden_tooltip = { character_event = { id = council_plot.53 } }
+		}
+	}
+}
+
+character_event = {
+	id = council_plot.53
+	desc = "EVTDESCCOUNCILPLOT53"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT53"
+	}
+}
+##Sponsored Candidate removed from council##
+character_event = { #Inform liege
+	id = council_plot.54
+	desc = "EVTDESCCOUNCILPLOT54"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		FROM = {
+			prisoner = no
+			is_incapable = no
+			NOT = { is_inaccessible_trigger = yes }
+			NOT = { has_character_flag = not_fired_from_council }
+			liege = { character = ROOT }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT54"
+		FROM = {
+			any_opinion_modifier_target = {
+				limit = { 
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_council_sponsor } 
+					is_liege_or_above = ROOT
+					NOT = { character = ROOT }
+				}
+				opinion = { who = ROOT modifier = opinion_replaced_council_candidate }
+				hidden_tooltip = {
+					remove_opinion = { who = ROOT modifier = opinion_approved_council_candidate }
+					reverse_remove_opinion = { who = PREV modifier = opinion_council_sponsor }
+					reverse_opinion = { who = PREV modifier = opinion_former_council_sponsor }
+					if = {
+						limit = { ai = no }
+						character_event = { id = council_plot.55 }
+					}
+				}	
+			}
+		}
+	}
+}
+character_event = { #Inform sponsor
+	id = council_plot.55
+	desc = "EVTDESCCOUNCILPLOT55"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT55"
+	}
+}
+#Spymaster informs player of available plot
+character_event = {
+	id = council_plot.60
+	desc = "EVTDESCCOUNCILPLOT60"
+	picture = GFX_evt_spymaster
+	
+	is_triggered_only = yes
+	ai = no
+	
+	trigger = {
+		NOT = { has_plot = yes }
+		OR = {
+			AND = {
+				has_ambition = obj_become_castellan
+				liege = { job_castellan = { always = yes } }
+			}	
+			AND = {
+				has_ambition = obj_become_chancellor
+				liege = { job_chancellor = { always = yes } }
+			}
+			AND = {
+				has_ambition = obj_become_marshal
+				liege = { job_marshal = { always = yes } }
+			}
+			AND = {
+				has_ambition = obj_become_treasurer
+				liege = { job_treasurer = { always = yes } }
+			}
+			AND = {
+				has_ambition = obj_become_spymaster
+				liege = { job_spymaster = { always = yes } }
+			}
+			AND = {
+				has_ambition = obj_become_councillor
+				liege = { 
+					any_courtier_or_vassal = { 
+						same_liege = ROOT
+						OR = {
+							has_minor_title = title_councilmember_king
+							has_minor_title = title_councilmember_emperor
+							AND = {
+								#OR = {
+									has_minor_title = title_high_admiral
+									#has_minor_title = title_master_of_ships
+								#}
+								ROOT = { can_be_admiral_trigger = yes }
+							}
+						}
+					}
+				}
+			}
+			AND = {
+				has_ambition = obj_become_regent
+				liege = { 
+					OR = {
+						any_courtier_or_vassal = { 
+							same_liege = ROOT
+							OR = {
+								has_minor_title = title_appointed_regent
+								liege = { regent = { character = PREVPREV } }
+							}
+						}
+						AND = {
+							has_regent = no
+							OR = {
+								trait = inbred
+								trait = imbecile
+								trait = lunatic
+								is_crippled_trigger = yes
+								trait = infirm
+								has_epidemic = yes
+							}
+						}
+					}	
+				}
+			}			
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_ambition = obj_become_castellan }
+			liege = { job_castellan = { save_event_target_as = target_councillor } }
+		}
+		if = {
+			limit = { has_ambition = obj_become_chancellor }
+			liege = { job_chancellor = { save_event_target_as = target_councillor } }
+		}
+		if = {
+			limit = { has_ambition = obj_become_marshal }
+			liege = { job_marshal = { save_event_target_as = target_councillor } }
+		}
+		if = {
+			limit = { has_ambition = obj_become_treasurer }
+			liege = { job_treasurer = { save_event_target_as = target_councillor } }
+		}
+		if = {
+			limit = { has_ambition = obj_become_spymaster }
+			liege = { job_spymaster = { save_event_target_as = target_councillor } }
+		}
+		if = {
+			limit = { has_ambition = obj_become_councillor }
+			liege = { 
+				random_courtier_or_vassal = { 
+					limit = {
+						same_liege = ROOT
+						OR = {
+							has_minor_title = title_councilmember_king
+							has_minor_title = title_councilmember_emperor
+							AND = {
+								#OR = {
+									has_minor_title = title_high_admiral
+									#has_minor_title = title_master_of_ships
+								#}
+								ROOT = { can_be_admiral_trigger = yes }
+							}
+						}
+					}
+					save_event_target_as = target_councillor 
+				} 
+			}
+		}
+		if = {
+			limit = { has_ambition = obj_become_regent }
+			liege = { 
+				random_courtier_or_vassal = { 
+					limit = {
+						same_liege = ROOT
+						OR = {
+							has_minor_title = title_appointed_regent
+							liege = { regent = { character = PREVPREV } }
+						}
+					}
+					save_event_target_as = target_councillor 
+					break = yes
+				} 
+				if = {
+					limit = { 
+						has_regent = no
+						OR = {
+							trait = inbred
+							trait = imbecile
+							trait = lunatic
+							is_crippled_trigger = yes
+							trait = infirm
+							has_epidemic = yes
+						}
+					}	
+					save_event_target_as = target_councillor 
+					break = yes
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTACOUNCILPLOT60"
+		event_target:target_councillor = { show_portrait = yes }
+		job_spymaster = { show_portrait = yes }
+	}
+}

@@ -1,0 +1,5616 @@
+namespace = diplomatic
+
+############################
+###Defensive Coalitions#####
+############################
+#A foreign power is invading, can call to arms realms of same culture group
+character_event = {
+	id = diplomatic.3099
+
+	only_independent = yes
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		demesne_size = 1
+		NOT = { trait = nightswatch }
+		NOT_mythical_creature_trigger = yes
+		FROM = {
+			NOT = { liege_before_war = { character = ROOT } }
+			NOT = { same_realm = ROOT }
+			NOT = { 
+				primary_title = { 
+					check_variable = { which = "de_facto_empire" value = 1 }
+					ROOT = { 
+						primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } 
+					} 
+				} 
+			}
+			OR = {
+				is_nomadic = yes
+				demesne_size = 1
+			}	
+		}
+		NAND = { #Night's Watch deserters cannot do this
+			trait = deserter
+			capital_scope = { region = world_beyond_the_wall }
+		}
+	}
+	
+	immediate = {
+		character_event = { id = diplomatic.30 days = 20 }
+	}
+	
+	option = {
+		name = OK
+		FROM = { show_portrait = yes }
+	}
+}	
+character_event = {
+	id = diplomatic.30
+	desc = "EVTDESCdiplomatic.30"
+	
+	only_independent = yes
+	is_triggered_only = yes
+	show_from_from = yes
+	war = yes	
+	
+	trigger = {
+		war_with = FROMFROM
+		FROMFROM = {
+			NOT = { liege_before_war = { character = ROOT } }
+			NOT = { same_realm = ROOT }
+			NOT = { 
+				primary_title = { 
+					check_variable = { which = "de_facto_empire" value = 1 }
+					ROOT = { 
+						primary_title = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } 
+					} 
+				} 
+			}
+			OR = {
+				is_nomadic = yes
+				demesne_size = 1
+			}
+			
+			NAND = { #Only used for King tier or above during Aegon's Conquest
+				has_landed_title = e_iron_throne
+				has_global_flag = aegons_conquest
+				ROOT = { lower_tier_than = KING }
+			}
+		}
+		# OR = { #NOW CALLED DIRECTLY FROM VALID CBs
+			# any_war = { #All rulers can call for help in invasions
+				# attacker = { character = ROOT_FROMFROM }
+				# defender = { character = ROOT }
+				# OR = {			
+					# using_cb = invasion
+					# using_cb = tribal_invasion
+					# using_cb = war_of_enslavement
+					# using_cb = war_of_liberation
+					# using_cb = dothraki_invasion
+					# using_cb = AGOT_invasion
+					# using_cb = invasion_ironborn
+					# using_cb = dragon_conquest
+					# using_cb = pirate_invasion
+					# using_cb = invasion_ambition
+					# using_cb = old_ones_scourge_cb			
+				# }			
+			# }
+			# AND = { #republics and theocracies can ask for help in many other wars
+				# OR = {
+					# is_theocracy = yes
+					# is_republic = yes
+				# }
+				# any_war = { #All rulers can call for help in invasions
+					# attacker = { character = ROOT_FROMFROM }
+					# defender = { character = ROOT }
+					# NOT = { using_cb = cb_faction_independence }
+					# NOT = { using_cb = embargo_cb }
+					# #NOT = { using_cb = other_dejure_barony_claim }
+					# NOT = { using_cb = dejure_barony_claim }
+					# NOT = { using_cb = dejure_county_claim }
+					# NOT = { using_cb = other_dejure_county_claim }
+					# NOT = { using_cb = seize_trade_post }
+					# NOT = { using_cb = dejure_duchy_claim }
+					# NOT = { using_cb = other_dejure_duchy_claim }
+					# NOT = { using_cb = bid_for_independence_CW }
+					# NOT = { using_cb = bloody_vengeance }
+					# NOT = { using_cb = reclaim_ancestral_sword }
+					# NOT = { using_cb = slave_raid }
+					# NOT = { using_cb = dothraki_raid }
+					
+					# NOT = { using_cb = peasant_revolt }
+					# NOT = { using_cb = heretic_revolt }
+					# NOT = { using_cb = cb_minor_clan_revolt }
+					# NOT = { using_cb = native_revolt }
+				# }	
+			# }
+		# }	
+		NAND = {
+			is_nomadic = yes
+			FROMFROM = { is_nomadic = yes }
+		}
+		any_independent_ruler = {
+			demesne_size = 1	
+			OR = {
+				tier = EMPEROR
+				primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+			}	
+			OR = { #Either
+				culture_group = ROOT #Same culture group
+				AND = { #Is a fellow slaver and ROOT is being liberated
+					ROOT = { 
+						has_character_modifier = defending_anti_slavery_war
+						primary_title = { has_law = slavery_2 }							
+					}
+					primary_title = { has_law = slavery_2 }										
+				}
+				AND = {
+					ROOT = { 
+						has_character_modifier = defending_anti_slavery_war
+						primary_title = { has_law = slavery_3 }							
+					}
+					primary_title = { has_law = slavery_3 }										
+				}
+				AND = { #Is a liberator and ROOT is being enslaved
+					ROOT = { has_character_modifier = defending_pro_slavery_war }
+					OR = {
+						trait = liberator
+						AND = {
+							religion_group = ROOT
+							primary_title = { has_law = slavery_0 }
+							OR = {
+								has_antislavery_religion_trigger = yes
+								has_antislavery_culture_trigger = yes
+							}							
+						}
+					}									
+				}
+				AND = { #Is a pirate and ROOT is being anti-pirated
+					ROOT = { has_character_modifier = defending_anti_piracy_war }
+					trait = pirate									
+				}
+				AND = { #Is being attacked by nomads and are connected via trade
+					FROMFROM = { is_nomadic = yes }
+					ROOT = { is_nomadic = no }	
+					is_nomadic = no
+					any_trade_post = {
+						location = {
+							any_trade_route_province = {
+								owner = {
+									OR = {
+										character = ROOT
+										is_liege_or_above = ROOT
+									}
+								}
+							}
+						}	
+					}
+				}
+			}			
+			# capital_scope = { #Can only ask relatively close rulers
+				# ROOT = {
+					# capital_scope = {
+						# NOT = {
+							# distance = {
+								# where = PREVPREV
+								# value = 1150
+							# }
+						# }	
+					# }
+				# }
+			# }		
+			NOT = { ROOT = { suzerain = { character = PREVPREV } } }
+			#pirate wont help non-pirates and vice versa
+			NAND = {
+				ROOT = { trait = pirate }
+				NOT = { trait = pirate }
+			}
+			NAND = {
+				ROOT = { NOT = { trait = pirate } }
+				trait = pirate
+			}
+			##
+			is_within_diplo_range = ROOT
+			NOT = { has_non_aggression_pact_with = FROMFROM }
+			NOT = { is_allied_with = FROMFROM }
+			NOT = { war_with = FROMFROM }
+			NOT = { war_with = ROOT }
+			NOT = { character = ROOT }
+			NOT = { culture_group = unoccupied_group }
+			NOT = { trait = nightswatch }
+			#NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_rejected_coalition  } }
+		}
+		# OR = {
+			# NOT = { has_character_flag = no_coalition_help }
+			# had_character_flag = { flag = no_coalition_help days = 1825 }
+		# }
+	}
+
+	option = {
+		name = "EVTOPTAdiplomatic.30" #Yes, ask for help
+		ai_chance = {
+			factor = 80
+			#Never ask for help agaisnt really weak powers
+			modifier = {
+				factor = 0.0001
+				FROMFROM = { NOT = { relative_power = { who = ROOT power = 0.25 } }  } 
+			}
+			#Will want help against stronger powers
+			modifier = {
+				factor = 2
+				FROMFROM = { relative_power = { who = ROOT power = 1.5 } } 
+			}
+			modifier = {
+				factor = 3
+				FROMFROM = { trait = dragon_rider }
+			}
+			modifier = { #less likely for inter-wildling wars
+				factor = 0.2
+				trait = wildling
+				FROMFROM = { trait = wildling }
+			}
+			modifier = {
+				factor = 0.33
+				culture = rhoynar #fiercely independent
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+		}	
+		clr_character_flag = no_coalition_help	
+		if = {
+			limit = { ai = no }
+			prestige = -100
+			wealth = -50
+		}	
+		if = { #extra prestige loss for inter-wildling wars
+			limit = { 
+				trait = wildling
+				FROMFROM = { trait = wildling }
+			}
+			prestige = -100
+		}
+		any_independent_ruler = {
+			limit = {
+				demesne_size = 1	
+				OR = {
+					tier = EMPEROR
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}	
+				OR = { #Either
+					culture_group = ROOT #Same culture group
+					AND = { #Is a fellow slaver and ROOT is being liberated
+						ROOT = { 
+							has_character_modifier = defending_anti_slavery_war
+							primary_title = { has_law = slavery_2 }							
+						}
+						primary_title = { has_law = slavery_2 }										
+					}
+					AND = {
+						ROOT = { 
+							has_character_modifier = defending_anti_slavery_war
+							primary_title = { has_law = slavery_3 }							
+						}
+						primary_title = { has_law = slavery_3 }										
+					}
+					AND = { #Is a liberator and ROOT is being enslaved
+						ROOT = { has_character_modifier = defending_pro_slavery_war }
+						OR = {
+							trait = liberator
+							AND = {
+								religion_group = ROOT
+								primary_title = { has_law = slavery_0 }
+								OR = {
+									has_antislavery_religion_trigger = yes
+									has_antislavery_culture_trigger = yes
+								}							
+							}
+						}									
+					}
+					AND = { #Is a pirate and ROOT is being anti-pirated
+						ROOT = { has_character_modifier = defending_anti_piracy_war }
+						trait = pirate									
+					}
+					AND = { #Is being attacked by nomads and are connected via trade
+						FROMFROM = { is_nomadic = yes }
+						ROOT = { is_nomadic = no }		
+						is_nomadic = no
+						any_trade_post = {
+							location = {
+								any_trade_route_province = {
+									owner = {
+										OR = {
+											character = ROOT
+											is_liege_or_above = ROOT
+										}
+									}
+								}
+							}	
+						}
+					}
+				}	
+				#NOT Both powers are distant and low rank
+				NAND = {
+					ROOT = { lower_tier_than = KING }
+					FROMFROM = { lower_tier_than = KING }
+					capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 200 } } } }
+					NOT = { any_neighbor_independent_ruler = { character = ROOT } }
+					NOT = { any_neighbor_independent_ruler = { character = FROMFROM } }
+					NOT = { opinion = { who = ROOT value = 50 } } #opinion/alliance exception
+					NOT = { has_non_aggression_pact_with = ROOT }	
+				}	
+
+				NOT = { ROOT = { suzerain = { character = PREVPREV } } }
+				#pirate wont help non-pirates and vice versa
+				NAND = {
+					ROOT = { trait = pirate }
+					NOT = { trait = pirate }
+				}
+				NAND = {
+					ROOT = { NOT = { trait = pirate } }
+					trait = pirate
+				}
+				##
+				is_within_diplo_range = ROOT
+				NOT = { has_non_aggression_pact_with = FROMFROM }
+				NOT = { is_allied_with = FROMFROM }
+				NOT = { war_with = FROMFROM }
+				NOT = { war_with = ROOT }
+				NOT = { character = ROOT }
+				NOT = { culture_group = unoccupied_group }
+				NOT = { trait = nightswatch }
+				#NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_rejected_coalition  } }
+			}
+			letter_event = { id = diplomatic.31 days = 5 tooltip = TOOLTIPdiplomatic.31 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.30" #No
+		ai_chance = {
+			factor = 20
+			#always ask for help against strong powers
+			modifier = {
+				factor = 0
+				FROMFROM = { relative_power = { who = ROOT power = 2 } } 
+			}
+			#Will not want help against weaker powers
+			modifier = {
+				factor = 2
+				FROMFROM = { NOT = { relative_power = { who = ROOT power = 0.66 } }  } 
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { NOT = { relative_power = { who = ROOT power = 0.5 } } } 
+			}
+			modifier = {
+				factor = 3
+				FROMFROM = { NOT = { relative_power = { who = ROOT power = 0.33 } } } 
+			}
+			
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+		}	
+		#set_character_flag = no_coalition_help
+	}
+}
+#Ruler receives calls to arms
+letter_event = {
+	id = diplomatic.31
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCdiplomatic.31"
+		trigger = { culture_group = FROM }
+	}	
+	desc = { #Is a fellow slaver and ROOT is being liberated
+		text = "EVTDESCdiplomatic.31B"
+		trigger = { 
+			OR = {
+				AND = { #Is a fellow slaver and ROOT is being liberated
+					FROM = { 
+						has_character_modifier = defending_anti_slavery_war
+						primary_title = { has_law = slavery_2 }							
+					}
+					primary_title = { has_law = slavery_2 }										
+				}
+				AND = {
+					FROM = { 
+						has_character_modifier = defending_anti_slavery_war
+						primary_title = { has_law = slavery_3 }							
+					}
+					primary_title = { has_law = slavery_3 }										
+				}
+			}	
+		}
+	}
+	desc = { #Is a liberator and ROOT is being enslaved
+		text = "EVTDESCdiplomatic.31C"
+		trigger = { 
+			FROM = { has_character_modifier = defending_pro_slavery_war }
+			OR = {
+				trait = liberator
+				AND = {
+					religion_group = FROM
+					primary_title = { has_law = slavery_0 }
+					OR = {
+						has_antislavery_religion_trigger = yes
+						has_antislavery_culture_trigger = yes
+					}							
+				}
+			}
+		}
+	}
+	desc = { #Is a liberator and ROOT is being enslaved
+		text = "EVTDESCdiplomatic.31D"
+		trigger = { 
+			FROM = { has_character_modifier = defending_anti_piracy_war }
+			trait = pirate		
+		}
+	}
+	desc = { #Is being attacked by nomads and are connected via trade
+		text = "EVTDESCdiplomatic.31E"
+		trigger = { 
+			FROMFROMFROM = { is_nomadic = yes }
+			FROM = { is_nomadic = no }		
+			is_nomadic = no
+			any_trade_post = {
+				location = {
+					any_trade_route_province = {
+						owner = {
+							OR = {
+								character = FROM
+								is_liege_or_above = FROM
+							}
+						}
+					}
+				}	
+			}	
+		}
+	}
+	option = {
+		name = "EVTOPTAdiplomatic.31" #Yes
+		ai_chance = {
+			factor = 20
+			
+			modifier = { #Motives
+				factor = 0
+				NOT = { is_close_relative = FROM }
+				NOT = { is_married = FROM }
+				NOT = { has_non_aggression_pact_with = FROM }
+				NAND = {
+					NOT = { dynasty = 0 }
+					dynasty = FROM
+				}
+				NAND = { #defending my religion
+					religion = FROM
+					trait = zealous
+					NOT = { religion = FROMFROMFROM }
+				}
+				NAND = { #Will want to help against equivalent powers
+					relative_power = { who = FROMFROMFROM power = 0.66 }
+					NOT = { relative_power = { who = FROMFROMFROM power = 1.5 } }
+				}
+				NOT = { FROMFROMFROM = { relative_power = { who = ROOT_FROM power = 1.5 } } }
+				NOT = { FROMFROMFROM = { tier = EMPEROR } }
+				NOT = { opinion = { who = FROM value = 40 } }
+				opinion = { who = FROMFROMFROM value = -39 }
+			}
+			
+			modifier = {
+				factor = 1.5
+				is_married = FROM
+			}
+			modifier = {
+				factor = 2
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { dynasty = 0 }
+				dynasty = FROM
+			}
+			modifier = {
+				factor = 1.25
+				religion = FROM
+			}
+			
+			#Foreigner reluctance
+			modifier = {
+				factor = 0.75
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 0.25
+				is_nomadic = yes
+				FROM = { is_nomadic = no }
+			}
+			modifier = {
+				factor = 0.25
+				is_nomadic = no
+				FROM = { is_nomadic = yes }
+			}
+			
+			#Trivial Wars
+			modifier = { #Both powers are much weaker than me
+				factor = 0.2
+				FROM = { lower_tier_than = KING }
+				FROMFROMFROM = { lower_tier_than = KING }
+				relative_power = { who = FROM power = 3 }
+				relative_power = { who = FROMFROMFROM power = 3 }
+			}
+			modifier = { #Both powers are much weaker than me, and are distant
+				factor = 0
+				FROM = { lower_tier_than = KING }
+				FROMFROMFROM = { lower_tier_than = KING }
+				relative_power = { who = FROM power = 3 }
+				relative_power = { who = FROMFROMFROM power = 3 }
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 200 } } } } }
+				NOT = { any_neighbor_independent_ruler = { character = FROM } }
+				NOT = { any_neighbor_independent_ruler = { character = FROMFROMFROM } }
+			}
+			modifier = { #The defender is a distant OPM
+				factor = 0
+				FROM = { 
+					lower_tier_than = DUKE 
+					NOT = { num_of_count_titles = 2 }
+				}
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 100 } } } } }
+				NOT = { any_neighbor_independent_ruler = { character = FROM } }
+				NOT = { any_neighbor_independent_ruler = { character = FROMFROMFROM } }
+				NOT = { opinion = { who = FROM value = 50 } } #opinion/alliance exception
+				NOT = { has_non_aggression_pact_with = FROM }
+			}
+			
+			#Reluctance to help slavers
+			modifier = {
+				factor = 0.5
+				FROM = { has_character_modifier = defending_anti_slavery_war }							
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { 
+					crownlaw_title = { 
+						OR = {
+							has_law = slavery_2 
+							has_law = slavery_3
+						}	
+					}
+					OR = {
+						has_slavery_religion_trigger = yes
+						has_slavery_culture_trigger = yes
+						culture_group = iron_isles_culture
+						trait = slave_trader
+					}					
+				}
+				OR = {
+					has_antislavery_religion_trigger = yes
+					has_antislavery_culture_trigger = yes
+					trait = liberator
+				}
+				OR = {
+					trait = zealous
+					trait = honorable
+					trait = kind
+					AND = {
+						NOT = { trait = arbitrary }
+						NOT = { trait = ruthless }
+						NOT = { trait = lunatic }
+					}	
+				}								
+			}
+			modifier = {
+				factor = 0
+				FROM = { has_character_modifier = defending_anti_slavery_war }
+				OR = {
+					has_antislavery_religion_trigger = yes
+					has_antislavery_culture_trigger = yes
+					trait = liberator
+				}
+				OR = {
+					trait = zealous
+					trait = honorable
+					trait = kind
+					AND = {
+						NOT = { trait = arbitrary }
+						NOT = { trait = ruthless }
+						NOT = { trait = lunatic }
+					}	
+				}							
+			}
+			#Reluctance to help anti-slavers
+			modifier = {
+				factor = 0
+				FROM = { has_character_modifier = defending_pro_slavery_war }
+				OR = {
+					has_slavery_religion_trigger = yes
+					has_slavery_culture_trigger = yes
+				}	
+				primary_title = { 
+					OR = {
+						has_law = slavery_2 
+						has_law = slavery_3
+					}	
+				}
+			}
+			
+			modifier = { #less likely for inter-wildling wars
+				factor = 0.2
+				trait = wildling
+				FROM = { trait = wildling }
+				FROMFROMFROM = { trait = wildling }
+			}
+			modifier = {
+				factor = 0.33
+				culture = rhoynar #fiercely independent
+			}
+			
+			#Will want to help against equivalent powers
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROMFROM power = 0.66 }
+				NOT = { relative_power = { who = FROMFROMFROM power = 1.5 } }
+			}
+			#Will want to help if attacker is stronger than target
+			modifier = {
+				factor = 1.25
+				FROMFROMFROM = { relative_power = { who = ROOT_FROM power = 1.5 } }
+			}
+			modifier = {
+				factor = 1.25
+				FROMFROMFROM = { relative_power = { who = ROOT_FROM power = 2 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROMFROM = { relative_power = { who = ROOT_FROM power = 3 } }
+			}
+			modifier = {
+				factor = 2
+				FROMFROMFROM = { relative_power = { who = ROOT_FROM power = 4 } }
+			}
+			modifier = {
+				factor = 3
+				FROMFROMFROM = { trait = dragon_rider }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROMFROM = { NOT = { culture_group = ROOT } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROMFROM = { NOT = { religion_group = ROOT } }
+			}
+			
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROM value = 100 }
+			}	
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROMFROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROMFROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROMFROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROMFROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROMFROM value = -99 } }
+			}
+			
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}	
+			modifier = {
+				factor = 1.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}	
+			modifier = {
+				factor = 1.5
+				trait = proud
+			}	
+			modifier = {
+				factor = 1.5
+				trait = zealous
+			}			
+		}
+		join_defender_wars = FROM
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+		hidden_tooltip = {
+			FROM = {
+				letter_event = { id = diplomatic.32 }
+			}
+		}		
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.31" #No
+		ai_chance = {
+			factor = 75
+			
+			modifier = {
+				factor = 2
+				NOT = { wealth = -29 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = dragon_rider }
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					is_tribal = yes
+					is_feudal = yes
+				}	
+			}
+					
+			#Will not want to help stronger powers
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROM power = 0.66 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { relative_power = { who = FROM power = 0.5 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { relative_power = { who = FROM power = 0.33 } }
+			}
+			modifier = {
+				factor = 3
+				NOT = { relative_power = { who = FROM power = 0.25 } }
+			}
+			
+			#Will not want to help against weaker powers
+			modifier = {
+				factor = 1.25
+				FROMFROMFROM = { NOT = { relative_power = { who = ROOT_FROM power = 0.66 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROMFROM = { NOT = { relative_power = { who = ROOT_FROM power = 0.5 } } }
+			}
+			modifier = {
+				factor = 2
+				FROMFROMFROM = { NOT = { relative_power = { who = ROOT_FROM power = 0.33 } } }
+			}
+			modifier = {
+				factor = 5
+				FROMFROMFROM = { NOT = { relative_power = { who = ROOT_FROM power = 0.25 } } }
+			}
+			
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROMFROM value = 20 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROMFROM value = 40 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROMFROM value = 60 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROMFROM value = 80 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROMFROM value = 100 }
+			}
+			
+			#Too far away
+			modifier = {
+				factor = 4
+				capital_scope = { region = world_westeros }
+				NOT = { FROM = { capital_scope = { region = world_westeros } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 250 } } } } }
+			}	
+			modifier = {
+				factor = 1.75
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 500 } } } } }
+			}
+			modifier = {
+				factor = 1.75
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 700 } } } } }
+			}
+			modifier = {
+				factor = 1.75
+				FROM = { capital_scope = { ROOT = { capital_scope = { distance = { where = PREVPREV value = 900 } } } } }
+			}
+			
+			modifier = {
+				factor = 1.5
+				trait = slothful
+			}	
+			modifier = {
+				factor = 1.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 1.5
+				trait = patient
+			}	
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}	
+			modifier = {
+				factor = 1.5
+				trait = cynical
+			}		
+		}		
+		FROM = {
+			opinion = { who = ROOT modifier = opinion_rejected_coalition }
+			hidden_tooltip = { letter_event = { id = diplomatic.34 } }
+		}
+	}
+}
+#Inform accept
+letter_event = {
+	id = diplomatic.32
+	desc = "EVTDESCdiplomatic.32"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.32" #
+		hidden_tooltip = { 
+			FROMFROMFROMFROM = { 
+				character_event = { id = diplomatic.33 } 
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_JOINED_COALITION
+							portrait = [From.GetID]
+						}
+					}
+				}
+				FROM = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_JOINED_COALITION
+							portrait = [Root.GetID]
+						}
+					}
+				}
+			} 
+		}
+	}
+}
+character_event = {
+	id = diplomatic.33
+	desc = "EVTDESCdiplomatic.33"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.33"
+		FROM = { tooltip = { show_portrait = yes } }
+	}
+}
+#Inform reject
+letter_event = {
+	id = diplomatic.34
+	desc = "EVTDESCdiplomatic.34"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.34"
+	}
+}
+###############################
+###Titular Kingdom Vassals#####
+###############################
+#Kings abolish spare titles
+character_event = {
+	id = diplomatic.50
+	
+	desc = {
+		text = "EVTDESCdiplomatic.50"
+		trigger = {
+			NAND = {
+				has_landed_title = e_iron_throne
+				any_demesne_title = {
+					tier = EMPEROR
+					NOT = { title = e_iron_throne }
+					OR = {
+						capital_scope = { region = world_westeros }
+						title = e_iron_isles #These titles dont have capitals
+						title = e_riverlands
+					}		
+				}
+			}
+		}
+	}	
+	desc = {
+		text = "EVTDESCdiplomatic.50B"
+		trigger = {
+			has_landed_title = e_iron_throne
+			any_demesne_title = {
+				tier = EMPEROR
+				NOT = { title = e_iron_throne }
+				OR = {
+					capital_scope = { region = world_westeros }
+					title = e_iron_isles #These titles dont have capitals
+					title = e_riverlands
+				}		
+			}
+		}
+	}
+	
+	only_playable = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		higher_tier_than = DUKE
+		OR = {
+			# Holder of Iron Throne/Westeros shouldn't have any Westerosi Kingdom titles
+			AND = {
+				has_landed_title = e_iron_throne
+				any_demesne_title = {
+					tier = EMPEROR
+					NOT = { title = e_iron_throne }
+					OR = {
+						capital_scope = { region = world_westeros }
+						title = e_iron_isles #These titles dont have capitals
+						title = e_riverlands
+					}	
+					NOT = { is_contested = yes }
+				}
+			}
+			#Cannot hold kingdom and equivalent LP at the same time
+			AND = {
+				has_landed_title = e_north	
+				has_landed_title = k_north
+			}
+			AND = {
+				has_landed_title = e_riverlands	
+				has_landed_title = k_riverlands	
+			}
+			AND = {
+				has_landed_title = e_vale	
+				has_landed_title = k_vale
+			}
+			AND = {
+				has_landed_title = e_westerlands	
+				has_landed_title = k_westerlands	
+			}
+			AND = {
+				has_landed_title = e_reach	
+				has_landed_title = k_reach
+			}
+			AND = {
+				has_landed_title = e_stormlands	
+				has_landed_title = k_stormlands
+			}
+			AND = {
+				has_landed_title = e_dorne	
+				has_landed_title = k_dorne
+			}
+			AND = {
+				has_landed_title = e_iron_isles
+				has_landed_title = k_iron_isles
+			}
+			#Superfulous titular titles
+			any_demesne_title = {
+				tier = KING
+				is_titular = yes
+				capital_scope = {
+					OR = {
+						kingdom = { holder_scope = { character = ROOT } }
+						empire = { holder_scope = { character = ROOT } }
+					}
+				}
+				ROOT = {
+					NAND = {
+						government = nomadic_government
+						OR = {
+							clan_title = { title = PREVPREV }
+							primary_title = { title = PREVPREV }
+						}
+					}
+				}
+				NOT = { is_contested = yes }
+			}	
+			any_demesne_title = {
+				tier = EMPEROR
+				is_titular = yes
+				capital_scope = {
+					empire = { holder_scope = { character = ROOT } }
+				}
+				ROOT = {
+					NAND = {
+						government = nomadic_government
+						OR = {
+							clan_title = { title = PREVPREV }
+							primary_title = { title = PREVPREV }
+						}
+					}
+				}
+				NOT = { is_contested = yes }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdiplomatic.50" #Yes
+		if = { # Holder of Iron Throne/Westeros shouldn't have any Westerosi Kingdom titles
+			limit = {
+				has_landed_title = e_iron_throne
+				any_demesne_title = {
+					tier = EMPEROR
+					NOT = { title = e_iron_throne }
+					OR = {
+						capital_scope = { region = world_westeros }
+						title = e_iron_isles #These titles dont have capitals
+						title = e_riverlands
+					}		
+					NOT = { is_contested = yes }
+				}
+			}
+			#Add king tier titles to iron throne dejure realm
+			hidden_tooltip = {
+				any_demesne_title = {
+					limit = { 
+						tier = KING 
+						dejure_liege_title = { 
+							NOT = { title = e_iron_throne }
+							OR = {
+								capital_scope = { region = world_westeros }
+								title = e_iron_isles #These titles dont have capitals
+								title = e_riverlands
+							}
+						} 
+						NOT = { is_contested = yes }
+					} 
+					de_jure_liege = e_iron_throne
+				}
+				any_vassal = {
+					limit = { tier = KING }
+					any_demesne_title = {
+						limit = { 
+							tier = KING 
+							capital_scope = { region = world_westeros }
+							NOT = { is_contested = yes }
+						}
+						de_jure_liege = e_iron_throne
+					}
+					set_character_flag = iron_throne_vassal #Mark vassal in case they seperate
+				}	
+			}	
+			#Destroy the titles
+			any_demesne_title = {
+				limit = {
+					tier = EMPEROR
+					NOT = { title = e_iron_throne }
+					OR = {
+						capital_scope = { region = world_westeros }
+						title = e_iron_isles #These titles dont have capitals
+						title = e_riverlands
+					}		
+					NOT = { is_contested = yes }
+				}
+				destroy_landed_title = THIS
+				if = {
+					limit = { title = e_north }
+					k_north = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 2 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_riverlands }
+					k_riverlands = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 9 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_vale }
+					k_vale = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 4 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_westerlands }
+					k_westerlands = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 5 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_reach }
+					k_reach = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 6 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_stormlands }
+					k_stormlands = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 7 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { title = e_dorne }
+					k_dorne = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 8 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { title = e_iron_isles }
+					k_iron_isles = { de_jure_liege = e_iron_throne }
+					hidden_tooltip = {
+						any_independent_ruler = {
+							limit = { 
+								NOT = { tier = EMPEROR }
+								primary_title = { is_variable_equal = { which = "de_facto_empire" value = 3 } }
+							}
+							any_demesne_title = { 
+								limit = { NOT = { tier = BARON } }
+								set_variable = { which = "de_facto_empire" value = 1 }
+							}
+						}
+					}	
+				}
+			}
+			#Re-add any erroneously split king tier vassals
+			any_independent_ruler = {
+				limit = { has_character_flag = iron_throne_vassal }
+				set_defacto_liege = ROOT
+			}
+			any_vassal = {
+				limit = { tier = KING }
+				clr_character_flag = iron_throne_vassal
+			}			
+		}	
+		#Cannot hold kingdom and equivalent LP at the same time
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_north	
+					has_landed_title = k_north
+				}
+			}
+			k_north = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_riverlands	
+					has_landed_title = k_riverlands	
+				}
+			}
+			k_riverlands = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_vale	
+					has_landed_title = k_vale
+				}
+			}
+			k_vale = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_westerlands	
+					has_landed_title = k_westerlands	
+				}
+			}
+			k_westerlands = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_reach	
+					has_landed_title = k_reach
+				}
+			}
+			k_reach = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_stormlands	
+					has_landed_title = k_stormlands
+				}
+			}
+			k_stormlands = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_dorne	
+					has_landed_title = k_dorne
+				}
+			}
+			k_dorne = { destroy_landed_title = THIS }
+		}	
+		if = { 
+			limit = {
+				AND = {
+					has_landed_title = e_iron_isles
+					has_landed_title = k_iron_isles
+				}
+			}
+			k_iron_isles = { destroy_landed_title = THIS }
+		}	
+		any_demesne_title = {
+			limit = {
+				tier = KING
+				is_titular = yes
+				capital_scope = {
+					OR = {
+						kingdom = { holder_scope = { character = ROOT } }
+						empire = { holder_scope = { character = ROOT } }
+					}
+				}
+				ROOT = {
+					NAND = {
+						government = nomadic_government
+						OR = {
+							clan_title = { title = PREVPREV }
+							primary_title = { title = PREVPREV }
+						}
+					}
+				}
+				NOT = { is_contested = yes }
+			}
+			activate_title = { status = no title = THIS }
+			destroy_landed_title = THIS
+		}	
+		any_demesne_title = {
+			limit = {
+				tier = EMPEROR
+				is_titular = yes
+				capital_scope = {
+					empire = { holder_scope = { character = ROOT } }
+				}
+				ROOT = {
+					NAND = {
+						government = nomadic_government
+						OR = {
+							clan_title = { title = PREVPREV }
+							primary_title = { title = PREVPREV }
+						}
+					}
+				}
+				NOT = { is_contested = yes }
+			}
+			activate_title = { status = no title = THIS }
+			destroy_landed_title = THIS
+		}
+	}
+}
+
+#Has kingdom with no privilege status set, liege will decide what to do
+character_event = {
+	id = diplomatic.51
+	desc = "EVTDESCdiplomatic.51"
+	
+	only_playable = yes
+	
+	is_triggered_only = yes
+	war = no
+	
+	trigger = {
+		tier = KING
+		liege = { 
+			tier = EMPEROR 
+			is_nomadic = no
+		}
+		is_feudal = yes
+		NOT = { government = noble_oligarchy }
+		NOT = { government = alliance_government }
+		NOT = { government = theocratic_feudal_government }
+		any_demesne_title = {
+			tier = KING
+			NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+			controls_religion = no
+			is_landless_type_title = no
+			NOT = { has_law = privilege_vassal_king }
+		}
+		
+		is_nomadic = no
+	}
+	
+	immediate = {
+		hidden_tooltip = {
+			#pick title to show in event text
+			primary_title = {
+				if = {
+					limit = {
+						tier = KING
+						NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+						controls_religion = no
+						is_landless_type_title = no
+						NOT = { has_law = privilege_vassal_king }
+					}
+					save_event_target_as = titular_kingdom
+				}
+			}
+			if = {
+				limit = { NOT = { event_target:titular_kingdom = { always = yes } } }
+				random_demesne_title = {
+					limit = {
+						tier = KING
+						NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+						controls_religion = no
+						is_landless_type_title = no
+						NOT = { has_law = privilege_vassal_king }
+					}
+					save_event_target_as = titular_kingdom	
+				}
+			}
+			
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdiplomatic.51" #Appeal to keep kingship
+		any_demesne_title = {
+			limit = {
+				tier = KING
+				NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+				controls_religion = no
+				is_landless_type_title = no
+				NOT = { has_law = privilege_vassal_king }
+			}
+			custom_tooltip = { text = TOOLTIPdiplomatic.51KINGDOM }	
+		}
+		hidden_tooltip = { liege = { character_event = { id = diplomatic.52 days = 3 } } }
+	}
+}
+character_event = { #liege decides
+	id = diplomatic.52
+	desc = "EVTDESCdiplomatic.52"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			vassal_of = ROOT
+			war = no
+			any_demesne_title = {
+				tier = KING
+				NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+				controls_religion = no
+				is_landless_type_title = no
+				NOT = { has_law = privilege_vassal_king }
+			}
+		}
+	}
+		
+	option = { #Revoke Kingship
+		name = {
+			text = "EVTOPTAdiplomatic.52" 
+			trigger = { 
+				NAND = { 
+					character = 77000 
+					primary_title = { title = e_iron_throne }
+				} 
+			}
+		}	
+		name = {
+			text = "EVTOPTAdiplomatic.52B" 
+			trigger = { 
+				character = 77000 
+				primary_title = { title = e_iron_throne }
+			}
+		}
+		ai_chance = {
+			factor = 50
+			
+			modifier = { #Emperors usually grant privilege
+				factor = 0.1
+				NOR = {
+					primary_title = { title = e_iron_throne }
+					culture_group = andal
+					culture_group = first_men
+					culture_group = free_folk
+					culture_group = dornish
+					culture_group = iron_isles_culture
+				}
+			}
+			modifier = {
+				factor = 10
+				FROM = { 
+					NOT = {
+						any_demesne_title = {
+							tier = KING
+							controls_religion = no
+							is_landless_type_title = no
+							has_law = privilege_vassal_king
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				reverse_has_opinion_modifier = { who = FROM modifier = opinion_subjugated_AGOT }
+			}
+			modifier = {
+				factor = 5
+				has_opinion_modifier = { who = FROM modifier = opinion_traitor }
+			}
+			modifier = {
+				factor = 2
+				is_rival = FROM
+			}
+			modifier = {
+				factor = 5
+				is_foe = FROM
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 1.33
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.33
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.33
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.33
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { culture = high_valyrian }
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { religion_group = FROM }
+			}
+		}
+		FROM = {
+			if = { #Gain prestige for revoking status from king	
+				limit = {
+					any_demesne_title = {
+						tier = KING
+						controls_religion = no
+						is_landless_type_title = no
+						has_law = privilege_vassal_king
+					}
+				}
+				ROOT = { prestige = 100 }
+			}
+			tooltip = {
+				any_demesne_title = {
+					limit = {
+						tier = KING					
+						controls_religion = no
+						is_landless_type_title = no
+						NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+					}
+					if = {
+						limit = {
+							is_titular = yes
+							capital_scope = {
+								OR = {
+									kingdom = { holder_scope = { character = ROOT } }
+									empire = { holder_scope = { character = ROOT } }
+								}
+							}
+						}
+						destroy_landed_title = THIS
+					}
+					else = {
+						#tooltip = { destroy_landed_title = THIS }		
+						custom_tooltip = {
+							text = TOOLTIPrevoked_royal_privilege
+						}
+					}	
+				}	
+			}
+			# opinion = {
+				# who = ROOT
+				# modifier = opinion_revoked_titular_kingdom
+				# months = 120
+			# }
+			if = {
+				limit = {
+					any_demesne_title = {
+						tier = KING
+						controls_religion = no
+						is_landless_type_title = no
+						has_law = privilege_vassal_king
+					}
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_subjugated_AGOT } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } }				
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_revoked_royal_privilege
+					months = 120
+				}
+			}	
+			if = {
+				limit = {
+					has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom }
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_revoked_royal_privilege
+					months = 120
+					multiplier = 0.5
+				}
+			}
+			hidden_tooltip = { 
+				any_realm_lord = {
+					limit = { 
+						ai = no 
+						NOT = { character = PREV }
+					}
+					letter_event = { id = diplomatic.55 }
+				}
+				letter_event = { id = diplomatic.53 }
+			}		
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.52" #Grant privilege
+		ai_chance = {
+			factor = 50
+			modifier = { #Aegon the conqueror doesnt do this
+				factor = 0
+				character = 77000
+				has_global_flag = aegons_conquest
+			}
+			modifier = { #Westerosi usually dont give new privileges
+				factor = 0
+				OR = {
+					primary_title = { title = e_iron_throne }
+					culture_group = andal
+					culture_group = first_men
+					culture_group = free_folk
+					culture_group = dornish
+					culture_group = iron_isles_culture
+				}
+				FROM = { 
+					NOT = {
+						any_demesne_title = {
+							tier = KING
+							controls_religion = no
+							is_landless_type_title = no
+							has_law = privilege_vassal_king
+						}
+					}	
+					OR = {
+						NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } }
+						primary_title = {
+							OR = {
+								capital_scope = { region = world_westeros }
+								title = k_crownlands #These titles dont have capitals
+								title = k_riverlands
+								title = k_iron_isles
+							}
+						}	
+					}
+				}						
+			}
+			modifier = {
+				factor = 5
+				reverse_has_opinion_modifier = { who = FROM modifier = opinion_granted_kingdom }
+			}
+			modifier = {
+				factor = 2
+				is_friend = FROM
+			}
+			modifier = {
+				factor = 2
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 2
+				dynasty = FROM
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 1.33
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.33
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.33
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 1.33
+				opinion = { who = FROM value = 100 }
+			}
+		}		
+		FROM = {
+			if = { #Lose prestige for granting status to lord	
+				limit = {
+					any_demesne_title = {
+						tier = KING
+						controls_religion = no
+						is_landless_type_title = no
+						NOT = { has_law = privilege_vassal_king }
+						is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+					}
+				}
+				ROOT = { 
+					prestige = -200 
+					custom_tooltip = {
+						text = TOOLTIPgrant_privliege_vassals_annoyed
+						hidden_tooltip = {
+							any_vassal = {
+								limit = {
+									OR = {
+										any_demesne_title = {
+											tier = KING
+											controls_religion = no
+											is_landless_type_title = no
+											NOT = { has_law = privilege_vassal_king }
+											is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+										}
+										NOT = { opinion = { who = ROOT_FROM value = -29 } }
+										AND = {
+											NOT = { culture_group = ROOT_FROM }
+											OR = {
+												trait = wroth
+												trait = envious
+												trait = ambitious
+											}
+										}
+										AND = {
+											NOT = { religion = ROOT_FROM }
+											trait = zealous
+										}
+									}
+									NOT = { trait = content }
+								}
+								opinion = {
+									who = ROOT
+									modifier = opinion_someone_granted_royal_privilege
+									months = 60
+								}
+							}
+						}
+					}
+				}				
+			}
+			tooltip = {
+				any_demesne_title = {
+					limit = {
+						tier = KING
+						controls_religion = no
+						is_landless_type_title = no
+						NOT = { has_law = privilege_vassal_king }
+					}
+					add_law = privilege_vassal_king				
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_subjugated_AGOT } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_kingdom } }
+				}			
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_royal_privliege
+					months = 120
+				}
+			}
+			if = {
+				limit = {
+					has_opinion_modifier = { who = ROOT modifier = opinion_subjugated_AGOT }
+				}			
+				opinion = {
+					who = ROOT
+					modifier = opinion_granted_royal_privliege
+					months = 60
+					multiplier = 0.6
+				}
+			}			
+			hidden_tooltip = { 
+				letter_event = { id = diplomatic.54 }
+			}		
+		}
+	}
+}
+letter_event = { #inform revoked
+	id = diplomatic.53
+	desc = "EVTDESCdiplomatic.53"
+	
+	is_triggered_only = yes
+			
+	option = {
+		name = "EVTOPTAdiplomatic.53"
+		liege = {
+			ROOT = {
+				# hidden_tooltip = { #If, no other kingdoms, any non-dejure vassals become vassals of the emperor
+					# if = {
+						# limit = {
+							# NOT = {
+								# any_demesne_title = {
+									# tier = KING
+									# OR = {
+										# is_titular = no
+										# controls_religion = yes
+										# is_landless_type_title = yes
+										# has_law = privilege_vassal_king
+									# }				
+								# }
+							# }
+						# }
+						# any_vassal = {
+							# limit = { 
+								# OR = {
+									# tier = DUKE 
+									# AND = {
+										# tier = COUNT
+										# ROOT = { NOT = { num_of_duke_titles = 1 } }
+									# }
+								# }	
+								# NOT = {
+									# primary_title = {
+										# dejure_liege_title = {
+											# OR = {
+												# holder_scope = { character = ROOT }
+												# dejure_liege_title = { holder_scope = { character = ROOT } }
+											# }
+										# }
+									# }
+								# }
+							# }	
+							# set_defacto_liege = PREVPREV
+						# }
+					# }	
+				# }
+				any_demesne_title = {
+					limit = {
+						tier = KING
+						NOT = { is_variable_equal = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum }
+						controls_religion = no
+						is_landless_type_title = no
+					}
+					if = {
+						limit = {
+							is_titular = yes
+							capital_scope = {
+								OR = {
+									kingdom = { holder_scope = { is_liege_of = ROOT } }
+									empire = { holder_scope = { is_liege_of = ROOT } }
+								}
+							}
+						}
+						destroy_landed_title = THIS
+					}
+					else = {
+						if = {
+							limit = { has_law = privilege_vassal_king }
+							revoke_law = privilege_vassal_king
+						}
+						hidden_tooltip = { set_variable = { which = "lord_paramount_status" value = 1 } } #1 = lord paramount, 2 = interregnum
+						custom_tooltip = {
+							text = TOOLTIPrevoked_royal_privilege
+						}
+					}				
+					#destroy_landed_title = THIS						
+				}
+				if = {
+					limit = {
+						has_character_modifier = granted_royal_privilege_modifier
+					}
+					remove_character_modifier = granted_royal_privilege_modifier
+				}
+				hidden_tooltip = {
+					#set_defacto_liege = PREV 
+					if = {
+						limit = {
+							primary_title = {
+								tier = KING
+								is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+							}
+						}
+						set_government_type = feudal_government_LP
+					}
+					if = {
+						limit = {
+							independent = yes
+						}
+						set_defacto_liege = ROOT_FROM
+					}
+					#remove special titles
+					if = {
+						limit = {
+							primary_title = {
+								OR = {
+									title = k_wolfswoodTK
+									title = k_barrowlandsTK
+									title = k_theneckTK
+									title = k_dreadfortTK
+									title = k_winterfellTK
+									title = k_riverrunTK
+									title = k_dragonstone
+									title = k_duskendaleTK
+									title = k_shipbreakerTK
+								}
+							}	
+						}
+						remove_special_character_title = yes
+					}
+				}		
+			}
+		}
+	}
+}	
+letter_event = { #inform privilege granted
+	id = diplomatic.54
+	
+	desc = {
+		text = "EVTDESCdiplomatic.54"
+		trigger = { NOT = { government = feudal_government_LP } }
+	}	
+	desc = {
+		text = "EVTDESCdiplomatic.54B"
+		trigger = { government = feudal_government_LP }
+	}
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			if = {
+				limit = { government = feudal_government_LP }
+				set_government_type = feudal_government
+			}
+		}
+	}
+			
+	option = {
+		name = "EVTOPTAdiplomatic.54"
+		any_demesne_title = {
+			limit = {
+				tier = KING
+				controls_religion = no
+				is_landless_type_title = no
+				NOT = { has_law = privilege_vassal_king }
+			}
+			hidden_tooltip = { set_variable = { which = "lord_paramount_status" value = 0 } } #1 = lord paramount, 2 = interregnum
+			add_law = privilege_vassal_king				
+		}	
+		if = {
+			limit = {
+				NOT = { has_character_modifier = granted_royal_privilege_modifier }
+			}
+			add_character_modifier = {
+				name = granted_royal_privilege_modifier
+				duration = -1
+			}
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_GRANTED_ROYAL_PRIVILEGE
+				portrait = [From.GetID]
+			}
+		}
+		FROM = {
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_GRANTED_VASSAL_ROYAL_PRIVILEGE
+					portrait = [Root.GetID]
+				}
+			}
+		}	
+	}
+}	
+letter_event = { #inform realm revoked
+	id = diplomatic.55
+	desc = "EVTDESCdiplomatic.55"
+	
+	is_triggered_only = yes
+			
+	option = {
+		name = OK
+		FROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}	
+character_event = { #privilege maintenance, on_new_holder
+	id = diplomatic.56
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		OR = {
+			FROM = { #the title
+				tier = KING
+				has_law = privilege_vassal_king
+			}
+			has_character_modifier = granted_royal_privilege_modifier		
+		}	
+	}
+	
+	immediate = {
+		remove_character_modifier = granted_royal_privilege_modifier
+		character_event = { id = diplomatic.57 days = 1 } #needs to be a day later otherwise conditions aren't met
+		FROMFROM = { #Check old holder as well
+			if = {
+				limit = {
+					is_alive = yes
+					has_character_modifier = granted_royal_privilege_modifier
+					NAND = {
+						tier = KING
+						is_feudal = yes
+						NOT = { government = noble_oligarchy }
+						OR = {
+							independent = no
+							primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+						}
+						any_demesne_title = {
+							tier = KING
+							controls_religion = no
+							is_landless_type_title = no
+							has_law = privilege_vassal_king
+							NOT = { check_variable = { which = "lord_paramount_status" value = 0.9 } } #1 = lord paramount, 2 = interregnum
+						}
+					}
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+		}
+	}
+			
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = diplomatic.57
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		tier = KING
+		is_feudal = yes
+		NOT = { government = noble_oligarchy }
+		OR = {
+			independent = no
+			primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+		}
+		any_demesne_title = {
+			tier = KING
+			controls_religion = no
+			is_landless_type_title = no
+			has_law = privilege_vassal_king
+			NOT = { check_variable = { which = "lord_paramount_status" value = 0.9 } } #1 = lord paramount, 2 = interregnum
+		}	
+	}
+	
+	immediate = {
+		add_character_modifier = {
+			name = granted_royal_privilege_modifier
+			duration = -1
+		}
+	}
+			
+	option = {
+		name = OK
+	}
+}	
+#######################
+###Diplomatic annexation#####
+#######################
+character_event = {
+	id = diplomatic.1
+	desc = "EVTDESCdiplomatic.1"
+	
+	is_triggered_only = yes
+
+	immediate = {
+		save_event_target_as = diplomatic_annexation_king	
+		job_castellan = { save_event_target_as = job_castellan_target }
+	}
+
+	option = {
+		name = "EVTOPTAdiplomatic.1" #I will go myself
+		ai_chance = { 
+			factor = 75
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				trait = trusting
+			}
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier = {
+				factor = 0.66
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.66
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.66
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				diplomacy = 12
+			}
+			modifier = {
+				factor = 1.5
+				diplomacy = 14
+			}
+			modifier = {
+				factor = 1.5
+				diplomacy = 16
+			}
+			modifier = {
+				factor = 1.5
+				diplomacy = 18
+			}
+			modifier = {
+				factor = 1.5
+				diplomacy = 20
+			}
+		}
+		event_target:diplomatic_annexation_target = {
+			tooltip = { show_portrait = yes }
+		}
+		scaled_wealth = { value = -0.25 min = -25 max = -100 }
+		#character_event = { id = diplomatic.2 days = 40  tooltip = EVTTOOLTIPdiplomatic.2 }
+		character_event = { id = diplomatic.2 days = 40 tooltip = EVTTOOLTIPdiplomatic.2 }
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.1" #Send my hand to initiaite negotiations
+		trigger = {
+			job_castellan = { always = yes }
+		}
+		ai_chance = { 
+			factor = 25
+		
+			modifier = {
+				factor = 0.1
+				job_castellan = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 1.75
+				job_castellan = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 1.75
+				job_castellan = { diplomacy = 14 }
+			}
+			modifier = {
+				factor = 1.75
+				job_castellan = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 1.75
+				job_castellan = { diplomacy = 18 }
+			}
+			modifier = {
+				factor = 1.75
+				job_castellan = { diplomacy = 20 }
+			}
+		}		
+		job_castellan = {
+			show_portrait = yes
+			character_event = { id = diplomatic.3 tooltip = EVTTOOLTIPdiplomatic.3 }
+			hidden_tooltip = { character_event = { id = diplomatic.2 days = 40  tooltip = EVTTOOLTIPdiplomatic.2 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTDdiplomatic.1" #Spouse
+		trigger = {
+			spouse = {
+				is_alive = yes
+				is_incapable = no
+				is_ill = no
+				prisoner = no
+				age = 18
+				is_liege_or_above = ROOT
+				NOT = { has_job_title = job_castellan }
+			}
+		}
+		ai_chance = { 
+			factor = 25
+					
+			modifier = {
+				factor = 0
+				spouse = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 1.75
+				spouse = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 1.75
+				spouse = { diplomacy = 14 }
+			}
+			modifier = {
+				factor = 1.75
+				spouse = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 1.75
+				spouse = { diplomacy = 18 }
+			}
+			modifier = {
+				factor = 1.75
+				spouse = { diplomacy = 20 }
+			}
+		}		
+		spouse = {
+			show_portrait = yes
+			character_event = { id = diplomatic.3 tooltip = EVTTOOLTIPdiplomatic.3 }
+			hidden_tooltip = { character_event = { id = diplomatic.2 days = 40  tooltip = EVTTOOLTIPdiplomatic.2 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTEdiplomatic.1" #Heir
+		trigger = {
+			current_heir = {
+				is_alive = yes
+				is_incapable = no
+				is_ill = no
+				prisoner = no
+				age = 18
+				is_liege_or_above = ROOT
+				dynasty = ROOT
+				NOT = { has_job_title = job_castellan }
+				NOT = { is_married = ROOT }
+			}
+		}
+		ai_chance = { 
+			factor = 25
+					
+			modifier = {
+				factor = 0
+				current_heir = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 1.75
+				current_heir = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 1.75
+				current_heir = { diplomacy = 14 }
+			}
+			modifier = {
+				factor = 1.75
+				current_heir = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 1.75
+				current_heir = { diplomacy = 18 }
+			}
+			modifier = {
+				factor = 1.75
+				current_heir = { diplomacy = 20 }
+			}
+		}		
+		current_heir = {
+			show_portrait = yes
+			character_event = { id = diplomatic.3 tooltip = EVTTOOLTIPdiplomatic.3 }
+			hidden_tooltip = { character_event = { id = diplomatic.2 days = 40  tooltip = EVTTOOLTIPdiplomatic.2 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCdiplomatic.1" #No
+		ai_chance = { factor = 0 }
+		clr_character_flag = diplomatic_annexation
+	}
+}
+#Arrive at foreign King's court
+character_event = {
+	id = diplomatic.2
+	desc = "EVTDESCdiplomatic.2"
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			demesne_size = 1
+			higher_tier_than = COUNT
+			OR = {
+				tier = EMPEROR
+				primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+			}
+			has_regent = no
+		}
+		FROMFROM = {
+			is_alive = yes
+			independent = yes
+			OR = {
+				tier = EMPEROR
+				primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+			}
+			war = no
+			OR = {
+				lower_tier_than = ROOT_FROM
+				custom_tooltip = {
+					text = TOOLTIPoffer_annexationWESTEROS
+					hidden_tooltip = {
+						AND = {
+							ROOT_FROM = { has_landed_title = e_iron_throne }
+							primary_title = {
+								NOT = { title = e_iron_throne }
+								OR = {
+									capital_scope = { region = world_westeros }
+									title = e_iron_isles #These titles dont have capitals
+									title = e_riverlands
+								}
+							}	
+						}
+					}
+				}	
+			}
+			has_regent = no
+		}
+	}
+	
+	fail_trigger_effect = {
+		character_event = { id = diplomatic.299 }
+		if = {
+			limit = { NOT = { character = event_target:diplomatic_annexation_king } }
+			event_target:diplomatic_annexation_king = { character_event = { id = diplomatic.299 } }
+		}
+		event_target:diplomatic_annexation_king = { clr_character_flag = diplomatic_annexation }	
+	}
+	
+	option = {
+		name = "EVTOPTAdiplomatic.2" 
+		event_target:diplomatic_annexation_target = {
+			character_event = { id = diplomatic.4 tooltip = EVTTOOLTIPdiplomatic.4 }
+		}	
+	}
+}	
+#The annexation can no longer proceed
+character_event = {
+	id = diplomatic.299
+	desc = "EVTDESCdiplomatic.299"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}	
+#Inform hand they are being sent to foreign court
+character_event = {
+	id = diplomatic.3
+	desc = "EVTDESCdiplomatic.3"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.3" 
+		event_target:diplomatic_annexation_target = {
+			tooltip = { show_portrait = yes }
+		}
+		custom_tooltip = { text = EVTTOOLTIPdiplomatic.2 }
+	}
+}	
+#Target informed of King's arrival, negotiation starts
+long_character_event = {
+	id = diplomatic.4
+	desc = "EVTDESCdiplomatic.4"
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		##Find potential council seat
+		clear_event_target = annnex_councillor_target
+		event_target:diplomatic_annexation_king = {
+			random_courtier = {
+				limit = {
+					is_councillor = yes
+					NOT = { has_job_title = job_physician }
+					NOT = { has_job_title = job_spiritual }
+					liege = { character = event_target:diplomatic_annexation_king }
+					NOT = { character = FROM } 
+					NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already				
+				}
+				preferred_limit = {
+					has_job_title = job_castellan
+					ROOT = {
+						OR = {
+							stewardship = 16
+							stewardship = PREV
+						}
+					}	
+					NAND = { #small lords usually wont ask for castellan as priority
+						event_target:diplomatic_annexation_king = { higher_tier_than = DUKE }
+						ROOT = { 
+							tier = COUNT 
+							NOT = { stewardship = 16 }
+						}						
+					}
+				}
+				preferred_limit = {
+					has_job_title = job_chancellor
+					ROOT = {
+						OR = {
+							diplomacy = 14
+							diplomacy = PREV
+						}
+					}	
+				}
+				preferred_limit = {
+					has_job_title = job_treasurer
+					ROOT = {
+						OR = {
+							stewardship = 14
+							stewardship = PREV
+						}
+					}	
+				}
+				preferred_limit = {
+					has_job_title = job_marshal
+					ROOT = {
+						OR = {
+							martial = 14
+							martial = PREV
+						}
+					}	
+				}
+				preferred_limit = {
+					has_job_title = job_spymaster
+					ROOT = {
+						OR = {
+							intrigue = 14
+							intrigue = PREV
+						}
+					}	
+				}
+				preferred_limit = {
+					NOT = { has_job_title = job_castellan }
+					ROOT = {
+						NOT = { stewardship = PREV }
+						NOT = { trait = proud }
+						NOT = { trait = ambitious }
+					}
+				}
+				save_event_target_as = annnex_councillor_target
+			}
+		}
+		##Find potential marriage
+		#Try self first
+		if = {
+			limit = {
+				can_marry_trigger = yes
+				age = 10
+				NOT = { trait = bastard }
+				NOT = { trait = incapable }
+				OR = {
+					is_female = no
+					NOT = { age = 30 }
+				}
+				event_target:diplomatic_annexation_king = {
+					any_courtier = {
+						dynasty = PREV
+						can_marry_trigger = yes
+						NOT = { same_sex = PREVPREV }
+						age = 10
+						NOT = { trait = bastard }
+						NOT = { trait = incapable }
+						OR = {
+							is_female = no
+							NOT = { age = 30 }
+						}
+						OR = {
+							character = PREV
+							AND = {
+								is_ruler = no	
+								OR = {
+									is_child_of = PREV
+									sibling = PREV
+								}
+								liege = { character = PREVPREV }
+							}
+						}
+					}
+				}
+			}
+			save_event_target_as = diplomatic_annexation_marriage_TARGET
+			add_trait = forbid_marriage
+			event_target:diplomatic_annexation_king = {
+				random_courtier = {
+					limit = {
+						dynasty = PREV
+						can_marry_trigger = yes
+						NOT = { same_sex = PREVPREV }
+						age = 10
+						NOT = { trait = bastard }
+						NOT = { trait = incapable }
+						OR = {
+							is_female = no
+							NOT = { age = 30 }
+						}
+						OR = {
+							character = PREV
+							AND = {
+								is_ruler = no	
+								OR = {
+									is_child_of = PREV
+									sibling = PREV
+								}
+								liege = { character = PREVPREV }
+							}
+						}
+					}
+					save_event_target_as = diplomatic_annexation_marriage_KING	
+					add_trait = forbid_marriage
+				}
+			}
+			break = yes
+		}	
+		random_courtier = {
+			limit = {
+				dynasty = ROOT
+				can_marry_trigger = yes
+				age = 10
+				NOT = { trait = bastard }
+				NOT = { trait = incapable }
+				OR = {
+					is_female = no
+					NOT = { age = 30 }
+				}
+				is_ruler = no	
+				OR = {
+					is_child_of = ROOT
+					sibling = ROOT
+				}
+				liege = { character = ROOT }
+				event_target:diplomatic_annexation_king = {
+					any_courtier = {
+						dynasty = PREV
+						can_marry_trigger = yes
+						NOT = { same_sex = PREVPREV }
+						age = 10
+						NOT = { trait = bastard }
+						NOT = { trait = incapable }
+						OR = {
+							is_female = no
+							NOT = { age = 30 }
+						}
+						OR = {
+							character = PREV
+							AND = {
+								is_ruler = no	
+								OR = {
+									is_child_of = PREV
+									sibling = PREV
+								}
+								liege = { character = PREVPREV }
+							}
+						}
+					}
+				}	
+			}
+			save_event_target_as = diplomatic_annexation_marriage_TARGET
+			add_trait = forbid_marriage
+			event_target:diplomatic_annexation_king = {
+				random_courtier = {
+					limit = {
+						dynasty = PREV
+						can_marry_trigger = yes
+						NOT = { same_sex = PREVPREV }
+						age = 10
+						NOT = { trait = bastard }
+						NOT = { trait = incapable }
+						OR = {
+							is_female = no
+							NOT = { age = 30 }
+						}
+						OR = {
+							character = PREV
+							AND = {
+								is_ruler = no	
+								OR = {
+									is_child_of = PREV
+									sibling = PREV
+								}
+								liege = { character = PREVPREV }
+							}
+						}
+					}
+					save_event_target_as = diplomatic_annexation_marriage_KING	
+					add_trait = forbid_marriage
+				}
+			}					
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAdiplomatic.4" #I'm interested
+		ai_chance = {
+			factor = 10
+			
+			modifier = { #will never start negotiations
+				factor = 0
+				NOR = {
+					trait = humble
+					trait = charitable
+					trait = patient
+					trait = content
+				}
+				OR = {
+					NOT = { religion = event_target:diplomatic_annexation_king }
+					NOR = {
+						culture_group = event_target:diplomatic_annexation_king
+						event_target:diplomatic_annexation_king = { culture = high_valyrian }
+					}
+				}	
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = { #will never start negotiations
+				factor = 0
+				NOT = { is_allied_with = event_target:diplomatic_annexation_king }
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = 25 } }
+				OR = {
+					higher_tier_than = DUKE
+					relative_power = { who = event_target:diplomatic_annexation_king power = 0.33 }
+				}
+				NOT = { culture = event_target:diplomatic_annexation_king }
+			}
+			
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.2 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.1 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.05 } }
+			}
+			
+			modifier = {
+				factor = 1.5
+				FROM  = { diplomacy = 13 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM  = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM  = { diplomacy = 19 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM  = { diplomacy = 22 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { trait = dragon_rider }
+				event_target:diplomatic_annexation_king = {
+					can_use_dragon_conquest_trigger = yes
+					relative_power = { who = ROOT power = 0.5 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 10 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 30 }
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = event_target:diplomatic_annexation_king value = 50 }
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = event_target:diplomatic_annexation_king value = 70 }
+			}
+		}
+		event_target:diplomatic_annexation_marriage_TARGET = { tooltip = { show_portrait = yes } }
+		event_target:diplomatic_annexation_marriage_KING = { tooltip = { show_portrait = yes } }
+		set_character_flag = first_demand
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.4" #No way!
+		ai_chance = {
+			factor = 10
+			
+			modifier = { #will at least start negotiations
+				factor = 0
+				NOR = {
+					trait = proud
+					trait = greedy
+					trait = wroth
+					trait = ambitious
+				}
+				religion = event_target:diplomatic_annexation_king
+				OR = {
+					culture_group = event_target:diplomatic_annexation_king
+					event_target:diplomatic_annexation_king = { culture = high_valyrian }
+				}
+				opinion = { who = event_target:diplomatic_annexation_king value = 10 }
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				relative_power = { who = event_target:diplomatic_annexation_king power = 0.4 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = event_target:diplomatic_annexation_king power = 0.7 }
+			}
+			modifier = {
+				factor = 4
+				relative_power = { who = event_target:diplomatic_annexation_king power = 1 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = event_target:diplomatic_annexation_king }
+			}
+			modifier = {
+				factor = 2
+				NOT = { culture_group = event_target:diplomatic_annexation_king }
+			}
+			modifier = {
+				factor = 4
+				can_use_dragon_conquest_trigger = yes
+				event_target:diplomatic_annexation_king = {			
+					NOT = { trait = dragon_rider }
+				}
+			}
+			modifier = { #is not dejure liege
+				factor = 2
+				NOR = { 
+					event_target:diplomatic_annexation_king  = { de_jure_vassal_or_below = PREV }
+					AND = {
+						event_target:diplomatic_annexation_king = { has_landed_title = e_iron_throne }
+						primary_title = {
+							NOT = { title = e_iron_throne }
+							OR = {
+								capital_scope = { region = world_westeros }
+								title = e_iron_isles #These titles dont have capitals
+								title = e_riverlands
+							}
+						}	
+					}
+				}
+			}
+			modifier = { #does not neighbor
+				factor = 2
+				NOT = { 
+					any_realm_province = {
+						any_neighbor_province = {
+							owner = { same_realm = event_target:diplomatic_annexation_king  }
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		FROM = { character_event = { id = diplomatic.6  tooltip = TOOLTIPdiplomatic.6B } } 
+	}
+	
+}	
+#Make Demand
+character_event = {
+	id = diplomatic.5
+	desc = "EVTDESCdiplomatic.5"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.5" ##This negotiation is over
+		ai_chance = {
+			factor = 1
+					
+			modifier = {
+				factor = 0.05
+				has_character_flag = first_demand
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				relative_power = { who = event_target:diplomatic_annexation_king power = 0.4 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = event_target:diplomatic_annexation_king power = 0.7 }
+			}
+			modifier = {
+				factor = 4
+				relative_power = { who = event_target:diplomatic_annexation_king power = 1 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = event_target:diplomatic_annexation_king }
+			}
+			modifier = {
+				factor = 2
+				NOT = { culture_group = event_target:diplomatic_annexation_king }
+			}
+			modifier = { #is not dejure liege
+				factor = 2
+				NOR = { 
+					event_target:diplomatic_annexation_king  = { de_jure_vassal_or_below = PREV }
+					AND = {
+						event_target:diplomatic_annexation_king = { has_landed_title = e_iron_throne }
+						primary_title = {
+							NOT = { title = e_iron_throne }
+							OR = {
+								capital_scope = { region = world_westeros }
+								title = e_iron_isles #These titles dont have capitals
+								title = e_riverlands
+							}
+						}	
+					}
+				}
+			}
+			modifier = { #does not neighbor
+				factor = 2
+				NOT = { 
+					any_realm_province = {
+						any_neighbor_province = {
+							owner = { same_realm = event_target:diplomatic_annexation_king  }
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				can_use_dragon_conquest_trigger = yes
+				event_target:diplomatic_annexation_king = {			
+					NOT = { trait = dragon_rider }
+				}
+			}
+		}
+		FROMFROM = {
+			character_event = { id = diplomatic.6  tooltip = TOOLTIPdiplomatic.6 }
+			if = {
+				limit = { NOT = { character = event_target:diplomatic_annexation_king } }
+				opinion = { who = ROOT modifier = opinion_annexation_failed }
+			}
+		}
+		event_target:diplomatic_annexation_king = { 
+			opinion = { who = ROOT modifier = opinion_annexation_failed }
+		}
+	}
+
+	option = {
+		name = "EVTOPTBdiplomatic.5" #Make marriage as first demand
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				trait = familyperson
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		trigger = {
+			NOT = { has_character_flag = diploannex_marriage }
+			NOT = { has_character_flag = diploannex_marriage_reject }
+			event_target:diplomatic_annexation_marriage_TARGET = { is_alive = yes }
+			event_target:diplomatic_annexation_marriage_KING = { is_alive = yes }
+		}	
+		event_target:diplomatic_annexation_marriage_TARGET = {
+			custom_tooltip = { text = TOOLTIPdiplomatic.5A }
+		}	
+		event_target:diplomatic_annexation_marriage_KING = {
+			custom_tooltip = { text = TOOLTIPdiplomatic.5E }
+		}
+		FROM = {
+			FROM = {			
+				hidden_tooltip = { character_event = { id = diplomatic.7 days = 1 } } 
+			}
+		}		
+	}
+	
+	option = {
+		name = "EVTOPTCdiplomatic.5" #Make hand of the king title as first demand
+		trigger = {
+			NOT = { has_character_flag = diploannex_handoftheking }
+			NOT = { has_character_flag = diploannex_handoftheking_reject }
+			event_target:annnex_councillor_target = { always = yes }
+			is_female = no
+		}
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				stewardship = 12
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		event_target:annnex_councillor_target = {
+			custom_tooltip = { text = TOOLTIPdiplomatic.10 }
+		}
+		hidden_tooltip = { FROMFROM = { character_event = { id = diplomatic.10  days = 1 } } }
+	}
+	
+	option = {
+		name = "EVTOPTDdiplomatic.5" #Make land for son as first demand
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				trait = familyperson
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		trigger = {
+			NOT = { has_character_flag = diploannex_land_for_son }
+			NOT = { has_character_flag = diploannex_land_reject }
+			any_child = {
+				is_female = no
+				is_alive = yes
+				is_ruler = no
+				is_primary_heir = no
+				NOT = { trait = bastard }
+				OR = {
+					is_married = yes
+					is_betrothed = yes
+				}
+				liege = { character = ROOT }				
+			}
+			event_target:diplomatic_annexation_king = {
+				any_demesne_title = {
+					tier = COUNT
+					can_be_given_away = yes
+					NOT = {
+						location = {
+							is_capital = yes
+						}						
+					}
+				}
+			}	
+		}	
+		random_child = {
+			limit = {
+				is_female = no
+				is_alive = yes
+				is_ruler = no
+				is_primary_heir = no
+				NOT = { trait = bastard }
+				OR = {
+					is_married = yes
+					is_betrothed = yes
+				}
+				liege = { character = ROOT }
+			}
+			custom_tooltip = { text = TOOLTIPdiplomatic.5B }
+			save_event_target_as = diploannex_land
+		}
+		hidden_tooltip = { FROM = { FROM = { character_event = { id = diplomatic.12 days = 1  } } } }
+	}
+	
+	option = {
+		name = "EVTOPTEdiplomatic.5" #Make KG position for son as first demand
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				trait = familyperson
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		trigger = {
+			NOT = { has_character_flag = diploannex_KG }
+			NOT = { has_character_flag = diploannex_KG_reject }
+			event_target:diplomatic_annexation_king = { has_landed_title = e_iron_throne }
+			d_kingsguard = { has_holder = yes }
+			any_child = {
+				is_female = no
+				is_alive = yes
+				is_ruler = no
+				is_primary_heir = no
+				age = 16
+				trait = knight
+				OR = {
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				is_married = no
+				is_betrothed = no #???
+				liege = { character = ROOT }
+				NOT = { event_target:diplomatic_annexation_marriage_TARGET = { character = PREV } }
+			}
+		}	
+		random_child = {
+			limit = {
+				is_female = no
+				is_alive = yes
+				is_ruler = no
+				is_primary_heir = no
+				age = 16
+				trait = knight
+				OR = {
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				is_married = no
+				is_betrothed = no #???
+				liege = { character = ROOT }
+				NOT = { event_target:diplomatic_annexation_marriage_TARGET = { character = PREV } }
+			}
+			save_event_target_as = diploannex_KG
+			custom_tooltip = { text = TOOLTIPdiplomatic.5C }
+		}
+		hidden_tooltip = { FROM = { FROM = { character_event = { id = diplomatic.14 days = 1  } } } }
+	}
+	
+	option = {
+		name = "EVTOPTFdiplomatic.5" #Make vassal transfer as first demand
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		trigger = {
+			NOT = { has_character_flag = diploannex_vassal_transfer }
+			NOT = { has_character_flag = diploannex_vassal_transfer_reject }
+			event_target:diplomatic_annexation_king = {
+				any_vassal = {
+					NOT = { tier = KING }
+					ROOT = { de_jure_vassal_or_below = PREV }
+				}
+			}
+		}	
+		event_target:diplomatic_annexation_king = {
+			any_vassal = {
+				limit = {
+					NOT = { tier = KING }
+					ROOT = { de_jure_vassal_or_below = PREV }
+				}
+				custom_tooltip = { text = TOOLTIPdiplomatic.5D }
+			}
+		}
+		hidden_tooltip = { FROM = { FROM = { character_event = { id = diplomatic.16 days = 1  } } } }
+	}
+	
+	option = {
+		name = "EVTOPTHdiplomatic.5" #Royal Privilege
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -70 } }
+			}
+		}
+		trigger = {
+			NOT = { has_character_flag = diploannex_royal_privilege }
+			NOT = { has_character_flag = diploannex_royal_privilege_reject }	
+			government = feudal_government
+			higher_tier_than = DUKE
+		}	
+		custom_tooltip = { text = TOOLTIPdiplomatic.5H }
+		FROM = {
+			FROM = {
+				hidden_tooltip = { character_event = { id = diplomatic.18 days = 1  } } 
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTGdiplomatic.5" #I think we can agree to this
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.05
+				has_character_flag = first_demand
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { has_character_flag = diploannex_marriage }
+			}
+			modifier = {
+				factor = 2
+				has_character_flag = diploannex_handoftheking
+			}
+			modifier = {
+				factor = 2
+				has_character_flag = diploannex_land_for_son
+			}
+			modifier = {
+				factor = 2
+				has_character_flag = diploannex_KG 
+			}
+			modifier = {
+				factor = 2
+				has_character_flag = diploannex_vassal_transfer
+			}
+			modifier = {
+				factor = 1.5
+				has_character_flag = diploannex_royal_privilege
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.2 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.1 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = event_target:diplomatic_annexation_king power = 0.05 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM  = { diplomacy = 13 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM  = { diplomacy = 16 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM  = { diplomacy = 19 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM  = { diplomacy = 22 } }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 10 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:diplomatic_annexation_king value = 70 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { trait = dragon_rider }
+				event_target:diplomatic_annexation_king = {
+					can_use_dragon_conquest_trigger = yes
+					relative_power = { who = ROOT power = 0.5 }
+				}
+			}
+		}
+		event_target:diplomatic_annexation_king = { 
+			character_event = { id = diplomatic.29  tooltip = TOOLTIPdiplomatic.29 } 
+			opinion = { who = ROOT modifier = opinion_agreed_annexation }
+		}
+		
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = event_target:diplomatic_annexation_king } }
+				opinion = { who = ROOT modifier = opinion_agreed_annexation }
+				hidden_tooltip = { character_event = { id = diplomatic.2900 } }
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPdiplomatic.5REALMUNHAPPY
+			hidden_tooltip = {
+				any_realm_character = {
+					limit = {
+						OR = {
+							higher_tier_than = BARON
+							is_patrician = yes
+							liege = { character = ROOT }
+							is_close_relative = ROOT						
+						}
+						OR = {
+							trait = proud
+							NOT = { opinion = { who = event_target:diplomatic_annexation_king value = -24 } }
+							AND = {
+								NOT = { culture_group = event_target:diplomatic_annexation_king }
+								OR = {
+									trait = wroth
+									trait = envious
+									trait = ambitious
+								}
+							}
+							AND = {
+								NOT = { religion = event_target:diplomatic_annexation_king }
+								trait = zealous
+							}
+						}
+					}
+					opinion = { who = ROOT modifier = opinion_agreed_annexation_bad }
+					opinion = { who = event_target:diplomatic_annexation_king modifier = opinion_agreed_annexation_bad }
+				}
+			}
+		}
+	}
+	after = { clr_character_flag = first_demand }
+}	
+#Inform King target rejects annexation
+character_event = {
+	id = diplomatic.6
+	desc = "EVTDESCdiplomatic.6"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.6" 
+		FROM = { 		
+			opinion = { who = ROOT modifier = opinion_annexation_failed }
+			clr_character_flag = diplomatic_annexation_target	
+			
+			clr_character_flag = diploannex_marriage
+			clr_character_flag = diploannex_marriage_reject
+			clr_character_flag = diploannex_handoftheking
+			clr_character_flag = diploannex_handoftheking_reject
+			clr_character_flag = diploannex_land_for_son
+			clr_character_flag = diploannex_land_reject
+			clr_character_flag = diploannex_KG 
+			clr_character_flag = diploannex_KG_reject 
+			clr_character_flag = diploannex_vassal_transfer
+			clr_character_flag = diploannex_vassal_transfer_reject
+			clr_character_flag = diploannex_royal_privilege
+			clr_character_flag = diploannex_royal_privilege_reject
+			
+			set_character_flag = diplomatic_annexation_refused	
+		}
+		clr_character_flag = diplomatic_annexation 
+		if = {
+			limit = { 
+				higher_tier_than = DUKE 
+				FROM = { higher_tier_than = COUNT }
+			}
+			prestige = -100
+		}	
+		else = {
+			prestige = -50
+		}
+		event_target:diplomatic_annexation_king = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				hidden_tooltip = { character_event = { id = diplomatic.690 } }
+				opinion = { who = ROOT modifier = opinion_annexation_failed }
+			}
+		}
+		hidden_tooltip = {
+			event_target:diplomatic_annexation_marriage_TARGET = { remove_trait = forbid_marriage }
+			event_target:diplomatic_annexation_marriage_KING = { remove_trait = forbid_marriage }
+		}
+	}
+}	
+character_event = { #inform king hand failed
+	id = diplomatic.690
+	desc = "EVTDESCdiplomatic.690"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.690" 
+		clr_character_flag = diplomatic_annexation 
+		prestige = -100
+		FROMFROM = { opinion = { who = ROOT modifier = opinion_annexation_failed } }
+	}
+}	
+#Inform King target demands ###marriage pact###
+character_event = {
+	id = diplomatic.7
+	desc = "EVTDESCdiplomatic.7"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.7" #OK
+		event_target:diplomatic_annexation_marriage_KING = {
+			custom_tooltip = { text = TOOLTIPdiplomatic.5A }
+		}	
+		FROM = {
+			event_target:diplomatic_annexation_marriage_TARGET = {
+				custom_tooltip = { text = TOOLTIPdiplomatic.5E }
+			}
+			set_character_flag = diploannex_marriage
+			character_event = { id = diplomatic.8  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.7" #No way
+		ai_chance = { factor = 0 }
+		FROM = {
+			set_character_flag = diploannex_marriage_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts marriage pact
+character_event = {
+	id = diplomatic.8
+	desc = "EVTDESCdiplomatic.8"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.8" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform target king rejects demand
+character_event = {
+	id = diplomatic.9
+	desc = "EVTDESCdiplomatic.9"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.9" #Fine, I will ask something else
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 70 }
+			}
+		}
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.9" #Negotition over
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -70 } }
+			}
+		}
+		FROM = {
+			character_event = { id = diplomatic.6  tooltip = TOOLTIPdiplomatic.6 }
+			if = {
+				limit = { NOT = { character = event_target:diplomatic_annexation_king } }
+				opinion = { who = ROOT modifier = opinion_annexation_failed }
+			}
+		}
+		event_target:diplomatic_annexation_king = { 
+			opinion = { who = ROOT modifier = opinion_annexation_failed }
+		}
+	}
+}
+#Inform King target demands ###Hand of the King###
+character_event = {
+	id = diplomatic.10
+	desc = "EVTDESCdiplomatic.10"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.10" #OK
+		ai_chance = { factor = 90 }
+		event_target:annnex_councillor_target = { custom_tooltip = { text = TOOLTIPdiplomatic.10 } }
+		FROM = {		
+			set_character_flag = diploannex_handoftheking
+			character_event = { id = diplomatic.11  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.7" #No way
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.75
+				job_castellan = {
+					NOT = { stewardship = FROM }
+				}
+			}
+			modifier = {
+				factor = 2
+				job_castellan = {
+					tier = KING
+				}
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 4 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 16 }
+			}
+		}
+		FROM = {
+			set_character_flag = diploannex_handoftheking_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts hand of the king
+character_event = {
+	id = diplomatic.11
+	desc = "EVTDESCdiplomatic.11"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.11" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform King target demands ###Land for son###
+character_event = {
+	id = diplomatic.12
+	desc = "EVTDESCdiplomatic.12"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.12" #OK
+		ai_chance = { factor = 90 }
+		FROM = {
+			event_target:diploannex_land = {
+				custom_tooltip = { text = TOOLTIPdiplomatic.12 }
+			}
+			set_character_flag = diploannex_land_for_son
+			character_event = { id = diplomatic.13  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.12" #No way
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 4 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 16 }
+			}
+		}
+		FROM = {
+			set_character_flag = diploannex_land_for_son_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts land for son
+character_event = {
+	id = diplomatic.13
+	desc = "EVTDESCdiplomatic.13"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.13" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform King target demands ###KG for son###
+character_event = {
+	id = diplomatic.14
+	desc = "EVTDESCdiplomatic.14"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.14" #OK
+		ai_chance = { factor = 90 }
+		FROM = {
+			event_target:diploannex_KG = {
+				custom_tooltip = { text = TOOLTIPdiplomatic.14 }
+			}
+			set_character_flag = diploannex_KG
+			character_event = { id = diplomatic.15  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.14" #No way
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 2
+				kingsguard = {
+					is_alive = yes
+					count = 7
+				}
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 4 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 16 }
+			}
+		}
+		FROM = {
+			set_character_flag = diploannex_KG_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts son KG
+character_event = {
+	id = diplomatic.15
+	desc = "EVTDESCdiplomatic.15"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.15" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform King target demands ###Vassal Transfer###
+character_event = {
+	id = diplomatic.16
+	desc = "EVTDESCdiplomatic.16"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.16" #OK
+		ai_chance = { factor = 90 }
+		event_target:diplomatic_annexation_king = {
+			any_vassal = {
+				limit = {
+					NOT = { tier = KING }
+					FROM = { de_jure_vassal_or_below = PREV }
+				}
+				custom_tooltip = { text = TOOLTIPdiplomatic.5D }				
+			}
+		}	
+		FROM = {
+			set_character_flag = diploannex_vassal_transfer
+			character_event = { id = diplomatic.17  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.16" #No way
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 4 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 12 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 16 }
+			}
+		}
+		FROM = {
+			set_character_flag = diploannex_vassal_transfer_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts vassal transfer
+character_event = {
+	id = diplomatic.17
+	desc = "EVTDESCdiplomatic.17"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.17" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform King target demands ###royal privilege###
+character_event = {
+	id = diplomatic.18
+	desc = "EVTDESCdiplomatic.18"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.18" #OK	
+		FROM = {
+			custom_tooltip = { text = TOOLTIPdiplomatic.5H }
+			set_character_flag = diploannex_royal_privilege
+			character_event = { id = diplomatic.19  tooltip = TOOLTIPdiplomatic.8 } 
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.18" #No way
+		ai_chance = { factor = 0 }
+		FROM = {
+			set_character_flag = diploannex_royal_privilege_reject
+			character_event = { id = diplomatic.9  tooltip = TOOLTIPdiplomatic.9 } 
+		}
+	}
+}
+#Inform target king accepts royal privilege
+character_event = {
+	id = diplomatic.19
+	desc = "EVTDESCdiplomatic.19"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.19" #OK
+		character_event = { id = diplomatic.5  tooltip = TOOLTIPdiplomatic.5 } 
+	}
+}
+#Inform king target accepts annexation
+character_event = {
+	id = diplomatic.29
+	desc = "EVTDESCdiplomatic.29"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.29" #OK
+		FROM = {
+			if = {
+				limit = { lower_tier_than = ROOT }
+				set_defacto_liege = ROOT
+				hidden_tooltip = { 
+					character_event = { id = maintenance.25 } #Subjugation flag maintenance
+					remove_opinion = { who = ROOT modifier = opinion_subjugated_AGOT }
+				} 
+			}
+			if = {
+				limit = { NOT = { lower_tier_than = ROOT } }
+				any_vassal = {
+					limit = { tier = KING }
+					if = {
+						limit = { ROOT = { trait = civil_war } }
+						set_character_flag = neutral
+						custom_tooltip = { text = TOOLTIPdejure_kingdom_EMP_vassal }
+						hidden_tooltip = { character_event = { id = mega_wars.52 } }
+					}
+					if = {
+						limit = { ROOT = { NOT = { trait = civil_war } } }
+						character_event = { id = mega_wars.52 tooltip = EVTTOOLTIPmega_wars.52 }
+					}	
+				}
+				if = { 	limit = { primary_title = { title = e_north } }
+						k_north = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_riverlands } }
+						k_riverlands  = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_vale } }
+						k_vale = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_westerlands } }
+						k_westerlands = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_reach } }
+						k_reach = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_stormlands } }
+						k_stormlands = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_dorne } }
+						k_dorne = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } }
+				}
+				if = { 	limit = { primary_title = { title = e_iron_isles } }
+						k_iron_isles = { custom_tooltip = { text = TOOLTIPdejure_kingdom_claim_EMP_success } } 
+				}
+				tooltip = { set_defacto_liege = ROOT }
+				hidden_tooltip = { 
+					character_event = { id = maintenance.20 } #This event takes the defeated King's title and reorganises them
+					remove_opinion = { who = ROOT modifier = opinion_subjugated_AGOT }
+				} 
+			}	
+			opinion = { who = ROOT modifier = opinion_agreed_annexation }
+			if = { #Marriage Pact
+				limit = { has_character_flag = diploannex_marriage }
+				event_target:diplomatic_annexation_marriage_TARGET = {
+					event_target:diplomatic_annexation_marriage_KING = {
+						add_spouse = PREV
+						hidden_tooltip = { 
+							child_fertility_debuff = yes 
+							add_character_modifier = { name = "wedding" duration = 60 }
+							PREV = { 
+								child_fertility_debuff = yes 
+								add_character_modifier = { name = "wedding" duration = 60 }
+							}
+						}
+					}
+				}
+				clr_character_flag = diploannex_marriage
+			}	
+			if = { #Hand of the King
+				limit = { has_character_flag = diploannex_handoftheking }
+				event_target:annnex_councillor_target = {
+					if = {
+						limit = {
+							is_councillor = yes
+							liege = { character = ROOT }
+						}
+						if = {
+							limit = { has_job_title = job_castellan }
+							remove_title = job_castellan 
+							opinion = { who = ROOT modifier = opinion_fired_from_council }
+							ROOT_FROM = { give_job_title = job_castellan }
+						}
+						if = {
+							limit = { has_job_title = job_chancellor }
+							remove_title = job_chancellor 
+							opinion = { who = ROOT modifier = opinion_fired_from_council }
+							ROOT_FROM = { give_job_title = job_chancellor }
+						}
+						if = {
+							limit = { has_job_title = job_treasurer }
+							remove_title = job_treasurer
+							opinion = { who = ROOT modifier = opinion_fired_from_council }
+							ROOT_FROM = { give_job_title = job_treasurer }
+						}
+						if = {
+							limit = { has_job_title = job_spymaster }
+							remove_title = job_spymaster
+							opinion = { who = ROOT modifier = opinion_fired_from_council }
+							ROOT_FROM = { give_job_title = job_spymaster }
+						}
+						if = {
+							limit = { has_job_title = job_marshal }
+							remove_title = job_marshal 
+							opinion = { who = ROOT modifier = opinion_fired_from_council }
+							ROOT_FROM = { give_job_title = job_marshal }
+						}
+					}	
+				}	
+				hidden_tooltip = { #failsafe
+					if = {
+						limit = { is_councillor = no }
+						ROOT = {
+							job_chancellor = {
+								remove_title = job_chancellor 
+								opinion = { who = ROOT modifier = opinion_fired_from_council }
+							}
+						}
+						give_job_title = job_chancellor
+					}
+					add_character_modifier = { name = negotiated_council_postion duration = 1825 } #cant be fired for 5 years
+				}
+				clr_character_flag = diploannex_handoftheking 
+			}	
+			if = { #Land for son
+				limit = { has_character_flag = diploannex_land_for_son }
+				event_target:diploannex_land = {
+					ROOT = {
+						random_demesne_title = {
+							limit = {
+								tier = COUNT
+								can_be_given_away = yes
+								NOT = {
+									location = {
+										is_capital = yes
+									}						
+								}
+							}
+							grant_title = PREVPREV	
+						}
+					}
+					if = {
+						limit = { NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_granted_county } } }
+						opinion = { who = ROOT modifier = opinion_granted_county }
+					}
+				}
+				clr_character_flag = diploannex_land_for_son
+			}	
+			if = { #KG for son
+				limit = { has_character_flag = diploannex_KG  }
+				event_target:diploannex_KG = {
+					if = {
+						limit = {
+							kingsguard = {
+								is_alive = yes
+								count = 7
+							}
+						}	
+						d_kingsguard = {
+							holder_scope = {
+								#hidden_tooltip = { change_variable = { which = "kingsguard_count" value = -1 } }
+								random_courtier = {
+									limit = { 
+										trait = kingsguard 
+										trait = trained_warrior
+									}
+									custom_tooltip = { text = TOOLTIPclash_of_kings.20C }
+									##opinion
+									hidden_tooltip = {
+										remove_trait = kingsguard
+										clr_character_flag = no_court_invites
+										recalc_succession = yes
+									}	
+								}
+							}
+						}
+					}
+					ROOT = { prestige = -50 }
+					add_trait = kingsguard
+					set_character_flag = no_court_invites
+					recalc_succession = yes
+					hidden_tooltip = {
+						d_kingsguard = {
+							holder_scope = {
+								reverse_banish = PREVPREV
+								#change_variable = { which = "kingsguard_count" value = 1 }
+							}
+						}
+					}
+				}
+				clr_character_flag = diploannex_KG 
+			}			
+			if = { #Vassal transfer
+				limit = { has_character_flag = diploannex_vassal_transfer }
+				ROOT = {
+					any_vassal = {
+						limit = {
+							NOT = { tier = KING }
+							ROOT_FROM = { de_jure_vassal_or_below = PREV }
+						}
+						set_defacto_liege = ROOT_FROM
+						hidden_tooltip = { character_event = { id = 63002 } } #inform
+					}
+				}
+				clr_character_flag = diploannex_vassal_transfer
+			}	
+			if = { #Royal Privilege
+				limit = { has_character_flag = diploannex_royal_privilege }
+				custom_tooltip = {
+					text = TOOLTIPdiploannex_royal_privilege
+					hidden_tooltip = {
+						any_demesne_title = {
+							limit = {
+								tier = KING
+								controls_religion = no
+							}
+							hidden_tooltip = { set_variable = { which = "lord_paramount_status" value = 0 } } #1 = lord paramount, 2 = interregnum
+							add_law = privilege_vassal_king
+						}
+						set_government_type = feudal_government
+					}
+				}	
+				ROOT = {
+					prestige = -100
+					custom_tooltip = {
+						text = TOOLTIPgrant_privliege_vassals_annoyed
+						hidden_tooltip = {
+							any_vassal = {
+								limit = {									
+									OR = {
+										any_demesne_title = {
+											tier = KING
+											controls_religion = no
+											is_landless_type_title = no
+											NOT = { has_law = privilege_vassal_king }
+											is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+										}
+										
+										NOT = { opinion = { who = ROOT value = -29 } }
+										AND = {
+											NOT = { culture_group = ROOT_FROM }
+											OR = {
+												trait = wroth
+												trait = envious
+												trait = ambitious
+											}
+										}
+										AND = {
+											NOT = { religion = ROOT_FROM }
+											trait = zealous
+										}
+									}
+									NOT = { trait = content }
+									#NOT = { has_position = loyalist }
+									NOT = { character = ROOT_FROM }
+								}
+								opinion = {
+									who = PREV
+									modifier = opinion_someone_granted_royal_privilege
+									months = 60
+								}
+							}
+						}
+					}
+				}
+				clr_character_flag = diploannex_royal_privilege
+			}	
+			clr_character_flag = diploannex_marriage_reject
+			clr_character_flag = diploannex_handoftheking_reject		
+			clr_character_flag = diploannex_land_reject
+			clr_character_flag = diploannex_KG_reject 	
+			clr_character_flag = diploannex_vassal_transfer_reject
+			clr_character_flag = diploannex_royal_privilege_reject				
+		}
+		if = {
+			limit = { FROM = { higher_tier_than = DUKE } }
+			prestige = 250
+			tooltip = {
+				if = {
+					limit = { NOT = { character = FROMFROMFROM } }
+					FROMFROMFROM = { prestige = 250 }
+				}
+			}
+		}	
+		if = {
+			limit = { FROM = { tier = DUKE } }
+			prestige = 150
+			tooltip = {
+				if = {
+					limit = { NOT = { character = FROMFROMFROM } }
+					FROMFROMFROM = { prestige = 150 }
+				}
+			}
+		}	
+		if = {
+			limit = { FROM = { lower_tier_than = DUKE } }
+			prestige = 75
+			tooltip = {
+				if = {
+					limit = { NOT = { character = FROMFROMFROM } }
+					FROMFROMFROM = { prestige = 75 }
+				}
+			}
+		}
+		clr_character_flag = diplomatic_annexation
+		hidden_tooltip = {
+			event_target:diplomatic_annexation_marriage_TARGET = { remove_trait = forbid_marriage }
+			event_target:diplomatic_annexation_marriage_KING = { remove_trait = forbid_marriage }
+			any_player = {
+				limit = { 
+					OR = {
+						same_realm = ROOT
+						same_realm = FROM
+						culture_group = ROOT
+						culture_group = FROM
+						religion_group = ROOT
+						religion_group = FROM
+						is_within_diplo_range = ROOT
+					}
+					NOR = {
+						character = ROOT
+						character = FROM
+						character = FROMFROMFROM
+					}
+				}
+				character_event = { id = diplomatic.2901 }
+			}
+		}
+	}
+}
+character_event = { #Inform hand
+	id = diplomatic.2900
+	desc = "EVTDESCdiplomatic.2900"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.2900"
+		if = {
+			limit = { FROM = { higher_tier_than = DUKE } }
+			prestige = 250
+		}	
+		if = {
+			limit = { FROM = { tier = DUKE } }
+			prestige = 150
+		}	
+		if = {
+			limit = { FROM = { lower_tier_than = DUKE } }
+			prestige = 75
+		}
+		event_target:diplomatic_annexation_king = { opinion = { who = ROOT modifier = opinion_service_rendered multiplier = 2 years = 5 } }
+		hidden_tooltip = { 
+			clr_character_flag = dirty_service
+			change_variable = { which = "services_rendered" value = 5 }
+			character_event = { id = 73560 days = 5 }
+		}
+	}
+}
+character_event = { #Inform world
+	id = diplomatic.2901
+	desc = "EVTDESCdiplomatic.2901"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.2901"
+		trigger = {
+			OR = {
+				same_realm = ROOT
+				same_realm = FROM
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBdiplomatic.2901"
+		trigger = {
+			is_liege_or_above = FROM
+			NOT = { is_liege_or_above = FROMFROM }
+		}
+	}
+	option = {
+		name = "EVTOPTCdiplomatic.2901"
+		trigger = {
+			is_liege_or_above = FROMFROM
+		}
+	}
+	option = {
+		name = OK
+		trigger = {
+			NOR = {
+				same_realm = ROOT
+				same_realm = FROM
+			}
+		}
+	}
+}	
+###############################################
+###Demand Important Prisoners from Vassals#####
+###############################################
+#Vassal receives demand
+letter_event = {
+	id = diplomatic.200
+	desc = "EVTDESCdiplomatic.200"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.200" #Yes
+		ai_chance = {
+			factor = 75
+			
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 20 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 40 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 60 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 80 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 100 }
+			}	
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.5 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.33 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.1 } }
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}	
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}	
+			modifier = {
+				factor = 2
+				trait = patient
+			}	
+			modifier = {
+				factor = 4
+				trait = just
+			}			
+		}
+		any_courtier = {		
+			limit = {
+				prisoner = yes
+				host = { character = PREVPREV }
+				OR = {
+					AND = {
+						is_ruler = yes
+						war_with = ROOT
+					}
+					liege = {
+						is_close_relative = PREV
+						war_with = ROOT
+					}							
+				}
+				NOT = { has_character_flag = kidnapped_by_plot }
+			}
+			custom_tooltip = { text = EVTTOOLTIPprisreq }
+			hidden_tooltip = {
+				prisoner = no
+				imprison = FROMFROM
+			}
+		}	
+		hidden_tooltip = {
+			FROMFROM = {
+				letter_event = { id = diplomatic.201 }
+			}
+		}		
+	}
+	
+	option = {
+		name = "EVTOPTCdiplomatic.200" #No
+		trigger = {
+			NAND = {
+				prisoner = yes
+				host = { character = FROMFROM }
+			}
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROMFROM value = -39 }
+				NOT = { trait = lunatic }
+				NOT = { trait = greedy }
+				NOT = { trait = arbitrary }
+				NOT = { #want to keep foes
+					any_courtier = {
+						prisoner = yes
+						host = { character = PREVPREV }
+						is_foe = ROOT
+						OR = {
+							AND = {
+								is_ruler = yes
+								war_with = FROMFROM
+							}
+							liege = {
+								is_close_relative = PREV
+								war_with = FROMFROM
+							}							
+						}	
+						NOT = { has_character_flag = kidnapped_by_plot }
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+			}	
+			modifier = {
+				factor = 1.5
+				relative_power = { who = FROMFROM power = 0.8 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 1 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 1.5 }
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}	
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}	
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}	
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}		
+		}		
+		FROMFROM = {
+			opinion = { who = ROOT modifier = opinion_refused_prisoner_transfer months = 60 }
+			hidden_tooltip = { letter_event = { id = diplomatic.202 } }
+		}
+	}
+}
+letter_event = { #Inform Accept
+	id = diplomatic.201
+	desc = "EVTDESCdiplomatic.201"
+	
+	is_triggered_only = yes
+	ai = no
+
+	option = {
+		name = OK
+	}
+}	
+letter_event = { #Inform Reject
+	id = diplomatic.202
+	desc = "EVTDESCdiplomatic.202"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.202"
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = -70
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = -50
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = -30
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			prestige = -10
+		}
+	}
+}	
+
+######################
+###Ask to Embargo#####
+######################
+letter_event = { #Proposal sent
+	id = diplomatic.210
+	desc = "EVTDESCdiplomatic.210"
+	border = GFX_event_letter_frame_diplomacy
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = {
+		FROMFROM = {
+			is_alive = yes
+			is_merchant_republic = yes
+			NOT = { war_with = ROOT }
+		}
+		NOT = { is_vassal_or_below = FROM }	
+		FROMFROMFROM = {
+			#can_use_cb ????
+			NOT = { war_with = ROOT_FROMFROM }
+			NOT = { war_with = ROOT }
+		}
+	}
+	
+	immediate = {
+		FROMFROMFROM = { save_event_target_as = embargo_target }
+	}
+
+	option = {
+		name = "EVTOPTAdiplomatic.210" #Yes
+		show_portrait = event_target:embargo_target
+		
+		unsafe_war = {
+			target = event_target:embargo_target
+			casus_belli = embargo_cb
+		}
+		FROMFROM = {
+			if = {
+				limit = { NOT = { yearly_income = 100 } }
+				ROOT = { wealth = 100 }
+			}	
+			if = {
+				limit = { 
+					yearly_income = 100
+					NOT = { yearly_income = 250 } 
+				}
+				ROOT = { wealth = 200 }
+			}
+			if = {
+				limit = { 
+					yearly_income = 250
+					NOT = { yearly_income = 400 } 
+				}
+				ROOT = { wealth = 300 }
+			}
+			if = {
+				limit = { 
+					yearly_income = 400
+					NOT = { yearly_income = 550 } 
+				}
+				ROOT = { wealth = 400 }
+			}
+			if = {
+				limit = { 
+					yearly_income = 550
+				}
+				ROOT = { wealth = 500 }
+			}
+			tooltip = { join_attacker_wars = ROOT }
+			hidden_tooltip = { letter_event = { id = diplomatic.211 } }
+		}	
+		event_target:embargo_target = {
+			hidden_tooltip = { character_event = { id = diplomatic.213 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdiplomatic.210" #No
+		trigger = { ai = no } #AI logic is applied in decision	
+		FROMFROM = {
+			hidden_tooltip = { letter_event = { id = diplomatic.212 } }
+		}
+	}
+}
+letter_event = { #Accepted
+	id = diplomatic.211
+	desc = "EVTDESCdiplomatic.211"
+	border = GFX_event_letter_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		clr_character_flag = asking_to_embargo
+		show_portrait = event_target:embargo_target
+		join_attacker_wars = FROM
+	}
+}	
+letter_event = { #Rejected
+	id = diplomatic.212
+	desc = "EVTDESCdiplomatic.212"
+	border = GFX_event_letter_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		clr_character_flag = asking_to_embargo
+		show_portrait = event_target:embargo_target
+	}
+}
+character_event = { #Inform Target
+	id = diplomatic.213
+	desc = "EVTDESCdiplomatic.213"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdiplomatic.213"
+		show_portrait = FROMFROMFROM
+	}
+}
+
+###################################
+###Demand Religious Conversion#####
+###################################
+#Vassal receives demand
+letter_event = {
+	id = diplomatic.230
+	desc = "EVTDESCdiplomatic.230"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = {
+		FROMFROM = {
+			is_alive = yes
+			is_liege_of = ROOT
+			NOT = { religion = ROOT }
+		}
+	}
+	
+	fail_trigger_effect = {
+		clr_character_flag = demand_religious_conversion
+	}
+
+	option = {
+		name = "EVTOPTAdiplomatic.230" #Yes
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				religion_group = FROMFROM
+			}
+			modifier = {
+				factor = 2
+				capital_scope = { religion = FROMFROM }
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { opinion = { who = FROMFROM value = -25 } }
+				relative_power = { who = FROMFROM power = 0.33 }
+			}
+			
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 20 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 40 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 60 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 80 }
+			}
+			modifier = {
+				factor = 1.25
+				opinion = { who = FROMFROM value = 100 }
+			}	
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.5 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.33 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.1 } }
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}	
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}	
+			modifier = {
+				factor = 2
+				trait = patient
+			}	
+			modifier = {
+				factor = 2
+				trait = just
+			}			
+		}
+		if = {
+			limit = {
+				higher_tier_than = BARON
+				NOT = { religion_group = FROMFROM }
+			}
+			prestige = -400
+			piety = 250
+		}
+		if = {
+			limit = { higher_tier_than = BARON }
+			religion_authority = {
+				modifier = ruler_converted_from
+			}
+			any_vassal = {
+				limit = {
+					religion = ROOT
+					age = 16
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_adopted_foreign_ways
+					years = 10
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						is_ruler = no
+						religion = ROOT
+						age = 16
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_adopted_foreign_ways
+						years = 10
+					}
+				}	
+			}	
+		}	
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes
+		}
+		else = {
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes
+			}
+		}
+		religion = FROMFROM
+		hidden_tooltip = {			
+			religion_authority = {
+				modifier = ruler_converted_to
+			}
+		}
+		FROMFROM = {
+			opinion = { who = ROOT modifier = DEMAND_RELIGIOUS_CONVERSION_INTERACTION_ON_ACCEPT multiplier = 3 }
+			hidden_tooltip = { letter_event = { id = diplomatic.231 } }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTCdiplomatic.230" #No
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				capital_scope = { religion = ROOT }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+			}	
+			modifier = {
+				factor = 1.5
+				relative_power = { who = FROMFROM power = 0.8 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 1 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 1.5 }
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}	
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}	
+			modifier = {
+				factor = 2
+				trait = wroth
+			}	
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}	
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}		
+		}		
+		FROMFROM = {
+			opinion = { who = ROOT modifier = DEMAND_RELIGIOUS_CONVERSION_INTERACTION_ON_DECLINE multiplier = 3 }
+			hidden_tooltip = { letter_event = { id = diplomatic.232 } }
+		}
+	}
+}
+letter_event = { #Inform Accept
+	id = diplomatic.231
+	desc = "EVTDESCdiplomatic.231"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		FROM = {
+			if = {
+				limit = { tier = KING }
+				ROOT = { 
+					prestige = -400 
+					piety = 200
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = DUKE
+						liege = {
+							higher_tier_than = DUKE
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -200 
+					piety = 100
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = COUNT
+						liege = {
+							higher_tier_than = COUNT
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -100 
+					piety = 50
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						is_ruler = yes
+						liege = {
+							higher_tier_than = BARON
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -50 
+					piety = 25
+				}
+			}
+			else = {
+				ROOT = { 
+					prestige = -25 
+					piety = 15
+				}
+			}	
+		}	
+	}
+}	
+letter_event = { #Inform Reject
+	id = diplomatic.232
+	desc = "EVTDESCdiplomatic.232"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAdiplomatic.232"
+		FROM = {
+			if = {
+				limit = { tier = KING }
+				ROOT = { 
+					prestige = -100
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = DUKE
+						liege = {
+							higher_tier_than = DUKE
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -50
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = COUNT
+						liege = {
+							higher_tier_than = COUNT
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -25
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						is_ruler = yes
+						liege = {
+							higher_tier_than = BARON
+							is_close_relative = PREV
+						}
+					}	
+				}
+				ROOT = { 
+					prestige = -15
+				}
+			}
+			else = {
+				ROOT = { 
+					prestige = -10
+				}
+			}	
+		}
+	}
+}	
+
+###################################
+###Request Excommunication#####
+###################################
+#High Septon Receives Request
+letter_event = {
+	id = diplomatic.240
+	desc = "EVTDESCdiplomatic.240"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		FROMFROM = {
+			is_alive = yes
+			religion = the_seven
+			NOT = { war_with = ROOT }
+		}
+		FROM = {
+			is_alive = yes
+			religion = the_seven
+			NOT = { trait = excommunicated }
+		}
+	}
+	
+	fail_trigger_effect = {
+		FROMFROM = { clr_character_flag = ask_to_excommunicate }
+	}
+	
+	option = {
+		name = "EVTOPTAdiplomatic.240" #Yes
+		ai_chance = {
+			factor = 33
+			
+			modifier = { #Motives
+				factor = 0
+				FROM = {
+					NOR = {
+						NOT = { reverse_opinion = { who = ROOT value = -30 } }
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_religion_threatened }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						is_any_kinslayer_trigger = yes
+						trait = suspected_kinslayer
+						NOT = { piety = -150 }
+						has_character_modifier = known_murderer
+						trait = dishonorable1
+						trait = dishonorable2
+						trait = dishonorable3
+						trait = dishonorable4
+						trait = dishonorable5
+						trait = dishonorable6
+						trait = dishonorable7
+						trait = dishonorable8
+						trait = dishonorable9
+						trait = dishonorable10
+					}
+				}
+			}
+			#Target factors
+			modifier = {
+				factor = 0.33
+				liege = { character = FROM }
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 0.66
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 0.66
+				opinion = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -10 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -70 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { has_character_modifier = grandchild_of_incest }
+			}
+			modifier = {
+				factor = 2
+				FROM = { has_character_modifier = abomination_of_incest }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_any_kinslayer_trigger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = suspected_kinslayer }
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					OR = {	
+						trait = dishonorable1
+						trait = dishonorable2
+						trait = dishonorable3
+					}
+				}	
+			}
+			modifier = {
+				factor = 3
+				FROM = { 
+					OR = {	
+						trait = dishonorable4
+						trait = dishonorable5
+						trait = dishonorable6
+						trait = dishonorable7
+						trait = dishonorable8
+						trait = dishonorable9
+						trait = dishonorable10
+					}
+				}	
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { piety = 300 }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { piety = 200 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { piety = 100 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { piety = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { piety = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { piety = -50 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { piety = -100 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { piety = -200 } }
+			}
+			#Actor factors
+			modifier = {
+				factor = 3
+				liege = { character = FROMFROM }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 90 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 70 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 10 }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { opinion = { who = FROMFROM value = -10 } }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { opinion = { who = FROMFROM value = -30 } }
+			}
+			modifier = {
+				factor = 0
+				NOT = { opinion = { who = FROMFROM value = -50 } }
+			}
+						
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}		
+		}
+		FROM = {
+			tooltip = { 
+				add_trait = excommunicated 
+				opinion = { who = ROOT modifier = opinion_excommunicated_me months = 120 }
+			}			
+			hidden_tooltip = { letter_event = { id = diplomatic.241 } }
+		}
+		FROMFROM = {
+			opinion = { who = ROOT modifier = opinion_accepted_excom_request months = 60 }
+			hidden_tooltip = { letter_event = { id = diplomatic.242 } }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTCdiplomatic.240" #No
+		trigger = { NOT = { FROM = { check_variable = { which = local_ai_acceptance_score value = 50 } } } }
+		ai_chance = {
+			factor = 66	
+		}		
+		FROMFROM = {
+			opinion = { who = ROOT modifier = opinion_rejected_excom_request months = 60 }
+			hidden_tooltip = { letter_event = { id = diplomatic.243 } }
+		}
+	}
+}
+letter_event = { #Inform target excommed!
+	id = diplomatic.241
+	
+	desc = {
+		text = "EVTDESCdiplomatic.241"
+		trigger = { FROMFROM = { NOT = { has_landed_title = k_the_most_devout } } }
+	}	
+	desc = {
+		text = "EVTDESCdiplomatic.241B"
+		trigger = { FROMFROM = { has_landed_title = k_the_most_devout } }
+	}	
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdiplomatic.241
+		show_portrait = FROMFROM
+		excommunicate_effect = yes
+	}
+}	
+letter_event = { #Inform Accept
+	id = diplomatic.242
+	desc = "EVTDESCdiplomatic.242"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		FROMFROM = {
+			show_portrait = THIS
+			tooltip = { add_trait = excommunicated }
+			opinion = { who = ROOT modifier = opinion_had_me_excom months = 120 }
+		}
+		piety = -100
+		clr_character_flag = ask_to_excommunicate 
+	}
+}	
+letter_event = { #Inform Reject
+	id = diplomatic.243
+	desc = "EVTDESCdiplomatic.243"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		FROMFROM = {
+			show_portrait = THIS
+			opinion = { who = ROOT modifier = opinion_tried_to_have_me_excom months = 60 }
+		}
+		prestige = -50
+		clr_character_flag = ask_to_excommunicate 
+	}
+}

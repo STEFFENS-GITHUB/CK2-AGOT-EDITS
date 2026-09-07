@@ -1,0 +1,2291 @@
+###Summer Islander Archery Tourney
+
+namespace = archery
+
+# Invitations have gone out
+character_event = {
+	id = archery.500
+	title = "TOURNAMENTTITLE3"
+	desc = "EVTDESCarchery.500"
+	picture = "GFX_evt_courier"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA70033"
+	}
+}
+# Invitation
+letter_event = {
+	id = archery.1
+	title = "TOURNAMENTTITLE2"
+	desc = "EVTDESCarchery.1"
+	picture = "GFX_evt_courier"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = archery_tourny_in_progress }
+		NOT = { has_character_flag = attending_archery_tournament }
+		NOT = { has_character_flag = spectating_tournament	}
+		NOT = { has_character_flag = no_archery_tournies_ever }
+		age = 13
+		NOT = { trait = incapable }
+		NOT = { trait = infirm }
+		NOT = { is_crippled_trigger = yes }
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { trait = nightswatch }
+		NOT = { has_priest_trait_trigger = yes }
+		NOT = { trait = dragon }
+		prisoner = no
+		war = no
+		is_ill = no
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	immediate = {
+		clr_character_flag = king_tourny
+		clr_character_flag = grand_tourny
+		clr_character_flag = normal_tourny
+		clr_character_flag = small_tourny
+		clr_character_flag = lost_tournament
+	}
+
+	option = {
+		name = "EVTOPTA70000"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.05
+				is_inaccessible_trigger = yes	
+			}
+			modifier = {
+				factor = 4
+				OR = {
+					trait = master_warrior
+					trait = skilled_warrior
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = trained_warrior
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = duelist
+			}
+			modifier = {
+				factor = 2
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value =  20 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value =  40 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value =  60 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value =  80 }
+			}
+		}
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = 50
+			set_character_flag = king_tourny
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = 30
+			set_character_flag = grand_tourny
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = 20
+			set_character_flag = small_tourny
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = 10
+			set_character_flag = small_tourny
+		}			
+		set_character_flag = attending_archery_tournament
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_attending_tournament
+				who = FROM
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_attending_tournament
+				who = FROM
+				years = 100
+			}
+			character_event = { id = archery.34 days = 5 } #Buy a bow?
+		}	
+	}
+	option = {
+		name = "EVTOPTB70000"
+		trigger = {
+			lower_tier_than = FROM
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				NOT = {
+					OR = {
+						trait = master_warrior
+						trait = skilled_warrior
+						trait = trained_warrior
+						trait = poor_warrior
+					}
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+		}
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = -100
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = -60
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = -40
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = -20
+		}	
+	}
+	option = {
+		name = "EVTOPTC70000"
+		trigger = {
+			NOT = { lower_tier_than = FROM }
+		}
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 2
+				NOT = {
+					OR = {
+						trait = master_warrior
+						trait = skilled_warrior
+						trait = trained_warrior
+						trait = poor_warrior
+					}
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTDarchery.1"
+		ai_chance = { factor = 0 }
+		set_character_flag = no_archery_tournies_ever
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = -100
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = -60
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = -40
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = -20
+		}	
+	}
+}	
+
+# Start of tournament
+character_event = {
+	id = archery.2
+	title = "TOURNAMENTTITLE3"
+	desc = "EVTDESCarchery.2"
+	picture = "GFX_evt_archery_2"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAarchery.2"
+		trigger = {
+			war = no
+		}
+		hidden_tooltip = {
+			clr_character_flag = inform_of_all_archery_results
+			set_character_flag = tournament_begins
+			set_character_flag = attending_archery_tournament
+			set_variable = { which = "archery_competitors" value = 0 }
+			character_event = { id = archery.4 days = 1 }
+			character_event = { id = archery.999 days = 500 } #flag safety catch
+		}
+	}
+	option = {
+		name = "EVTOPTBarchery.2" #Human has option of viewing all results
+		trigger = {
+			war = no
+			ai = no
+		}
+		custom_tooltip = { text = TOOLTIPEVTOPTBarchery.2 }
+		hidden_tooltip = {
+			set_character_flag = inform_of_all_archery_results
+			set_character_flag = tournament_begins
+			set_character_flag = attending_archery_tournament
+			set_variable = { which = "archery_competitors" value = 0 }
+			character_event = { id = archery.4 days = 1 }
+			character_event = { id = archery.999 days = 500 } #flag safety catch
+		}
+	}
+	option = {
+		name = "EVTOPTB70001"
+		trigger = {
+			war = yes
+		}
+		if = { limit = { tier = EMPEROR }
+			wealth = 350
+		}	
+		if = { limit = { tier = KING }
+			wealth = 250
+		}	
+		if = { limit = { tier = DUKE }
+			wealth = 100
+		}	
+		if = { limit = { tier = COUNT }
+			wealth = 50
+		}	
+		hidden_tooltip = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_archery_tournament
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+				}
+				character_event = { id = archery.3 }
+			}
+		}
+		clr_character_flag = archery_tournament
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+	}
+}
+
+# Tournament has been cancelled
+character_event = {
+	id = archery.3
+	title = "TOURNAMENTTITLE2"
+	desc = "EVTDESCarchery.3"
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA70037"
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+		if = { 
+			limit = { 
+				FROM = { tier = EMPEROR } 
+				has_opinion_modifier = { who = FROM modifier = opinion_attending_tournament }
+			}
+			prestige = -50
+		}	
+		if = { 
+			limit = { 
+				FROM = { tier = KING } 
+				has_opinion_modifier = { who = FROM modifier = opinion_attending_tournament }
+			}
+			prestige = -30
+		}
+		if = { 
+			limit = { 
+				FROM = { tier = DUKE } 
+				has_opinion_modifier = { who = FROM modifier = opinion_attending_tournament }
+			}
+			prestige = -20
+		}
+		if = { 
+			limit = { 
+				FROM = { tier = COUNT } 
+				has_opinion_modifier = { who = FROM modifier = opinion_attending_tournament }
+			}
+			prestige = -10
+		}	
+		clr_character_flag = attending_archery_tournament
+		clr_character_flag = spectating_tournament
+		clr_character_flag = lost_tournament
+		clr_character_flag = king_tourny
+		clr_character_flag = grand_tourny
+		clr_character_flag = normal_tourny
+		clr_character_flag = small_tourny
+		hidden_tooltip = {	
+			remove_opinion = {
+				modifier = opinion_attending_tournament
+				who = FROM
+			}
+			reverse_remove_opinion = {
+				modifier = opinion_attending_tournament
+				who = FROM
+			}
+		}
+	}
+}
+
+# Count Competitors
+character_event = {
+	id = archery.4	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		any_realm_character = {
+			limit = { 
+				has_character_flag = attending_archery_tournament
+				NOT = { has_character_flag = lost_tournament }
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}	
+			ROOT = { change_variable = { which = "archery_competitors" value = 1 } }
+		}
+		character_event = { id = archery.5 days = 1 }
+	}
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = archery.5	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		#If 3 or less create randoms to make 4
+		if = {
+			limit = { NOT = { check_variable = { which = "archery_competitors" value = 4 } } }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+			}
+			new_character = {
+				set_character_flag = new_archer		
+			}			
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "archery_competitors" value = 3 } } }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+			}
+			new_character = {
+				set_character_flag = new_archer		
+			}			
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "archery_competitors" value = 2 } } }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+			}
+			new_character = {
+				set_character_flag = new_archer		
+			}			
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "archery_competitors" value = 1 } } }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+			}
+			new_character = {
+				set_character_flag = new_archer		
+			}			
+		}	
+		any_courtier = {
+			limit = { has_character_flag = new_archer }
+			clr_character_flag = new_archer	
+			remove_trait = weak
+			remove_trait = imbecile
+			remove_trait = clubfooted
+			remove_trait = inbred
+			set_character_flag = attending_archery_tournament
+			opinion = {
+				modifier = opinion_attending_tournament
+				who = ROOT
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_attending_tournament
+				who = ROOT
+				years = 100
+			}
+			random_list = {
+				50 = { add_trait = trained_warrior }
+				40 = { add_trait = poor_warrior }
+				10 = { add_trait = skilled_warrior }
+			}
+			if = { 
+				limit = { ROOT = { tier = EMPEROR } }
+				set_character_flag = king_tourny
+			}	
+			if = { 
+				limit = { ROOT = { tier = KING } }
+				set_character_flag = grand_tourny
+			}
+			if = { 
+				limit = { ROOT = { tier = DUKE } }
+				set_character_flag = normal_tourny
+			}
+			if = { 
+				limit = { ROOT = { tier = COUNT } }
+				set_character_flag = small_tourny
+			}	
+		}	
+		#If 32 or less proceed
+		if = {
+			limit = { NOT = { check_variable = { which = "archery_competitors" value = 32 } } }
+			set_variable = { which = "archery_competitors" value = 0 }
+			set_character_flag = archers_found
+			character_event = { id = archery.9 days = 1 } 		
+		}
+		#if more than 32 randomly remove competitors
+		if = {
+			limit = { 
+				NOT = { has_character_flag = archers_found }
+				check_variable = { which = "archery_competitors" value = 32 } 
+			} 
+			any_realm_character = {
+				limit = { 
+					has_character_flag = attending_archery_tournament
+					NOT = { has_character_flag = lost_tournament }
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+				}
+				character_event = { id = archery.6 days = 2 random = 1 }
+			}
+			#set_variable = { which = "archery_competitors" value = 0 }
+			character_event = { id = archery.5 days = 4 } #Recount loop
+		}
+	}
+	option = {
+		name = OK
+	}
+}
+#Candidate is randomly removed from tourney
+character_event = {
+	id = archery.6
+	
+	is_triggered_only = yes
+	
+	hide_window = yes
+	
+	trigger = {
+		FROM = {
+			NOT = { has_character_flag = archers_found }
+			check_variable = { which = "archery_competitors" value = 32 } 
+		}
+	}
+	
+	immediate = {
+		c_the_citadel = {
+			holder_scope = {
+				character_event = { id = archery.7 } 
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = archery.7
+	desc = "AI only archery event 7" 
+	
+	is_triggered_only = yes
+	
+	option = { #Survive
+		name = OK
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 10
+				FROM = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = skilled_warrior }
+			}
+			modifier = {
+				factor = 4
+				FROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_3
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_2
+					}
+				}
+			}
+			modifier = {
+				factor = 3
+				FROM = { is_strong_trigger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = tall }
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = genius }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_smart_trigger = yes }
+			}
+		}	
+	}
+	
+	option = { #Remove
+		name = OK
+		ai_chance = { 
+			factor = 15
+			modifier = {
+				factor = 10
+				FROM = { 
+					NOT = {
+						OR = {
+							trait = master_warrior
+							trait = skilled_warrior
+							trait = trained_warrior
+							trait = poor_warrior
+						}
+					}
+				}	
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = poor_warrior }
+			}
+			modifier = {
+				factor = 3
+				FROM = { is_weak_trigger = yes }
+			}
+			modifier = {
+				factor = 100
+				FROM = { trait = infirm }
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = imbecile }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_dumb_trigger = yes }
+			}	
+		}	
+		FROM = {	
+			set_character_flag = lost_tournament		
+			character_event = { id = archery.8 } 
+		}
+		FROM = { FROM = { change_variable = { which = "archery_competitors" value = -1 } } }
+	}
+}	
+#Inform lost tourney
+character_event = {
+	id = archery.8
+	desc = "EVTDESCarchery.8" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAarchery.8" #Cannot participate	
+		prestige = -30
+	}
+}	
+###Final Archers found, inform host###
+character_event = {
+	id = archery.9
+	desc = "EVTDESCarchery.9" 
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.9" 
+		clr_character_flag = archers_found
+		set_character_flag = archery_final_round
+		#hidden_tooltip = { character_event = { id = archery.11 days = 1 } }
+		any_realm_character = {
+			limit = { 
+				has_character_flag = attending_archery_tournament
+				NOT = { has_character_flag = lost_tournament }
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}
+			hidden_tooltip = { ROOT = { change_variable = { which = "archery_competitors" value = 1 } } }
+			character_event = { id = archery.10 tooltip = TOOLTIParchery.10 }
+		}
+	}
+}
+#Inform Archer they made final rounds
+character_event = {
+	id = archery.10
+	desc = "EVTDESCarchery.10" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.10" 
+		hidden_tooltip = { character_event = { id = archery.12 days = 2 random = 1 } } 
+	}
+}	
+###New Match Up###
+# character_event = {
+	# id = archery.11
+	# #hide_window = yes
+	# only_rulers = yes
+	
+	# trigger = {
+		# has_character_flag = archery_tourny_in_progress
+		# has_character_flag = archery_final_round
+		# any_realm_character = {
+			# has_character_flag = attending_archery_tournament
+			# has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			# NOT = { has_character_flag = lost_tournament }
+			# OR = {
+				# NOT = { has_character_flag = in_archery }
+				# had_character_flag = { flag = in_archery days = 7 }
+			# }
+		# }
+		# OR = {
+			# NOT = { has_character_flag = made_matchup }
+			# had_character_flag = { flag = made_matchup days = 1 }
+		# }
+	# }
+	
+	# immediate = {
+		# set_character_flag = made_matchup
+		# random_realm_character = {
+			# limit = {
+				# has_character_flag = attending_archery_tournament
+				# has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+				# NOT = { has_character_flag = lost_tournament }
+				# OR = {
+					# NOT = { has_character_flag = in_archery }
+					# had_character_flag = { flag = in_archery days = 7 }
+				# }
+			# }
+			# set_character_flag = in_archery
+			# character_event = { id = archery.12 } 
+		# }
+		# character_event = { id = archery.11 days = 1 } 
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }	
+#Match Archers
+character_event = {
+	id = archery.12	
+	hide_window = yes
+	#is_triggered_only = yes
+	
+	has_character_flag = attending_archery_tournament
+	
+	trigger = {	
+		NOT = { has_character_flag = lost_tournament }
+		any_liege = {
+			has_character_flag = archery_tourny_in_progress
+			has_character_flag = archery_final_round
+			reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+		}
+		OR = {
+			NOT = { has_character_flag = in_archery }
+			had_character_flag = { flag = in_archery days = 7 }
+		}
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	immediate = {
+		set_character_flag = in_archery
+		any_liege = {
+			limit = {
+				has_character_flag = archery_tourny_in_progress
+				has_character_flag = archery_final_round
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}
+			random_realm_character = {
+				limit = {				
+					has_character_flag = attending_archery_tournament
+					has_opinion_modifier = { who = PREV modifier = opinion_attending_tournament }
+					NOT = { has_character_flag = lost_tournament }
+					NOT = { character = ROOT }
+					OR = {
+						NOT = { has_character_flag = in_archery }
+						had_character_flag = { flag = in_archery days = 7 }
+					}
+				}
+				set_character_flag = in_archery
+				character_event = { id = archery.13 } 
+			}
+		}	
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Inform 2nd Archer
+character_event = {
+	id = archery.13
+	desc = "EVTDESCarchery.13" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = won_1st_round
+		clr_character_flag = 2nd_round
+		clr_character_flag = 3rd_round
+		set_character_flag = 1st_round
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.13" 
+		set_character_flag = 1st_round
+		FROM = { character_event = { id = archery.14 tooltip = TOOLTIParchery.14 } }		
+	}
+}	
+#Inform 1st Archer
+character_event = {
+	id = archery.14
+	desc = "EVTDESCarchery.14" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = won_1st_round
+		clr_character_flag = 2nd_round
+		clr_character_flag = 3rd_round
+		set_character_flag = 1st_round	
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.14" 
+		custom_tooltip = { text = TOOLTIParchery.14 }
+		hidden_tooltip = { c_the_citadel = { holder_scope = { character_event = { id = archery.15 days = 1 } } } }
+	}
+}
+#Citadel Determines Round Winner
+character_event = {
+	id = archery.15
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "FROM wins"
+		trigger = { 
+			FROM = { is_alive = yes } 
+			FROM = { FROM = { is_alive = yes } }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 10
+				FROM = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = skilled_warrior }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = trained_warrior }
+			}
+			modifier = {
+				factor = 4
+				FROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_3
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_2
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = poor_warrior }
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = genius }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_smart_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_strong_trigger = yes }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { trait = imbecile }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_dumb_trigger = yes }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_weak_trigger = yes }
+			}
+		}
+		FROM = { 		
+			if = {
+				limit = { has_character_flag = 1st_round }
+				set_character_flag = won_1st_round
+				FROM = { character_event = { id = archery.19 days = 1 } } #New Round
+			}
+			if = {
+				limit = { has_character_flag = 2nd_round }
+				if = {
+					limit = { NOT = { has_character_flag = won_1st_round } }
+					FROM = { character_event = { id = archery.19 days = 1 } } #New Round
+				}
+				if = {
+					limit = { has_character_flag = won_1st_round } 
+					set_character_flag = won_match_up
+					FROM = { character_event = { id = archery.22 days = 1 } } #Match Up Ended
+				}
+			}
+			if = {
+				limit = { has_character_flag = 3rd_round }
+				set_character_flag = won_match_up
+				FROM = { character_event = { id = archery.22 days = 1 } } #Match Up Ended
+			}
+			character_event = { id = archery.16 } 
+		}
+		FROM = { FROM = { character_event = { id = archery.17 } } }
+	}
+	
+	option = {
+		name = "FROM FROM wins"
+		trigger = { 
+			FROM = { is_alive = yes } 
+			FROM = { FROM = { is_alive = yes } }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 10
+				FROM = { FROM = { trait = master_warrior } }
+			}
+			modifier = {
+				factor = 5
+				FROM = { FROM = { trait = skilled_warrior } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { FROM = { trait = trained_warrior } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { trait = poor_warrior } }
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_3
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { 
+					any_artifact = {
+						is_artifact_active = yes
+						has_artifact_flag = combat_weapon 
+						has_artifact_flag = bow 
+						has_artifact_flag = combat_tier_2
+					}
+				}
+			}
+			modifier = {
+				factor = 4
+				FROM = { FROM = { trait = genius } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { FROM = { is_smart_trigger = yes } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { FROM = { is_strong_trigger = yes } }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { FROM = { trait = imbecile } }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { FROM = { is_dumb_trigger = yes } }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { FROM = { is_weak_trigger = yes } }
+			}
+		}
+		FROM = { character_event = { id = archery.17 } }
+		FROM = { 
+			FROM = { 			
+				if = {
+					limit = { has_character_flag = 1st_round }
+					set_character_flag = won_1st_round
+					character_event = { id = archery.19 days = 1 } #New Round
+				}
+				if = {
+					limit = { has_character_flag = 2nd_round }
+					if = {
+						limit = { NOT = { has_character_flag = won_1st_round } }
+						character_event = { id = archery.19 days = 1 } #New Round
+					}
+					if = {
+						limit = { has_character_flag = won_1st_round } 
+						set_character_flag = won_match_up
+						character_event = { id = archery.22 days = 1 } #Match Up Ended
+					}
+				}
+				if = {
+					limit = { has_character_flag = 3rd_round }
+					set_character_flag = won_match_up
+					character_event = { id = archery.22 days = 1 } #Match Up Ended
+				}
+				character_event = { id = archery.16 } 
+			} 
+		}
+	}
+	
+	option = {
+		name = "archer is dead"
+		trigger = { 
+			OR = {
+				FROM = { is_alive = no } 
+				FROM = { FROM = { is_alive = no } }
+			}	
+		}
+		if = {
+			limit = { FROM = { is_alive = no } }
+			FROM = { FROM = { character_event = { id = archery.18 } } }
+		}
+		if = {
+			limit = { FROM = { FROM = { is_alive = no } } }
+			FROM = { character_event = { id = archery.18 } }
+		}
+	}	
+}
+#Inform Round Won
+character_event = {
+	id = archery.16
+	desc = "EVTDESCarchery.16" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+		
+	option = {
+		name = "EVTOPTAarchery.16" 
+	}
+}
+#Inform Round Lost
+character_event = {
+	id = archery.17
+	desc = "EVTDESCarchery.17" 
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+		
+	option = {
+		name = "EVTOPTAarchery.17" 
+	}
+}
+#Inform Opponent Invalid
+character_event = {
+	id = archery.18
+	desc = "EVTDESCarchery.18" 
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+		
+	option = {
+		name = "EVTOPTAarchery.18" 
+		clr_character_flag = in_archery
+		clr_character_flag = won_1st_round
+		clr_character_flag = 2nd_round
+		clr_character_flag = 3rd_round
+		clr_character_flag = 1st_round
+	}
+}
+#Start 2nd/3rd Rounds
+character_event = {
+	id = archery.19
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = archery.20 } 
+			}
+		}	
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Inform Archer 2nd/3rd Round
+character_event = {
+	id = archery.20
+	desc = "EVTDESCarchery.20" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = 2nd_round }
+			clr_character_flag = 2nd_round
+			set_character_flag = 3rd_round
+		}
+		if = {
+			limit = { has_character_flag = 1st_round }
+			clr_character_flag = 1st_round
+			set_character_flag = 2nd_round
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.20" 
+		FROM = { character_event = { id = archery.21 tooltip = TOOLTIParchery.21 } }		
+	}
+}	
+#Inform 2nd Archer 2nd/3rd Round
+character_event = {
+	id = archery.21
+	desc = "EVTDESCarchery.21" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = 2nd_round }
+			clr_character_flag = 2nd_round
+			set_character_flag = 3rd_round
+		}
+		if = {
+			limit = { has_character_flag = 1st_round }
+			clr_character_flag = 1st_round
+			set_character_flag = 2nd_round
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.21" 
+		custom_tooltip = { text = TOOLTIParchery.21 }
+		hidden_tooltip = { c_the_citadel = { holder_scope = { character_event = { id = archery.15 days = 1 } } } }
+	}
+}
+#Match Up finished, set scopes
+character_event = {
+	id = archery.22
+
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		any_liege = {
+			limit = {
+				has_character_flag = archery_tourny_in_progress
+				has_character_flag = archery_final_round
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}
+			change_variable = { which = "archery_competitors" value = -1 }
+		}
+		if = {
+			limit = { has_character_flag = won_match_up }
+			FROM = { 
+				FROM = { 
+					set_character_flag = lost_tournament 
+					character_event = { id = archery.24 days = 1 } 
+				} 
+			}
+		}
+		if = {
+			limit = { FROM = { FROM = { has_character_flag = won_match_up } } }
+			set_character_flag = lost_tournament
+			FROM = { FROM = { character_event = { id = archery.23 days = 1 } } }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Inform Won Matchup
+character_event = {
+	id = archery.23
+	desc = "EVTDESCarchery.23" 
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = won_match_up }
+			clr_character_flag = won_match_up
+			FROM = { character_event = { id = archery.24 days = 1 } }
+		}		
+		clr_character_flag = in_archery
+		clr_character_flag = won_1st_round
+		clr_character_flag = 2nd_round
+		clr_character_flag = 3rd_round
+		clr_character_flag = 1st_round	
+		any_liege = {
+			limit = {
+				has_character_flag = archery_tourny_in_progress
+				has_character_flag = archery_final_round
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}
+			#If last competitor inform host of end of tourney
+			if = {
+				limit = { 
+					NOT = {
+						any_realm_character = {
+							has_character_flag = attending_archery_tournament
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_tournament }
+							NOT = { has_character_flag = lost_tournament }
+							NOT = { character = ROOT }
+						}
+					}	
+				}
+				set_character_flag = tournament_winner_found		
+				character_event = { id = archery.26 tooltip = TOOLTIParchery.26 days = 1 }
+				hidden_tooltip = { 
+					ROOT = { character_event = { id = archery.31 days = 1 } }
+					FROM = { character_event = { id = archery.32 days = 1 } }
+					any_realm_character = { #Inform rest of tourny
+						limit = {
+							has_character_flag = attending_archery_tournament
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_tournament }
+							NOT = { character = ROOT }
+							NOT = { character = FROM }
+							NOT = { character = PREV }
+						}	
+						character_event = { id = archery.28 days = 1 } 
+					}
+				}
+			}
+			#If semi-finalist inform host
+			if = {
+				limit = { 
+					NOT = { has_character_flag = tournament_winner_found }
+					NOT = { check_variable = { which = "archery_competitors" value = 3 } } 
+				}
+				hidden_tooltip = { 
+					set_character_flag = tournament_winner_found
+					character_event = { id = archery.25 days = 1 } 
+					FROM = { character_event = { id = archery.33 days = 1 } }
+					any_realm_character = { #Inform rest of tourny
+						limit = {
+							has_character_flag = attending_archery_tournament
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_tournament }
+							NOT = { character = ROOT }
+							NOT = { character = FROM }
+							NOT = { character = PREV }
+						}	
+						character_event = { id = archery.27 days = 1 } 
+					}
+				}
+			}
+			#If human requests all results inform
+			if = {
+				limit = { 
+					NOT = { has_character_flag = tournament_winner_found }
+					has_character_flag = inform_of_all_archery_results
+				}
+				hidden_tooltip = { character_event = { id = archery.25 days = 1 } }
+			}
+		}
+		hidden_tooltip = { character_event = { id = archery.12 days = 2 random = 1 } }  #Find New Matchup
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.23" 
+		if = {
+			limit = {
+				FROM = { 
+					OR = {
+						trait = master_warrior
+						tier = KING
+					}
+				}
+			}
+			prestige = 40
+		}
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					OR = {
+						trait = skilled_warrior
+						tier = DUKE
+					}
+				}
+			}
+			prestige = 20
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					OR = {
+						trait = trained_warrior
+						tier = COUNT
+					}
+				}
+			}
+			prestige = 10
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { trait = trained_warrior }
+					NOT = { higher_tier_than = BARON }
+				}
+			}
+			prestige = 5
+		}		
+	}
+}
+#Inform Lost Matchup
+character_event = {
+	id = archery.24
+	desc = "EVTDESCarchery.24" 
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { FROM = { has_character_flag = won_match_up } }
+			FROM = { 
+				clr_character_flag = won_match_up 
+				character_event = { id = archery.23 days = 1 } 
+			}
+		}	
+		clr_character_flag = in_archery
+		clr_character_flag = won_1st_round
+		clr_character_flag = 2nd_round
+		clr_character_flag = 3rd_round
+		clr_character_flag = 1st_round
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.24" 
+		prestige = -15
+	}
+}
+#Inform Host of Semi_final
+character_event = {
+	id = archery.25
+	desc = "EVTDESCarchery.25" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = tournament_winner_found
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.25" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+#Inform Host of Winner
+character_event = {
+	id = archery.26
+	desc = "EVTDESCarchery.26" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = tournament_winner_found
+		clr_character_flag = archery_final_round
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { 
+						NOT = { character = FROM }
+						NOT = { character = FROMFROM }
+						OR = {
+							character = ROOT
+							is_liege_or_above = ROOT
+						}	
+					}
+					chronicle = {
+						entry = CHRONICLE_HELD_ARCHERY_TOURNAMENT
+						portrait = [From.GetID]
+					}	
+				}
+			}
+		}	
+		FROM = {
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_WON_ARCHERY_TOURNAMENT
+					portrait = [Root.GetID]
+				}	
+			}
+		}
+		FROMFROM = {
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_2ND_ARCHERY_TOURNAMENT
+					portrait = [From.GetID]
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.26" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+		character_event = { id = archery.29 days = 20 tooltip = TOOLTIParchery.29 }
+	}
+}
+#Inform spectator of Semi_final
+character_event = {
+	id = archery.27
+	desc = "EVTDESCarchery.27" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.27" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+#Inform spectator of winner
+character_event = {
+	id = archery.28
+	desc = "EVTDESCarchery.28" 
+	picture = "GFX_evt_archery_1"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.28" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+# Tournament is over
+character_event = {
+	id = archery.29
+	title = "TOURNAMENTTITLE3"
+	desc = "EVTDESCarchery.29"
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAarchery.29"
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+		clr_character_flag = archery_tourny_in_progress	
+		clr_character_flag = made_matchup
+		clr_character_flag = in_archery
+		clr_character_flag = attending_archery_tournament
+		clr_character_flag = inform_of_all_archery_results
+		any_realm_character = {
+			limit = {
+				has_character_flag = attending_archery_tournament
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+				NOT = { character = ROOT }
+			}
+			hidden_tooltip = { character_event = { id = archery.30 } }
+			if = {
+				limit = {
+					OR = {
+						trait = master_warrior
+						tier = KING
+					}
+				}
+				ROOT = { prestige = 40 }
+			}
+			if = {
+				limit = {
+					NOT = { trait = master_warrior }
+					OR = {
+						trait = skilled_warrior
+						tier = DUKE
+					}
+				}
+				ROOT = { prestige = 20 }
+			}	
+			if = {
+				limit = {
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					tier = COUNT
+				}
+				ROOT = { prestige = 10 }
+			}	
+			if = {
+				limit = {
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { higher_tier_than = BARON }
+				}
+				hidden_tooltip = {
+					reverse_opinion = {
+						modifier = opinion_tournament_participant
+						who = ROOT
+						years = 2
+					}
+				}	
+			}	
+			if = {
+				limit = {
+					OR = { 
+						trait = master_warrior
+						trait = skilled_warrior
+						higher_tier_than = BARON 
+					}
+				}
+				reverse_opinion = {
+					modifier = opinion_tournament_participant
+					who = ROOT
+					years = 2
+				}
+			}			
+			hidden_tooltip = {	
+				remove_opinion = {
+					modifier = opinion_attending_tournament
+					who = ROOT
+				}
+				reverse_remove_opinion = {
+					modifier = opinion_attending_tournament
+					who = ROOT
+				}
+			}
+			clr_character_flag = in_archery
+			clr_character_flag = attending_archery_tournament
+			clr_character_flag = won_1st_round
+			clr_character_flag = 2nd_round
+			clr_character_flag = 3rd_round
+			clr_character_flag = 1st_round
+			clr_character_flag = lost_tournament
+			clr_character_flag = king_tourny
+			clr_character_flag = grand_tourny
+			clr_character_flag = normal_tourny
+			clr_character_flag = small_tourny
+		}
+	}		
+}
+character_event = {
+	id = archery.30
+	title = "TOURNAMENTTITLE2"
+	desc = "EVTDESCarchery.30"
+	picture = "GFX_evt_archery_2"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAarchery.30"
+	}		
+}
+# Inform Character wins the tournament
+character_event = {
+	id = archery.31
+	title = "TOURNAMENTTITLE"
+	desc = "EVTDESCarchery.31"
+	picture = "GFX_evt_archery_2"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			add_character_modifier = { 
+				name = grand_tourny_1st
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = grand_tourny_1st
+			set_character_flag = medal_assigned
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			add_character_modifier = { 
+				name = normal_tourny_1st
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = normal_tourny_1st
+			set_character_flag = medal_assigned
+		}	
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			add_character_modifier = { 
+				name = small_tourny_1st
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = small_tourny_1st
+			set_character_flag = medal_assigned
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.31"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 125
+			prestige = 300
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 75
+			prestige = 200
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 50
+			prestige = 100	
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 25
+			prestige = 50
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = { trait = poor_warrior }
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			add_trait = poor_warrior
+		}
+	}
+}
+
+
+
+# Character wins second place in the tournament
+character_event = {
+	id = archery.32
+	title = "TOURNAMENTTITLE"
+	desc = "EVTDESCarchery.32"
+	picture = "GFX_evt_archery_2"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			add_character_modifier = { 
+				name = grand_tourny_2nd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = grand_tourny_2nd
+			set_character_flag = medal_assigned
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			add_character_modifier = { 
+				name = normal_tourny_2nd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = normal_tourny_2nd
+			set_character_flag = medal_assigned
+		}	
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			add_character_modifier = { 
+				name = small_tourny_2nd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = small_tourny_2nd
+			set_character_flag = medal_assigned
+		}			
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.32"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 75
+			prestige = 200
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 50
+			prestige = 100
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 25
+			prestige = 50
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 15
+			prestige = 25
+		}	
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = { trait = poor_warrior }
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			add_trait = poor_warrior
+		}		
+	}	
+}
+# Character loses in semi-finals in the tournament
+character_event = {
+	id = archery.33
+	title = "TOURNAMENTTITLE"
+	desc = "EVTDESCarchery.33"
+	picture = "GFX_evt_archery_2"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			add_character_modifier = { 
+				name = grand_tourny_3rd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = grand_tourny_3rd
+			set_character_flag = medal_assigned
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			add_character_modifier = { 
+				name = normal_tourny_3rd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = normal_tourny_3rd
+			set_character_flag = medal_assigned
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			add_character_modifier = { 
+				name = small_tourny_3rd
+				duration = -1
+				stacking = yes
+			}
+			set_character_flag = small_tourny_3rd
+			set_character_flag = medal_assigned
+		}		
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.33"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 50
+			prestige = 100
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 25
+			prestige = 50
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 15
+			prestige = 25
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 10
+			prestige = 10
+		}	
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = { trait = poor_warrior }
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			add_trait = poor_warrior
+		}		
+	}	
+}
+# Buy a special bow?
+character_event = {
+	id = archery.34
+	desc = "EVTDESCarchery.34"
+	picture = "GFX_evt_archery_1"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { 
+			any_artifact = {
+				has_artifact_flag = combat_weapon 
+				has_artifact_flag = bow 
+				has_artifact_flag = combat_tier_3
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAarchery.34" #Not worth it
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = temperate
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTBarchery.34" #Buy a good bow
+		trigger = {
+			NOT = { 
+				any_artifact = {
+					has_artifact_flag = combat_weapon 
+					has_artifact_flag = bow 
+					has_artifact_flag = combat_tier_2
+				}
+			}
+			OR = {
+				wealth = 75
+				ai = no
+			}	
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				is_ruler = yes
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { wealth = 100 }
+			}
+		}	
+		wealth = -75
+		add_artifact = good_bow
+		custom_tooltip = {
+			text = TOOLTIPRENAMEARTIFACTADVICE
+		}
+	}
+
+	option = {
+		name = "EVTOPTCarchery.34" #Buy a golden bow
+		trigger = { 
+			OR = {
+				wealth = 200 
+				ai = no
+			}	
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3.5
+				trait = proud
+			}
+			modifier = {
+				factor = 3.5
+				trait = greedy
+			}
+			modifier = {
+				factor = 3.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 2.5
+				is_ruler = yes
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { wealth = 300 }
+			}
+		}
+		wealth = -200
+		add_artifact = golden_bow
+		new_artifact = { set_artifact_flag = heirloom_@PREV }
+		custom_tooltip = {
+			text = TOOLTIPRENAMEARTIFACTADVICE
+		}
+	}		
+}
+###Hook up with another guest###
+character_event = {
+	id = archery.35
+
+	min_age = 15
+	prisoner = no
+	#only_rulers = yes
+	capable_only = yes
+	hide_window = yes
+	has_character_flag = attending_archery_tournament
+	culture = summer_islander
+	
+	trigger = {		
+		NOT = { trait = celibate }
+		NOT = { trait = eunuch }
+		any_liege = {
+			has_character_flag = archery_tourny_in_progress
+			has_character_flag = tournament_begins
+			reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+		}
+	}
+	
+	mean_time_to_happen = {
+		days = 50
+		
+		modifier = {
+			factor = 0.5
+			trait = lustful
+		}
+		modifier = {
+			factor = 4
+			trait = chaste
+		}
+		modifier = {
+			factor = 0.5
+			has_ambition = obj_make_the_eight
+		}	
+		modifier = {
+			factor = 1.1
+			liege = { num_of_vassals = 10 }
+		}
+		modifier = {
+			factor = 1.2
+			liege = { num_of_vassals = 20 }
+		}
+		modifier = {
+			factor = 1.3
+			liege = { num_of_vassals = 30 }
+		}
+		modifier = {
+			factor = 1.4
+			liege = { num_of_vassals = 40 }
+		}
+		modifier = {
+			factor = 1.5
+			liege = { num_of_vassals = 50 }
+		}
+		modifier = {
+			factor = 3
+			liege = { num_of_vassals = 100 }
+		}
+	}
+	
+	immediate = {
+		any_liege = {
+			limit = {
+				has_character_flag = archery_tourny_in_progress
+				has_character_flag = tournament_begins
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+			}
+			random_realm_character = {
+				limit = {
+					NOT = { character = ROOT }	
+					possibly_romantically_interested_in_each_other_trigger = yes
+					prisoner = no
+					age = 16
+					NOT = { age = 40 }		
+					culture = summer_islander
+					OR = {
+						AND = {
+							has_character_flag = attending_archery_tournament
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_tournament }
+						}
+						AND = {
+							is_ruler = no
+							liege = {
+								dynasty = PREV
+								has_character_flag = attending_archery_tournament
+								has_opinion_modifier = { who = PREVPREV modifier = opinion_attending_tournament }
+							}	
+						}	
+					}
+				}
+				character_event = { id = archery.36 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = archery.36
+	desc = "EVTDESCarchery.36"
+	picture = GFX_evt_summer_island_lovers
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.36"
+		ai_chance = {
+			factor = 0.2
+			modifier = {
+				factor = 10
+				trait = chaste
+			}
+			modifier = {
+				factor = 20
+				is_close_relative = FROM
+			}
+		}
+		prestige = -20
+	}
+	
+	option = {
+		name = "EVTOPTBarchery.36"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 20
+				trait = lustful
+			}	
+		}
+		FROM = {
+			character_event = {
+				id = archery.37
+				tooltip = "EVTTOOLTIParchery.37"
+			}
+		}
+	}
+}	
+character_event = {
+	id = archery.37
+	desc = "EVTDESCarchery.37"
+	picture = GFX_evt_summer_island_lovers
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAarchery.37"
+		trigger = { is_female = yes }
+		if = {
+			limit = {
+				NOT = { age = 42 }
+				fertility = 0.3
+				FROM = { fertility = 0.3 }
+				is_pregnant = no
+			}
+			random = {
+				chance = 35	
+				impregnate = FROM
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTAarchery.37"
+		trigger = { is_female = no }
+		if = {
+			limit = {
+				FROM = {
+					NOT = { age = 42 }
+					FROM = { fertility = 0.3 }
+					is_pregnant = no
+				}	
+				fertility = 0.3			
+			}
+			random = {
+				chance = 35
+				FROM = { impregnate = ROOT }		
+			}
+		}	
+	}
+}
+
+###########################################
+# Flag management events                  #
+###########################################
+
+# Clear all character flags and modifiers
+character_event = {
+	id = archery.999
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_modifier = holding_epic_tournament }
+	
+	immediate = {
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+		clr_character_flag = archery_tourny_in_progress	
+		clr_character_flag = made_matchup
+		clr_character_flag = in_archery
+		clr_character_flag = attending_archery_tournament
+		clr_character_flag = inform_of_all_archery_results
+	}
+	
+	option = {
+		name = OK
+	}
+}

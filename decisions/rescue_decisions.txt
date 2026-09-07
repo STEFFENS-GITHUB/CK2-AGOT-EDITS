@@ -1,0 +1,105 @@
+plot_decisions = {
+	plot_rescue_war_withallies = { #Fight to rescue $PRISONER$
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			#NOT = { has_global_flag = westeros_civil_war }		
+			has_plot = plot_rescue_prisoner
+			is_ruler = yes
+			demesne_size = 1		
+			NOT = { has_character_flag = launched_rescue_war  }	
+			NOT = { has_character_flag = plot_rescue_war_demand_issued }
+			plot_target_char = { #Must be valid target to declare war
+				host = {
+					OR = {
+						liege = { character = ROOT }
+						is_liege_of = ROOT
+						same_liege = ROOT
+						AND = {
+							independent = yes
+							NOT = { same_realm = ROOT }
+							demesne_size = 1
+						}	
+					}
+				}
+				OR = {
+					prisoner = yes
+					host = { is_liege_of = PREV }
+				}
+			}
+		}
+		
+		allow = {
+			NOT = { is_inaccessible_trigger = yes }
+			war = no
+			in_command = no		
+			age = 15
+		}
+		
+		effect = {
+			pacifists_lose_piety_effect = yes
+			hidden_tooltip = { reveal_plot = yes } #plot is made public
+			set_character_flag = plot_rescue_war_demand_issued
+			plot_target_char = { #Jailor is issued demand
+				host = {
+					letter_event = { id = rescue_prisoner.2 days = 3 tooltip = TOOLTIPrescue_prisoner.2 }
+				}
+			}
+			activate_plot = yes #I don't want this to prematurely release the prisoner
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.3
+			}
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}			
+			modifier = { #only go for drastic ultimatum for important people
+				factor = 0
+				plot_target_char = {
+					NOR = {
+						AND = {
+							NOT = { dynasty = 0 }
+							dynasty = ROOT #is dynasty member
+						}
+						liege = { character = ROOT } #is vassal
+						is_liege_of = ROOT #is liege lord
+						is_married = ROOT #is spouse
+						is_close_relative = ROOT #is close relative (duh)
+						is_friend = ROOT #is a friend
+						any_spouse = { is_close_relative = ROOT } #in-laws
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_my_abducted_spouse } #Spouse that was taken as a concubine
+					}
+				}	
+			}
+			modifier = { #Wait for prison break
+				factor = 0.5
+				plot_power = 0.5
+				NOT = { trait = wroth }
+			}
+			modifier = {
+				factor = 0.25
+				plot_power = 1
+				NOT = { trait = wroth }
+			}
+			
+			modifier = {
+				factor = 0
+				plot_target_char = {
+					host = {
+						relative_power = {
+							who = ROOT
+							power = 2
+						}
+					}
+				}
+			}
+		}
+	}
+}

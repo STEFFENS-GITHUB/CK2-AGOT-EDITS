@@ -1,0 +1,428 @@
+##Dynastic Loyalty Events##
+
+namespace = dynastic_loyalty
+
+#When backing a character in a mega war, can become a loyalist for their family
+character_event = {
+	id = dynastic_loyalty.1
+	desc = "EVTDESCdynastic_loyalty.1"
+	
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		NOT = { dynasty = 0 }
+		NOT = { has_any_opinion_modifier = opinion_dynasty_loyalist }
+		event_target:potential_loyalty_target = {		
+			dynasty_head = { character = PREV }
+			NOT = { character = ROOT }
+			reverse_opinion = { who = ROOT value = 25 }
+			opinion = { who = ROOT value = -25 }
+			NOT = { dynasty = ROOT }
+			NOT = { dynasty = 0 }
+			NOT = { trait = bastard }
+			NOT = { war_with = ROOT }
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud } }
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_traitor } }
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_traitor_AGOT } }
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_joined_rebellion } }
+			NOR = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_vengeance } 
+				ROOT = { is_foe = PREV }
+				is_rival = ROOT
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_rejected_loyalty } 
+			}		
+		}
+		event_target:potential_loyalty_targets_enemy = {		
+			NOT = { dynasty = ROOT }
+			NOT = { dynasty = event_target:potential_loyalty_target }	
+			NOT = { reverse_opinion = { who = ROOT value = 25 }	}
+			NOT = { is_close_relative = ROOT }
+			NOT = { is_married = ROOT }
+			NOT = { is_friend = ROOT }
+			NOT = { is_lover = ROOT }
+		}
+	}	
+
+	option = {
+		name = "EVTOPTAdynastic_loyalty.1" #Declare loyalty
+		ai_chance = {
+			factor = 20
+			
+			modifier = {
+				factor = 4
+				trait = zealous
+				religion = event_target:potential_loyalty_target
+				NOT = { religion = event_target:potential_loyalty_targets_enemy }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			modifier = {
+				factor = 0.25
+				trait = zealous
+				NOT = { religion = event_target:potential_loyalty_target }
+			}
+			
+			modifier = {
+				factor = 2
+				has_non_aggression_pact_with = event_target:potential_loyalty_target
+			}
+			modifier = {
+				factor = 2
+				is_close_relative = event_target:potential_loyalty_target
+			}
+			modifier = {
+				factor = 2
+				is_married = event_target:potential_loyalty_target
+			}
+			modifier = {
+				factor = 2
+				is_friend = event_target:potential_loyalty_target
+			}
+			modifier = {
+				factor = 2
+				is_lover = event_target:potential_loyalty_target
+			}
+			
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:potential_loyalty_target value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:potential_loyalty_target value = 75 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = event_target:potential_loyalty_target value = 100 }
+			}
+			
+			modifier = {
+				factor = 2
+				is_rival = event_target:potential_loyalty_targets_enemy
+			}
+			modifier = {
+				factor = 2
+				has_opinion_modifier = { who = event_target:potential_loyalty_targets_enemy modifier = opinion_blood_feud }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			modifier = {
+				factor = 0.5
+				has_non_aggression_pact_with = event_target:potential_loyalty_targets_enemy
+			}
+			modifier = {
+				factor = 0.66
+				opinion = { who = event_target:potential_loyalty_targets_enemy value = 0 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:potential_loyalty_targets_enemy value = -24 } }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:potential_loyalty_targets_enemy value = -49 } }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:potential_loyalty_targets_enemy value = -74 } }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:potential_loyalty_targets_enemy value = -99 } }
+				event_target:potential_loyalty_targets_enemy = { NOT = { has_character_flag = independant } }
+			}
+			
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = honest
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = deceitful
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPdynastic_loyalty.1
+			opinion = { who = event_target:potential_loyalty_target modifier = opinion_dynasty_loyalist }			
+		}	
+		event_target:potential_loyalty_target = { 
+			set_character_flag = has_dynasty_loyalist 
+			opinion = { who = ROOT modifier = opinion_my_loyalist }
+		}		
+		#If important, inform target
+		if = {
+			limit = {
+				OR = {
+					tier = KING
+					among_most_powerful_vassals = 3
+				}
+			}
+			event_target:potential_loyalty_target = { character_event = { id = dynastic_loyalty.2 } }
+			event_target:potential_loyalty_targets_enemy = { character_event = { id = dynastic_loyalty.3 } }
+		}
+		character_event = { id = dynastic_loyalty.4 } #maintenance
+	}
+	option = {
+		name = "EVTOPTBdynastic_loyalty.1" #No
+		ai_chance = {
+			factor = 80		
+		}
+		hidden_tooltip = { opinion = { who = event_target:potential_loyalty_target modifier = opinion_rejected_loyalty } }
+	}
+}
+character_event = { #Inform target
+	id = dynastic_loyalty.2
+	desc = "EVTDESCdynastic_loyalty.2"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdynastic_loyalty.2"
+		tooltip = { FROM = { opinion = { who = ROOT modifier = opinion_dynasty_loyalist } } }
+	}
+}	
+character_event = { #Inform target's enemy
+	id = dynastic_loyalty.3
+	desc = "EVTDESCdynastic_loyalty.3"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdynastic_loyalty.3"
+		tooltip = { FROM = { opinion = { who = event_target:potential_loyalty_target modifier = opinion_dynasty_loyalist } } }
+	}
+}	
+#Maintenance
+character_event = {
+	id = dynastic_loyalty.4
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_playable = yes
+	
+	trigger = {
+		has_any_opinion_modifier = opinion_dynasty_loyalist
+	}	
+
+	option = {
+		name = OK
+		random_opinion_modifier_target = { #Find loyalty target I no longer like
+			limit = { 
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_dynasty_loyalist } 
+				dynasty_head = { character = PREV }
+				NOT = { reverse_opinion = { who = ROOT value = 0 } } 
+			}
+			save_event_target_as = loyalty_removal_target
+			ROOT = { character_event = { id = dynastic_loyalty.5 days = 2 } }
+		}	
+		any_opinion_modifier_target = {
+			limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_dynasty_loyalist } }
+			any_claim = { #Add loyalty to other claimants in dynasty
+				limit = { 
+					NOT = { lower_tier_than = PREV } 
+					holder_scope = { 
+						NOT = { dynasty = PREVPREV } 
+						NOT = { dynasty = ROOT } 
+					}
+				}
+				any_claimant = {
+					limit = {
+						dynasty = PREVPREV
+						NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_dynasty_loyalist } }
+					}
+					reverse_opinion = { who = ROOT modifier = opinion_dynasty_loyalist }
+					set_character_flag = has_dynasty_loyalist
+					opinion = { who = ROOT modifier = opinion_my_loyalist }
+				}
+			}
+		}
+	}
+}	
+#End loyalty?
+character_event = {
+	id = dynastic_loyalty.5
+	desc = "EVTDESCdynastic_loyalty.5"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAdynastic_loyalty.5"
+		ai_chance = {
+			factor = 20
+			
+			modifier = {
+				factor = 0
+				OR = {
+					has_non_aggression_pact_with = event_target:loyalty_removal_target
+					is_close_relative = event_target:loyalty_removal_target
+					is_married = event_target:loyalty_removal_target
+					opinion = { who = event_target:loyalty_removal_targets_enemy value = -24 }
+				}	
+				OR = {
+					trait = just
+					trait = honorable
+					trait = content
+					trait = honest
+				}				
+			}
+			
+			modifier = {
+				factor = 4
+				trait = zealous
+				NOT = { religion = event_target:loyalty_removal_target }
+			}
+			
+			modifier = {
+				factor = 0.5
+				has_non_aggression_pact_with = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 0.5
+				is_close_relative = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 0.5
+				is_married = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 0.5
+				is_friend = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 0.5
+				is_lover = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 4
+				is_rival = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 4
+				has_opinion_modifier = { who = event_target:loyalty_removal_target modifier = opinion_blood_feud }
+			}
+			modifier = {
+				factor = 4
+				has_opinion_modifier = { who = event_target:loyalty_removal_target modifier = opinion_vengeance }
+			}
+			modifier = {
+				factor = 4
+				is_foe = event_target:loyalty_removal_target
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:loyalty_removal_targets_enemy value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:loyalty_removal_targets_enemy value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:loyalty_removal_targets_enemy value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = event_target:loyalty_removal_targets_enemy value = -99 } }
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = just
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+			modifier = {
+				factor = 0.5
+				trait = honest
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+		}	
+		show_portrait = event_target:loyalty_removal_target
+		custom_tooltip = {
+			text = TOOLTIPdynastic_loyalty.5
+			remove_opinion = { who = event_target:loyalty_removal_target modifier = opinion_dynasty_loyalist }	
+			reverse_remove_opinion = { who = event_target:loyalty_removal_target modifier = opinion_my_loyalist }
+			any_opinion_modifier_target = {
+				limit = { 
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_dynasty_loyalist } 
+					dynasty = event_target:loyalty_removal_target
+				}
+				reverse_remove_opinion = { who = ROOT modifier = opinion_dynasty_loyalist }	
+				remove_opinion = { who = ROOT modifier = opinion_my_loyalist }
+			}
+			event_target:loyalty_removal_target = { character_event = { id = dynastic_loyalty.6 } }
+		}
+	}
+	option = {
+		name = "EVTOPTBdynastic_loyalty.5"
+		ai_chance = {
+			factor = 80
+		}
+	}
+}	
+character_event = { #Inform
+	id = dynastic_loyalty.6
+	desc = "EVTDESCdynastic_loyalty.6"
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { is_ruler = yes } }
+	
+	option = {
+		name = "EVTOPTAdynastic_loyalty.6"
+		tooltip = { FROM = { remove_opinion = { who = ROOT modifier = opinion_dynasty_loyalist } } }
+	}
+}	
+
+
+	

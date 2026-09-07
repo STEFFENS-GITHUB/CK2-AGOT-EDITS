@@ -1,0 +1,216 @@
+#Warlock Magic.  
+
+namespace = warlock
+
+# A Strange Priest from Essos aprroaches me.
+character_event = {
+	id = warlock.0
+	desc = "EVTDESCwarlock.0"
+	picture = "GFX_evt_warlock"
+	border = "GFX_event_normal_frame_religion"
+	
+	only_playable = yes
+	min_age = 16 
+	prisoner = no
+	
+	trigger = {
+		demesne_size = 1
+		NOT = { religion = qarth_warlocks }
+		OR = {
+			higher_tier_than = COUNT
+			capital_scope = {
+				OR = {
+					religion = qarth_warlocks				
+					region = world_qarth
+				}			
+			}
+		}
+		capital_scope = { NOT = { region = world_westeros } }
+		NOT = { any_courtier = { trait = warlock } }
+		is_devil_worshiper_trigger = no
+		NOT_mythical_creature_trigger = yes
+	}
+
+	mean_time_to_happen = { 
+		years = 600 
+		modifier = {
+			factor = 0.5
+			capital_scope = { religion = qarth_warlocks }
+		}
+		modifier = {
+			factor = 0.2
+			capital_scope = {
+				region = world_qarth
+			}
+		}
+	}
+	
+	immediate = {
+		random_playable_ruler = {
+			limit = { 
+				religion = qarth_warlocks 
+				capital_scope = { religion = qarth_warlocks }
+			}
+			random_list = {
+				50 = {
+					create_character = {
+						min_age = 20
+						max_age = 60
+						religion = qarth_warlocks
+						culture = THIS
+						trait = warlock
+						random_traits = yes
+						dynasty = none
+						female = no
+					}			
+				}
+				50 = {
+					create_character = {
+						min_age = 20
+						max_age = 40
+						religion = qarth_warlocks
+						culture = THIS
+						trait = warlock
+						random_traits = yes
+						dynasty = none
+						female = yes
+					}		
+				}
+			}
+			new_character = {
+				change_stewardship = 2
+				change_intrigue = 4
+				change_diplomacy = 4
+				change_learning = 10
+				move_character = ROOT
+				set_character_flag = warlock_target
+			}	
+			break = yes
+		}
+		#If no playable warlock characters create random warlock from Qarth
+		create_character = {
+			min_age = 20
+			max_age = 60
+			religion = qarth_warlocks
+			culture = qartheen
+			trait = warlock
+			random_traits = yes
+			dynasty = none
+			female = no
+		}	
+		new_character = {
+			change_stewardship = 2
+			change_intrigue = 4
+			change_diplomacy = 4
+			change_learning = 10
+			move_character = ROOT
+			set_character_flag = warlock_target
+		}
+	}
+	option = {
+		name = "EVTOPTAwarlock.0" # Embrace this new religion!
+		ai_chance = {
+			factor = 2.5
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		tooltip = {
+			if = {
+				limit = { trait = pirate }
+				remove_trait = pirate
+				if = {
+					limit = { government = pirate_government }
+					set_government_type = feudal_government
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes	
+			}
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes				
+		}
+		random_courtier = {
+			limit = { has_character_flag = warlock_target }
+			clr_character_flag =warlock_target
+			tooltip = { show_portrait = yes }
+			ROOT = { religion = PREV }
+		}
+		#custom_tooltip = { text = TOOLTIPCONVERTTORHLLOR }
+	}
+	
+	option = {
+		name = "EVTOPTBwarlock.0" # Have this heretic jailed!
+		trigger = { NOT = { trait = cynical } }
+		ai_chance = {
+			factor = 45
+		}
+		piety = 25
+		if = { 
+			limit = { 
+				NOT = { trait = zealous }
+				NOT = { trait = cynical } 	
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 }  }
+			}
+		}	
+		random_courtier = {
+			limit = { has_character_flag = warlock_target }
+			clr_character_flag = warlock_target
+			hidden_tooltip = {
+				d_warlocks = {
+					holder_scope = {
+						reverse_banish = PREVPREV
+					}
+				}
+			}	
+			imprison = ROOT			
+		}
+	}
+		
+	option = {
+		name = "EVTOPTCwarlock.0" # Ignore him.
+		ai_chance = { 
+			factor = 45 
+			modifier = {
+				factor = 10
+				trait = cynical
+			}
+		}
+		random_courtier = {
+			limit = { has_character_flag = warlock_target }
+			clr_character_flag = walock_target
+			tooltip = { show_portrait = yes }	
+		}
+		if = { 
+			limit = { 
+				NOT = { trait = zealous }
+				NOT = { trait = cynical } 	
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify Cynical
+					}
+				}
+			}
+		}		
+	}
+}

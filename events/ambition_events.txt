@@ -1,0 +1,8918 @@
+################################
+# 
+# Ambition Events
+#
+# ID 94000 - 95000 reserved
+#
+################################
+
+# Written by Henrik Eklund
+
+namespace = ambition
+
+###AGOT###
+#ambition.1		Make the Eight
+#ambition.10		Expand Realm
+
+####################
+# Martial Ambition #
+####################
+
+### Toy Army
+
+# Toy Army
+character_event = {
+	id = 94000
+	desc = EVTDESC94000
+	picture = GFX_evt_large_army
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	is_married = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { martial = 10 }
+			}
+			has_ambition = obj_improve_martial
+		}	
+		NOT = { has_character_flag = toy_army }
+		NOT = { has_character_flag = toy_army_prepare }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94000
+		set_character_flag = toy_army_prepare
+		change_martial = 1
+		hidden_tooltip = { character_event = { id = 94001 days = 60 random = 30 } }
+	}
+}
+
+# Other Toy Army Enthusiasts
+character_event = {
+	id = 94001
+	desc = EVTDESC94001
+	picture = GFX_evt_large_army
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	hide_from = yes
+	prisoner = no
+	only_capable = yes
+	min_age = 16
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_martial
+			has_focus = focus_war
+		}
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94001
+		character_event = { id = 94002 days = 10 tooltip = EVTTOOLTIP94002 }
+		clr_character_flag = toy_army_prepare
+		set_character_flag = toy_army
+	}
+	option = {
+		name = EVTOPTB94001
+		clr_character_flag = toy_army_prepare
+	}
+}
+
+# Toy Army Tournament Begins
+character_event = {
+	id = 94002
+	desc = EVTDESC94002
+	picture = GFX_evt_large_army
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94002
+		random_list = {
+			50 = {
+				character_event = { id = 94004 tooltip = EVTTOOLTIP94004 }
+			}
+			50 = {
+				character_event = { id = 94003 tooltip = EVTTOOLTIP94003 }
+			}
+		}
+	}
+}
+
+# Toy Army Tournament Defeat
+character_event = {
+	id = 94003
+	desc = EVTDESC94003
+	picture = GFX_evt_large_army
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94003
+		tooltip_info = yes
+		custom_tooltip = { text = tooltip_info_wroth_ruthless }
+		trigger = {
+			NOT = { trait = honorable }
+			OR = {
+				trait = wroth
+				trait = ruthless
+			} 
+		}
+		ambition_succeeds = yes
+		change_martial = 1
+		set_character_flag = improve_martial_success
+		piety = -10
+	}
+	option = {
+		name = EVTOPTB94003
+		ambition_succeeds = yes
+		change_martial = 1
+		set_character_flag = improve_martial_success
+		prestige = -15
+	}
+}
+
+# Toy Army Tournament Victory
+character_event = {
+	id = 94004
+	desc = EVTDESC94004
+	picture = GFX_evt_large_army
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94004
+		change_martial = 2
+		prestige = 15
+	}
+}
+
+### Street Ruffians
+
+# Street Ruffians
+character_event = {
+	id = 94005
+	desc = EVTDESC94005
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			has_ambition = obj_improve_combat_ability
+		}		
+		NOT = { has_character_flag = street_ruffians }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94005
+		set_character_flag = street_ruffians
+		random_list = {
+			50 = {
+				character_event = { id = 94007 tooltip = EVTTOOLTIP94007 }
+			}
+			50 = {
+				character_event = { id = 94006 tooltip = EVTTOOLTIP94006 }
+			}
+		}
+		pacifists_lose_piety_effect = yes
+	}
+	option = {
+		name = EVTOPTB94005
+		custom_tooltip = { text = improve_martial_quit }
+	}
+}
+
+# Melee Lost
+character_event = {
+	id = 94006
+	desc = EVTDESC94006
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94006
+		tooltip_info = yes
+		custom_tooltip = { text = tooltip_info_wroth_ruthless_cruel }
+		trigger = {
+			NOT = { trait = honorable }
+			OR = {
+				trait = wroth
+				trait = ruthless
+				trait = cruel
+			} 
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = wounded
+						is_maimed_trigger = yes
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}				
+		piety = -10
+	}
+	option = {
+		name = EVTOPTB94006
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = wounded
+						is_maimed_trigger = yes
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}	
+		prestige = -15
+	}
+}
+
+# Melee Won
+character_event = {
+	id = 94007
+	desc = EVTDESC94007
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94007
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			add_trait = poor_warrior
+		}	
+		prestige = 15
+	}
+}
+
+### Drunken Warrior
+
+# Drunken Warrior
+character_event = {
+	id = 94010
+	desc = EVTDESC94010
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			has_ambition = obj_improve_combat_ability
+		}
+		NOT = { has_character_flag = warrior_mentor }
+		NOT = { has_character_flag = warrior_mentor_search }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94010	
+		set_character_flag = warrior_mentor_search
+		hidden_tooltip = { character_event = { id = 94011 days = 300 random = 150 } }
+	}
+}
+
+# The Warrior is found
+character_event = {
+	id = 94011
+	desc = EVTDESC94011
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	
+	trigger = {
+		OR = {
+			has_focus = focus_war
+			has_ambition = obj_improve_combat_ability
+		}
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94011
+		clr_character_flag = warrior_mentor_search
+		custom_tooltip = { text = improve_martial_quit }
+	}
+	option = {
+		name = EVTOPTB94011
+		scaled_wealth = { value = -0.33 min = -20 max = -75 }
+		character_event = { id = 94012 tooltip = EVTTOOLTIP94012 }
+		set_character_flag = warrior_mentor
+		clr_character_flag = warrior_mentor_search
+	}
+}
+
+# Warrior is asked to teach
+character_event = {
+	id = 94012
+	desc = EVTDESC94012
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94012
+		character_event = { id = 94013 days = 50 random = 10 tooltip = EVTTOOLTIP94013 }
+	}
+	option = {
+		name = EVTOPTB94012
+		clr_character_flag = warrior_mentor
+		custom_tooltip = { text = improve_martial_quit }
+	}
+}
+
+# Chopsticks
+character_event = {
+	id = 94013
+	desc = EVTDESC94013
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94013
+		character_event = { id = 94014 days = 50 random = 10 tooltip = EVTTOOLTIP94014 }
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}
+	}
+}
+
+# Boat
+character_event = {
+	id = 94014
+	desc = EVTDESC94014
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94014
+		tooltip_info = wroth
+		trigger = { 
+			trait = wroth
+		}
+		prestige = -15
+		custom_tooltip = { text = improve_martial_quit }
+	}
+	option = {
+		name = EVTOPTB94014
+		character_event = { id = 94015 days = 50 random = 10 tooltip = EVTTOOLTIP94014 }
+		if = {
+			limit = { trait = trained_warrior }
+			random = {
+				chance = 20
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = skilled_warrior }
+			}
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+						trait = skilled_warrior
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}
+	}
+}
+
+# Training Done
+character_event = {
+	id = 94015
+	desc = EVTDESC94015
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94015
+		prestige = 15
+		if = {
+			limit = { trait = skilled_warrior }
+			random = {
+				chance = 5
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = master_warrior }
+			}
+		}
+		if = {
+			limit = { trait = trained_warrior }
+			random = {
+				chance = 20
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = skilled_warrior }
+			}
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}	
+			}
+			add_trait = poor_warrior
+		}
+		if = {
+			limit = {
+				trait = feeble
+			}
+			remove_trait = feeble
+		}
+	}
+}
+
+### Training with the Guard
+character_event = {
+	id = 94016
+	desc = EVTDESC94016
+	picture = GFX_evt_melee
+	border = GFX_event_normal_frame_war
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			has_ambition = obj_improve_combat_ability
+		}
+	}
+	
+	option = {
+		name = EVTOPTA94016
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			add_trait = poor_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = wounded
+						is_maimed_trigger = yes
+					}
+				}	
+			}
+			random = {
+				chance = 20
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}	
+	}
+}
+
+### Horsemanship
+character_event = {
+	id = 94017
+	desc = EVTDESC94017
+	picture = GFX_evt_joust
+	border = GFX_event_normal_frame_war
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			has_ambition = obj_improve_combat_ability
+		}
+	}
+	
+	option = {
+		name = EVTOPTA94017
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+					}
+				}	
+			}
+			add_trait = poor_warrior
+		}
+	}
+}
+
+### Alexander/Ashoka the Great
+character_event = {
+	id = 94018
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_war
+
+	desc = {
+		text = EVTDESC94018_valyria #Valyria
+		trigger = {
+			capital_scope = {
+				NOT = {
+					OR = {
+						region = world_bone_mountains
+						region = world_yi_ti
+						region = world_ibben
+						region = world_summer_islands
+						AND = {
+							start_date = 7600.1.1
+							region = world_dorne
+						}	
+						AND = {
+							region = world_north
+							start_date = 6531.1.1
+						}
+						AND = {						
+							region = world_riverlands
+							start_date = 6651.1.1
+						}	
+						AND = {
+							region = world_vale
+							start_date = 6563.1.1
+						}	
+						AND = {
+							region = world_reach
+							start_date = 6483.1.1
+						}	
+						AND = {
+							region = world_stormlands
+							start_date = 7701.1.1
+						}	
+						region = world_westerlands
+					}
+				}	
+			}
+			NOT = { culture_group = iron_isles_culture }
+			NAND = { 
+				culture = dothraki 
+				start_date = 7950.1.1
+			}
+			NAND = { 
+				culture = jogos_nhai 
+				start_date = 6750.1.1
+			}
+			NOT = { trait = wildling }
+		}
+	}
+	desc = {
+		text = EVTDESC94018_hyrkoon
+		trigger = {
+			capital_scope = {
+				region = world_bone_mountains
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_yi_ti
+		trigger = {
+			capital_scope = {
+				region = world_yi_ti
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_ibben
+		trigger = {
+			capital_scope = {
+				region = world_ibben
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_summer_islands
+		trigger = {
+			capital_scope = {
+				region = world_summer_islands
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_dorne
+		trigger = {
+			start_date = 7600.1.1
+			capital_scope = {
+				region = world_dorne
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_ironborn
+		trigger = {
+			culture_group = iron_isles_culture
+		}
+	}
+	desc = {
+		text = EVTDESC94018_dothraki
+		trigger = {
+			culture = dothraki
+			start_date = 7950.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_jogos_nhai
+		trigger = {
+			culture = jogos_nhai
+			start_date = 6750.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_wildling
+		trigger = {
+			trait = wildling
+		}
+	}
+	desc = {
+		text = EVTDESC94018_north
+		trigger = {
+			capital_scope = {
+				region = world_north
+			}
+			start_date = 6531.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_riverlands
+		trigger = {
+			capital_scope = {
+				region = world_riverlands
+			}
+			start_date = 6651.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_vale
+		trigger = {
+			capital_scope = {
+				region = world_vale
+			}
+			start_date = 6563.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_westerlands
+		trigger = {
+			capital_scope = {
+				region = world_westerlands
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94018_reach
+		trigger = {
+			capital_scope = {
+				region = world_reach
+			}
+			start_date = 6483.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94018_stormlands
+		trigger = {
+			capital_scope = {
+				region = world_stormlands
+			}
+			start_date = 7701.1.1
+		}
+	}
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				OR = {
+					AND = {
+						NOT = { martial = 10 }
+						NOT = { trait = strategist }
+					}
+					NOT = { lifestyle_traits = 1 }
+				}	
+				NOT = { has_character_modifier = student_of_strategy }
+				NOT = { has_character_modifier = adept_of_strategy }
+				
+			}
+			has_ambition = obj_improve_martial
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+
+		modifier = {
+			factor = 10
+			has_focus = focus_war
+			NOT = { lifestyle_traits = 1 }
+			NOT = { has_character_modifier = student_of_strategy }
+			NOT = { has_character_modifier = adept_of_strategy }
+		}
+	}
+	
+	option = {
+		name = EVTOPTA94018
+		trigger = {
+			OR = {
+				has_ambition = obj_improve_martial
+				NOT = { martial = 8 }
+			}
+		}
+		change_martial = 1
+	}
+	option = {
+		name = EVTOPTC_94018     # Study further
+		trigger = {
+			has_focus = focus_war
+		}
+		add_character_modifier = {
+			modifier = student_of_strategy
+			duration = -1
+		}
+		custom_tooltip = { text = studying_strategy_tooltip }
+		hidden_tooltip = { character_event = { id = 94019 days = 300 random = 400 } }
+	}
+}
+
+# Further studies in strategy
+character_event = {
+	id = 94019
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_war
+	
+	desc = {
+		text = EVTDESC94019_valyria #Valyria
+		trigger = {
+			capital_scope = {
+				NOT = {
+					OR = {
+						region = world_bone_mountains
+						region = world_yi_ti
+						region = world_ibben
+						region = world_summer_islands
+						AND = {
+							start_date = 7600.1.1
+							region = world_dorne
+						}	
+						AND = {
+							region = world_north
+							start_date = 6531.1.1
+						}
+						AND = {						
+							region = world_riverlands
+							start_date = 6651.1.1
+						}	
+						AND = {
+							region = world_vale
+							start_date = 6563.1.1
+						}	
+						AND = {
+							region = world_reach
+							start_date = 6483.1.1
+						}	
+						AND = {
+							region = world_stormlands
+							start_date = 7701.1.1
+						}	
+						region = world_westerlands
+					}
+				}	
+			}
+			NOT = { culture_group = iron_isles_culture }
+			NAND = { 
+				culture = dothraki 
+				start_date = 7950.1.1
+			}
+			NAND = { 
+				culture = jogos_nhai 
+				start_date = 6750.1.1
+			}
+			NOT = { trait = wildling }
+		}
+	}
+	desc = {
+		text = EVTDESC94019_hyrkoon
+		trigger = {
+			capital_scope = {
+				region = world_bone_mountains
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_yi_ti
+		trigger = {
+			capital_scope = {
+				region = world_yi_ti
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_ibben
+		trigger = {
+			capital_scope = {
+				region = world_ibben
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_summer_islands
+		trigger = {
+			capital_scope = {
+				region = world_summer_islands
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_dorne
+		trigger = {
+			start_date = 7600.1.1
+			capital_scope = {
+				region = world_dorne
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_ironborn
+		trigger = {
+			culture_group = iron_isles_culture
+		}
+	}
+	desc = {
+		text = EVTDESC94019_dothraki
+		trigger = {
+			culture = dothraki
+			start_date = 7950.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_jogos_nhai
+		trigger = {
+			culture = jogos_nhai
+			start_date = 6750.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_wildling
+		trigger = {
+			trait = wildling
+		}
+	}
+	desc = {
+		text = EVTDESC94019_north
+		trigger = {
+			capital_scope = {
+				region = world_north
+			}
+			start_date = 6531.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_riverlands
+		trigger = {
+			capital_scope = {
+				region = world_riverlands
+			}
+			start_date = 6651.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_vale
+		trigger = {
+			capital_scope = {
+				region = world_vale
+			}
+			start_date = 6563.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_westerlands
+		trigger = {
+			capital_scope = {
+				region = world_westerlands
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC94019_reach
+		trigger = {
+			capital_scope = {
+				region = world_reach
+			}
+			start_date = 6483.1.1
+		}
+	}
+	desc = {
+		text = EVTDESC94019_stormlands
+		trigger = {
+			capital_scope = {
+				region = world_stormlands
+			}
+			start_date = 7701.1.1
+		}
+	}
+
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_94019
+		trigger = {
+			has_focus = focus_war
+			NOT = { lifestyle_traits = 1 }
+			has_character_modifier = adept_of_strategy
+		}
+		remove_character_modifier = adept_of_strategy
+		add_trait = strategist
+	}
+	option = {
+		name = EVTOPTA_94019
+		trigger = {
+			has_character_modifier = student_of_strategy
+		}
+		remove_character_modifier = student_of_strategy
+		add_character_modifier = {
+			modifier = adept_of_strategy
+			duration = -1
+		}
+	}
+	option = {
+		name = EVTOPTB_94019
+		trigger = {
+			has_character_modifier = adept_of_strategy
+		}
+		prestige = 25
+	}
+	option = {
+		name = EVTOPTC_94019
+		trigger = {
+			trait = strategist
+		}
+		add_character_modifier = { 
+			modifier = strategic_innovation
+			duration = 1095
+		}
+	}
+}
+
+### War Council
+character_event = {
+	id = ambition.940
+	desc = EVTDESCambition.940
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_war
+				NOT = { martial = 10 }
+			}
+			has_ambition = obj_improve_martial
+		}
+		OR = {
+			war = yes
+			any_liege = { war = yes }
+		}
+	}
+	
+	option = {
+		name = EVTOPTAambition.940
+		change_martial = 1
+	}
+}
+
+########################
+# Stewardship Ambition #
+########################
+
+### The Inn
+
+# The Inn
+character_event = {
+	id = 94050
+	desc = EVTDESC94050
+	picture = GFX_evt_carriage
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_business
+				NOT = { stewardship = 9 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		wealth = 100
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+		NOT = { has_character_flag = the_inn_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94050
+		character_event = { id = 94051 days = 30 random = 10 tooltip = EVTTOOLTIP94051 }
+		wealth = -50
+		set_character_flag = the_inn
+		set_character_flag = the_inn_taken
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_OPENED_INN
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTB94050
+		custom_tooltip = { text = improve_stewardship_quit }
+	}
+}
+
+# The Inn's name
+character_event = {
+	id = 94051
+	desc = EVTDESC94051
+	picture = GFX_evt_feast
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_stewardship
+			has_focus = focus_business
+		}
+		has_character_flag = the_inn
+	}
+	
+	option = {
+		name = "EVTOPTA94051"
+		#trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	}
+	option = {
+		name = "EVTOPTB94051"
+		#trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	}
+	option = {
+		name = "EVTOPTC94051"
+		#trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	}
+	option = {
+		name = "EVTOPTD94051"
+		#trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	}
+	# option = {
+		# name = "EVTOPTE94051"
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	# }
+	# option = {
+		# name = "EVTOPTF94051"
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	# }
+	# option = {
+		# name = "EVTOPTG94051"
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	# }
+	# option = {
+		# name = "EVTOPTH94051"
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94052 days = 30 random = 10 tooltip = EVTTOOLTIP94052 }
+	# }
+}
+
+# Salt the turnips
+character_event = {
+	id = 94052
+	desc = EVTDESC94052
+	picture = GFX_evt_brothel
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_stewardship
+			has_focus = focus_business
+		}
+		has_character_flag = the_inn
+	}
+	
+	option = {
+		name = EVTOPTA94052
+		set_character_flag = 10_salt
+		character_event = { id = 94053 days = 30 random = 10 tooltip = EVTTOOLTIP94053 }
+	}
+	option = {
+		name = EVTOPTB94052
+		set_character_flag = 20_salt
+		character_event = { id = 94053 days = 30 random = 10 tooltip = EVTTOOLTIP94053 }
+	}
+	option = {
+		name = EVTOPTC94052
+		set_character_flag = 30_salt
+		character_event = { id = 94053 days = 30 random = 10 tooltip = EVTTOOLTIP94053 }
+	}
+	option = {
+		name = EVTOPTD94052
+		set_character_flag = all_salt
+		character_event = { id = 94053 days = 30 random = 10 tooltip = EVTTOOLTIP94053 }
+	}
+}
+
+# Entertainment
+character_event = {
+	id = 94053
+	desc = EVTDESC94053
+	picture = GFX_evt_feast
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_stewardship
+			has_focus = focus_business
+		}
+		has_character_flag = the_inn
+	}
+	
+	option = {
+		name = EVTOPTA94053
+		character_event = { id = 94054 days = 30 random = 10 tooltip = EVTTOOLTIP94054 }
+		wealth = -5
+	}
+	option = {
+		name = EVTOPTB94053
+		character_event = { id = 94055 days = 30 random = 10 tooltip = EVTTOOLTIP94055 }
+		wealth = -10
+	}
+	option = {
+		name = EVTOPTC94053
+		character_event = { id = 94056 days = 30 random = 10 tooltip = EVTTOOLTIP94056 }
+		wealth = -15
+	}
+	option = {
+		name = EVTOPTD94053
+		character_event = { id = 94057 days = 30 random = 10 tooltip = EVTTOOLTIP94057 }
+	}
+}
+
+# Clergyman
+character_event = {
+	id = 94054
+	desc = EVTDESC94054
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94054
+		hidden_tooltip = {
+			character_event = { id = 94059 days = 5 }
+			character_event = { id = 94058 days = 5 }
+		}
+		wealth = 10
+	}
+}
+
+# Bard
+character_event = {
+	id = 94055
+	desc = EVTDESC94055
+	picture = GFX_evt_feast
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94055
+		hidden_tooltip = {
+			character_event = { id = 94059 days = 5 }
+			character_event = { id = 94058 days = 5 }
+		}
+		wealth = 15
+	}
+}
+
+# Eunuch
+character_event = {
+	id = 94056
+	desc = EVTDESC94056
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94056
+		hidden_tooltip = {
+			character_event = { id = 94059 days = 5 }
+			character_event = { id = 94058 days = 5 }
+		}
+		wealth = -10
+	}
+}
+
+# Wild Ass
+character_event = {
+	id = 94057
+	desc = EVTDESC94057
+	picture = GFX_evt_burning_house
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94057
+		hidden_tooltip = {
+			character_event = { id = 94059 days = 5 }
+			character_event = { id = 94058 days = 5 }
+		}
+		wealth = -20
+	}
+}
+
+# Salt Disaster
+character_event = {
+	id = 94058
+	desc = EVTDESC94058
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_flag = all_salt
+	}
+	
+	option = {
+		name = EVTOPTA94058
+		hidden_tooltip = {
+			character_event = { id = 94060 days = 5 }
+		}
+		wealth = -20
+	}
+}
+
+# Salt Profit
+character_event = {
+	id = 94059
+	desc = EVTDESC94059
+	picture = GFX_evt_brothel
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = all_salt }
+	}
+	
+	option = {
+		name = EVTOPTA94059
+		trigger = {
+			has_character_flag = 10_salt
+		}
+		wealth = 15
+		hidden_tooltip = {
+			character_event = { id = 94060 days = 5 }
+		}
+	}
+	option = {
+		name = EVTOPTA94059
+		trigger = {
+			has_character_flag = 20_salt
+		}
+		wealth = 20
+		hidden_tooltip = {
+			character_event = { id = 94060 days = 5 }
+		}
+	}
+	option = {
+		name = EVTOPTA94059
+		trigger = {
+			has_character_flag = 30_salt
+		}
+		wealth = 25
+		hidden_tooltip = {
+			character_event = { id = 94060 days = 5 }
+		}
+	}
+}
+
+# Opening Night Over
+character_event = {
+	id = 94060
+	desc = EVTDESC94060
+	picture = GFX_evt_feast
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94060
+		wealth = 65
+		change_stewardship = 2
+		clr_character_flag = 10_salt
+		clr_character_flag = 20_salt
+		clr_character_flag = 30_salt
+		clr_character_flag = all_salt
+	}
+}
+
+### The Garden
+
+# The Garden
+character_event = {
+	id = 94065
+	desc = EVTDESC94065
+	picture = GFX_evt_garden
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_business
+				NOT = { stewardship = 9 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+		NOT = { has_character_flag = the_garden_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94065
+		character_event = { id = 94066 days = 50 random = 10 tooltip = EVTTOOLTIP94066 }
+		set_character_flag = the_garden
+		set_character_flag = the_garden_taken
+	}
+	option = {
+		name = EVTOPTB94065
+		custom_tooltip = { text = improve_stewardship_quit }
+	}
+}
+
+# Gardening Done
+character_event = {
+	id = 94066
+	desc = EVTDESC94066
+	picture = GFX_evt_garden
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94066
+		change_stewardship = 2
+		if = {
+			limit = { NOT = { lifestyle_traits = 1 } }
+			add_trait = gardener
+		}
+	}
+}
+
+### Land Survey
+
+# Land Survey
+character_event = {
+	id = 94070
+	desc = EVTDESC94070
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_rulership
+				NOT = { stewardship = 10 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+		NOT = { has_character_flag = the_survey_taken }
+	}
+	
+	option = {
+		name = EVTOPTA94070
+		set_character_flag = the_survey
+		set_character_flag = the_survey_taken
+		character_event = { id = 94071 days = 260 random = 50 tooltip = EVTTOOLTIP94071 }
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_LAND_SURVEY
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTB94070
+		custom_tooltip = { text = improve_stewardship_quit }
+	}
+}
+
+# Survey Complete
+character_event = {
+	id = 94071
+	desc = EVTDESC94071
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_economy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94071
+		change_stewardship = 2
+	}
+}
+
+### Bookkeeping
+character_event = {
+	id = 94072
+	desc = EVTDESC94072
+	picture = GFX_evt_monk
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_business
+				NOT = { stewardship = 9 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+	}
+	
+	option = {
+		name = EVTOPTA94072
+		change_stewardship = 1
+	}
+}
+
+### Delegation
+character_event = {
+	id = 94073
+	desc = EVTDESC94073
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_rulership
+				NOT = { stewardship = 10 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+	}
+	
+	option = {
+		name = EVTOPTA94073
+		change_stewardship = 1
+	}
+}
+
+### Servant Staff
+character_event = {
+	id = 94074
+	desc = EVTDESC94074
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_economy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_rulership
+				NOT = { stewardship = 10 }
+			}
+			has_ambition = obj_improve_stewardship
+		}
+		NOT = { has_character_flag = the_inn }
+		NOT = { has_character_flag = the_garden }
+		NOT = { has_character_flag = the_survey }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94074
+		change_stewardship = 1
+	}
+}
+
+#####################
+# Learning Ambition #
+#####################
+
+### The Flying Machine
+
+# The Flying Machine
+character_event = {
+	id = 94080
+	desc = EVTDESC94080
+	picture = GFX_evt_falconing
+	border = GFX_event_normal_frame_religion
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_scholarship
+				NOT = { learning = 10 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+		NOT = { has_character_flag = flying_machine_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94080
+		character_event = { id = 94081 days = 30 random = 10 tooltip = EVTTOOLTIP94081 }
+		set_character_flag = flying_machine
+		set_character_flag = meldrick_fly
+		set_character_flag = flying_machine_taken
+	}
+	option = {
+		name = EVTOPTB94080
+		custom_tooltip = { text = improve_learning_quit }
+	}
+}
+
+# Studies 
+character_event = {
+	id = 94081
+	desc = EVTDESC94081
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_learning
+			has_focus = focus_scholarship
+		}
+		has_character_flag = flying_machine
+	}
+	
+	option = {
+		name = EVTOPTA94081
+		character_event = { id = 94082 days = 30 random = 10 tooltip = EVTTOOLTIP94082 }
+	}
+}
+
+# Enlist Pilot
+character_event = {
+	id = 94082
+	desc = EVTDESC94082
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_learning
+			has_focus = focus_scholarship
+		}
+		has_character_flag = flying_machine
+	}
+	
+	option = { # Otis
+		name = EVTOPTA94082
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94083 days = 5 tooltip = EVTTOOLTIP94083 }
+	}
+	option = { # Meldrick
+		name = EVTOPTB94082
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94084 days = 5 tooltip = EVTTOOLTIP94084 }
+	}
+	option = { # Dog
+		name = EVTOPTC94082
+		character_event = { id = 94085 days = 5 tooltip = EVTTOOLTIP94085 }
+	}
+	# option = { # al-Otis
+		# name = EVTOPTD94082
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94092 days = 5 tooltip = EVTTOOLTIP94092 }
+	# }
+	# option = { # Ba'ah al-Drik
+		# name = EVTOPTE94082
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94093 days = 5 tooltip = EVTTOOLTIP94093 }
+	# }
+}
+
+# Otis Flies
+character_event = {
+	id = 94083
+	desc = EVTDESC94083
+	picture = GFX_evt_bloody_man
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94083
+		character_event = { id = 94086 days = 5 tooltip = EVTTOOLTIP94086 }
+	}
+}
+
+# # al-Otis Flies (Muslim version)
+# character_event = {
+	# id = 94092
+	# desc = EVTDESC94092
+	# picture = GFX_evt_bloody_man
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94092
+		# character_event = { id = 94094 days = 5 tooltip = EVTTOOLTIP94086 }
+	# }
+# }
+
+# Meldrick Flies
+character_event = {
+	id = 94084
+	desc = EVTDESC94084
+	picture = GFX_evt_bloody_man
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94084
+		character_event = { id = 94087 days = 5 tooltip = EVTTOOLTIP94086 }
+	}
+}
+
+# # Ba'ah al-Drik Flies (Muslim version)
+# character_event = {
+	# id = 94093
+	# desc = EVTDESC94093
+	# picture = GFX_evt_bloody_man
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94093
+		# character_event = { id = 94095 days = 5 tooltip = EVTTOOLTIP94086 }
+	# }
+# }
+
+# Dog Flies
+character_event = {
+	id = 94085
+	desc = EVTDESC94085
+	picture = GFX_evt_bloody_man
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94085
+		character_event = { id = 94088 days = 5 tooltip = EVTTOOLTIP94088 }
+		add_trait_silently_wounded_effect = yes
+	}
+}
+
+# Otis Aftermath
+character_event = {
+	id = 94086
+	desc = EVTDESC94086
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94086
+		character_event = { id = 94089 days = 15 random = 5 tooltip = EVTTOOLTIP94089 }
+	}
+	option = {
+		name = EVTOPTB94086
+		custom_tooltip = { text = improve_learning_quit }
+	}
+}
+
+# # al-Otis Aftermath (Muslim version)
+# character_event = {
+	# id = 94094
+	# desc = EVTDESC94094
+	# picture = GFX_evt_council
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94086
+		# character_event = { id = 94096 days = 15 random = 5 tooltip = EVTTOOLTIP94089 }
+	# }
+	# option = {
+		# name = EVTOPTB94086
+		# custom_tooltip = improve_learning_quit
+	# }
+# }
+
+# Meldrick Aftermath
+character_event = {
+	id = 94087
+	desc = EVTDESC94087
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94087
+		character_event = { id = 94090 days = 15 random = 5 tooltip = EVTTOOLTIP94090 }
+	}
+	option = {
+		name = EVTOPTB94087
+		custom_tooltip = { text = improve_learning_quit }
+	}
+}
+
+# # Ba'ah al-Drik Aftermath (Muslim version)
+# character_event = {
+	# id = 94095
+	# desc = EVTDESC94095
+	# picture = GFX_evt_whispers
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94087
+		# character_event = { id = 94097 days = 15 random = 5 tooltip = EVTTOOLTIP94097 }
+	# }
+	# option = {
+		# name = EVTOPTB94087
+		# custom_tooltip = improve_learning_quit
+	# }
+# }
+
+# Dog Aftermath
+character_event = {
+	id = 94088
+	desc = EVTDESC94088
+	picture = GFX_evt_monk
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94088
+		# trigger = { NOT = { religion_group = muslim } }
+		change_learning = 1
+	}
+	# option = {
+		# name = EVTOPTA94091
+		# trigger = { religion_group = muslim }
+		# change_learning = 1
+	# }
+}
+
+# Otis Second Attempt
+character_event = {
+	id = 94089
+	desc = EVTDESC94089
+	picture = GFX_evt_falconing
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94089
+		character_event = { id = 94091 days = 6 tooltip = EVTTOOLTIP94091 }
+	}
+}
+
+# # al-Otis Second Attempt (Muslim version)
+# character_event = {
+	# id = 94096
+	# desc = EVTDESC94096
+	# picture = GFX_evt_falconing
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94096
+		# character_event = { id = 94091 days = 6 tooltip = EVTTOOLTIP94091 }
+	# }
+# }
+
+# Meldrick Second Attempt
+character_event = {
+	id = 94090
+	desc = EVTDESC94090
+	picture = GFX_evt_falconing
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94090
+		character_event = { id = 94091 days = 6 tooltip = EVTTOOLTIP94091 }
+	}
+}
+
+# # Ba'ah al-Drik Second Attempt
+# character_event = {
+	# id = 94097
+	# desc = EVTDESC94097
+	# picture = GFX_evt_falconing
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94090
+		# character_event = { id = 94091 days = 6 tooltip = EVTTOOLTIP94091 }
+	# }
+# }
+
+# Aftermath
+character_event = {
+	id = 94091
+	desc = EVTDESC94091
+	picture = GFX_evt_falconing
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94088
+		# trigger = { NOT = { religion_group = muslim } }
+		change_learning = 2
+	}
+	# option = {
+		# name = EVTOPTA94091
+		# trigger = { religion_group = muslim }
+		# change_learning = 2
+	# }
+}
+
+### St. Augustine's Confessions
+
+# Augustine
+character_event = {
+	id = 94098
+	desc = EVTDESC94098
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_theology
+				NOT = { learning = 9 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		# NOT = { religion_group = muslim }
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+		NOT = { has_character_flag = ancient_tome_taken }
+	}
+	
+	option = {
+		name = EVTOPTA94098
+		character_event = { id = 94099 days = 6 tooltip = EVTTOOLTIP94099 }
+		set_character_flag = ancient_tome
+		set_character_flag = ancient_tome_taken
+	}
+	option = {
+		name = EVTOPTB94098
+		custom_tooltip = { text = improve_learning_quit }
+	}
+}
+
+# Finished Reading
+character_event = {
+	id = 94099
+	desc = EVTDESC94099
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94099
+		change_learning = 2
+	}
+}
+
+### The Shahnameh
+
+# # The Shahnameh
+# character_event = {
+	# id = 94100
+	# desc = "EVTDESC94100"
+	# picture = "GFX_evt_library"
+	# border = GFX_event_normal_frame_religion
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_improve_learning
+		# religion_group = muslim
+		# NOT = { has_character_flag = flying_machine }
+		# NOT = { has_character_flag = ancient_tome }
+		# NOT = { has_character_flag = hermit_visit }
+		# NOT = { has_character_flag = ancient_tome_taken }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = "EVTOPTA94098"
+		# character_event = { id = 94101 days = 6 tooltip = EVTTOOLTIP94099 }
+		# set_character_flag = ancient_tome
+		# set_character_flag = ancient_tome_taken
+	# }
+	# option = {
+		# name = "EVTOPTB94098"
+		# custom_tooltip = improve_learning_quit
+	# }
+# }
+
+# # Finished Reading
+# character_event = {
+	# id = 94101
+	# desc = "EVTDESC94101"
+	# picture = "GFX_evt_library"
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTA94099"
+		# change_learning = 2
+	# }
+# }
+
+### The Hermit
+
+# Hermit
+character_event = {
+	id = 94102
+	desc = EVTDESC94102
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_religion
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_theology
+				NOT = { learning = 9 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+		NOT = { has_character_flag = hermit_visit_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94102
+		character_event = { id = 94103 days = 16 random = 5 tooltip = EVTTOOLTIP94103 }
+		set_character_flag = hermit_visit
+		set_character_flag = hermit_visit_taken
+	}
+	option = {
+		name = EVTOPTB94102
+		custom_tooltip = { text = improve_learning_quit }
+	}
+}
+
+# Arrival
+character_event = {
+	id = 94103
+	desc = EVTDESC94103
+	picture = GFX_evt_carriage
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94103
+		character_event = { id = 94104 tooltip = EVTTOOLTIP94104 }
+	}
+}
+
+# The Old Man Appears
+character_event = {
+	id = 94104
+	desc = EVTDESC94104
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94104
+		character_event = { id = 94105 tooltip = EVTTOOLTIP94105 }
+	}
+	option = {
+		name = EVTOPTB94104
+		custom_tooltip = { text = improve_learning_quit }
+		clr_character_flag = hermit_visit
+	}
+}
+
+# The Cave
+character_event = {
+	id = 94105
+	desc = EVTDESC94105
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94105
+		character_event = { id = 94106 days = 8 random = 3 tooltip = EVTTOOLTIP94106 }
+	}
+}
+
+# Leaving
+character_event = {
+	id = 94106
+	desc = EVTDESC94106
+	picture = GFX_evt_monk
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94106
+		change_learning = 2
+	}
+}
+
+### Roman Engineering
+character_event = {
+	id = 94107
+	desc = EVTDESC94107
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_scholarship
+				NOT = { learning = 10 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+	}
+	
+	option = {
+		name = EVTOPTA94107
+		change_learning = 1
+	}
+}
+
+### Philosophy
+character_event = {
+	id = 94108
+	desc = EVTDESC94108
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_scholarship
+				NOT = { learning = 10 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+	}
+	
+	option = {
+		name = EVTOPTA94108
+		change_learning = 1
+	}
+}
+
+### Astronomy
+character_event = {
+	id = 94109
+	desc = EVTDESC94109
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				OR = {
+					trait = astronomer
+					has_focus = focus_scholarship
+				}	
+				NOT = { learning = 10 }
+			}
+			has_ambition = obj_improve_learning
+		}
+		NOT = { has_character_flag = flying_machine }
+		NOT = { has_character_flag = ancient_tome }
+		NOT = { has_character_flag = hermit_visit }
+	}
+	
+	option = {
+		name = EVTOPTA94109
+		change_learning = 1
+	}
+}
+
+######################
+# Diplomacy Ambition #
+######################
+
+### The Feud
+
+# The Feud
+character_event = {
+	id = 94110
+	desc = EVTDESC94110
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_family
+				NOT = { diplomacy = 9 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+		NOT = { has_character_flag = the_feud_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94110
+		character_event = { id = 94111 days = 5 tooltip = EVTTOOLTIP94111 }
+		set_character_flag = the_feud
+		set_character_flag = the_feud_taken
+	}
+	option = {
+		name = EVTOPTB94110
+		custom_tooltip = { text = improve_diplomacy_quit }
+	}
+}
+
+# The Conference (Choice 1)
+character_event = {
+	id = 94111
+	desc = EVTDESC94111
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			has_ambition = obj_improve_diplomacy
+			has_focus = focus_family
+		}
+	}
+	
+	option = {
+		name = EVTOPTA94111
+		character_event = { id = 94112 tooltip = EVTTOOLTIP94112 }
+	}
+	option = {
+		name = EVTOPTB94111
+		character_event = { id = 94113 tooltip = EVTTOOLTIP94112 }
+	}
+	option = {
+		name = EVTOPTC94111
+		tooltip_info = inbred
+		trigger = {
+			trait = inbred
+		}
+		character_event = { id = 94114 tooltip = EVTTOOLTIP94112 }
+	}
+}
+
+# Appeal to reason
+character_event = {
+	id = 94112
+	desc = EVTDESC94112
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94112
+		character_event = { id = 94119 tooltip = EVTTOOLTIP94119 }
+	}
+}
+
+# Flatter them (Choice 2A)
+character_event = {
+	id = 94113
+	desc = EVTDESC94113
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94113
+		character_event = { id = 94115 tooltip = EVTTOOLTIP94112 }
+	}
+	option = {
+		name = EVTOPTB94113
+		character_event = { id = 94116 tooltip = EVTTOOLTIP94112 }
+	}
+}
+
+# Find common ground (Choice 2B)
+character_event = {
+	id = 94114
+	desc = EVTDESC94114
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94113
+		character_event = { id = 94115 tooltip = EVTTOOLTIP94112 }
+	}
+	option = {
+		name = EVTOPTB94113
+		character_event = { id = 94116 tooltip = EVTTOOLTIP94112 }
+	}
+}
+
+# Their patriotic duty
+character_event = {
+	id = 94115
+	desc = EVTDESC94115
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94112
+		character_event = { id = 94119 tooltip = EVTTOOLTIP94119 }
+	}
+}
+
+# Soothe tempers (Choice 3)
+character_event = {
+	id = 94116
+	desc = EVTDESC94116
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94116
+		character_event = { id = 94117 tooltip = EVTTOOLTIP94112 }
+		pacifists_lose_piety_effect = yes
+	}
+	option = {
+		name = EVTOPTB94116
+		character_event = { id = 94118 tooltip = EVTTOOLTIP94112 }
+	}
+}
+
+# Threaten violence
+character_event = {
+	id = 94117
+	desc = EVTDESC94117
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94112
+		character_event = { id = 94119 tooltip = EVTTOOLTIP94119 }
+	}
+}
+
+# Lambast childish behavior
+character_event = {
+	id = 94118
+	desc = EVTDESC94118
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94118
+		character_event = { id = 94120 tooltip = EVTTOOLTIP94120 }
+	}
+}
+
+# Fight!
+character_event = {
+	id = 94119
+	desc = EVTDESC94119
+	picture = GFX_evt_burning_house
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94119
+		change_diplomacy = 1
+	}
+}
+
+# Peace In Our Time
+character_event = {
+	id = 94120
+	desc = EVTDESC94120
+	picture = GFX_evt_feast
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94120
+		change_diplomacy = 2
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_SETTLED_FEUD
+			}	
+		}
+	}
+}
+
+### The Mirror
+
+# The Mirror
+character_event = {
+	id = 94125
+	desc = EVTDESC94125
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_carousing
+				NOT = { diplomacy = 10 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+		NOT = { has_character_flag = the_mirror_taken }
+	}
+	
+	option = {
+		name = EVTOPTA94125
+		set_character_flag = the_mirror
+		set_character_flag = the_mirror_taken
+	}
+}
+
+# Practise Done
+character_event = {
+	id = 94126
+	desc = EVTDESC94126
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	has_character_flag = the_mirror
+	min_age = 16
+
+	is_triggered_only = yes
+	
+	trigger = {		
+		OR = {
+			has_ambition = obj_improve_diplomacy
+			has_focus = focus_carousing
+		}
+	}
+	
+	option = {
+		name = EVTOPTA94126
+		change_diplomacy = 2
+	}
+}
+
+### The Suicide
+
+# The Suicide
+character_event = {
+	id = 94130
+	desc = EVTDESC94130
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_carousing
+				NOT = { diplomacy = 10 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+		NOT = { has_character_flag = the_suicide_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94130
+		set_character_flag = the_suicide
+		set_character_flag = the_suicide_taken
+		character_event = { id = 94131 tooltip = EVTTOOLTIP94131 }
+	}
+	option = {
+		name = EVTOPTB94130
+		custom_tooltip = { text = improve_diplomacy_quit }
+	}
+}
+
+# Approaching the Jumper
+character_event = {
+	id = 94131
+	desc = EVTDESC94131
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = { # Grab Man
+		name = EVTOPTA94131
+		character_event = { id = 94132 tooltip = EVTTOOLTIP94132 }
+	}
+	option = { # Talk to Man
+		name = EVTOPTB94131
+		random_list = {
+			50 = {
+				character_event = { id = 94136 tooltip = EVTTOOLTIP94136 }
+			}
+			50 = {
+				character_event = { id = 94137 tooltip = EVTTOOLTIP94137 }
+			}
+		}
+	}
+}
+
+# Man Grabbed
+character_event = {
+	id = 94132
+	desc = EVTDESC94132
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = { # Jump
+		name = EVTOPTA94132
+		character_event = { id = 94133 tooltip = EVTTOOLTIP94133 }
+	}
+	option = { # Pull Inside
+		name = EVTOPTB94132
+		character_event = { id = 94135 tooltip = EVTTOOLTIP94135 }
+	}
+}
+
+# Jumping
+character_event = {
+	id = 94133
+	desc = EVTDESC94133
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94133
+		character_event = { id = 94134 tooltip = EVTTOOLTIP94134 }
+	}
+}
+
+# Jumping Aftermath
+character_event = {
+	id = 94134
+	desc = EVTDESC94134
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94134
+		change_diplomacy = 1
+	}
+}
+
+# Man Pulled Inside
+character_event = {
+	id = 94135
+	desc = EVTDESC94135
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94135
+		change_diplomacy = 1
+	}
+}
+
+# Talk Successful
+character_event = {
+	id = 94136
+	desc = EVTDESC94136
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94136
+		change_diplomacy = 2
+	}
+}
+
+# Talk Failure
+character_event = {
+	id = 94137
+	desc = EVTDESC94137
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_diplomacy
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94137
+		change_diplomacy = 1
+	}
+}
+
+### Town Crier
+character_event = {
+	id = 94138
+	desc = EVTDESC94138
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_carousing
+				NOT = { diplomacy = 10 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94138
+		change_diplomacy = 1
+	}
+}
+
+### Foreign Cultures
+character_event = {
+	id = 94139
+	desc = EVTDESC94139
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_carousing
+				NOT = { diplomacy = 10 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+	}
+	
+	option = {
+		name = EVTOPTA94139
+		change_diplomacy = 1
+	}
+}
+
+### Old Diplomat
+character_event = {
+	id = 94156
+	desc = EVTDESC94156
+	picture = GFX_evt_emissary
+	border = GFX_event_normal_frame_diplomacy
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_carousing
+				NOT = { diplomacy = 10 }
+			}
+			has_ambition = obj_improve_diplomacy
+		}
+		NOT = { has_character_flag = the_feud }
+		NOT = { has_character_flag = the_mirror }
+		NOT = { has_character_flag = the_suicide }
+	}
+	
+	option = {
+		name = EVTOPTA94156
+		change_diplomacy = 1
+	}
+}
+
+#####################
+# Intrigue Ambition #
+#####################
+
+### The Necklace
+
+# The Necklace
+character_event = {
+	id = 94140
+	desc = EVTDESC94140
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+		NOT = { has_character_flag = the_necklace_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = { # Do it
+		name = EVTOPTA94140
+		set_character_flag = the_necklace
+		set_character_flag = the_necklace_taken
+		character_event = { id = 94141 days = 3 tooltip = EVTTOOLTIP94141 }
+	}
+	option = { # Don't do it
+		name = EVTOPTB94140
+		custom_tooltip = { text = improve_intrigue_quit }
+	}
+}
+
+# The Theft
+character_event = {
+	id = 94141
+	desc = EVTDESC94141
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { trait = honorable }
+	}
+	
+	option = { # Magda
+		name = EVTOPTA94141
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94142 tooltip = EVTTOOLTIP94142 }
+	}
+	option = { # Meldrick
+		name = EVTOPTB94141
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94149 tooltip = EVTTOOLTIP94149 }
+	}
+	# option = { # Wafaa
+		# name = EVTOPTC94141
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94142 tooltip = EVTTOOLTIP94142 }
+	# }
+	# option = {	# Bah al-Drik
+		# name = EVTOPTD94141
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94149 tooltip = EVTTOOLTIP94149 }
+	# }
+}
+
+# Cook's Wife
+character_event = {
+	id = 94142
+	desc = EVTDESC94142
+	picture = GFX_evt_quarrel
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94142
+		character_event = { id = 94143 days = 3 tooltip = EVTTOOLTIP94143 }
+	}
+}
+
+# Cook's Wife, Theft Discovered
+character_event = {
+	id = 94143
+	desc = EVTDESC94143
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = { # Magda
+		name = EVTOPTA94143
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94144 tooltip = EVTTOOLTIP94144 }
+	}
+	# option = { # Wafaa
+		# name = EVTOPTB94143
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94144 tooltip = EVTTOOLTIP94144 }
+	# }
+}
+
+# Cook's Wife Caught
+character_event = {
+	id = 94144
+	desc = EVTDESC94144
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94144
+		character_event = { id = 94145 tooltip = EVTTOOLTIP94145 }
+	}
+}
+
+# Cook's Wife Aftermath
+character_event = {
+	id = 94145
+	desc = EVTDESC94145
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94145
+		change_intrigue = 3
+		if = {
+			limit = { 
+				NOT = { 
+					trait = deceitful
+					trait = honest
+					trait = honorable
+				}
+			}
+			random = {
+				chance = 60
+				add_trait = deceitful
+				hidden_tooltip = {
+					character_event = {
+						id = 38255 #Notify Deceitful
+					}
+				}
+			}
+		}
+		if = {
+			limit = { trait = honest }
+			remove_trait = honest
+		}
+		hidden_tooltip = {
+			random_list = {
+				40 = {
+				}
+				60 = {
+					character_event = { id = 94146 days = 3000 random = 100 }
+				}
+			}
+		}
+	}
+}
+
+# Cook's Wife Forgotten
+character_event = {
+	id = 94146
+	desc = EVTDESC94146
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94146
+		# trigger = { NOT = { religion_group = muslim } }
+		custom_tooltip = {
+			text = hurry_dungeons
+			hidden_tooltip = {
+				random_list = {
+					50 = {
+						character_event = { id = 94147 }
+					}
+					50 = {
+						character_event = { id = 94148 }
+					}
+				}
+			}
+		}
+	}
+	# option = {
+		# name = EVTOPTB94146
+		# trigger = { religion_group = muslim }
+		# hidden_tooltip = {
+			# random_list = {
+				# 50 = {
+					# character_event = { id = 94147 }
+				# }
+				# 50 = {
+					# character_event = { id = 94148 }
+				# }
+			# }
+		# }
+	# }
+}
+
+# Cook's Wife Dead
+character_event = {
+	id = 94147
+	desc = EVTDESC94147
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94147
+		piety = -50
+	}
+}
+
+# Cook's Wife Alive
+character_event = {
+	id = 94148
+	desc = EVTDESC94148
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94148
+		piety = -25
+	}
+}
+
+# Servant
+character_event = {
+	id = 94149
+	desc = EVTDESC94149
+	picture = GFX_evt_drunk
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94149
+		character_event = { id = 94150 tooltip = EVTTOOLTIP94143 }
+	}
+}
+
+# Servant, Theft Discovered
+character_event = {
+	id = 94150
+	desc = EVTDESC94150
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = { # Meldrick
+		name = EVTOPTA94150
+		# trigger = { NOT = { religion_group = muslim } }
+		character_event = { id = 94151 tooltip = EVTTOOLTIP94151 }
+	}
+	# option = { # Arab Meldrick
+		# name = EVTOPTB94150
+		# trigger = { religion_group = muslim }
+		# character_event = { id = 94151 tooltip = EVTTOOLTIP94151 }
+	# }
+}
+
+# Servant Caught
+character_event = {
+	id = 94151
+	desc = EVTDESC94151
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94151
+		character_event = { id = 94152 tooltip = EVTTOOLTIP94145 }
+	}
+}
+
+# Servant Aftermath
+character_event = {
+	id = 94152
+	desc = EVTDESC94152
+	picture = GFX_evt_scandal
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94152
+		change_intrigue = 3
+		if = {
+			limit = { 
+				NOT = { 
+					trait = deceitful
+					trait = honest
+					trait = honorable
+				}
+			}
+			random = {
+				chance = 60
+				add_trait = deceitful
+				hidden_tooltip = {
+					character_event = {
+						id = 38255 #Notify Deceitful
+					}
+				}
+			}
+		}
+		if = {
+			limit = { trait = honest }
+			remove_trait = honest
+		}
+		hidden_tooltip = {
+			random_list = {
+				40 = {
+				}
+				60 = {
+					character_event = { id = 94153 days = 3000 random = 100}
+				}
+			}
+		}
+	}
+}
+
+# Servant Forgotten
+character_event = {
+	id = 94153
+	desc = EVTDESC94153
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = meldrick_fly }
+	}
+	
+	option = {
+		name = EVTOPTA94153
+		custom_tooltip = { 
+			text = hurry_dungeons
+			hidden_tooltip = {
+				random_list = {
+					50 = {
+						character_event = { id = 94154 }
+					}
+					50 = {
+						character_event = { id = 94155 }
+					}
+				}
+			}
+		}
+		#trigger = { NOT = { religion_group = muslim } }
+	}
+	# option = {
+		# name = EVTOPTA94153
+		# custom_tooltip = hurry_dungeons
+		# trigger = { religion_group = muslim }
+		# hidden_tooltip = {
+			# random_list = {
+				# 50 = {
+					# character_event = { id = 94154 }
+				# }
+				# 50 = {
+					# character_event = { id = 94155 }
+				# }
+			# }
+		# }
+	# }
+}
+
+# Servant Dead
+character_event = {
+	id = 94154
+	desc = EVTDESC94154
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94154
+		piety = -50
+	}
+}
+
+# Servant Alive
+character_event = {
+	id = 94155
+	desc = EVTDESC94155
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94155
+		piety = -25
+	}
+}
+
+### Gossip
+
+# Gossip
+character_event = {
+	id = 94160
+	desc = EVTDESC94160
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+		NOT = { has_character_flag = gossip_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94160
+		set_character_flag = gossip
+		set_character_flag = gossip_taken
+		character_event = { id = 94161 days = 72 random = 20 tooltip = EVTTOOLTIP94161 }
+	}
+	option = {
+		name = EVTOPTB94160
+		custom_tooltip = { text = improve_intrigue_quit }
+	}
+}
+
+# Gossip learned
+character_event = {
+	id = 94161
+	desc = EVTDESC94161
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94161
+		change_intrigue = 2
+	}
+}
+
+### Old Spymaster
+
+# Old Spymaster
+character_event = {
+	id = 94165
+	desc = EVTDESC94165
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+		NOT = { has_character_flag = old_spymaster_taken }
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	option = {
+		name = EVTOPTA94165
+		set_character_flag = old_spymaster
+		set_character_flag = old_spymaster_taken
+		character_event = { id = 94166 days = 15 tooltip = EVTTOOLTIP94166 }
+	}
+	option = {
+		name = EVTOPTB94165
+		custom_tooltip = { text = improve_intrigue_quit }
+	}
+}
+
+# Visit
+character_event = {
+	id = 94166
+	desc = EVTDESC94166
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94166
+		character_event = { id = 94167 tooltip = EVTTOOLTIP94167 }
+	}
+}
+
+# Agreed to teach
+character_event = {
+	id = 94167
+	desc = EVTDESC94167
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94167
+		character_event = { id = 94168 days = 190 random = 40 tooltip = EVTTOOLTIP94168 }
+	}
+}
+
+# Training complete
+character_event = {
+	id = 94168
+	desc = EVTDESC94168
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA94168
+		change_intrigue = 2
+	}
+}
+
+### Alchemy
+character_event = {
+	id = 94169
+	desc = EVTDESC94169
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+	}
+	
+	option = {
+		name = EVTOPTA94169
+		change_intrigue = 1
+	}
+}
+
+### Improved Bodygard
+character_event = {
+	id = 94172
+	desc = EVTDESC94172
+	picture = GFX_evt_carriage
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+	}
+	
+	option = {
+		name = EVTOPTA94172
+		change_intrigue = 1
+	}
+}
+
+### Old Assassin
+character_event = {
+	id = 94173
+	desc = EVTDESC94173
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	only_playable = yes
+	min_age = 16
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			AND = {
+				has_focus = focus_intrigue
+				NOT = { intrigue = 10 }
+			}
+			has_ambition = obj_improve_intrigue
+		}
+		NOT = { has_character_flag = the_necklace }
+		NOT = { has_character_flag = gossip }
+		NOT = { has_character_flag = old_spymaster }
+	}
+	
+	option = {
+		name = EVTOPTA94173
+		change_intrigue = 1
+	}
+}
+
+######################
+# Decadence Ambition #
+######################
+
+# ### Berber Life
+
+# # Berber Life
+# character_event = {
+	# id = 94170
+	# desc = EVTDESC94170
+	# picture = GFX_evt_desert
+	# border = GFX_event_normal_frame_religion
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+		# NOT = { has_character_flag = berber_life_taken }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94170
+		# set_character_flag = berber_life
+		# set_character_flag = berber_life_taken
+		# character_event = { id = 94171 days = 15 tooltip = EVTTOOLTIP94171 }
+	# }
+	# option = {
+		# name = EVTOPTB94170
+		# custom_tooltip = lower_decadence_quit
+	# }
+# }
+
+# # Living with Berbers
+# character_event = {
+	# id = 94171
+	# desc = EVTDESC94171
+	# picture = GFX_evt_desert
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94171
+		# decadence = -5
+	# }
+# }
+
+# ### The Bandit Camp
+
+# # The Bandit Camp
+# character_event = {
+	# id = 94175
+	# desc = EVTDESC94175
+	# picture = GFX_evt_moors
+	# border = GFX_event_normal_frame_religion
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+		# NOT = { has_character_flag = bandit_camp_taken }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94175
+		# set_character_flag = bandit_camp
+		# set_character_flag = bandit_camp_taken
+		# character_event = { id = 94176 days = 3 tooltip = EVTTOOLTIP94176 }
+	# }
+	# option = {
+		# name = EVTOPTB94175
+		# custom_tooltip = lower_decadence_quit
+	# }
+	# option = {
+		# name = EVTOPTC94175
+		# trigger = { age = 60 }
+		# custom_tooltip = lower_decadence_quit
+	# }
+# }
+
+# # Sneak up on Camp
+# character_event = {
+	# id = 94176
+	# desc = EVTDESC94176
+	# picture = GFX_evt_bandits
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94176
+		# character_event = { id = 94177 tooltip = EVTTOOLTIP94177 }
+	# }
+	# option = {
+		# name = EVTOPTB94176
+		# tooltip_info = craven
+		# trigger = { trait = craven }
+		# custom_tooltip = lower_decadence_quit
+	# }
+# }
+
+# # The Fight
+# character_event = {
+	# id = 94177
+	# desc = EVTDESC94177
+	# picture = GFX_evt_melee_muslim
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94177
+		# tooltip_info = craven
+		# trigger = { trait = craven }
+		# character_event = { id = 94178 tooltip = EVTTOOLTIP94178 }
+		# random = {
+			# chance = 20
+			# add_trait_silently_wounded_effect = yes
+		# }
+	# }
+	# option = {
+		# name = EVTOPTB94177
+		# tooltip_info = impaler
+		# trigger = { trait = impaler }
+		# character_event = { id = 94178 tooltip = EVTTOOLTIP94178 }
+		# random = {
+			# chance = 5
+			# add_trait_silently_wounded_effect = yes
+		# }
+	# }
+	# option = {
+		# name = EVTOPTC94177
+		# character_event = { id = 94178 tooltip = EVTTOOLTIP94178 }
+		# trigger = { 
+			# NOT = {
+				# trait = impaler
+				# trait = craven
+			# }
+		# }
+		# random = {
+			# chance = 10
+			# add_trait_silently_wounded_effect = yes
+		# }
+	# }
+# }
+
+# # Fight Aftermath
+# character_event = {
+	# id = 94178
+	# desc = EVTDESC94178
+	# picture = GFX_evt_bloody_man
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94178
+		# trigger = {
+			# NOT = { trait = impaler }
+		# }
+		# decadence = -5
+	# }
+	# option = {
+		# name = EVTOPTB94178
+		# tooltip_info = impaler
+		# trigger = { trait = impaler }
+		# decadence = -5
+	# }
+# }
+
+# ### The Two-Headed Dromedary Hunt
+
+# # The Hunt
+# character_event = {
+	# id = 94180
+	# desc = EVTDESC94180
+	# picture = GFX_evt_hunt
+	# border = GFX_event_normal_frame_religion
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+		# NOT = { has_character_flag = dromedary_hunt_taken }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94180
+		# set_character_flag = dromedary_hunt
+		# set_character_flag = dromedary_hunt_taken
+		# character_event = { id = 94181 days = 6 tooltip = EVTTOOLTIP94181 }
+	# }
+	# option = {
+		# name = EVTOPTB94180
+		# custom_tooltip = lower_decadence_quit
+	# }
+# }
+
+# # The Hunt Begins
+# character_event = {
+	# id = 94181
+	# desc = EVTDESC94181
+	# picture = GFX_evt_desert
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94181
+		# character_event = { id = 94182 days = 6 tooltip = EVTTOOLTIP94182 }
+	# }
+# }
+
+# # No Sign of the Beast
+# character_event = {
+	# id = 94182
+	# desc = EVTDESC94182
+	# picture = GFX_evt_desert
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94182
+		# character_event = { id = 94183 days = 6 tooltip = EVTTOOLTIP94183 }
+	# }
+# }
+
+# # Hunt is Abandoned
+# character_event = {
+	# id = 94183
+	# desc = EVTDESC94183
+	# picture = GFX_evt_desert
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94183
+		# character_event = { id = 94184 days = 6 tooltip = EVTTOOLTIP94184 }
+	# }
+# }
+
+# # Coming Home
+# character_event = {
+	# id = 94184
+	# desc = EVTDESC94184
+	# picture = GFX_evt_feast
+	# border = GFX_event_normal_frame_religion
+	
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTA94184
+		# decadence = -5
+	# }
+# }
+
+# ### Couriers
+# character_event = {
+	# id = 94185
+	# desc = EVTDESC94185
+	# picture = GFX_evt_bishop_muslim
+	# border = GFX_event_normal_frame_intrigue
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94185
+		# decadence = -3
+	# }
+# }
+
+# ### Palace Stripped of Luxuries
+# character_event = {
+	# id = 94186
+	# desc = EVTDESC94186
+	# picture = GFX_evt_jugglers_muslim
+	# border = GFX_event_normal_frame_intrigue
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94186
+		# decadence = -3
+	# }
+# }
+
+# ### Brothels Closed
+# character_event = {
+	# id = 94187
+	# desc = EVTDESC94187
+	# picture = GFX_evt_sultan
+	# border = GFX_event_normal_frame_intrigue
+	
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# has_ambition = obj_lower_decadence
+		# NOT = { has_character_flag = berber_life }
+		# NOT = { has_character_flag = bandit_camp }
+		# NOT = { has_character_flag = dromedary_hunt }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 280
+	# }
+	
+	# option = {
+		# name = EVTOPTA94187
+		# decadence = -3
+	# }
+# }
+####################
+# Make the Eight Ambition #
+####################
+#Lusty/Hedonist/unmarried commander finds peasant girl at war
+#Lusty/Hedonist/unmarried player finds girl of random culture at feast
+#Lusty/Hedonist/unmarried player finds girl of random culture at fair
+#Lusty/Hedonist/unmarried player finds girl of hosts culture at tournament
+#Track cultures a character has laid with in various events
+character_event = {
+	id = ambition.1
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_ambition = obj_make_the_eight
+	}
+
+	immediate = {
+		FROM = {
+			if = {
+				limit = { culture = stormlander }
+				ROOT = { set_character_flag = made_stormlander }
+			}
+			if = {
+				limit = { culture = reachman }
+				ROOT = { set_character_flag = made_reachman }
+			}
+			if = {
+				limit = { culture = valeman }
+				ROOT = { set_character_flag = made_valeman }
+			}
+			if = {
+				limit = { culture = westerman }
+				ROOT = { set_character_flag = made_westerman }
+			}
+			if = {
+				limit = { culture = riverlander }
+				ROOT = { set_character_flag = made_riverlander }
+			}
+			if = {
+				limit = { culture_group = iron_isles_culture }
+				ROOT = { set_character_flag = made_ironborn }
+			}
+			if = {
+				limit = { northman_culture_trigger = yes }
+				ROOT = { set_character_flag = made_northman }
+			}
+			if = {
+				limit = { 
+					culture_group = dornish
+					NOT = { culture = rhoynar }
+				}
+				ROOT = { set_character_flag = made_dornish }
+			}
+		}
+	}
+	option = {
+		name = OK
+	}	
+}
+
+#Lusty/Hedonist/unmarried commander finds peasant girl at war
+character_event = {
+	id = ambition.2
+	desc = EVTDESCambition.2
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	only_playable = yes
+	only_men = yes
+	min_age = 14	
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	trigger = {
+		has_ambition = obj_make_the_eight		
+		NOT = { in_battle = yes }		
+		location = { 
+			OR = {
+				culture_group = andal
+				culture_group = iron_isles_culture
+				northman_culture_trigger = yes
+				culture_group = dornish
+			}	
+			NOT = { culture = old_andal }
+			NOT = { culture = crownlander }
+			NOT = { culture = sisterman }
+			NOT = { culture = rhoynar }
+			any_province_lord = {
+				war = yes
+				NOT = { same_realm = ROOT }
+			}
+		}
+	}
+
+	immediate = {
+		location = {
+			owner = {
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					female = yes
+					age = 18
+					culture = PREV
+					religion = PREV
+				}
+				new_character = { set_character_flag = war_wench }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 2
+			trait = hedonist
+		}
+		modifier = {
+			factor = 1.25
+			is_married = no
+		}
+		modifier = {
+			factor = 2
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.66
+			age = 50
+		}
+		modifier = {
+			factor = 0.66
+			age = 60
+		}
+		modifier = {
+			factor = 0.5
+			has_lover = yes
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture = stormlander
+			}
+			has_character_flag = made_stormlander
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture = reachman
+			}
+			has_character_flag = made_reachman
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture = valeman
+			}
+			has_character_flag = made_valeman
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture = westerman
+			}
+			has_character_flag = made_westerman
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture = riverlander
+			}
+			has_character_flag = made_riverlander
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture_group = iron_isles_culture
+			}
+			has_character_flag = made_ironborn
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				northman_culture_trigger = yes	
+			}
+			has_character_flag = made_northman
+		}
+		modifier = {
+			factor = 0.01
+			location = {
+				culture_group = dornish
+				NOT = { culture = rhoynar }
+			}
+			has_character_flag = made_dornish
+		}
+
+	}
+
+	option = { #She seems willing to make your aquaintance. #Fair
+		name = EVTOPTAambition.2
+		trigger = { 
+			OR = {
+				has_fair_trait_trigger = yes 
+				is_strong_trigger = yes
+				trait = tall
+				higher_tier_than = DUKE
+				any_dynasty_member = { is_close_relative = ROOT higher_tier_than = DUKE }
+				location = {
+					owner = {
+						any_courtier = {
+							has_character_flag = war_wench
+							opinion = { who = ROOT value = 20 }
+						}
+					}
+				}
+			}	
+		}
+		ai_chance = { factor = 90 }
+		if = {
+			limit = {
+				location = {
+					culture = stormlander
+				}			
+			}
+			set_character_flag = made_stormlander
+		}
+		if = {
+			limit = {
+				location = {
+					culture = reachman
+				}
+			}
+			set_character_flag = made_reachman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = valeman
+				}
+			}
+			set_character_flag = made_valeman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = westerman
+				}
+			}
+			set_character_flag = made_westerman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = riverlander
+				}
+			}
+			set_character_flag = made_riverlander
+		}
+		if = {
+			limit = {
+				location = {
+					culture_group = iron_isles_culture
+				}
+			}
+			set_character_flag = made_ironborn
+		}
+		if = {
+			limit = {
+				location = {
+					northman_culture_trigger = yes
+				}
+			}
+			set_character_flag = made_northman
+		}
+		if = {
+			limit = {
+				location = {
+					culture_group = dornish
+					NOT = { culture = rhoynar }
+				}
+			}
+			set_character_flag = made_dornish
+		}
+		location = {
+			owner = {
+				random_courtier = {
+					limit = { has_character_flag = war_wench }
+					if = {
+						limit = { ROOT = { fertility = 0.9 } }
+						impregnate = ROOT
+					}	
+					if = {
+						limit = { 
+							ROOT = { 
+								NOT = { fertility = 0.9 }
+								fertility = 0.5
+							} 
+						}
+						random = {
+							chance = 66
+							impregnate = ROOT
+						}	
+					}
+					if = {
+						limit = { 
+							ROOT = { 
+								NOT = { fertility = 0.5 }
+								fertility = 0.1
+							} 
+						}
+						random = {
+							chance = 33
+							impregnate = ROOT
+						}	
+					}
+					if = {
+						limit = { ROOT = { NOT = { fertility = 0.1 } } }
+						random = {
+							chance = 10
+							impregnate = ROOT
+						}	
+					}
+					clr_character_flag = war_wench
+				}
+			}
+		}
+	}
+	
+	option = { #She screams and tries to run away putting up a fight.
+		name = EVTOPTEambition.2
+		trigger = { 
+			NOT = {
+				OR = {
+					has_fair_trait_trigger = yes 
+					is_strong_trigger = yes
+					trait = tall
+					higher_tier_than = DUKE
+					any_dynasty_member = { is_close_relative = ROOT higher_tier_than = DUKE }
+					location = {
+						owner = {
+							any_courtier = {
+								has_character_flag = war_wench
+								opinion = { who = ROOT value = 20 }
+							}
+						}
+					}
+				}
+			}	
+		}
+		ai_chance = { factor = 90 }
+		random_list = {
+			10 = { add_trait_silently_wounded_effect = yes }
+			88 = { }
+			1 = { add_trait = eunuch }
+			1 = { add_trait = blinded }
+		}
+		if = {
+			limit = {
+				location = {
+					culture = stormlander
+				}
+			}
+			set_character_flag = made_stormlander
+		}
+		if = {
+			limit = {
+				location = {
+					culture = reachman
+				}
+			}
+			set_character_flag = made_reachman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = valeman
+				}
+			}
+			set_character_flag = made_valeman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = westerman
+				}
+			}
+			set_character_flag = made_westerman
+		}
+		if = {
+			limit = {
+				location = {
+					culture = riverlander
+				}
+			}
+			set_character_flag = made_riverlander
+		}
+		if = {
+			limit = {
+				location = {
+					culture_group = iron_isles_culture
+				}
+			}
+			set_character_flag = made_ironborn
+		}
+		if = {
+			limit = {
+				location = {
+					northman_culture_trigger = yes
+				}
+			}
+			set_character_flag = made_northman
+		}
+		if = {
+			limit = {
+				location = {
+					culture_group = dornish
+					NOT = { culture = rhoynar }
+				}
+			}
+			set_character_flag = made_dornish
+		}
+		location = {
+			owner = {
+				random_courtier = {
+					limit = { has_character_flag = war_wench }
+					if = {
+						limit = { ROOT = { fertility = 0.9 } }
+						impregnate = ROOT
+					}	
+					if = {
+						limit = { 
+							ROOT = { 
+								NOT = { fertility = 0.9 }
+								fertility = 0.5
+							} 
+						}
+						random = {
+							chance = 66
+							impregnate = ROOT
+						}	
+					}
+					if = {
+						limit = { 
+							ROOT = { 
+								NOT = { fertility = 0.5 }
+								fertility = 0.1
+							} 
+						}
+						random = {
+							chance = 33
+							impregnate = ROOT
+						}	
+					}
+					if = {
+						limit = { ROOT = { NOT = { fertility = 0.1 } } }
+						random = {
+							chance = 10
+							impregnate = ROOT
+						}	
+					}
+					clr_character_flag = war_wench
+				}
+			}
+		}
+	}
+	option = { #Leave her alone.
+		name = EVTOPTFambition.2
+		trigger = {
+			NOT = { trait = ruthless }
+			NOT = { trait = deceitful }
+		}
+		ai_chance = { factor = 0 }
+		random = {
+			chance = 25
+			add_trait = honorable
+			hidden_tooltip = { character_event = { id = trait_notification.8 } }
+		}	
+		hidden_tooltip = {
+			location = {
+				owner = {
+					random_courtier = {
+						limit = { has_character_flag = war_wench }
+						clr_character_flag = war_wench
+					}
+				}
+			}
+		}	
+	}
+}
+#Lusty/Hedonist/unmarried player finds girl of random culture at tournament
+character_event = {
+	id = ambition.3
+	desc = EVTDESCambition.3
+	picture = "GFX_evt_joust"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random_opinion_modifier_target = {
+			limit = {
+				is_ruler = yes
+				OR = {
+					has_character_flag = melee_begins
+					has_character_flag = tournament_begins
+				}	
+				OR = {			
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_tournament }
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_spectating_tournament }
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				}
+				OR = {
+					culture_group = andal
+					culture_group = iron_isles_culture
+					northman_culture_trigger = yes
+					culture_group = dornish
+				}	
+				NOT = { culture = old_andal }
+				NOT = { culture = crownlander }
+				NOT = { culture = sisterman }
+				NOT = { culture = rhoynar }
+			}
+			save_event_target_as = tourney_host
+		}
+	}
+	
+	option = { #She seems willing to make your aquaintance. 
+		name = EVTOPTAambition.3
+		ai_chance = { factor = 85 }
+		event_target:tourney_host = {
+			if = {
+				limit = { culture = stormlander }
+				ROOT = { set_character_flag = made_stormlander }
+			}
+			if = {
+				limit = { culture = reachman }
+				ROOT = { set_character_flag = made_reachman }
+			}
+			if = {
+				limit = { culture = valeman }
+				ROOT = { set_character_flag = made_valeman }
+			}
+			if = {
+				limit = { culture = westerman }
+				ROOT = { set_character_flag = made_westerman }
+			}
+			if = {
+				limit = { culture = riverlander }
+				ROOT = { set_character_flag = made_riverlander }
+			}
+			if = {
+				limit = { culture_group = iron_isles_culture }
+				ROOT = { set_character_flag = made_ironborn }
+			}
+			if = {
+				limit = { northman_culture_trigger = yes }
+				ROOT = { set_character_flag = made_northman }
+			}
+			if = {
+				limit = { 
+					culture_group = dornish
+					NOT = { culture = rhoynar }
+				}
+				ROOT = { set_character_flag = made_dornish }
+			}			
+		}	
+	}
+	
+	option = { #Take as lover
+		name = EVTOPTBambition.30
+		ai_chance = { factor = 15 }
+		event_target:tourney_host = {
+			create_character = {
+				random_traits = yes
+				dynasty = none
+				culture = THIS
+				religion = THIS
+				female = yes
+				age = 18
+			}
+			new_character = { 
+				add_lover = ROOT 
+				cultural_congenital_trait_chance_effect = yes
+				remove_trait = ugly
+				remove_trait = dwarf
+				remove_trait = hunchback
+				remove_trait = clubfooted
+				remove_trait = harelip
+				random = {
+					chance = 20
+					add_trait = fair
+				}
+			}
+		}	
+	}
+	
+	option = { #Leave her alone.
+		name = EVTOPTFambition.2
+		ai_chance = { factor = 0 }
+		if = {
+			limit = {
+				NOT = { trait = honorable }
+				NOT = { trait = ruthless}
+				NOT = { trait = deceitful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = honorable
+				hidden_tooltip = { character_event = { id = trait_notification.8 } }
+			}
+		}	
+	}
+}
+#Wench claims she is from another kingdom
+character_event = {
+	id = ambition.4
+
+	hide_window = yes
+	
+	only_playable = yes
+	only_men = yes
+	min_age = 14	
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_ambition = obj_make_the_eight
+		NOT = { in_battle = yes }
+		NOT = { is_inaccessible_trigger = yes }		
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+		
+		modifier = {
+			factor = 0.66
+			e_iron_throne = { has_holder=  no } #harder in disunited westeros
+		}
+		modifier = {
+			factor = 0.75
+			trait = gregarious
+		}
+		modifier = {
+			factor = 0.75
+			has_fair_trait_trigger = yes
+		}
+		modifier = {
+			factor = 0.5
+			trait = hedonist
+		}
+		modifier = {
+			factor = 0.75
+			is_married = no
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 2
+			has_lover = yes
+		}
+		modifier = {
+			factor = 1.5
+			trait = shy
+		}
+		modifier = {
+			factor = 1.5
+			has_ugly_trait_trigger = yes
+		}
+	}
+
+	immediate = {
+		random_playable_ruler = { #scope to ruler of random culture to scope for wench's culture
+			limit = {
+				OR = {
+					AND = {
+						culture = stormlander
+						ROOT = { NOT = { has_character_flag = made_stormlander } }
+					}
+					AND = {
+						culture = reachman
+						ROOT = { NOT = { has_character_flag = made_reachman } }
+					}
+					AND = {
+						culture = valeman
+						ROOT = { NOT = { has_character_flag = made_valeman } }
+					}
+					AND = {
+						culture = westerman
+						ROOT = { NOT = { has_character_flag = made_westerman } }
+					}
+					AND = {
+						culture = riverlander
+						ROOT = { NOT = { has_character_flag = made_riverlander } }
+					}
+					AND = {
+						culture_group = iron_isles_culture
+						ROOT = { NOT = { has_character_flag = made_ironborn } }
+					}
+					AND = {
+						northman_culture_trigger = yes
+						ROOT = { NOT = { has_character_flag = made_northman } }
+					}
+					AND = {
+						culture_group = dornish
+						NOT = { culture = rhoynar }
+						ROOT = { NOT = { has_character_flag = made_dornish } }
+					}
+				}
+				NOT = { culture = ROOT }
+				NOT = { ROOT = { any_spouse = { culture = PREVPREV } } }
+				NOT = { ROOT = { any_consort = { culture = PREVPREV } } }
+				NOT = { ROOT = { any_lover = { culture = PREVPREV } } }
+			}
+			character_event = { id = ambition.5 }
+		}
+	}
+	
+	option = { 
+		name = OK
+	}
+}
+character_event = {
+	id = ambition.5
+
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+		FROM = { 
+			character_event = { id = ambition.6 }
+		}
+	}
+	
+	option = { 
+		name = OK
+	}
+}
+#Wench claims she is from another kingdom
+character_event = {
+	id = ambition.6
+	desc = EVTDESCambition.6
+	picture = GFX_evt_lovers
+	
+	is_triggered_only = yes
+	hide_from = yes
+
+	option = { 
+		name = EVTOPTAambition.6
+		wealth = -15
+		health = 0.1
+		fertility = 0.05
+		if = {
+			limit = {
+				FROM = {
+					culture = stormlander
+				}			
+			}
+			set_character_flag = made_stormlander
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture = reachman
+				}
+			}
+			set_character_flag = made_reachman
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture = valeman
+				}
+			}
+			set_character_flag = made_valeman
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture = westerman
+				}
+			}
+			set_character_flag = made_westerman
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture = riverlander
+				}
+			}
+			set_character_flag = made_riverlander
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture_group = iron_isles_culture
+				}
+			}
+			set_character_flag = made_ironborn
+		}
+		if = {
+			limit = {
+				FROM = {
+					northman_culture_trigger = yes
+				}
+			}
+			set_character_flag = made_northman
+		}
+		if = {
+			limit = {
+				FROM = {
+					culture_group = dornish
+					NOT = { culture = rhoynar }
+				}
+			}
+			set_character_flag = made_dornish
+		}
+	}
+}
+####################
+# Expand Realm Ambition #
+####################
+#Grand Council Called
+character_event = {
+	id = ambition.10
+	title = EVTTITLEambition.10
+	desc = EVTDESCambition.10
+	picture = "GFX_evt_courier"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	# immediate = {
+		# hidden_tooltip = {
+			# random_vassal = { #strongest vassal can be offered marriage alliance
+				# limit = {
+					# is_theocracy = no		
+					# NOT = { trait = incapable }
+					# is_adult = yes
+					# prisoner = no
+					# ROOT = { 
+						# NOT = {
+							# any_vassal = {
+								# is_theocracy = no
+								# NOT = { trait = incapable }
+								# is_adult = yes
+								# prisoner = no
+								# relative_power = {
+									# who = PREVPREV
+									# power = 1.01
+								# }
+							# }
+						# }
+					# }	
+					# any_child = {
+						# age = 5
+						# NOT = { age = 24 }
+						# can_marry = yes
+						# is_married = no
+						# is_betrothed = no
+						# fertility = 0.1
+						# NOT = { trait = incapable }
+						# ai = yes
+						# ROOT = {
+							# any_child = {
+								# age = 5
+								# NOT = { age = 24 }
+								# can_marry = yes
+								# can_marry = PREVPREV
+								# is_married = no
+								# is_betrothed = no
+								# fertility = 0.1
+								# NOT = { trait = incapable }
+								# ai = yes
+							# }
+						# }
+					# }
+				# }
+				# set_character_flag = offer_marriage_alliance
+			# }
+		# }
+	# }
+	
+	option = {
+		name = EVTOPTAambition.10
+		
+		##AI skip to end for optimisation##
+		if = { 
+			limit = {
+				NOR = {
+					ai = no
+					any_player = { is_liege_or_above = ROOT }
+				}	
+			}
+			any_realm_lord = { #All important vassals/courtiers determine support
+				limit = {
+					has_regent = no
+					OR = {
+						liege = { character = ROOT }
+						AND = {
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { liege = { character = ROOT } }
+						}
+						is_close_relative = ROOT
+					}
+					OR = {
+						NOT = { tier = BARON }
+						ROOT = { NOT = { higher_tier_than = DUKE } }
+						AND = { 
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { character = ROOT }
+						}
+						is_close_relative = ROOT
+					}
+				}
+				character_event = { id = ambition.23 }
+			}
+			any_courtier = { #Other important unlanded characters also summoned
+				limit = {
+					is_ruler = no
+					NOT = { trait = incapable }
+					prisoner = no
+					OR = {
+						trait = dragon_rider
+						AND = { 
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { character = ROOT }
+						}
+						AND = { #Closely related dynasts
+							dynasty = ROOT
+							is_close_relative = ROOT
+							is_adult = yes
+							NOT = { trait = maester }
+							OR = { #Welcome genders depends on succession law
+								ROOT = { primary_title = { has_law = true_cognatic_succession } }
+								ROOT = { current_heir = { character = PREVPREV } }
+								AND = {
+									is_female = no
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = agnatic_succession 
+												has_law = cognatic_succession 
+											}	
+										} 
+									}
+								}
+								AND = {
+									is_female = yes
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = enatic_succession
+												has_law = enatic_cognatic_succession
+											}	
+										} 
+									}
+								}
+							}
+						}
+					}
+				}
+				character_event = { id = ambition.23 }
+			}	
+			character_event = { id = ambition.26 }
+			break = yes
+		}
+		
+		##Player only events##
+		add_character_modifier = {
+			name = holding_large_feast
+			duration = 365
+		}
+		hidden_tooltip = {
+			character_event = { id = 72003 days = 4 } #Food prep	
+			character_event = { id = feast.1 } #Random Events
+			character_event = { id = ambition.13 days = 30 } #council begins		
+			any_realm_lord = { #All important vassals summoned
+				limit = {
+					OR = {
+						liege = { character = ROOT }
+						AND = {
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { liege = { character = ROOT } }
+						}
+						is_close_relative = ROOT
+					}
+					OR = {
+						NOT = { tier = BARON }
+						ROOT = { NOT = { higher_tier_than = DUKE } }
+						AND = { 
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { character = ROOT }
+						}
+						is_close_relative = ROOT
+					}
+				}
+				letter_event = { id = ambition.11 }
+			}
+			any_realm_character = { #Other important unlanded characters also summoned
+				limit = {
+					is_ruler = no
+					NOT = { trait = incapable }
+					prisoner = no
+					OR = {
+						trait = dragon_rider
+						AND = { 
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							liege = { character = ROOT }
+						}
+						AND = { #Closely related dynasts
+							dynasty = ROOT
+							is_close_relative = ROOT
+							is_adult = yes
+							NOT = { trait = maester }
+							OR = { #Welcome genders depends on succession law
+								ROOT = { primary_title = { has_law = true_cognatic_succession } }
+								ROOT = { current_heir = { character = PREVPREV } }
+								AND = {
+									is_female = no
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = agnatic_succession 
+												has_law = cognatic_succession 
+											}	
+										} 
+									}
+								}
+								AND = {
+									is_female = yes
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = enatic_succession
+												has_law = enatic_cognatic_succession
+											}	
+										} 
+									}
+								}
+							}
+						}
+					}
+				}
+				set_character_flag = attending_grand_council
+			}		
+		}
+	}
+}
+#Grand Council Called
+letter_event = {
+	id = ambition.11
+	title = EVTTITLEambition.11
+	desc = EVTDESCambition.11
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.11
+		trigger = {
+			NOT = { trait = incapable }
+			is_adult = yes
+			prisoner = no
+		}
+		set_character_flag = attending_grand_council
+		# hidden_tooltip = {
+			# if = {
+				# limit = { has_character_flag = offer_marriage_alliance }	
+				# FROM = { character_event = { id = ambition.28 days = 2 } }
+				# clr_character_flag = offer_marriage_alliance
+			# }	
+		# }
+	}
+	option = {
+		name = EVTOPTBambition.11
+		trigger = {
+			OR = {
+				trait = incapable
+				is_adult = no
+				prisoner = yes
+			}	
+		}
+		regent = {
+			character_event = { id = ambition.12 tooltip = TOOLTIPambition.12 days = 1 }
+		}	
+	}
+}
+character_event = { #regent attends in lord's stead
+	id = ambition.12
+	title = EVTTITLEambition.12
+	desc = EVTDESCambition.12
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.12
+		set_character_flag = attending_grand_council
+		set_character_flag = grand_council_regent
+	}
+}
+#The Lords have Arrived
+character_event = {
+	id = ambition.13
+	desc = EVTDESCambition.13
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_flag = called_grand_council
+	}
+	
+	option = {
+		name = EVTOPTAambition.13
+		trigger = { 
+			OR = { #Don't stop for minor wars
+				war = no
+				AND = {
+					is_primary_war_attacker = no
+					is_primary_war_defender = no
+				}
+				AND = {
+					NOT = { any_current_enemy = { demesne_size = 1 } }
+					NOT = { primary_title = { is_contested = yes } }
+				}			
+			}
+			has_ambition = obj_expand_realm	
+		}
+		set_character_flag = host_feast_started
+		if = {
+			limit = { ai = no }
+			if = {
+				limit = { #if many attendees abbreviate list
+					any_realm_character = {
+						has_character_flag = attending_grand_council
+						count = 40
+					}
+				}
+				custom_tooltip = { text = TOOLTIPdynasty.23ARRIVEDB }	
+				any_realm_character = {
+					limit = { 
+						has_character_flag = attending_grand_council 
+						OR = {
+							ai = no
+							higher_tier_than = COUNT
+							AND = {
+								liege = { higher_tier_than = COUNT }
+								liege = { regent = { character = PREVPREV } }
+							}
+							AND = { #Closely related dynasts
+								dynasty = ROOT
+								is_close_relative = ROOT
+							}
+						}
+					}
+					if = {
+						limit = { NOT = { liege = { regent = { character = PREVPREV } } } }
+						custom_tooltip = { text = EVTTOOLTIPdynasty.24 }
+					}			
+					if = {
+						limit = { liege = { regent = { character = PREVPREV } } }
+						custom_tooltip = { text = TOOLTIPdynasty.23REGENT }
+					}
+				}
+			}			
+			if = {
+				limit = {
+					NOT = {
+						any_realm_character = {
+							has_character_flag = attending_grand_council
+							count = 40
+						}
+					}	
+				}
+				custom_tooltip = { text = TOOLTIPdynasty.23ARRIVED }
+				any_realm_character = {
+					limit = { has_character_flag = attending_grand_council }
+					if = {
+						limit = { NOT = { liege = { regent = { character = PREVPREV } } } }
+						custom_tooltip = { text = EVTTOOLTIPdynasty.24 }
+					}			
+					if = {
+						limit = { liege = { regent = { character = PREVPREV } } }
+						custom_tooltip = { text = TOOLTIPdynasty.23REGENT }
+					}
+				}	
+			}	
+		}	
+		hidden_tooltip = { 
+			character_event = { id = feast.2 days = 1 } #Random Events
+			character_event = { id = ambition.913 days = 25 } 
+			any_realm_character = {
+				limit = { has_character_flag = attending_grand_council }
+				character_event = { id = ambition.14 }
+				if = {
+					limit = { is_ruler = yes }
+					hidden_tooltip = { character_event = { id = feast.3 } } #random events
+				}			
+			}
+		}	 
+	}
+	option = {
+		name = EVTOPTBambition.13 #cancelled
+		trigger = { 
+			OR =  {
+				NOT = { has_ambition = obj_expand_realm	}
+				NOR = { #Don't stop for minor wars
+					war = no
+					AND = {
+						is_primary_war_attacker = no
+						is_primary_war_defender = no
+					}
+					AND = {
+						NOT = { any_current_enemy = { demesne_size = 1 } }
+						NOT = { primary_title = { is_contested = yes } }
+					}			
+				}
+			}	
+		}
+		clr_character_flag = called_grand_council
+		wealth = 80
+		remove_character_modifier = holding_large_feast
+		hidden_tooltip = {
+			any_realm_character = {
+				limit = { has_character_flag = attending_grand_council }
+				clr_character_flag = attending_grand_council
+			}	
+		}		
+	}
+}
+#Lord is welcomed
+character_event = {
+	id = ambition.14
+	desc = EVTDESCambition.14
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	immediate = { set_character_flag = guest_feast_started }
+	
+	option = {
+		name = EVTOPTAambition.14 #OK	
+	}
+}
+#The Invasion Council starts after feast
+character_event = {
+	id = ambition.913
+	desc = EVTDESCambition.913
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_flag = called_grand_council
+	}
+	
+	immediate = {
+		clr_character_flag = host_feast_started
+		clr_character_flag = feast_jongleur
+		clr_character_flag = feast_musicians
+		clr_character_flag = feast_rains_of_castamere
+		clr_character_flag = feast_minstrel
+		clr_character_flag = feast_fireeaters
+		clr_character_flag = feast_conjurer
+		clr_character_flag = lavishly_food
+		clr_character_flag = medium_food
+		clr_character_flag = low_food
+		clr_character_flag = castle_problems
+		clr_character_flag = feast_jester 
+		clr_character_flag = feast_drunkard_guest
+		clr_character_flag = feast_duel
+		clr_character_flag = feast_boar_hunt
+	}
+	
+	option = {
+		name = EVTOPTAambition.913
+		trigger = { 
+			is_primary_war_attacker = no
+			is_primary_war_defender = no
+			has_ambition = obj_expand_realm	
+		}
+		remove_character_modifier = holding_large_feast
+		any_realm_character = {
+			limit = { has_character_flag = attending_grand_council }
+			hidden_tooltip = { character_event = { id = ambition.914 } }
+			custom_tooltip = { text = EVTTOOLTIPambition.14 }
+		}	
+		hidden_tooltip = { character_event = { id = ambition.15 days = 10 } }	 
+	}
+	option = {
+		name = EVTOPTBambition.13 #cancelled
+		trigger = { 
+			OR =  {
+				NOT = { has_ambition = obj_expand_realm	}
+				is_primary_war_attacker = yes
+				is_primary_war_defender = yes
+			}
+		}
+		clr_character_flag = called_grand_council
+		wealth = 80
+		remove_character_modifier = holding_large_feast
+		hidden_tooltip = {
+			any_realm_character = {
+				limit = { has_character_flag = attending_grand_council }
+				clr_character_flag = attending_grand_council
+				clr_character_flag = guest_feast_started			
+			}	
+		}		
+	}
+}
+#The concil starts, lord reveals intent for invasion
+character_event = {
+	id = ambition.914
+	desc = EVTDESCambition.914
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	immediate = { 
+		clr_character_flag = guest_feast_started 
+		if = {
+			limit = {
+				OR = { #If liege is king tier or higher, only high ranking characters may speak
+					NOT = { FROM = { higher_tier_than = DUKE } }
+					OR = {
+						ai = no
+						higher_tier_than = COUNT
+						prestige = 500
+						trait = dragon_rider
+						FROM = { current_heir = { character = ROOT } }
+						AND = {
+							liege = { character = FROM }
+							has_job_title = job_castellan
+						}
+						AND = {
+							liege = { 
+								higher_tier_than = COUNT 
+								regent = { character = ROOT }
+							}
+						}
+					}
+				}
+			}
+			set_character_flag = eligible_to_speak
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAambition.914 #OK	
+		ai_chance = {
+			factor = 40
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 25 }
+			}
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 35 }
+			}
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 50 }
+			}
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 65 }
+			}
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 80 }
+			}
+			modifier = {	
+				factor = 1.25
+				FROM = { num_of_vassals = 100 }
+			}
+			modifier = {	
+				factor = 0.8
+				tier = KING
+			}
+			modifier = {	
+				factor = 2
+				trait = craven
+			}
+			modifier = {	
+				factor = 2
+				trait = content
+			}
+			modifier = {	
+				factor = 2
+				trait = patient
+			}
+			modifier = {	
+				factor = 2
+				trait = shy
+			}
+			modifier = {	
+				factor = 2
+				trait = slothful
+			}
+			modifier = {	
+				factor = 0.5
+				trait = gregarious
+			}
+			modifier = {	
+				factor = 0.5
+				trait = authoritative
+			}
+			modifier = {	
+				factor = 0.5
+				trait = wroth
+			}
+			modifier = {	
+				factor = 0.5
+				trait = ambitious
+			}
+			modifier = {	
+				factor = 0.5
+				trait = brave
+			}
+			modifier = {	
+				factor = 0.5
+				trait = diligent
+			}
+			modifier = {	
+				factor = 0.75
+				diplomacy = 10
+			}
+			modifier = {	
+				factor = 0.75
+				diplomacy = 13
+			}
+			modifier = {	
+				factor = 0.75
+				diplomacy = 16
+			}
+			modifier = {	
+				factor = 0.75
+				diplomacy = 19
+			}
+			modifier = {	
+				factor = 0.5
+				diplomacy = 22
+			}
+		}
+		clr_character_flag = eligible_to_speak
+	}
+	option = {
+		name = EVTOPTBambition.914 #Speak in favour	
+		trigger = {
+			has_character_flag = eligible_to_speak
+			NOT = { trait = lustful }
+			NOT = { trait = greedy }
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {	
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {	
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 90 }
+			}
+		}
+		custom_tooltip = { text = TOOLTIPambition.914FAVOUR }
+		set_character_flag = grand_council_oration_for
+		hidden_tooltip = { 
+			c_the_citadel = { holder_scope = { character_event = { id = ambition.16 days = 2 random = 1 } } } 
+		}	
+		clr_character_flag = eligible_to_speak
+	}
+	option = {
+		name = EVTOPTCambition.914 #Speak in opposition
+		trigger = {
+			has_character_flag = eligible_to_speak
+			NOT = { trait = just }
+			NOT = { trait = lunatic }
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 2
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {	
+				factor = 2
+				trait = content
+			}
+			modifier = {	
+				factor = 2
+				trait = honorable
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -75 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+		}
+		custom_tooltip = { text = TOOLTIPambition.914AGAINST }
+		set_character_flag = grand_council_oration_against
+		hidden_tooltip = { 
+			c_the_citadel = { holder_scope = { character_event = { id = ambition.16 days = 2 random = 1 } } } 
+		}
+		clr_character_flag = eligible_to_speak		
+	}
+	option = {
+		name = EVTOPTEambition.914 #rant and rave
+		trigger = { 
+			has_character_flag = eligible_to_speak
+			trait = lunatic 
+		}
+		ai_chance = {
+			factor = 5
+			modifier = {	
+				factor = 0.5
+				diplomacy = 7
+			}
+			modifier = {	
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {	
+				factor = 2
+				trait = wroth
+			}
+			modifier = {	
+				factor = 2
+				trait = possessed
+			}
+		}	
+		tooltip_info = lunatic
+		custom_tooltip = { text = TOOLTIPambition.914LUNATIC }
+		hidden_tooltip = { 
+			character_event = { id = ambition.52 days = 3 random = 2 } 
+		}
+		clr_character_flag = eligible_to_speak
+	}
+	option = {
+		name = EVTOPTFambition.914 #oppurtunity for land and riches!
+		trigger = { 
+			has_character_flag = eligible_to_speak
+			trait = greedy
+			diplomacy = 7
+			NOT = { trait = content }
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {	
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {	
+				factor = 2
+				trait = envious
+			}
+			modifier = {	
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {	
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 90 }
+			}
+		}
+		tooltip_info = greedy
+		custom_tooltip = { text = TOOLTIPambition.914GREEDY }
+		hidden_tooltip = { 
+			character_event = { id = ambition.54 days = 3 random = 2 } 
+		}	
+		clr_character_flag = eligible_to_speak
+	}
+	option = {
+		name = EVTOPTDambition.914 #Argue it is against the law
+		trigger = { 
+			has_character_flag = eligible_to_speak
+			trait = just 
+			diplomacy = 7
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 2
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {	
+				factor = 2
+				trait = content
+			}
+			modifier = {	
+				factor = 2
+				trait = honorable
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -75 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+		}
+		tooltip_info = just
+		custom_tooltip = { text = TOOLTIPambition.914JUST }
+		hidden_tooltip = { 
+			character_event = { id = ambition.56 days = 3 random = 2 } 
+		}
+		clr_character_flag = eligible_to_speak
+	}
+	option = {
+		name = EVTOPTFambition.914 #joke about women
+		trigger = { 
+			has_character_flag = eligible_to_speak
+			is_female = no
+			trait = lustful 
+			NOT = { trait = honorable }
+			NOT = { trait = homosexual }
+			NOT = { trait = kind }
+			NOT = { trait = chaste }
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0.5
+				trait = temperate
+			}
+			modifier = {
+				factor = 0.5
+				trait = shy
+			}
+			modifier = {	
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {	
+				factor = 2
+				trait = hedonist
+			}
+			modifier = {	
+				factor = 2
+				trait = cruel
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 90 }
+			}
+		}
+		tooltip_info = lustful
+		custom_tooltip = { text = TOOLTIPambition.914LUSTFUL }
+		hidden_tooltip = { 
+			character_event = { id = ambition.58 days = 3 random = 2 } 
+		}	
+		clr_character_flag = eligible_to_speak
+	}
+}
+#Give final oration
+character_event = {
+	id = ambition.15
+	desc = EVTDESCambition.15
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.15 #OK
+		hidden_tooltip = { 
+			c_the_citadel = { holder_scope = { character_event = { id = ambition.16 } } } 
+			any_realm_character = {
+				limit = { has_character_flag = attending_grand_council }
+				character_event = { id = ambition.23 days = 3 }
+			}
+			character_event = { id = ambition.26 days = 5 } #end of council
+		} 
+	}
+}
+character_event = { #citadel determines oration success
+	id = ambition.16
+	desc = EVTDESCambition.16
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = GREAT
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 3
+				FROM = { trait = genius }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_smart_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = authoritative }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = gregarious }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = poet }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = brave }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { has_fair_trait_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 15 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 17 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 19 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 21 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 23 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 25 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 27 }
+			}
+			modifier = { ##if you have 28 base dip. You deserve a 100% strong case/defence
+				factor = 50
+				FROM = { diplomacy = 28 }
+			}
+			modifier = { #keeping bads away, pushing to center
+				factor = 0.25
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = { # penalized for no court education
+				factor = 0.75
+				FROM = {  
+					NOT = {
+						OR = {
+							trait = amateurish_plotter
+							trait = flamboyant_schemer
+							trait = intricate_webweaver
+							trait = elusive_shadow
+							trait = naive_appeaser
+							trait = underhanded_rogue
+							trait = charismatic_negotiator
+							trait = grey_eminence
+						} 
+					}
+				}
+			}
+			modifier = { #reward for people familiar with the court
+				factor = 1.5
+				FROM = {  
+					OR = {
+						trait = amateurish_plotter
+						trait = flamboyant_schemer
+						trait = intricate_webweaver
+						trait = elusive_shadow
+						trait = naive_appeaser
+						trait = underhanded_rogue
+						trait = charismatic_negotiator
+						trait = grey_eminence
+					} 
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_character_flag = called_grand_council }
+				set_character_flag = great_oration
+				character_event = { id = ambition.17 days = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_for }
+				clr_character_flag = grand_council_oration_for 
+				character_event = { id = ambition.40 days = 2 random = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_against }
+				clr_character_flag = grand_council_oration_against
+				character_event = { id = ambition.46 days = 2 random = 1 }
+			}
+		}
+	}
+	option = {
+		name = GOOD
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 2
+				FROM = { trait = genius }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_smart_trigger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = authoritative }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = gregarious }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = poet }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = brave }
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					diplomacy = 8
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					diplomacy = 10
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					diplomacy = 12
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { 
+					diplomacy = 14
+				}
+			}
+			modifier = { #Push to good case
+				factor = 0.25
+				FROM = { 
+					diplomacy = 17
+				}
+			}
+			modifier = { # penalized for no court education
+				factor = 0.75
+				FROM = {  
+					NOT = {
+						OR = {
+							trait = amateurish_plotter
+							trait = flamboyant_schemer
+							trait = intricate_webweaver
+							trait = elusive_shadow
+							trait = naive_appeaser
+							trait = underhanded_rogue
+							trait = charismatic_negotiator
+							trait = grey_eminence
+						} 
+					}
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_character_flag = called_grand_council }
+				set_character_flag = good_oration
+				character_event = { id = ambition.18 days = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_for }
+				clr_character_flag = grand_council_oration_for 
+				character_event = { id = ambition.41 days = 2 random = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_against }
+				clr_character_flag = grand_council_oration_against
+				character_event = { id = ambition.47 days = 2 random = 1 }
+			}
+		}
+	}
+	option = {
+		name = BAD
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 3
+				FROM = { trait = imbecile }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_dumb_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = rude }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = shy }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = stutter }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = wroth }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = craven }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { has_ugly_trait_trigger = yes }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = dwarf }
+			}
+			modifier = {
+				factor = 2
+				FROM = { NOT = { diplomacy = 8 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { NOT = { diplomacy = 6 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { NOT = { diplomacy = 4 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { NOT = { diplomacy = 2 } }
+			}
+			modifier = { #save those who dont belong in poor catagory, pushing to center
+				factor = 0.25
+				FROM = { diplomacy = 15 } 
+			}
+			modifier = { #reward for people familiar with the court
+				factor = 0.75
+				FROM = {  
+					OR = {
+						trait = amateurish_plotter
+						trait = flamboyant_schemer
+						trait = intricate_webweaver
+						trait = elusive_shadow
+						trait = naive_appeaser
+						trait = underhanded_rogue
+						trait = charismatic_negotiator
+						trait = grey_eminence
+					} 
+				}
+			}
+			modifier = { # penalized for no court education
+				factor = 1.5
+				FROM = {  
+					NOT = {
+						OR = {
+							trait = amateurish_plotter
+							trait = flamboyant_schemer
+							trait = intricate_webweaver
+							trait = elusive_shadow
+							trait = naive_appeaser
+							trait = underhanded_rogue
+							trait = charismatic_negotiator
+							trait = grey_eminence
+						} 
+					}
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_character_flag = called_grand_council }
+				set_character_flag = bad_oration
+				character_event = { id = ambition.19 days = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_for }
+				clr_character_flag = grand_council_oration_for 
+				character_event = { id = ambition.42 days = 2 random = 1 }
+			}
+			if = {
+				limit = { has_character_flag = grand_council_oration_against }
+				clr_character_flag = grand_council_oration_against
+				character_event = { id = ambition.48 days = 2 random = 1 }
+			}
+		}
+	}
+}
+#Great final oration
+character_event = {
+	id = ambition.17
+	desc = EVTDESCambition.17
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.17 #OK
+		prestige = 100
+		hidden_tooltip = { 
+			any_realm_lord = {
+				limit = { 
+					ai = no
+					has_character_flag = attending_grand_council 
+				}
+				character_event = { id = ambition.20 }
+			}	
+		} 
+	}
+}
+#Good final oration
+character_event = {
+	id = ambition.18
+	desc = EVTDESCambition.18
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.18 #OK
+		hidden_tooltip = { 
+			any_realm_lord = {
+				limit = { 
+					ai = no
+					has_character_flag = attending_grand_council 
+				}
+				character_event = { id = ambition.21 }
+			}	
+		} 
+	}
+}
+#Badfinal oration
+character_event = {
+	id = ambition.19
+	desc = EVTDESCambition.19
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.19 #OK
+		prestige = -100
+		hidden_tooltip = { 
+			any_realm_lord = {
+				limit = { 
+					ai = no
+					has_character_flag = attending_grand_council 
+				}
+				character_event = { id = ambition.22 }
+			}	
+		} 
+	}
+}
+#Inform Great final oration
+character_event = {
+	id = ambition.20
+	desc = EVTDESCambition.20
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.20 #OK 
+	}
+}
+#Inform Good final oration
+character_event = {
+	id = ambition.21
+	desc = EVTDESCambition.21
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.21 #OK 
+	}
+}
+#Inform bad final oration
+character_event = {
+	id = ambition.22
+	desc = EVTDESCambition.22
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.22 #OK 
+	}
+}
+#Final decison declared, support?
+character_event = {
+	id = ambition.23
+	desc = EVTDESCambition.23
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.23 #support
+		ai_chance = {
+			factor = 33
+			
+			modifier = {
+				factor = 0.1
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 1.25
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				trait = ruthless
+			}
+			modifier = {
+				factor = 1.25
+				trait = cruel
+			}
+			modifier = {
+				factor = 1.25
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.25
+				trait = proud
+			}
+			modifier = {
+				factor = 1.25
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { has_character_flag = great_oration }
+			}
+			modifier = {
+				factor = 1.25
+				dynasty = FROM
+			}
+			modifier = {
+				factor = 1.25
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 1.2
+				opinion = { who = FROM value = 90 }
+			}
+		}
+		opinion = { who = FROM modifier = opinion_invasion_good months = 60 }
+		if = {
+			limit = {
+				has_character_flag = grand_council_regent
+				liege = { regent = { character = ROOT } }
+			}
+			liege = { opinion = { who = FROM modifier = opinion_invasion_good months = 60 } }
+		}
+	}
+	option = {
+		name = EVTOPTBambition.23 #neutral
+		trigger = {
+			NOT = { has_character_flag = council_marriage_pledge }
+		}
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 1.25
+				trait = patient
+			}
+			modifier = {
+				factor = 1.25
+				trait = deceitful
+			}
+			modifier = {
+				factor = 1.25
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { has_character_flag = good_oration }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTCambition.23 #dissent
+		trigger = {
+			NOT = { has_character_flag = council_marriage_pledge }
+		}
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 1.25
+				trait = patient
+			}
+			modifier = {
+				factor = 1.25
+				trait = honorable
+			}
+			modifier = {
+				factor = 1.25
+				trait = kind
+			}
+			modifier = {
+				factor = 1.25
+				trait = just
+			}
+			modifier = {
+				factor = 1.25
+				trait = humble
+			}
+			modifier = {
+				factor = 1.25
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { has_character_flag = bad_oration }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -75 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+		}
+		opinion = { who = FROM modifier = opinion_invasion_bad months = 60 }
+		if = {
+			limit = {
+				has_character_flag = grand_council_regent
+				liege = { regent = { character = ROOT } }
+			}
+			liege = { opinion = { who = FROM modifier = opinion_invasion_bad months = 60 } }
+		}
+	}
+	option = {
+		name = EVTOPTDambition.23 #storm out
+		trigger = {
+			NOT = { trait = patient }
+			is_ruler = yes
+			NOT = { has_character_flag = council_marriage_pledge }
+		}
+		ai_chance = {
+			factor = 3
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 1.25
+				trait = kind
+			}
+			modifier = {
+				factor = 1.25
+				trait = just
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { has_character_flag = bad_oration }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -75 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+		}
+		opinion = { who = FROM modifier = opinion_invasion_bad months = 60 multiplier = 2 }
+		if = {
+			limit = {
+				has_character_flag = grand_council_regent
+				 liege = { regent = { character = ROOT } }
+			}
+			liege = { opinion = { who = FROM modifier = opinion_invasion_bad months = 60 } }
+		}
+		reverse_opinion = { who = FROM modifier = opinion_left_grand_council months = 60 }
+		clr_character_flag = attending_grand_council 
+		hidden_tooltip = { 
+			FROM = { 
+				character_event = { id = ambition.24 } 
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.24 }
+				}
+			} 
+		}
+	}
+}
+#Lord storms out
+character_event = {
+	id = ambition.24
+	desc = EVTDESCambition.24
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.24 
+	}
+}
+# #Inform Lord storms out
+# character_event = {
+	# id = ambition.25
+	# desc = EVTDESCambition.25
+	# picture = GFX_evt_council
+	
+	# is_triggered_only = yes
+	# show_from_from = yes
+	
+	# option = {
+		# name = EVTOPTAambition.25 #OK 			
+	# }
+# }
+
+#End of council
+character_event = {
+	id = ambition.26
+	desc = EVTDESCambition.26
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		any_realm_character = {
+			limit = { has_character_flag = attending_grand_council }
+			character_event = { id = ambition.27 days = 1 }
+		}
+		clr_character_flag = bad_oration
+		clr_character_flag = good_oration
+		clr_character_flag = great_oration	
+		clr_character_flag = called_grand_council
+		if = {
+			limit = { 
+				OR = {
+					NOT = { culture_group = valyrian }
+					NOT = { has_landed_title = k_volantis }
+				}	
+			}		
+			set_character_flag = may_call_ambition_invasion
+			hidden_tooltip = { character_event = { id = ambition.61 days = 150 random = 100 } }#make sure AI actually declares a war
+		}
+		if = { #Volantenes can gain New Valyrian Freehold if Vacant
+			limit = { 
+				culture_group = valyrian
+				has_landed_title = k_volantis
+			}
+			if = {
+				limit = { e_new_valyria = { has_holder = yes } }
+				e_new_valyria = { add_pressed_claim = ROOT }
+				set_character_flag = may_call_ambition_invasion
+				hidden_tooltip = { character_event = { id = ambition.61 days = 150 random = 100 } }#make sure AI actually declares a war
+			}
+			if = {
+				limit = { e_new_valyria = { has_holder = no } }
+				hidden_tooltip = {
+					primary_title = {
+						save_event_target_as = old_primary_title
+					}	
+				}
+				set_character_flag = new_valyria_ambition_invasion
+				e_new_valyria = { 
+					gain_title = ROOT 
+					hidden_tooltip = { copy_title_laws = event_target:old_primary_title }
+				}
+				set_global_flag = e_new_valyria_ambition #This flag causes the title to be lost if first war is lost
+				hidden_tooltip = { character_event = { id = ambition.67 days = 150 random = 100 } }#make sure AI actually declares a war
+			}		
+		}
+		any_independent_ruler = {
+			limit = { 
+				ai = no
+				NOT = { character = ROOT }
+				OR = {
+					culture_group = ROOT
+					religion_group = ROOT
+					any_realm_province = { any_neighbor_province = { owner = { same_realm = ROOT } } }
+					ROOT = { tier = EMPEROR }
+				}
+			}
+			character_event = { id = ambition.60 days = 1 } #Inform neighbours of council
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_HELD_GRAND_COUNCIL
+				picture = GFX_evt_council
+			}	
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { 
+						NOT = { character = ROOT }
+						OR = {							
+							dynasty = ROOT
+							is_liege_or_above = ROOT
+						}
+					}
+					chronicle = {
+						entry = CHRONICLE_HELD_GRAND_COUNCIL
+						portrait = [Root.GetID]
+					}	
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAambition.26 #supporting lords
+		if = {
+			limit = { ai = no }
+			if = {
+				limit = { has_character_flag = may_call_ambition_invasion }
+				custom_tooltip = { text = TOOLTIPambition.26 }
+				if = {
+					limit = { 
+						culture_group = valyrian
+						has_landed_title = k_volantis
+					}
+					tooltip = { e_new_valyria = { add_pressed_claim = ROOT } }
+				}	
+			}
+			if = {
+				limit = { has_character_flag = new_valyria_ambition_invasion }
+				tooltip = { e_new_valyria = { gain_title = ROOT } }
+			}		
+			any_realm_character = {
+				limit = { has_opinion_modifier = { who = ROOT modifier = opinion_invasion_good } }
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPambition.26A }
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTbambition.26 #Neutral Lords
+		if = {
+			limit = { ai = no }
+			any_realm_character = {
+				limit = { 
+					has_character_flag = attending_grand_council
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_invasion_good } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_invasion_bad } }
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPambition.26B }
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTCambition.26 #opposing lords
+		if = {
+			limit = { ai = no }
+			any_realm_character = {
+				limit = { has_opinion_modifier = { who = ROOT modifier = opinion_invasion_bad } }
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPambition.26C }
+			}
+		}	
+	}
+}
+#Inform End of council
+character_event = {
+	id = ambition.27
+	desc = EVTDESCambition.27
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.27 
+		clr_character_flag = attending_grand_council 
+		clr_character_flag = grand_council_regent
+		clr_character_flag = council_marriage_pledge
+	}
+}
+# #offer marriage alliance?
+# character_event = {
+	# id = ambition.28
+	# desc = EVTDESCambition.28
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTAambition.28 #yes
+		# ai_chance = { factor = 80 }
+		# FROM = { letter_event = { id = ambition.29 tooltip = TOOLTIPambition.28 } }
+	# }
+	# option = {
+		# name = EVTOPTBambition.28 #No
+		# ai_chance = { factor = 20 }
+	# }
+# }
+# letter_event = {
+	# id = ambition.29
+	# desc = EVTDESCambition.29
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTAambition.29 #yes
+		# ai_chance = { factor = 80 }
+		# hidden_tooltip = { FROM = { letter_event = { id = ambition.30  } } }
+		# set_character_flag = council_marriage_pledge
+		# random_child = {
+			# limit = {
+				# age = 5
+				# NOT = { age = 24 }
+				# can_marry = yes
+				# is_married = no
+				# is_betrothed = no
+				# fertility = 0.1
+				# NOT = { trait = incapable }
+				# ai = yes
+				# FROM = {
+					# any_child = {
+						# age = 5
+						# NOT = { age = 24 }
+						# can_marry = yes
+						# can_marry = PREVPREV
+						# is_married = no
+						# is_betrothed = no
+						# ai = yes
+						# fertility = 0.1
+						# NOT = { trait = incapable }
+					# }
+				# }
+			# }	
+			# FROM = {
+				# random_child = {
+					# limit = {
+						# age = 5
+						# NOT = { age = 24 }
+						# can_marry = yes
+						# can_marry = PREVPREV
+						# is_married = no
+						# is_betrothed = no
+						# fertility = 0.1
+						# NOT = { trait = incapable }
+						# ai = yes
+					# }
+					# if = {
+						# limit = {
+							# age = 14
+							# PREVPREV = { age = 14 }
+						# }
+						# add_spouse = PREVPREV
+					# }
+					# if = {
+						# limit = {
+							# OR = {
+								# NOT = { age = 14 }
+								# PREVPREV = { NOT = { age = 14 } }
+							# }	
+						# }
+						# PREVPREV = { 
+							# add_betrothal = PREV 
+						# }
+						# add_betrothal = PREVPREV
+					# }	
+				# }
+			# }
+		# }
+	# }
+	# option = {
+		# name = EVTOPTBambition.29 #No
+		# ai_chance = { factor = 20 }
+		# FROM = { letter_event = { id = ambition.31 tooltip = TOOLTIPambition.31 } }
+	# }
+# }
+# letter_event = {
+	# id = ambition.30
+	# desc = EVTDESCambition.30
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = OK
+	# }
+# }
+# letter_event = {
+	# id = ambition.31
+	# desc = EVTDESCambition.31
+
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = OK
+	# }
+# }
+###Vassal Orations###
+#Argue in favour
+#Great oration
+character_event = {
+	id = ambition.40
+	desc = EVTDESCambition.40
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.40 #OK
+		prestige = 25
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_persuaded multiplier = 1.5 } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.43 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.43 }
+				}
+			}	
+		} 
+	}
+}
+#Good oration
+character_event = {
+	id = ambition.41
+	desc = EVTDESCambition.41
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.41 #OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = ROOT value = 10 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_persuaded } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.44 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.44 }
+				}
+			}	
+		}
+	}
+}
+#Bad oration
+character_event = {
+	id = ambition.42
+	desc = EVTDESCambition.42
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.42 #OK
+		prestige = -25
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.45 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.45 }
+				}
+			}	
+		}
+	}
+}
+#Inform Great oration in favour
+character_event = {
+	id = ambition.43
+	desc = EVTDESCambition.43
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = FROM value = 0 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+			}
+		}	
+	}
+}
+#Inform Good oration in favour
+character_event = {
+	id = ambition.44
+	desc = EVTDESCambition.44
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = FROM value = 10 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+			}
+		}	
+	}
+}
+#Inform bad oration in favour
+character_event = {
+	id = ambition.45
+	desc = EVTDESCambition.45
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}
+#Argue in opposition
+#Great oration
+character_event = {
+	id = ambition.46
+	desc = EVTDESCambition.46
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.46 #OK
+		prestige = 25
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = ROOT value = 0 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_dissuaded multiplier = 1.5 } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.49 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.49 }
+				}
+			}	
+		} 
+	}
+}
+#Good oration
+character_event = {
+	id = ambition.47
+	desc = EVTDESCambition.47
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.47 #OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = ROOT value = 10 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_dissuaded } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.50 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.50 }
+				}
+			}	
+		} 
+	}
+}
+#Bad oration
+character_event = {
+	id = ambition.48
+	desc = EVTDESCambition.48
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.48 #OK
+		hidden_tooltip = { 
+			top_liege = {
+				if = {
+					limit = { 
+						ai = no
+					}
+					character_event = { id = ambition.51 }
+				}
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.51 }
+				}
+			}	
+		} 
+	}
+}
+#Inform Great oration in opposition
+character_event = {
+	id = ambition.49
+	desc = EVTDESCambition.49
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = FROM value = 0 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+			}
+		}	
+	}
+}
+#Inform Good oration in opposition
+character_event = {
+	id = ambition.50
+	desc = EVTDESCambition.50
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					reverse_opinion = { who = FROM value = 10 }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+			}
+		}	
+	}
+}
+#Inform Bad oration in opposition
+character_event = {
+	id = ambition.51
+	desc = EVTDESCambition.51
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}
+#Lunatic rants and raves
+character_event = {
+	id = ambition.52
+	desc = EVTDESCambition.52
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.52 #OK
+		prestige = -25
+		hidden_tooltip = { 
+			top_liege = {
+				character_event = { id = ambition.53 }
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.53 }
+				}
+			}	
+		} 
+	}
+}
+#Inform Lunatic rants and raves
+character_event = {
+	id = ambition.53
+	desc = EVTDESCambition.53
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.53
+	}
+}
+#Greedy characters points out oppurtuinty for riches
+character_event = {
+	id = ambition.54
+	desc = EVTDESCambition.54
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.54 #OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					OR = {
+						trait = greedy
+						AND = {
+							OR = {
+								trait = ambitious
+								trait = envious
+							}	
+							NOT = { trait = content }
+							reverse_opinion = { who = ROOT value = 0 }
+						}	
+					}	
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_persuaded } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				character_event = { id = ambition.55 }
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.55 }
+				}
+			}	
+		} 
+	}
+}
+character_event = { #Inform 
+	id = ambition.55
+	desc = EVTDESCambition.55
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.55
+		any_realm_character = {
+			limit = {
+				has_character_flag = attending_grand_council
+				ai = yes
+				OR = {
+					trait = greedy
+					AND = {
+						OR = {
+							trait = ambitious
+							trait = envious
+						}	
+						NOT = { trait = content }
+						reverse_opinion = { who = FROM value = 0 }
+					}	
+				}	
+			}
+			custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+		}
+	}
+}
+#Just character argues it is against the law
+character_event = {
+	id = ambition.56
+	desc = EVTDESCambition.56
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.56 #OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					OR = {
+						trait = just
+						AND = {
+							OR = {
+								trait = honorable
+								trait = content
+							}	
+							NOT = { trait = arbitrary }
+							NOT = { trait = ruthless }
+							reverse_opinion = { who = ROOT value = 0 }
+						}	
+					}	
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_dissuaded } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				character_event = { id = ambition.57 }
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.57 }
+				}
+			}	
+		} 
+	}
+}
+character_event = { #Inform
+	id = ambition.57
+	desc = EVTDESCambition.57
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		any_realm_character = {
+			limit = {
+				has_character_flag = attending_grand_council
+				ai = yes
+				OR = {
+					trait = just
+					AND = {
+						OR = {
+							trait = honorable
+							trait = content
+						}	
+						NOT = { trait = arbitrary }
+						NOT = { trait = ruthless }
+						reverse_opinion = { who = FROM value = 0 }
+					}	
+				}	
+			}
+			custom_tooltip = { text = TOOLTIPgrand_councilDISSUADE }
+		}
+	}
+}
+#Lustful character makes joke about women
+character_event = {
+	id = ambition.58
+	desc = EVTDESCambition.58
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	option = {
+		name = EVTOPTAambition.58 #OK
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = attending_grand_council
+					ai = yes
+					OR = {
+						trait = lustful
+						trait = hedonist
+					}	
+					NOT = { trait = honorable }
+					NOT = { trait = kind }
+				}
+				custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+				hidden_tooltip = {
+					top_liege = { reverse_opinion = { who = PREV modifier = opinion_council_persuaded } }
+				}
+			}
+		}
+		hidden_tooltip = { 
+			top_liege = {
+				character_event = { id = ambition.59 }
+				any_realm_lord = {
+					limit = { 
+						ai = no
+						has_character_flag = attending_grand_council 
+					}
+					character_event = { id = ambition.59 }
+				}
+			}	
+		} 
+	}
+}
+character_event = { #Inform 
+	id = ambition.59
+	desc = EVTDESCambition.59
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.59
+		any_realm_character = {
+			limit = {
+				has_character_flag = attending_grand_council
+				ai = yes
+				OR = {
+					trait = lustful
+					trait = hedonist
+				}	
+				NOT = { trait = honorable }
+				NOT = { trait = kind }	
+			}
+			custom_tooltip = { text = TOOLTIPgrand_councilPERSUADE }
+		}
+	}
+}
+#Inform neighbours of grand council
+character_event = { #Inform 
+	id = ambition.60
+	picture = GFX_evt_china_expansionist
+	
+	desc = {
+		text = EVTDESCambition.60
+		trigger = {
+			NOT = {
+				FROM = {
+					government = triarch_merchant_republic_government
+					trait = tiger	
+				}
+			}	
+		}
+	}
+	
+	desc = {
+		text = EVTDESCambition.60B #Triarchy tigers
+		trigger = {
+			FROM = {
+				government = triarch_merchant_republic_government
+				trait = tiger	
+			}
+		}
+	}	
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.60
+	}
+}
+#Make sure AI actually performs an invasion
+character_event = { #Inform 
+	id = ambition.61
+	
+	is_triggered_only = yes
+	only_independent = yes
+	prisoner = no
+	capable_only = yes
+	ai = yes
+	
+	trigger = {
+		has_ambition = obj_expand_realm
+		has_character_flag = may_call_ambition_invasion 
+		OR = { #Don't stop for minor wars
+			war = no
+			AND = {
+				is_primary_war_attacker = no
+				is_primary_war_defender = no
+			}
+			AND = {
+				NOT = { any_current_enemy = { demesne_size = 1 } }
+				NOT = { primary_title = { is_contested = yes } }
+			}			
+		}
+		NOT = { trait = nightswatch } 
+		NOT = { trait = kingsguard }
+	}
+	
+	immediate = {
+		random_independent_ruler = {
+			limit = {
+				NOT = { character = ROOT }
+				OR = {
+					tier = KING
+					NOT = { lower_tier_than = ROOT }
+				}
+				is_within_diplo_range = ROOT
+				ROOT = {
+					relative_power = {
+						who = PREV
+						power = 0.75
+					}
+				}
+				capital_scope = {
+					ROOT = {
+						capital_scope = {
+							NOT = {
+								distance = {
+									where = PREVPREV
+									value = 500
+								}
+							}
+						}
+					}	
+				}
+				
+				NOT = { culture_group = unoccupied_group }
+				NOT = { culture_group = winter_group }
+				NOT = { trait = nightswatch }
+				OR = {
+					NOT = { capital_scope = { traditional_nomad_territory_trigger = yes } }	
+					NOT = { is_nomadic = no }
+				}
+				OR = { #Cannot attack vassals split by mega war
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } }
+					NOT = { ROOT = { higher_tier_than = PREV } }
+				}
+				any_demesne_title = {
+					NOT = { title = d_kingsguard } 
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							lower_tier_than = KING
+							holder_scope = { 
+								independent = yes 
+								tier = PREV
+							}
+						}
+					}
+					controls_religion = no
+				}
+			}
+			random_demesne_title = {
+				limit = {
+					NOT = { title = d_kingsguard } 
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							lower_tier_than = KING
+							holder_scope = { 
+								independent = yes 
+								tier = PREV
+							}
+						}
+					}
+					controls_religion = no
+				}
+				reverse_war = {
+					target = ROOT
+					casus_belli = invasion_ambition
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Special Volantene Triarchy events
+#Triarch Council Called
+character_event = {
+	id = ambition.62
+	title = EVTTITLEambition.62
+	desc = EVTDESCambition.62
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.62
+		any_realm_character = {
+			limit = { has_character_flag = triarch }
+			character_event = { id = ambition.63 tooltip = TOOLTIPambition.63 }
+		}
+		hidden_tooltip = {
+			character_event = { id = ambition.64 days = 2 } #Triarchs Agree
+			character_event = { id = ambition.65 days = 2 } #Triarchs Disagree
+		}
+	}
+}
+#Junior Triarch informed/respond
+character_event = {
+	id = ambition.63
+	title = EVTTITLEambition.62
+	desc = EVTDESCambition.63
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.63 #Agree
+		ai_chance = {
+			factor = 20
+			modifier = {	
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {	
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 90 }
+			}
+		}
+		set_character_flag = triarch_council_agree
+		FROM = { opinion = { who = ROOT modifier = opinion_invasion_good months = 24 } }
+	}
+	
+	option = {
+		name = EVTOPTBambition.63 #Disagree
+		ai_chance = {
+			factor = 5
+			modifier = {	
+				factor = 0
+				opinion = { who = FROM value = 50 }
+				NOT = { trait = honorable }
+				NOT = { trait = just }
+			}
+			
+			modifier = {	
+				factor = 2
+				trait = content
+			}
+			modifier = {	
+				factor = 2
+				trait = honorable
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -15 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -45 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -75 } }
+			}
+			modifier = {	
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -90 } }
+			}
+		}
+		FROM = { opinion = { who = ROOT modifier = opinion_invasion_bad months = 24 } }
+	}
+}
+#Triarchs Agree
+character_event = {
+	id = ambition.64
+	desc = EVTDESCambition.64
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		any_realm_character = {
+			count = 2
+			has_character_flag = triarch
+			has_character_flag = triarch_council_agree
+		}
+	}
+	
+	immediate = {		
+		any_independent_ruler = {
+			limit = { 
+				ai = no
+				NOT = { character = ROOT }
+				OR = {
+					culture_group = ROOT
+					religion_group = ROOT
+					any_realm_province = { any_neighbor_province = { owner = { same_realm = ROOT } } }
+					ROOT = { tier = EMPEROR }
+				}
+			}
+			character_event = { id = ambition.60 days = 1 } #Inform neighbours of council
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_HELD_GRAND_COUNCIL_TRIARCH
+				picture = GFX_evt_council
+			}	
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { 
+						NOT = { character = ROOT }
+						OR = {							
+							dynasty = ROOT
+							is_liege_or_above = ROOT
+						}
+					}
+					chronicle = {
+						entry = CHRONICLE_HELD_GRAND_COUNCIL_TRIARCH
+						portrait = [Root.GetID]
+					}	
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAambition.64
+		#Gain New Valyrian Freehold if Vacant
+		if = {
+			limit = { 
+				e_new_valyria = { has_holder = yes } 
+			}		
+			set_character_flag = may_call_ambition_invasion
+			custom_tooltip = { text = TOOLTIPambition.26 }
+			e_new_valyria = { add_pressed_claim = ROOT }
+			hidden_tooltip = { character_event = { id = ambition.61 days = 150 random = 100 } }#make sure AI actually declares a war
+		}
+		if = {
+			limit = { 
+				e_new_valyria = { has_holder = no } 
+			}
+			hidden_tooltip = {
+				primary_title = {
+					save_event_target_as = old_primary_title
+				}	
+			}
+			e_new_valyria = { 
+				gain_title = ROOT 
+				hidden_tooltip = { copy_title_laws = event_target:old_primary_title }
+			}
+			set_global_flag = e_new_valyria_ambition
+			set_character_flag = new_valyria_ambition_invasion
+			hidden_tooltip = { character_event = { id = ambition.67 days = 150 random = 100 } }#make sure AI actually declares a war
+		}
+		any_realm_character = {
+			limit = {
+				has_character_flag = triarch
+				has_character_flag = triarch_council_agree
+			}
+			tooltip = { show_portrait = yes }
+			clr_character_flag = triarch_council_agree
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				character_event = { id = ambition.66 }
+			}
+		}
+		clr_character_flag = called_grand_council
+	}
+}
+#Triarchs Disagree
+character_event = {
+	id = ambition.65
+	desc = EVTDESCambition.65
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = {
+			any_realm_character = {
+				count = 2
+				has_character_flag = triarch
+				has_character_flag = triarch_council_agree
+			}
+		}	
+	}
+
+	option = {
+		name = EVTOPTAambition.65
+		trigger = {
+			any_realm_character = {
+				count = 2
+				has_character_flag = triarch
+			}
+		}
+		prestige = -200
+		clr_character_flag = called_grand_council
+		any_realm_character = {
+			limit = { 
+				has_character_flag = triarch 
+				NOT = { has_character_flag = triarch_council_agree }
+			}
+			custom_tooltip = { text = TOOLTIPveto }
+		}
+		any_realm_character = {
+			limit = { 
+				has_character_flag = triarch
+				has_character_flag = triarch_council_agree
+			}
+			custom_tooltip = { text = TOOLTIPno_veto }
+			clr_character_flag = triarch_council_agree
+		}
+	}
+	option = {
+		name = EVTOPTBambition.65 #triarch went missing
+		trigger = {
+			NOT = {
+				any_realm_character = {
+					count = 2
+					has_character_flag = triarch
+				}
+			}	
+		}
+		clr_character_flag = called_grand_council
+	}
+}
+#Inform realm
+character_event = {
+	id = ambition.66
+	desc = EVTDESCambition.66
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.66
+		FROM = {
+			any_realm_character = {
+				limit = {
+					has_character_flag = triarch
+				}
+				tooltip = { show_portrait = yes }
+			}
+		}	
+	}
+}
+#Make sure AI actually performs an invasion (New Valyria)
+character_event = {
+	id = ambition.67
+	
+	is_triggered_only = yes
+	only_independent = yes
+	prisoner = no
+	capable_only = yes
+	ai = yes
+	
+	trigger = {
+		has_ambition = obj_expand_realm
+		has_landed_title = e_new_valyria
+		OR = { #Don't stop for minor wars
+			war = no
+			AND = {
+				is_primary_war_attacker = no
+				is_primary_war_defender = no
+			}
+			AND = {
+				NOT = { any_current_enemy = { demesne_size = 1 } }
+				NOT = { primary_title = { is_contested = yes } }
+			}			
+		}
+		NOT = { trait = nightswatch } 
+		NOT = { trait = kingsguard }
+	}
+	
+	immediate = {
+		random_independent_ruler = {
+			limit = {
+				NOT = { character = ROOT }
+				higher_tier_than = DUKE
+				is_within_diplo_range = ROOT
+				ROOT = {
+					relative_power = {
+						who = PREV
+						power = 0.75
+					}
+				}
+				capital_scope = {
+					ROOT = {
+						capital_scope = {
+							NOT = {
+								distance = {
+									who = PREVPREV
+									value = 500
+								}
+							}
+						}
+					}	
+				}
+				
+				NOT = { culture_group = unoccupied_group }
+				NOT = { culture_group = winter_group }
+				NOT = { trait = nightswatch }
+				OR = {
+					NOT = { capital_scope = { traditional_nomad_territory_trigger = yes } }	
+					NOT = { is_nomadic = no }
+				}
+				OR = { #Cannot attack vassals split by mega war
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } }
+					NOT = { ROOT = { higher_tier_than = PREV } }
+				}
+				any_demesne_title = {
+					NOT = { title = d_kingsguard } 
+					tier = KING
+					controls_religion = no
+					dejure_liege_title = { title = e_new_valyria }				
+				}
+			}
+			random_demesne_title = {
+				limit = {
+					NOT = { title = d_kingsguard } 
+					tier = KING
+					controls_religion = no
+					dejure_liege_title = { title = e_new_valyria }
+				}
+				reverse_war = {
+					target = ROOT
+					casus_belli = dejure_kingdom_claim
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+###########################
+# Befriend Liege Ambition #
+###########################
+###Inform liege they have been befriended
+character_event = {
+	id = ambition.700
+	desc = EVTDESCambition.700
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { character = FROM } }
+	
+	option = {
+		name = EVTOPTAambition.700
+		add_friend = FROM
+	}
+}
+
+### Talk to liege at feast/wedding
+character_event = {
+	id = ambition.70
+	desc = EVTDESCambition.70
+	picture = GFX_evt_feast
+
+	is_triggered_only = yes
+	ai = no
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_ambition = obj_befriend_liege
+		FROMFROM = { is_liege_of = ROOT }
+	}
+	
+	immediate = { set_character_flag = obj_befriend_liege_event }
+	
+	option = {
+		name = EVTOPTAambition.70
+		liege = { character_event = { id = ambition.71 tooltip = TOOLTIPambition.71 } }
+	}
+}
+
+#Liege responds
+character_event = { #Inform 
+	id = ambition.71
+	desc = EVTDESCambition.71
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_ambition = obj_befriend_liege } }
+	
+	option = {
+		name = EVTOPTAambition.71 #Like
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 1.5
+				FROM = { tier = KING }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { tier = DUKE }
+			}			
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 8 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 11 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 14 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 17 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 20 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				trait = patient
+			}
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			modifier = {
+				factor = 1.5
+				trait = kind
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = ambition.72 } }
+		}
+	}
+	
+	option = {
+		name = EVTOPTBambition.72 #Dislike
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 5 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 2 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = envious
+			}
+			modifier = {
+				factor = 1.5
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = cruel
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_spurned
+				multiplier = 2
+			}
+			hidden_tooltip = { character_event = { id = ambition.73 } }
+		}
+	}
+}
+
+character_event = { #Inform good response
+	id = ambition.72
+	desc = EVTDESCambition.72
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.72
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+		}
+	}
+}
+character_event = { #Inform bad response
+	id = ambition.73
+	desc = EVTDESCambition.73
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.73
+		prestige = -30
+	}
+}
+
+### Army campfire
+character_event = {
+	id = ambition.74
+	desc = "EVTDESCambition.74"
+	picture = GFX_evt_battle
+
+	is_triggered_only = yes
+	ai = no
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	trigger = {
+		has_ambition = obj_befriend_liege
+		liege = {
+			at_location = ROOT
+			in_command = yes
+			NOT = { character = ROOT }
+		}
+		OR = {
+			NOT = { has_character_flag = obj_befriend_liege_event }
+			had_character_flag = { flag = obj_befriend_liege_event days = 365 }
+		}
+	}
+	
+	immediate = { set_character_flag = obj_befriend_liege_event }
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 2
+			trait = gregarious
+		}
+		modifier = {
+			factor = 0.1
+			trait = shy
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAambition.74"
+		liege = { 
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = ambition.75 tooltip = TOOLTIPambition.75 } } 
+		}
+	}
+}
+
+#Liege responds
+character_event = {
+	id = ambition.75
+	desc = "EVTDESCambition.75"
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_ambition = obj_befriend_liege } }
+	
+	option = {
+		name = "EVTOPTAambition.74"
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+			#hidden_tooltip = { character_event = { id = ambition.76 days = 2 } }
+		}
+	}
+}
+# character_event = { #Inform good response
+	# id = ambition.76
+	# desc = EVTDESCambition.76
+	# picture = GFX_evt_battle
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = EVTOPTAambition.76
+		# FROM = {			
+			# opinion = {
+				# who = ROOT
+				# modifier = opinion_acquaintance
+				# multiplier = 3
+				# years = 10
+			# }
+		# }
+	# }
+# }
+
+### Invite liege to go to wenching
+character_event = {
+	id = ambition.77
+	desc = "EVTDESCambition.77"
+	picture = GFX_evt_feast
+
+	ai = no
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	
+	trigger = {
+		has_ambition = obj_befriend_liege
+		NOT = { trait = chaste }
+		NOT = { trait = celibate }
+		NOT = { trait = honorable }
+		NOT = { trait = eunuch }
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			is_female = no
+			at_location = ROOT
+			NOT = { trait = chaste }
+			NOT = { trait = celibate }
+			NOT = { trait = honorable }
+			NOT = { trait = eunuch }
+			prisoner = no
+		}
+		NOT = { has_character_flag = obj_befriend_liege_wenching_event }
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+		
+		modifier = {
+			factor = 0.1
+			OR = {
+				trait = lustful
+				trait = hedonist
+			}
+		}
+		modifier = {
+			factor = 0.5
+			trait = gregarious
+		}
+		modifier = {
+			factor = 5
+			trait = shy
+		}
+	}
+	
+	immediate = { set_character_flag = obj_befriend_liege_wenching_event }
+	
+	option = {
+		name = "EVTOPTAambition.77"
+		liege = { character_event = { id = ambition.78 tooltip = TOOLTIPambition.78 } }
+	}
+}
+
+#Liege responds
+character_event = { #Inform 
+	id = ambition.78
+	desc = "EVTDESCambition.78"
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_ambition = obj_befriend_liege } }
+	
+	option = {
+		name = "EVTOPTAambition.78" #Agree to go wenching
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 5
+				trait = lustful
+			}
+			modifier = {
+				factor = 5
+				trait = hedonist
+			}
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.5
+				trait = gluttonous
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = ambition.79 } }
+		}
+		piety = -30
+	}
+	
+	option = {
+		name = "EVTOPTBambition.78" #No
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = temperate
+			}
+			modifier = {
+				factor = 1.5
+				trait = craven
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_spurned
+				multiplier = 2
+			}
+			hidden_tooltip = { character_event = { id = ambition.80 } }
+		}
+	}
+}
+
+character_event = { #Inform agreed
+	id = ambition.79
+	desc = EVTDESCambition.79
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.79
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+		}
+		piety = -30
+	}
+}
+character_event = { #Inform bad response
+	id = ambition.80
+	desc = EVTDESCambition.80
+	picture = GFX_evt_feast
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.80
+		prestige = -30
+	}
+}
+
+### Go to liege's quarters with a fine wine
+character_event = {
+	id = ambition.81
+	desc = EVTDESCambition.81
+	picture = GFX_evt_courtiers_talking
+
+	ai = no
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	in_command = no
+	
+	trigger = {
+		has_ambition = obj_befriend_liege
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			at_location = ROOT
+			in_command = no
+			prisoner = no
+		}
+		NOT = { has_character_flag = obj_befriend_liege_wine_event }
+	}
+	
+	mean_time_to_happen = {
+		months = 36
+		
+		modifier = {
+			factor = 0.5
+			trait = brave
+		}
+		modifier = {
+			factor = 0.5
+			trait = gregarious
+		}
+		modifier = {
+			factor = 5
+			trait = shy
+		}
+	}
+	
+	immediate = { set_character_flag = obj_befriend_liege_wine_event }
+	
+	option = {
+		name = EVTOPTAambition.81
+		liege = { character_event = { id = ambition.82 tooltip = TOOLTIPambition.82 } }
+		wealth = -15
+	}
+}
+
+#Liege responds
+character_event = { #Inform 
+	id = ambition.82
+	desc = EVTDESCambition.82
+	picture = GFX_evt_courtiers_talking
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { has_ambition = obj_befriend_liege } }
+	
+	option = {
+		name = EVTOPTAambition.82 #Invite in
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 1.5
+				FROM = { tier = KING }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { tier = DUKE }
+			}	
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 8 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 11 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 14 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 17 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { diplomacy = 20 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				trait = patient
+			}
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			modifier = {
+				factor = 1.5
+				trait = kind
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = ambition.83 } }
+		}
+	}
+	
+	option = {
+		name = EVTOPTBambition.82 #Send away
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 5 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { NOT = { diplomacy = 2 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -30 } }
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = envious
+			}
+			modifier = {
+				factor = 1.5
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = cruel
+			}
+		}
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_spurned
+				multiplier = 2
+			}
+			hidden_tooltip = { character_event = { id = ambition.84 } }
+		}
+	}
+}
+
+character_event = { #Inform invited in
+	id = ambition.83
+	desc = EVTDESCambition.83
+	picture = GFX_evt_courtiers_talking
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.83
+		FROM = {			
+			opinion = {
+				who = ROOT
+				modifier = opinion_acquaintance
+				multiplier = 3
+				years = 10
+			}
+		}
+	}
+}
+character_event = { #Inform bad response
+	id = ambition.84
+	desc = EVTDESCambition.84
+	picture = GFX_evt_courtiers_talking
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAambition.84
+		prestige = -30
+	}
+}

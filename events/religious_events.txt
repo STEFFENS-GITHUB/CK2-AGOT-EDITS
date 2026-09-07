@@ -1,0 +1,7975 @@
+namespace = religious
+
+#religious.1 Landed priest gets appropiate trait
+#religious.1.1 Non-landed characters with the Septon or Septa trait gain it as a minor title
+#religious.1.2  Converting away from religion removes religion specific traits
+#religious.2-3   I want a church career
+#religious.4-5   Novice advances to priesthood
+
+###The Seven Events###
+#39210 -13 High Septon offers absolution for Kinslaying
+#religious.6-9 Most Devout events
+#religious.10-17   High Septon election events
+#religious.18-21   King offers conciliation to the faith
+
+#39220-26 Bishops don't like being in prison events..
+#39300-06 Seven Icons
+
+###Rhllor Events###
+#39230 Bishops don't like being in prison event
+
+#religious.300 - Father Notification (Silent Sisters Descision)
+#2101001 - Daughter Notification (Silent Sisters Descision)
+#religious.301 - 04  Free Cities - Sending sons to the temple
+
+#religious.63-64 Increase godswood level
+
+#religious.65 - Syncrectic Faith
+
+#Landed priest gets appropiate trait
+character_event = {
+	id = religious.1
+	desc = "EVTDESCreligious.1"
+	
+	only_rulers = yes
+	
+	trigger = {
+		demesne_size = 1
+		OR = {
+			is_theocracy = yes
+			government = theocratic_feudal_government
+		}		
+		OR = {
+			AND = {
+				is_drowned_god_religion_trigger = yes
+				is_female = no
+			}	
+			religion = the_seven
+			religion = rhllor
+			religion = harpy
+			religion = qarth_warlocks
+			religion = shadowbinders
+			religion = bearded_priests
+			religion = summer_rel
+			AND = {
+				OR = {
+					religion = boash 
+					religion = boash_reformed
+				}
+				NOT = { trait = blinded }
+				NOT = { trait = eunuch }
+			}	
+			is_reformed_religion = yes
+		}
+		NOT = {
+			has_priest_trait_trigger = yes
+		}
+	}
+
+	option = {
+		name = "EVTOPTAreligious.1"
+		if = {
+			limit = { 
+				OR = {
+					religion = boash 
+					religion = boash_reformed
+				}
+			}
+			add_trait = blinded
+			add_trait = eunuch
+			break = yes
+		}
+		add_priest_trait_effect = yes
+		recalc_succession = yes
+	}
+}
+#Religion change removes special titles
+character_event = {
+	id = religious.111
+	desc = "EVTDESCreligious.1.1"
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {		
+		FROM = { religion = the_seven }
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.1.1"
+		remove_special_character_title = title_septon
+		remove_special_character_title = title_septa
+	}
+}
+# #Landed Septons with High faith Authority get modifier allowing buildings #no longer neccesary
+# character_event = {
+	# id = religious.112
+	
+	# hide_window = yes
+	# only_rulers = yes
+	# religion = the_seven
+	
+	# trigger = {		
+		# is_theocracy = yes		
+		# crownlaw_title = { has_law = investiture_law_3 }
+		# NOT = { has_character_modifier = high_faith_authority }		
+	# }
+	
+	# immediate = {
+		# add_character_modifier = {
+			# name = high_faith_authority
+			# duration = -1
+			# #hidden = yes
+		# }	
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }
+# #remove
+# character_event = {
+	# id = religious.113
+	
+	# hide_window = yes
+	# only_rulers = yes
+	# religion = the_seven
+		
+	# trigger = {		
+		# is_theocracy = yes	
+		# has_character_modifier = high_faith_authority
+		# NOT = { crownlaw_title = { has_law = investiture_law_3 } }		
+	# }
+	
+	# immediate = {
+		# remove_character_modifier = high_faith_authority
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }
+#Converting away from religion removes religion specific traits OBSOLETE
+# character_event = {
+	# id = religious.1.2
+	# desc = "EVTDESCreligious.1.2"
+	# picture = GFX_evt_bishop
+	# border = "GFX_event_normal_frame_religion"
+	
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# OR = {
+			# AND = {
+				# OR = {
+					# trait = favored_by_rhllor
+					# trait = chosen_by_rhllor
+					# trait = red_priest
+				# }	
+				# NOT = { religion = rhllor }		
+			# }	
+			# AND = {
+				# OR = {
+					# trait = septon
+					# trait = septa
+					# trait = silent_sister
+				# }	
+				# NOT = { religion = the_seven }		
+			# }	
+			# AND = {
+				# trait = drowned
+				# NOT = { religion = drowned_god }		
+			# }	
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAreligious.1.2" 
+		# trigger = {
+			# OR = {
+				# trait = favored_by_rhllor
+				# trait = chosen_by_rhllor
+				# trait = red_priest
+			# }	
+			# NOT = { religion = rhllor }	
+		# }
+		# if = {
+			# limit = { trait = favored_by_rhllor }
+			# remove_trait = favored_by_rhllor
+		# }	
+		# if = {
+			# limit = { trait = chosen_by_rhllor }
+			# remove_trait = chosen_by_rhllor
+		# }	
+		# if = {
+			# limit = { trait = red_priest }
+			# remove_trait = red_priest
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTBreligious.1.2" 
+		# trigger = {
+			# OR = {
+				# trait = septon
+				# trait = septa
+				# trait = silent_sister
+			# }	
+			# NOT = { religion = the_seven }	
+		# }
+		# if = {
+			# limit = { trait = septon }
+			# remove_trait = septon
+		# }	
+		# if = {
+			# limit = { trait = septa }
+			# remove_trait = septa
+		# }	
+		# if = {
+			# limit = { trait = silent_sister }
+			# remove_trait = silent_sister
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTCreligious.1.2" 
+		# trigger = {
+			# trait = drowned
+			# NOT = { religion = drowned_god }	
+		# }
+		# remove_trait = drowned
+	# }
+# }
+#I want a church career
+character_event = {
+	id = religious.2
+	desc = "EVTDESCreligious.2"
+	picture = GFX_evt_bishop
+	
+	min_age = 14
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		is_ruler = no
+		liege = { 
+			demesne_size = 1 
+			NOT = { is_theocracy = yes } 
+			NOT = { government = theocratic_feudal_government }
+		}
+		in_command = no
+		is_married = no
+		NOT = { trait = cynical }
+		OR = {
+			religion = the_seven
+			religion = rhllor
+			religion = qarth_warlocks
+			religion = shadowbinders
+			religion = summer_rel
+			is_drowned_god_religion_trigger = yes
+			religion = bearded_priests
+			religion = harpy	
+			is_reformed_religion = yes
+		}
+		NAND = {
+			is_female = no
+			religion_allows_male_temple_holders = no
+		}
+		NAND = {
+			is_female = yes
+			religion_allows_female_temple_holders = no
+		}
+		NOT = {
+			has_priest_trait_trigger = yes
+		}
+		NOT = { has_ambition = obj_get_married }
+		NOT = { has_ambition = obj_marry_ruler }
+		NOT = { has_ambition = obj_wants_landed_title }
+		OR = {	
+			NOT = { num_of_children = 1 }
+			age = 40
+		}
+		father_even_if_dead = { always = yes }
+		is_ill = no
+		has_epidemic = no
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }	
+		NOT = { trait = kingsguard }	
+		NOT = { trait = nightswatch }
+		NOT = { trait = wildling }
+		NOT = { trait = slave }
+		NOT = { trait = giant }
+		NOT = { has_character_modifier = maester_education }
+		NOT = { has_character_flag = asked_church_career }
+		NOT = { has_character_flag = is_child_of_destiny }
+	}
+	
+	mean_time_to_happen = {
+		months = 2500
+		
+		modifier = {
+			factor = 0.2
+			is_summer_rel_trigger = yes
+			trait = lustful
+		}
+		modifier = {
+			factor = 1000
+			is_summer_rel_trigger = yes
+			OR = {
+				trait = chaste
+				trait = celibate
+			}	
+		}
+		
+		modifier = {
+			factor = 3
+			religion = bearded_priests
+			trait = craven
+		}
+		modifier = {
+			factor = 1000
+			religion = bearded_priests
+			NOT = { combat_rating = 40 }
+		}
+		
+		modifier = {
+			factor = 0.2
+			trait = zealous
+		}
+		modifier = {
+			factor = 1.2
+			age = 25
+		}
+		modifier = {
+			factor = 1.2
+			age = 35
+		}
+		modifier = {
+			factor = 1.2
+			age = 45
+		}
+		modifier = {
+			factor = 1.5
+			OR = { 	
+				trait = misguided_warrior
+				trait = tough_soldier
+				trait = skilled_tactician
+				trait = brilliant_strategist
+			}
+			NOT = { religion = bearded_priests }
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+		}
+		modifier = {
+			factor = 1.5
+			martial = 10
+			NOT = { religion = bearded_priests }
+		}
+		modifier = {
+			factor = 1.5
+			OR = {
+				trait = skilled_warrior
+				trait = master_warrior
+			}
+			NOT = { religion = bearded_priests }
+		}
+		modifier = {
+			factor = 2
+			OR = { 
+				trait = stressed
+				trait = depressed
+			}
+		}
+		modifier = {
+			factor = 0.8
+			trait = bastard
+		}
+		modifier = {
+			factor = 0.5
+			trait = celibate
+		}
+		modifier = {
+			factor = 4
+			trait = hedonist
+			NOT = { is_summer_rel_trigger = yes }
+		}
+		modifier = {
+			factor = 0.75
+			trait = scholar
+		}
+		modifier = {
+			factor = 1.5
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.66
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = proud
+		}
+		modifier = {
+			factor = 0.66
+			trait = humble
+		}
+		modifier = {
+			factor = 1.5
+			trait = craven
+		}
+		modifier = {
+			factor = 0.66
+			trait = ambitious
+		}
+		modifier = {
+			factor = 1.5
+			trait = content
+		}
+		modifier = {
+			factor = 2.0
+			is_primary_heir = yes
+		}
+		modifier = {
+			factor = 1.75
+			is_pretender = yes 
+		}
+	}
+	immediate = {
+		set_character_flag = asked_church_career
+	}
+
+	option = {
+		name = "EVTOPTA999900003" 
+		liege = { letter_event = { id = religious.3 } } 
+	}
+}
+#Someone wants a church career
+letter_event = {
+	id = religious.3
+	desc = "EVTDESCreligious.3"
+	picture = GFX_evt_bishop
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA999900004" #Yes
+		ai_chance = {
+			factor = 60
+			
+			modifier = {
+				factor = 0.25
+				FROM = { is_betrothed = yes }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 0
+				AND = { 
+					current_heir = { character = FROM }
+					NOT = { num_of_children = 2 }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				AND = { 
+					current_heir = { character = FROM }
+					NOT = { num_of_children = 3 }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				AND = { 
+					current_heir = { character = FROM }
+					NOT = { num_of_children = 4 }
+				}
+			}
+			modifier = {
+				factor = 0.04
+				current_heir = { character = FROM }
+			}
+			modifier = {
+				factor = 2
+				AND = { 	
+					current_heir = { character = FROM }
+					FROM = { 	
+						OR = { 	
+							NOT = { martial = 8 } 
+							trait = craven
+							is_weak_trigger = yes
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0.5
+				is_parent_of = FROM
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { martial = 12 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { martial = 16 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { stewardship = 16 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { intrigue = 16 }
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 0.5
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+				religion = FROM
+			}
+			modifier = {
+				factor = 0
+				trait = zealous
+				NOT = { religion = FROM }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { is_parent_of = FROM }
+				NOT = { current_heir = { character = FROM } }
+			}
+			prestige = 10
+		}
+		if = {
+			limit = {
+				is_parent_of = FROM
+				NOT = { current_heir = { character = FROM } }
+			}
+			prestige = 20
+		}
+		if = {
+			limit = {
+				current_heir = { character = FROM } 
+			}
+			prestige = 40
+		}
+		scaled_wealth = { value = -0.05 min = -10 max = -75 }
+		piety = 15
+		FROM = {
+			prestige = 10
+			clr_character_flag = asked_church_career
+			clr_character_flag = serving_varangian	#Merc company
+			set_character_flag = no_court_invites
+			if = {
+				limit = { is_betrothed = yes }
+				betrothed = {
+					if = {
+						limit = { 
+							is_ruler = yes 
+							NOT = { character = ROOT }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						opinion = {
+							who = PREV
+							modifier = opinion_betrothal_broken
+						}
+					}
+					if = {
+						limit = { 
+							is_ruler = no 
+							liege = { 
+								is_close_relative = PREV 
+								NOT = { character = ROOT }
+							}
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						liege = {
+							opinion = {
+								who = ROOT
+								modifier = opinion_betrothal_broken
+							}
+							opinion = {
+								who = PREVPREV
+								modifier = opinion_betrothal_broken
+							}
+						}	
+					}
+					break_betrothal = PREV
+				}	
+			}	
+		}
+		custom_tooltip = {
+			text = TOOLTIPreligious.3TEMPLE
+			hidden_tooltip = {
+				top_liege = {
+					random_realm_lord = {
+						limit = {
+							OR = {
+								is_theocracy = yes
+								government = theocratic_feudal_government
+							}
+							demesne_size = 1
+							religion = FROM
+							culture = ROOT							
+							NOT = { has_landed_title = k_the_most_devout }
+						}	
+						FROM = { 
+							move_character = PREV 
+							opinion = { who = PREV modifier = opinion_studying_religion }
+							break = yes
+						}
+					}
+					random_realm_lord = {
+						limit = {
+							OR = {
+								is_theocracy = yes
+								government = theocratic_feudal_government
+							}
+							demesne_size = 1
+							religion = FROM
+							culture_group = ROOT							
+							NOT = { has_landed_title = k_the_most_devout }
+						}	
+						FROM = { 
+							move_character = PREV 
+							opinion = { who = PREV modifier = opinion_studying_religion }
+							break = yes
+						}
+					}
+					random_realm_lord = {
+						limit = {
+							OR = {
+								is_theocracy = yes
+								government = theocratic_feudal_government
+							}
+							demesne_size = 1
+							religion = FROM
+							NOT = { has_landed_title = k_the_most_devout }
+						}	
+						FROM = { 
+							move_character = PREV 
+							opinion = { who = PREV modifier = opinion_studying_religion }
+							break = yes
+						}
+					}
+				}	
+				random_character = {
+					limit = {
+						OR = {
+							is_theocracy = yes
+							government = theocratic_feudal_government
+						}
+						demesne_size = 1
+						religion = FROM
+						is_within_diplo_range = ROOT
+						NOT = { has_landed_title = k_the_most_devout }
+					}	
+					FROM = { 
+						move_character = PREV 
+						opinion = { who = PREV modifier = opinion_studying_religion }
+						break = yes
+					}
+				}
+			}	
+		}	
+	}
+	option = {
+		name = "EVTOPTB999900004" #No
+		trigger = { 
+			NOT = { current_heir = { character = FROM } }
+			NOT = { is_parent_of = FROM }
+		}
+		ai_chance = {
+			factor = 20
+		}
+		FROM = {
+			prestige = -5
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_refused_church_career
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTDreligious.3" #No son of mine
+		trigger = { 
+			NOT = { current_heir = { character = FROM } }
+			is_parent_of = FROM
+		}
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			prestige = -5
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_refused_church_career
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTC999900004" #You're my heir!
+		trigger = { 
+			current_heir = { character = FROM } 	    
+		}
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			prestige = -10
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_refused_church_career
+			}
+		}
+	}
+
+}
+#Novice advances to priesthood
+character_event = {
+	id = religious.4
+	desc = "EVTDESCreligious.4"
+	picture = GFX_evt_bishop
+	
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		liege = { 
+			OR = {
+				is_theocracy = yes
+				government = theocratic_feudal_government
+			}
+			religion = ROOT
+		}
+		is_ruler = no
+		OR = {
+			religion = the_seven
+			religion = rhllor
+			religion = qarth_warlocks
+			religion = shadowbinders
+			religion = summer_rel
+			is_drowned_god_religion_trigger = yes
+			religion = bearded_priests
+			religion = harpy		
+			is_reformed_religion = yes
+		}
+		NAND = {
+			is_female = no
+			religion_allows_male_temple_holders = no
+		}
+		NAND = {
+			is_female = yes
+			religion_allows_female_temple_holders = no
+		}
+		OR = {
+			NOT = { religion = bearded_priests }
+			combat_rating = 20
+		}
+		NOT = {
+			has_priest_trait_trigger = yes
+		}			
+		NOT = { trait = kingsguard }
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { is_ill = yes }		
+		NOT = { trait = pneumonic }	
+	}
+
+	mean_time_to_happen = {
+		months = 100
+		
+		modifier = {
+			factor = 0.75
+			religion = bearded_priests
+			combat_rating = 60
+		}
+		modifier = {
+			factor = 0.75
+			religion = bearded_priests
+			combat_rating = 80
+		}
+		
+		modifier = {
+			factor = 4
+			trait = cynical
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.75
+			trait = celibate
+		}
+		modifier = {
+			factor = 0.9
+			piety = 50
+		}
+		modifier = {
+			factor = 0.9
+			piety = 75
+		}
+		modifier = {
+			factor = 0.9
+			piety = 100
+		}
+		modifier = {
+			factor = 0.8
+			piety = 150
+		}
+		modifier = {
+			factor = 2
+			OR = { 
+				trait = stressed
+				trait = depressed
+			}
+		}
+		modifier = {
+			factor = 0.75
+			trait = genius
+		}
+		modifier = {
+			factor = 0.9
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 1.1
+			is_dumb_trigger = yes
+		}
+		modifier = {
+			factor = 0.9
+			trait = scholar
+		}
+		modifier = {
+			factor = 1.5
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.66
+			trait = diligent
+		}
+		modifier = {
+			factor = 0.66
+			trait = ambitious
+		}
+		modifier = {
+			factor = 1.5
+			trait = content
+		}
+	}	
+
+
+	option = {
+		name = "EVTOPTA999900005" #Yes
+		# #Remove slave status
+		# if = {
+			# limit = { trait = slave }
+			# character_event = { id = slavery.0 }
+		# }
+		piety = 25
+		set_character_flag = no_court_invites
+		add_priest_trait_effect = yes
+		remove_trait = knight
+		remove_trait = squire
+		remove_spouse = spouse
+		recalc_succession = yes
+		if = {
+			limit = { 
+				religion = bearded_priests 
+				NOT = { trait = master_warrior }
+			}
+			if = {
+				limit = { trait = skilled_warrior }
+				random = {
+					chance = 5
+					remove_trait = skilled_warrior
+					add_trait = master_warrior
+				}
+			}
+			else_if = {
+				limit = { trait = trained_warrior }
+				random = {
+					chance = 25
+					remove_trait = trained_warrior
+					add_trait = skilled_warrior
+				}
+			}
+			else_if = {
+				limit = { trait = poor_warrior }
+				remove_trait = poor_warrior
+				add_trait = trained_warrior
+			}
+			else = {
+				add_trait = poor_warrior
+			}
+		}
+		# Inform close relatives
+		any_player = {
+			limit = {
+				OR = {
+					is_close_relative = ROOT
+					is_liege_of = ROOT
+				}	
+			}
+			character_event = { id = religious.5 days = 1 }
+		}
+	}
+}
+# The character's relatives informed
+character_event = {
+	id = religious.5
+	picture = GFX_evt_bishop
+	
+	desc = {
+		text = "EVTDESCreligious.5"
+		trigger = { FROM = { NOT = { religion = bearded_priests } } }
+	}
+	desc = {
+		text = "EVTDESCreligious.5B"
+		trigger = { FROM = { religion = bearded_priests } }
+	}
+	
+	is_triggered_only = yes
+	
+	option = {	
+		name = {
+			text = "EVTOPTAreligious.5"
+			trigger = { opinion = { who = FROM value = -30 } }
+		}
+		name = {
+			text = "EVTOPTBreligious.5"
+			trigger = { NOT = { opinion = { who = FROM value = -30 } } }
+		}		
+		prestige = 15
+		recalc_succession = yes
+	}
+}
+###################
+###The Seven Events###
+###################
+#High Septon offers absolution for Kinslaying
+character_event = {
+	id = 39210
+	desc = "EVTDESC39210"
+	picture = GFX_evt_pope
+	border = "GFX_event_normal_frame_religion"
+	
+	min_age = 16
+	only_capable = yes
+	prisoner = no
+	only_playable = yes
+	religion = the_seven
+	war = no
+	
+	trigger = {	
+		controls_religion = yes
+		any_playable_ruler = {
+			religion = the_seven
+			rightful_religious_head = ROOT
+			OR = {
+				is_any_kinslayer_trigger = yes
+				trait = suspected_kinslayer
+			}	
+			piety = 200
+			reverse_opinion  = { who = ROOT value = 0 }
+			NOT = { has_character_flag = kinslaying_offered }
+		}		
+	}
+	
+	mean_time_to_happen = {
+		months = 24
+	}
+
+	option = {
+		name = "EVTOPTA39210"
+		ai_chance = { factor = 100 }
+		
+		random_playable_ruler = {
+			limit = {
+				religion = the_seven
+				rightful_religious_head = ROOT
+				OR = {
+					is_any_kinslayer_trigger = yes
+					trait = suspected_kinslayer
+				}
+				piety = 200
+				reverse_opinion  = { who = ROOT value = 0 }
+			}
+			set_character_flag = kinslaying_offered
+			character_event = { id = 39211 tooltip = EVTTOOLTIP39211 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB39210"	#incase someone plays the High Septon.. players will mod it in, so might as well give them a fun option here..
+		ai_chance = { factor = 0 }
+	}
+}
+
+
+character_event = {
+	id = 39211
+	desc = "EVTDESC39211"
+	picture = GFX_evt_pope
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39211"
+		ai_chance = { factor = 100 }
+		piety = -200
+		if = {
+			limit = { yearly_income = 200 }
+			transfer_scaled_wealth = {
+				to = FROM
+				value = 0.5
+			}
+		}	
+		if = {
+			limit = { NOT = { yearly_income = 200 } }
+			wealth = -100
+			FROM = { wealth = 100 }
+		}	
+		remove_kinslayer_trait_effect = yes
+		FROM = { character_event = { id = 39212 days = 1 tooltip = EVTTOOLTIP39212 } }
+	}
+	
+	option = {
+		name = "EVTOPTB39211"
+		ai_chance = { factor = 0 }
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical } 
+			}
+			add_trait = cynical
+		}
+		if = {
+			limit = { 
+				trait = zealous
+			}
+			remove_trait = zealous
+		}			
+		FROM = { character_event = { id = 39213 days = 1  tooltip = EVTTOOLTIP39213 } }
+	}
+}
+
+
+character_event = {
+	id = 39212
+	desc = "EVTDESC39212"
+	picture = GFX_evt_knight_kneeling
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	option = {
+		name = "EVTOPTA39224"
+		prestige = 10
+	}
+}
+
+character_event = {
+	id = 39213
+	desc = "EVTDESC39213"
+	picture = GFX_evt_torture
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39213"
+		prestige = -10
+	}
+}
+###Most Devout Events###
+#Most Devout counter
+character_event = {
+	id = religious.6
+	desc = "EVTDESCreligious.6"
+	picture = GFX_evt_library
+
+	is_triggered_only = yes
+	only_playable = yes
+	lacks_dlc = "Sons of Abraham"
+	
+	trigger = {
+		has_landed_title = k_the_most_devout
+	}
+	
+	immediate = {
+		set_variable = { which = "mostdevout_count" value = 0 }
+	}
+	
+	option = { 
+		name = "EVTOPTAreligious.6"
+		any_courtier = {
+			limit = {
+				trait = septon
+				has_character_flag = themost_devout
+				NOT = { demesne_size = 1 }
+				is_ruler = no
+			}
+			ROOT = { change_variable = { which = "mostdevout_count" value = 1 } }				
+		}
+		set_character_flag = mostdevout_count_initialised
+		any_courtier = {
+			limit = {
+				liege = { character = ROOT }
+				NOT = { 
+					OR = {
+						has_character_flag = themost_devout
+						demesne_size = 1
+						is_ruler = yes
+						trait = silent_sister
+						trait = septa
+					}
+				}
+			}
+			random_dynasty_member = {
+				limit = { 
+					is_alive = yes 
+					NOT = { character = PREV }
+				}
+				PREV = { set_character_flag = banished }
+				if = {
+					limit = { is_ruler = yes }
+					reverse_banish = PREV
+				}
+				if = {
+					limit = { is_ruler = no }
+					liege = { reverse_banish = PREVPREV }
+				}
+			}
+			if = {
+				limit = { 
+					NOT = { has_character_flag = banished }
+					is_female = no
+				}
+				b_oldtown = {
+					holder_scope = {
+						reverse_banish = PREVPREV
+					}
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = { has_character_flag = banished }
+					is_female = yes
+				}
+				add_trait = silent_sister
+				set_character_flag = no_court_invites
+				recalc_succession = yes
+			}
+			clr_character_flag = banished			
+		}
+		character_event = { id = religious.7 days = 2 }
+	}
+}
+#New Most Devout needed
+character_event = {
+	id = religious.7
+	desc = "EVTDESCreligious.7"
+	picture = GFX_evt_library
+
+	is_triggered_only = yes
+	lacks_dlc = "Sons of Abraham"
+	
+	trigger = {
+		has_landed_title = k_the_most_devout
+		has_character_flag = mostdevout_count_initialised
+		NOT = { check_variable = { which = "mostdevout_count" value = 3 } }
+		NOT = { has_global_flag = searching_most_devout }
+	}
+	
+	option = { 
+		name = "EVTOPTAreligious.7"
+		set_global_flag = searching_most_devout
+	}
+}
+#Septon selected
+character_event = {
+	id = religious.8
+	desc = "EVTDESCreligious.8"
+	picture = GFX_evt_library
+	
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	lacks_dlc = "Sons of Abraham"
+	has_global_flag = searching_most_devout
+	
+	trigger = {	
+		trait = septon
+		NOT = { has_landed_title = k_the_most_devout }
+		NOT = { is_feudal = yes }
+		OR = { 
+			NOT = { liege = { has_landed_title = k_the_most_devout } }	
+			demesne_size = 1
+		}
+		NOT = { trait = nightswatch }
+		NOT = { trait = kingsguard }
+	}
+	
+	mean_time_to_happen = {
+		months = 50
+		modifier = {
+			factor = 0.5
+			father_even_if_dead = { 
+				always = yes
+			}
+		}	
+		modifier = {
+			factor = 0.8
+			age = 40
+		}
+		modifier = {
+			factor = 0.7
+			age = 60
+		}
+		modifier = {
+			factor = 1.2
+			NOT = { age = 32 }
+		}
+		modifier = {
+			factor = 0.9
+			piety = 100
+		}
+		modifier = {
+			factor = 0.9
+			piety = 150
+		}
+		modifier = {
+			factor = 0.9
+			piety = 200
+		}
+		modifier = {
+			factor = 0.9
+			piety = 250
+		}
+		modifier = {
+			factor = 0.9
+			piety = 300
+		}
+		modifier = {
+			factor = 0.75
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.75
+			trait = celibate
+		}
+		modifier = {
+			factor = 2
+			OR = { 	
+				trait = stressed
+				trait = depressed
+			}
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.9
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 1.1
+			is_dumb_trigger = yes
+		}
+		modifier = {
+			factor = 0.9
+			trait = scholar
+		}
+		modifier = {
+			factor = 1.2
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.9
+			trait = diligent
+		}
+		modifier = {
+			factor = 0.9
+			trait = ambitious
+		}
+		modifier = {
+			factor = 1.1
+			trait = content
+		}
+	}
+	
+	immediate = {
+		clr_global_flag = searching_most_devout
+		k_the_most_devout = {
+			holder_scope = {
+				change_variable = { which = "mostdevout_count" value = 1 }
+			}
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTA999900012"
+		prestige = 50
+		piety = 50
+		liege = {
+			letter_event = { id = religious.9 }
+		}	
+		if = {
+			limit = { demesne_size = 1 }
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				current_heir = { ROOT = { transfer_scaled_wealth = { to = PREV value = all } } }
+			}
+			abdicate = yes
+		}
+		set_character_flag = themost_devout
+		k_the_most_devout = {
+			holder_scope = {
+				reverse_banish = ROOT
+				if = { 	
+					limit = { NOT = { check_variable = { which = "mostdevout_count" value = 3 } } }
+					set_global_flag = searching_most_devout
+				}
+			}
+		}
+	}
+}
+#Inform liege of septon's promotion to most devout
+letter_event = {
+	id = religious.9
+	desc = "EVTDESCreligious.9"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAreligious.9" #Yes			
+	}
+
+}
+#High Septon dies, start search for successor
+#on_death
+character_event = {
+	id = religious.10
+	desc = "EVTDESCreligious.10"
+	picture = GFX_evt_pope
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_landed_title = k_the_most_devout		
+	}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_dlc = "Sons of Abraham" } }
+			clr_global_flag = need_new_high_septon
+			set_global_flag = need_new_high_septon
+			liege = {
+				if = {
+					limit = { NOT = { character = ROOT } }
+					set_character_flag = select_next_high_septon
+					character_event = { id = religious.11 }					
+				}	
+			}
+		}
+		any_playable_ruler = {
+			limit = { 
+				ai = no 
+				has_knighthood_religion_trigger = yes
+				NOT = { has_character_flag = select_next_high_septon }
+			}
+			character_event = { id = religious.1199 }	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.10"
+	}
+}
+#Inform King
+character_event = {
+	id = religious.11
+	desc = "EVTDESCreligious.11"
+	picture = GFX_evt_pope
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "EVTOPTAreligious.11"
+		custom_tooltip = { text = TOOLTIPSELECTHIGHSEPTON }
+	}
+}
+#Inform World (notification only)
+character_event = {
+	id = religious.1199
+	desc = "EVTDESCreligious.11"
+	picture = GFX_evt_pope
+	
+	is_triggered_only = yes
+	notification = yes
+	
+	option = {
+		name = OK
+	}
+}
+#AI King selects preferred candidate
+character_event = {
+	id = religious.12
+	desc = "AI chooses preferred High Septon"
+	picture = GFX_evt_pope
+	
+	capable_only = yes
+	prisoner = no
+	lacks_dlc = "Sons of Abraham"
+	has_global_flag = need_new_high_septon
+	
+	trigger = {	
+		NOT = { had_global_flag = { flag = need_new_high_septon days = 100 } }
+		liege = { has_landed_title = k_the_most_devout }
+		NOT = { demesne_size = 1 }
+		trait = septon
+		k_the_most_devout = {
+			holder_scope = {
+				liege = {
+					ai = yes
+					has_character_flag = select_next_high_septon
+				}	
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 4
+		modifier = {
+			factor = 0.1
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						dynasty = ROOT
+					}	
+				}
+			}
+		}	
+		modifier = {
+			factor = 1.25
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						NOT = {
+							opinion = {
+								who = ROOT
+								value = -80
+							}
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						NOT = {
+							opinion = {
+								who = ROOT
+								value = -60
+							}
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						NOT = {
+							opinion = {
+								who = ROOT
+								value = -40
+							}
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						NOT = {
+							opinion = {
+								who = ROOT
+								value = -20
+							}
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						opinion = {
+							who = ROOT
+							value = 20
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						opinion = {
+							who = ROOT
+							value = 40
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						opinion = {
+							who = ROOT
+							value = 60
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = {
+				holder_scope = {
+					liege = {
+						opinion = {
+							who = ROOT
+							value = 80
+						}	
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 1.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.5
+			trait = content
+		}
+	}
+	
+	immediate = {
+		k_the_most_devout = {
+			holder_scope = {
+				liege = {
+					clr_character_flag = select_next_high_septon
+					set_character_flag = next_high_septon_selected
+				}	
+			}
+		}	
+	}
+	
+	option = { 
+		name = "AI event"
+		set_character_flag = kings_preferred_candidate
+		k_the_most_devout = {
+			holder_scope = {
+				liege = {
+					reverse_opinion = {
+						modifier = opinion_preferred_high_septon
+						who = ROOT
+						years = 10
+					}
+				}	
+			}
+		}
+	}
+}
+#Character gets the title of High Septon
+character_event = {
+	id = religious.13
+	desc = "EVTDESCreligious.13"
+	picture = GFX_evt_pope
+	
+	capable_only = yes
+	prisoner = no
+	lacks_dlc = "Sons of Abraham"
+	
+	trigger = {
+		had_global_flag = { flag = need_new_high_septon days = 100 }
+		OR = {
+			has_character_flag = kings_preferred_candidate
+			trait = septon		
+		}	
+		NOT = { has_landed_title = k_the_most_devout }	
+		NOT = { 
+			AND = {
+				is_feudal = yes 
+				demesne_size = 1
+			}	
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 450
+		modifier = {
+			factor = 0.01
+			has_character_flag = kings_preferred_candidate
+			NOT = { religion_authority = 0.25 }
+		}
+		modifier = {
+			factor = 0.1
+			has_character_flag = kings_preferred_candidate
+			religion_authority = 0.25
+			NOT = { religion_authority = 0.4 }
+		}
+		modifier = {
+			factor = 0.25
+			has_character_flag = kings_preferred_candidate
+			religion_authority = 0.4
+			NOT = { religion_authority = 0.6 }
+		}
+		modifier = {
+			factor = 0.5
+			has_character_flag = kings_preferred_candidate
+			religion_authority = 0.6
+			NOT = { religion_authority = 0.8 }
+		}
+		modifier = {
+			factor = 0.8
+			has_character_flag = kings_preferred_candidate
+			religion_authority = 0.8
+			NOT = { religion_authority = 0.9 }
+		}
+		modifier = {
+			factor = 0.05
+			trait = septon
+			liege = { has_landed_title = k_the_most_devout }
+			NOT = { demesne_size = 1 }
+		}
+		modifier = {
+			factor = 0.33
+			has_character_flag = kings_preferred_candidate
+			trait = septon
+		}	
+		modifier = {
+			factor = 0.8
+			piety = 150
+		}
+		modifier = {
+			factor = 0.8
+			piety = 250
+		}
+		modifier = {
+			factor = 0.8
+			piety = 350
+		}
+		modifier = {
+			factor = 0.8
+			piety = 450
+		}
+		modifier = {
+			factor = 0.8
+			piety = 550
+		}
+		modifier = {
+			factor = 0.75
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.75
+			trait = celibate
+		}
+		modifier = {
+			factor = 0.75
+			trait = genius
+		}
+	}
+	
+	immediate = {	
+		clr_global_flag = need_new_high_septon	
+		if = {
+			limit = { demesne_size = 1 }
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				current_heir = { ROOT = { transfer_scaled_wealth = { to = PREV value = all } } }
+			}
+			abdicate = yes
+		}
+		k_the_most_devout = {
+			holder_scope = {
+				liege = {
+					clr_character_flag = select_next_high_septon
+					set_character_flag = liege_of_high_septon
+				}
+				#Mega war flags
+				if = { 	limit = { has_character_flag = supporting_king } 
+						ROOT = {
+							if = {
+								limit = {
+									NOT = { trait = rebel_leader }
+									NOT = { has_landed_title = e_iron_throne }
+								}
+								set_character_flag = supporting_king
+								set_character_flag = inherit_war
+								letter_event = { id = mega_wars.7 days=2 }	
+								character_event = { id = mega_wars.26 days=1 }	
+							}	
+						}
+				}
+				if = { 	limit = { has_character_flag = neutral  } 
+						ROOT = {
+							if = {
+								limit = {
+									NOT = { trait = rebel_leader }
+									NOT = { has_landed_title = e_iron_throne }
+								}
+								set_character_flag = neutral 
+								set_character_flag = inherit_war
+								letter_event = { id = mega_wars.7 days=2 }
+								character_event = { id = mega_wars.26 days=1 }
+							}	
+						}
+				}
+				if = { 	limit = { has_character_flag = against_king   } 
+						ROOT = {
+							if = {
+								limit = {
+									NOT = { trait = rebel_leader }
+									NOT = { has_landed_title = e_iron_throne }
+								}
+								rebel_leader = {
+									limit = {
+										reverse_has_opinion_modifier = {
+											who = ROOT
+											modifier = opinion_with_rebel_leader
+										}
+									}
+									reverse_opinion = {
+										who = PREV
+										modifier = opinion_deciding_rebel_leader
+										years = 1
+									}
+									PREV = { set_character_flag = inherit_war character_event = { id = mega_wars.26 days= 1 }	 }
+								}
+								set_character_flag = against_king 
+								character_event = { id = mega_wars.24 days = 2 }
+							}	
+						}
+				}
+				if = { 	limit = { has_character_flag = against_loyal_liege } 
+						ROOT = {
+							set_character_flag = against_loyal_liege
+						}
+				}
+				if = { 	limit = { has_character_flag = against_rebel_liege } 
+						ROOT = {
+							set_character_flag = against_rebel_liege
+						}
+				}
+				if = { 	limit = { has_character_flag = king_iron_throne   } 
+						ROOT = {
+							set_character_flag = king_iron_throne
+							any_playable_ruler = {
+								limit = {
+									has_opinion_modifier = {
+										who = ROOT
+										modifier = opinion_with_king
+									}
+								}
+								opinion = {
+									who = PREV
+									modifier = opinion_with_king
+									years = 100
+								}
+							}
+						}
+				}
+				if = { 	limit = { has_character_flag = rebel_leader   } 
+						ROOT = {
+							set_character_flag = rebel_leader
+						}
+				}
+				if = { 	limit = { trait = rebel_leader  } 
+						ROOT = {
+							add_trait = rebel_leader
+							any_playable_ruler = {
+								limit = {
+									has_opinion_modifier = {
+										who = ROOT
+										modifier = opinion_with_rebel_leader
+									}
+								}
+								opinion = {
+									who = PREV
+									modifier = opinion_with_rebel_leader
+									years = 100
+								}
+							}
+						}
+						remove_trait = rebel_leader
+				}
+				if = { 	limit = { has_character_flag = independant   } 
+						ROOT = {
+							set_character_flag = independant
+						}
+				}
+				if = { 	limit = { has_character_flag = post_civil_war_wars   } 
+						ROOT = {
+							set_character_flag = post_civil_war_wars
+						}
+				}
+				if = { 	limit = { has_character_flag = joined_independance_war   } 
+						ROOT = {
+							set_character_flag = joined_independance_war
+						}
+				}
+				###Debt Inheritance
+				ROOT = { save_event_target_as = debt_inheritor }
+				inherit_debt_effect = yes
+		
+				transfer_scaled_wealth = { to = ROOT value = all }
+				abdicate_to = ROOT
+				clear_wealth = THIS
+				wealth = -2000
+				death = yes
+			}	
+		}	
+		#character_event = { id = religious.206 } #nickname
+	}
+	
+	option = { 
+		name = "Ok"	
+		if = {
+			limit = { NOT = { trait = septon } }
+			add_trait = septon
+			set_special_character_title = title_septon
+			recalc_succession = yes
+			set_character_flag = king_selects_non_septon
+		}
+		piety = 150
+		prestige = 150
+		any_playable_ruler = {
+			limit = {		
+				OR = {
+					AND = {
+						ai = no
+						has_knighthood_religion_trigger = yes
+					}	
+					has_character_flag = liege_of_high_septon
+				}
+			}
+			character_event = { id = religious.14 days = 1 }
+		}	
+		hidden_tooltip = { character_event = { id = religious.6 days = 5 } }
+	}
+}
+#Inform realm of new high septon
+character_event = {
+	id = religious.14
+	desc = "EVTDESCreligious.14"
+	picture = "GFX_evt_greatsept"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.14"
+		trigger = {
+			OR = {
+				NOT = { has_character_flag = liege_of_high_septon }
+				NOT = { has_character_flag = next_high_septon_selected }
+			}	
+			NOT = { has_character_flag = high_septon_courtier }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBreligious.14"
+		trigger = {
+			OR = {
+				NOT = { has_character_flag = liege_of_high_septon }
+				NOT = { has_character_flag = next_high_septon_selected }
+			}	
+			NOT = { has_character_flag = high_septon_courtier }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCreligious.14"
+		trigger = {
+			has_character_flag = liege_of_high_septon
+			has_character_flag = next_high_septon_selected
+			FROM = { has_character_flag = kings_preferred_candidate }
+		}
+		prestige = 40
+		clr_character_flag = next_high_septon_selected
+		clr_character_flag = liege_of_high_septon
+		FROM = {
+			clr_character_flag = kings_preferred_candidate
+			religion_authority = {
+				modifier = influenced_election
+			}
+			if = {
+				limit = { has_character_flag = king_selects_non_septon }
+				clr_character_flag = king_selects_non_septon
+				custom_tooltip = { text = TOOLTIPEVTOPTCreligious.14 }
+				hidden_tooltip = {
+					ROOT = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								NOT = { character = FROM }
+								NOT = { trait = cynical }
+								NOT = { trait = incapable }
+							}
+							opinion = {
+								modifier = opinion_selected_non_septon
+								who = ROOT
+								years = 5
+							}
+							if = {
+								limit = { trait = septon }
+								opinion = {
+									modifier = opinion_selected_non_septon
+									who = ROOT
+									years = 5
+								}
+							}
+							if = {
+								limit = { trait = zealous }
+								opinion = {
+									modifier = opinion_selected_non_septon
+									who = ROOT
+									years = 5
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTDreligious.14"
+		trigger = {
+			has_character_flag = liege_of_high_septon
+			has_character_flag = next_high_septon_selected
+			NOT = { FROM = { has_character_flag = kings_preferred_candidate } }
+		}
+		prestige = -40
+		clr_character_flag = next_high_septon_selected
+		clr_character_flag = liege_of_high_septon
+		FROM = {	
+			religion_authority = {
+				modifier = defied_liege
+			}
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_not_preferred_high_septon
+				years = 10
+			}	
+		}
+		hidden_tooltip = {
+			any_realm_character = {
+				clr_character_flag = kings_preferred_candidate
+			}	
+		}
+	}
+}
+#Character responds to nomination request
+character_event = {
+	id = religious.15
+	desc = "EVTDESCreligious.15"
+	picture = "GFX_evt_greatsept"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = {
+		FROMFROM = { has_character_flag = select_next_high_septon }
+	}
+	
+	option = {
+		name = "Yes" #accept
+		ai_chance = {
+			factor = 0.5
+			modifier = {
+				factor = 10
+				trait = zealous
+			}
+			modifier = {
+				factor = 5
+				trait = celibate
+			}
+			modifier = {
+				factor = 2
+				trait = scholar
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			
+		}
+		FROMFROM = {
+			letter_event = { id = religious.16 }
+		}
+	}
+	
+	option = {
+		name = "No" #reject
+		ai_chance = {
+			factor = 0.5
+			modifier = {
+				factor = 10
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = knight
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { NOT = { at_location = ROOT } }
+			}
+			modifier = {
+				factor = 2
+				is_pretender = yes
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					is_voter = yes
+					is_councillor = yes
+				}
+			}
+			modifier = {
+				factor = 2
+				father_even_if_dead = {
+					always = yes
+				}
+			}
+		}
+		set_character_flag = no_to_high_septon
+		FROMFROM = {
+			letter_event = { id = religious.17 }
+		}
+		
+	}
+}	
+#Inform King accept
+letter_event = {
+	id = religious.16
+	desc = "EVTDESCreligious.16"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_flag = select_next_high_septon
+	}
+	
+	immediate = {
+		clr_character_flag = select_next_high_septon
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.16"
+		set_character_flag = next_high_septon_selected
+		scaled_wealth = { value = -0.2 min = -10 max = -100 }
+		FROM = {
+			set_character_flag = kings_preferred_candidate
+			opinion = {
+				modifier = opinion_preferred_high_septon
+				who = ROOT
+				years = 10
+			}
+		}
+	}
+}
+#Inform King reject
+letter_event = {
+	id = religious.17
+	desc = "EVTDESCreligious.17"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.17"
+	}
+}
+#High Septon has deposed liege, can choose successor
+character_event = {
+	id = religious.22
+	desc = "EVTDESCreligious.22"
+	
+	is_triggered_only = yes
+	
+	immediate = { FROMFROM = { save_event_target_as = deposed_liege } }
+	
+	option = {
+		name = "EVTOPTAreligious.22" #Current Heir
+		ai_chance = {
+			factor = 125
+			modifier = {
+				factor = 0
+				event_target:deposed_liege = {
+					current_heir = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							NOT = { religion = the_seven }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+						}
+					}
+				}
+			}
+		}
+		event_target:deposed_liege = { 
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				if = {
+					limit = { is_merchant_republic = no }
+					current_heir = { save_event_target_as = wealth_heir }
+				}
+				if = {
+					limit = { is_merchant_republic = yes }
+					family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+				}
+				transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+			}
+			abdicate = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBreligious.22" #Another relative
+		trigger = {
+			event_target:deposed_liege = {
+				current_heir = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						NOT = { religion = the_seven }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+					}
+				}
+				any_dynasty_member = {
+					reverse_opinion = { who = ROOT value = 0 }
+					is_close_relative = PREV
+					NOT = { any_child = { character = PREVPREV } }
+					OR = {			
+						is_married = yes
+						is_betrothed = yes
+						can_marry = yes
+						trait = widowed
+					}
+					religion = the_seven
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}	
+				}
+			}
+		}
+		ai_chance = {
+			factor = 60
+		}
+		event_target:deposed_liege = { 
+			random_dynasty_member = {
+				limit = {
+					reverse_opinion = { who = ROOT value = 0 }
+					is_close_relative = PREV
+					NOT = { any_child = { character = PREVPREV } }
+					religion = the_seven
+					OR = {			
+						is_married = yes
+						is_betrothed = yes
+						can_marry = yes
+						trait = widowed
+					}
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}
+				}
+				if = {
+					limit = { event_target:deposed_liege = { trait = civil_war } }
+					add_trait = civil_war
+				}
+				event_target:deposed_liege = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }
+			}
+		}
+		character_event = { id = mega_wars.10 days = 1 }
+	}
+	
+	option = {
+		name = "EVTOPTCreligious.22" #Another Lord
+		trigger = {
+			any_playable_ruler = {
+				liege = {
+					tier = KING
+					OR = {
+						has_character_flag = deposed_liege
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+					is_female = no
+					is_adult = yes
+					reverse_opinion = { who = ROOT value = -24 }
+					religion = the_seven 
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 30
+		}
+		random_playable_ruler = {
+			limit = {
+				liege = {
+					tier = KING	
+					OR = {
+						has_character_flag = deposed_liege
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+						reverse_opinion = { who = ROOT value = 40 }
+					}	
+					is_female = no
+					is_adult = yes
+					reverse_opinion = { who = ROOT value = -24 }
+					religion = the_seven
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}
+				}
+			}
+			liege = { 
+				if = {
+					limit = { event_target:deposed_liege = { trait = civil_war } }
+					add_trait = civil_war
+				}
+				event_target:deposed_liege = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }				
+			}
+		}
+		character_event = { id = mega_wars.10 days = 1 }
+	}
+	
+	option = {
+		name = "EVTOPTEreligious.22" #Another claimant
+		trigger = {
+			any_independent_ruler = {
+				any_realm_character = {
+					any_claim = {
+						is_primary_holder_title = yes
+						holder_scope = { character = FROMFROM }
+					}
+					reverse_opinion = { who = ROOT value = -24 }
+					religion = the_seven
+					OR = {
+						NOT = { dynasty = PREV }
+						NOT = { is_close_relative = PREV }
+					}
+					OR = {			
+						is_married = yes
+						is_betrothed = yes
+						can_marry = yes
+						trait = widowed
+					}
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}
+				}
+			}	
+		}
+		ai_chance = {
+			factor = 20
+		}
+		random_character = {
+			limit = {
+				any_claim = {
+					is_primary_holder_title = yes
+					holder_scope = { character = FROMFROM }
+				}
+				reverse_opinion = { who = ROOT value = -24 }
+				religion = the_seven
+				OR = {
+					NOT = { dynasty = PREV }
+					NOT = { is_close_relative = PREV }
+				}
+				OR = {			
+					is_married = yes
+					is_betrothed = yes
+					can_marry = yes
+					trait = widowed
+				}
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}
+			}
+			if = {
+				limit = { event_target:deposed_liege = { trait = civil_war } }
+				add_trait = civil_war
+			}
+			event_target:deposed_liege = { abdicate_to = PREV }
+			letter_event = { id = religious.23 days = 1 }				
+		}	
+		character_event = { id = mega_wars.10 days = 1 }
+	}
+	
+	option = {
+		name = "EVTOPTDreligious.22" #Disolve Iron Throne and take non King tier vassals
+		trigger = {
+			event_target:deposed_liege = { 
+				has_landed_title = e_iron_throne 
+				NOT = { num_of_emperor_titles = 2 }
+			}
+		}
+		ai_chance = {
+			factor = 1 #Last resort
+		}
+		hidden_tooltip = {
+			event_target:deposed_liege = {
+				any_vassal = {
+					limit = { NOT = { tier = KING } }
+					set_defacto_liege = ROOT
+				}
+				any_vassal = {
+					limit = { tier = KING }
+					add_character_modifier = {
+						name = indep_faction_won
+						duration = 20
+					}
+					any_demesne_title = { 
+						limit = { 
+							NOT = { tier = BARON } 
+							NOT = { tier = EMPEROR }
+						}
+						set_variable = { which = "de_facto_empire" value = 0 } 
+					}
+					any_realm_lord = { 
+						any_demesne_title = { 
+							limit = { 
+								NOT = { tier = BARON } 
+								NOT = { tier = EMPEROR }
+							}
+							set_variable = { which = "de_facto_empire" value = 0 } 
+						}
+					}
+				}
+			}
+		}	
+		event_target:deposed_liege = {
+			e_iron_throne = { 
+				destroy_landed_title = THIS
+				add_pressed_claim = PREV
+			}
+			any_demesne_title = {
+				limit = { location = { is_capital = yes } }
+				usurp_title = { target = ROOT type = claim }
+				if = {
+					limit = { NOT = { tier = BARON } }
+					add_pressed_claim = PREV
+				}
+			}
+			k_crownlands = {
+				if = {
+					limit = { is_titular = no }
+					gain_title = ROOT
+					add_pressed_claim = PREV
+				}		
+			}
+		}
+		hidden_tooltip = {
+			any_playable_ruler = {
+				limit = { primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } } }
+				any_demesne_title = { 
+					limit = { 
+						NOT = { tier = BARON } 
+						NOT = { tier = EMPEROR }
+					}
+					set_variable = { which = "de_facto_empire" value = 0 } 
+				}
+				letter_event = { id = religious.25 }
+			}
+			character_event = { id = mega_wars.10 days = 1 }
+			#Disband Kingsguard
+			d_kingsguard = {
+				holder_scope = {
+					clr_global_flag = kingsguard_initialising
+					clr_global_flag = need_commander_kingsguard
+					remove_trait = kingsguard
+					clr_character_flag = no_court_invites
+					any_courtier = { remove_trait = kingsguard clr_character_flag = no_court_invites }
+					activate_title = { title = d_kingsguard status = no }
+					d_kingsguard = { destroy_landed_title = THIS }
+				}
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.22" #FAILSAFE
+		trigger = { always = no }
+		ai_chance = {
+			factor = 0
+		}
+		event_target:deposed_liege = { 
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				if = {
+					limit = { is_merchant_republic = no }
+					current_heir = { save_event_target_as = wealth_heir }
+				}
+				if = {
+					limit = { is_merchant_republic = yes }
+					family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+				}
+				transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+			}
+			abdicate = yes
+		}
+	}
+}
+#Inform high septon gave throne
+letter_event = {
+	id = religious.23
+	desc = "EVTDESCreligious.23"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { is_ruler = no }
+				move_character = ROOT
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBreligious.23" 
+		FROMFROM = {
+			if = {
+				limit = { liege = { character = ROOT } }
+				give_job_title = job_spiritual
+				if = {
+					limit = { ROOT = { has_regent = yes } }
+					gain_regency_effect = yes
+				}
+			}		
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = {
+					ai = no
+				}
+				letter_event = { id = religious.24 }
+			}
+		}
+	}
+}
+letter_event = {
+	id = religious.24
+	desc = "EVTDESCreligious.24"
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	
+	option = {
+		name = OK
+	}
+}
+#Inform iron throne dissovled
+letter_event = {
+	id = religious.25
+	desc = "EVTDESCreligious.25"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBreligious.25" 
+		hidden_tooltip = {
+			if = {
+				limit = { tier = KING }
+				add_character_modifier = {
+					name = indep_faction_won
+					duration = 20
+				}
+				any_demesne_title = { 
+					limit = { 
+						NOT = { tier = BARON } 
+						NOT = { tier = EMPEROR }
+					}
+					set_variable = { which = "de_facto_empire" value = 0 } 
+				} 	
+				any_realm_lord = { 
+					any_demesne_title = { 
+						limit = { 
+							NOT = { tier = BARON } 
+							NOT = { tier = EMPEROR }
+						}
+						set_variable = { which = "de_facto_empire" value = 0 } 
+					} 					
+				}
+			}
+		}
+	}
+}
+#Character is excommunicated
+character_event = {
+	id = religious.30
+	desc = "EVTDESCreligious.30"
+	picture = GFX_evt_lunatic
+	
+	is_triggered_only = yes
+	min_age = 14
+	religion = the_seven
+	
+	trigger = {
+		NOT = { trait = excommunicated }	
+		rightful_religious_head_scope = { NOT = { opinion = { who = ROOT value = 25 } } }
+	}
+		
+	option = {
+		name = "EVTOPTAreligious.30"
+		excommunicate_effect = yes
+		piety = -50		
+	}
+}
+character_event = { #inform character was excommunicated
+	id = religious.31
+	desc = "EVTDESCreligious.31"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.31"
+		tooltip = { 
+			event_target:excommunicated_character = { 
+				add_trait = excommunicated 
+				show_portrait = yes
+			} 
+		}
+	}
+}	
+###Holy Orders Refounded###
+narrative_event = {
+	id = religious.200
+	desc = "EVTDESCreligious.200"
+	title = "EVTTITLEreligious.200"
+	picture = GFX_evt_crusaders
+
+	is_triggered_only = yes
+	
+	major = yes
+	
+	major_trigger = {
+		is_ruler = yes
+		OR = {
+			religion = the_seven
+			religion = old_gods_reformed
+			religion = old_gods	
+			capital_scope =  { region = world_westeros }
+			has_landed_title = k_the_most_devout
+			has_knighthood_religion_trigger = yes
+		}			
+	}
+	
+	option = {
+		name = OK
+		trigger = { has_landed_title = k_the_most_devout }
+		if = {
+			limit = { NOT = { is_title_active = d_warriors_sons } }
+			activate_title = { status = yes title = d_warriors_sons }
+			random_character = {
+				limit = {
+					is_ruler = no
+					is_primary_heir = no
+					NOT = { dynasty = 0 }
+					religion = the_seven
+					is_female = no
+					trait = knight
+					trait = zealous
+					is_incapable = no
+					prisoner = no
+					can_press_claims_trigger = yes
+					liege = { ai = yes }
+					reverse_opinion = { who = PREV value = -25 }
+					opinion = { who = PREV value = -25 }				
+				}	
+				any_spouse = { remove_spouse = PREV }
+				any_consort = { remove_consort = PREV }
+				betrothed = { break_betrothal = PREV }
+				add_trait = celibate
+				d_warriors_sons = { gain_title = PREV }
+			}
+			if = {
+				limit = { d_warriors_sons = { has_holder = no } }
+				create_character = {
+					random_traits = yes
+					dynasty = random
+					culture = ROOT
+					female = no
+					religion = the_seven
+					trait = knight
+					trait = zealous
+					trait = trained_warrior
+					trait = tough_soldier
+					trait = celibate
+				}
+				new_character = {
+					d_warriors_sons = { gain_title = PREV }
+				}
+			}
+		}
+		d_warriors_sons = { 
+			holder_scope = { 
+				set_defacto_liege = ROOT 
+				set_government_type = order_government
+			} 
+			succession = open_elective
+		}	
+		if = {
+			limit = { NOT = { is_title_active = d_poor_fellows } }
+			activate_title = { status = yes title = d_poor_fellows }
+			create_character = {
+				random_traits = yes
+				dynasty = none
+				culture = ROOT
+				female = no
+				religion = the_seven
+				trait = knight
+				trait = zealous
+				trait = trained_warrior
+				trait = tough_soldier
+				trait = celibate
+			}
+			new_character = {
+				d_poor_fellows = { gain_title = PREV }
+			}
+		}
+		d_poor_fellows = { 
+			holder_scope = { 
+				set_defacto_liege = ROOT 
+				set_government_type = order_government
+			} 
+			succession = open_elective
+		}	
+	}
+	option = {
+		name = OK
+		trigger = { NOT = { has_landed_title = k_the_most_devout } }
+	}	
+}
+###Holy Orders Disbanded###
+character_event = {
+	id = religious.290
+	desc = "EVTDESCreligious.290"
+	picture = GFX_evt_crusaders
+
+	is_triggered_only = yes
+	
+	major = yes
+	
+	major_trigger = {
+		is_ruler = yes
+		OR = {
+			religion = the_seven
+			religion = old_gods_reformed
+			religion = old_gods
+			capital_scope =  { region = world_westeros }
+			has_landed_title = k_the_most_devout
+			has_knighthood_religion_trigger = yes
+		}			
+	}
+	
+	option = {
+		name = OK
+		trigger = { has_landed_title = k_the_most_devout }
+		if = {
+			limit = { is_title_active = d_warriors_sons }
+			activate_title = { status = no title = d_warriors_sons }
+			d_warriors_sons = { destroy_landed_title = THIS }
+		}
+		if = {
+			limit = { is_title_active = d_poor_fellows } 
+			activate_title = { status = no title = d_poor_fellows }
+			d_poor_fellows = { destroy_landed_title = THIS }
+		}	
+	}
+	option = {
+		name = OK
+		trigger = { NOT = { has_landed_title = k_the_most_devout } }
+	}	
+}
+###Called for judgement before Most Devout###
+character_event = {
+	id = religious.201
+	
+	hide_window = yes	
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		age = 16
+		OR = {
+			AND = {
+				is_ruler = no
+				liege = {
+					religion = the_seven	
+					crownlaw_title = {
+						OR = {
+							has_law = investiture_law_2
+							has_law = investiture_law_3
+						}
+					}
+				}
+			}	
+			AND = {
+				religion = the_seven
+				crownlaw_title = {
+					OR = {
+						has_law = investiture_law_2
+						has_law = investiture_law_3
+					}
+				}
+			}	
+		}	
+		OR = {
+			is_any_kinslayer_trigger = yes
+			trait = suspected_kinslayer
+			trait = excommunicated
+			NOT = { piety = -150 }
+			trait = dishonorable1
+			trait = dishonorable2
+			trait = dishonorable3
+			trait = dishonorable4
+			trait = dishonorable5
+			trait = dishonorable6
+			trait = dishonorable7
+			trait = dishonorable8
+			trait = dishonorable9
+			trait = dishonorable10
+		}
+		k_the_most_devout = { 
+			holder_scope = { 
+				religion = the_seven
+				religion_authority = 0.4
+				NOT = { character = ROOT }
+				NOT = { opinion = { who = ROOT value = 10 } } 
+				NOT = { has_character_modifier = giving_justice } ###must not be in a court proceeding	
+			} 
+		}
+		OR = {
+			NOT = { has_character_flag = submitted_to_faith }
+			had_character_flag = { flag = submitted_to_faith days = 3650 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 60
+		
+		#Unimportant characters
+		modifier = {
+			factor = 4
+			dynasty = 0
+			NOT = { prestige = 200 }
+		}
+		modifier = {
+			factor = 4
+			NOT = { father_even_if_dead = { always = yes } }
+			NOT = { prestige = 200 }
+		}
+		
+		modifier = {
+			factor = 0.75
+			is_any_kinslayer_trigger = yes
+		}
+		modifier = {
+			factor = 0.5
+			trait = excommunicated
+		}
+		modifier = {
+			factor = 0.5
+			k_the_most_devout = { holder_scope = { NOT = { opinion = { who = ROOT value = -99 } } } }
+		}
+		modifier = {
+			factor = 0.7
+			k_the_most_devout = { holder_scope = { NOT = { opinion = { who = ROOT value = -74 } } } }
+		}
+		modifier = {
+			factor = 0.8
+			k_the_most_devout = { holder_scope = { NOT = { opinion = { who = ROOT value = -49 } } } }
+		}
+		modifier = {
+			factor = 0.8
+			k_the_most_devout = { holder_scope = { NOT = { opinion = { who = ROOT value = -24 } } } }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { piety = -500 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { piety = -350 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { piety = -250 }
+		}
+		modifier = {
+			factor = 1.5
+			piety = 200
+		}
+		modifier = {
+			factor = 1.5
+			piety = 350
+		}
+		modifier = {
+			factor = 1.5
+			piety = 500
+		}
+		modifier = {
+			factor = 2
+			piety = 650
+		}
+		modifier = {
+			factor = 3
+			piety = 800
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = { holder_scope = { trait = zealous } }
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = { holder_scope = { trait = diligent } }
+		}
+		modifier = {
+			factor = 0.75
+			k_the_most_devout = { holder_scope = { trait = wroth } }
+		}
+		modifier = {
+			factor = 2
+			k_the_most_devout = { holder_scope = { trait = cynical } }
+		}
+		modifier = {
+			factor = 2
+			k_the_most_devout = { holder_scope = { trait = slothful } }
+		}
+		modifier = {
+			factor = 1.5
+			k_the_most_devout = { holder_scope = { trait = patient } }
+		}
+		modifier = {
+			factor = 2
+			k_the_most_devout = { 
+				holder_scope = { 
+					liege = {
+						OR = {
+							character = ROOT
+							is_close_relative = ROOT
+						}
+					}
+				} 
+			}
+		}
+	}
+	
+	immediate = {
+		set_character_flag = submitted_to_faith
+		k_the_most_devout = { holder_scope = { character_event = { id = religious.202 } } }
+	}
+	
+	option = {
+		name = OK
+	}		
+}
+#set high septon as FROM scope
+character_event = {
+	id = religious.202
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { FROM = { letter_event = { id = religious.203 } } }
+	
+	option = {
+		name = OK
+	}	
+}	
+letter_event = {
+	id = religious.203
+	desc = "EVTDESCreligious.203"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.201" #Submit self		
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				religion = the_seven
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+		}
+		k_the_most_devout = { 
+			holder_scope = { 
+				ROOT = { imprison = PREV } 
+				hidden_tooltip = {
+					add_character_modifier = {
+						name = giving_justice
+						duration = 60
+					}
+				}
+			} 
+		}
+		hidden_tooltip = { 
+			character_event = { id = trial.0 days = 3 } #call for trial
+			add_character_modifier = {
+				name = getting_justice
+				duration = 30
+			}
+			clr_character_flag = select_champion
+			clr_character_flag = choosing_champion
+			liege = { character_event = { id = religious.204 } }
+			if = {
+				limit = { 
+					OR = {
+						is_ruler = yes 
+						liege = {
+							OR = {
+								current_heir = { character = ROOT }
+								sibling = ROOT
+								is_parent_of = ROOT
+								is_married = ROOT
+								father = { character = ROOT }
+								mother = { character = ROOT }
+							}
+						}
+					}	
+				}
+				liege = { 
+					any_realm_lord = { 
+						limit = { ai = no }
+						character_event = { id = religious.204 }
+						set_character_flag = religious.204
+					} 
+				}
+			}
+			any_dynasty_member = {
+				limit = { 
+					ai = no
+					is_close_relative = ROOT
+					NOT = { has_character_flag = religious.204 }
+				}	
+				character_event = { id = religious.204 }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBreligious.201" #No, ruler
+		trigger = { is_ruler = yes }
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				NOT = { religion = the_seven }
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+		}
+		if = {
+			limit = { 
+				religion = the_seven
+				NOT = { trait = excommunicated } 
+			}
+			excommunicate_effect = yes
+		}
+		piety = -100
+		k_the_most_devout = { 
+			holder_scope = { 
+				opinion = {
+					who = ROOT
+					modifier = opinion_unhappy
+					years = 5
+				}
+			} 
+		}	
+	}
+	option = {
+		name = "NO" #No, appeal to liege
+		trigger = { is_ruler = no }
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				NOT = { religion = the_seven }
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+		}
+		liege = { character_event = { id = religious.205 } }
+	}		
+}
+#inform realm agreed to submit to faith
+character_event = {
+	id = religious.204
+	desc = "EVTDESCreligious.204"
+	
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { character = FROM }
+	}
+	
+	option = {
+		name = OK
+		tooltip = { k_the_most_devout = { holder_scope = { FROM = { imprison = PREV } } } }
+		clr_character_flag = religious.204
+	}
+}
+#Courtier asks for protection from faith
+character_event = {
+	id = religious.205
+	desc = "EVTDESCreligious.205"
+
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = { FROM = { age = 16 } }
+	
+	option = {
+		name = "EVTOPTAreligious.205" #Submit them		
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				religion = the_seven
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+		}
+		k_the_most_devout = { 
+			holder_scope = { 
+				hidden_tooltip = { character_event = { id = religious.206 } } #call for trial
+				FROM = { imprison = PREV } 
+			} 
+		}
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_unhappy
+			years = 5
+		}
+		piety = 40
+	}
+	
+	option = {
+		name = "EVTOPTBreligious.205" #No		
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 10
+				NOT = { religion = the_seven }
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					dynasty = FROM
+					is_close_relative = FROM
+				}	
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 50 } 
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 75 } 
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 100 } 
+			}
+		}
+		piety = -80
+		k_the_most_devout = { 
+			holder_scope = { 
+				opinion = {
+					who = ROOT
+					modifier = opinion_unhappy
+					years = 5
+				}
+			} 
+		}	
+		FROM = {
+			if = {
+				limit = { 
+					religion = the_seven
+					NOT = { trait = excommunicated } 
+				}
+				excommunicate_effect = yes
+			}
+			piety = -100
+		}
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_happy
+			years = 5
+		}		
+	}
+}	
+
+character_event = { #set high septon as FROM scope
+	id = religious.206
+
+	is_triggered_only = yes
+	hide_window = yes
+
+	option = {
+		name = OK
+		FROMFROM = { character_event = { id = religious.296 } }
+	}
+}
+character_event = { #informed unlanded character imprisoned
+	id = religious.296
+
+	is_triggered_only = yes
+	hide_window = yes
+
+	option = {
+		name = OK
+		FROM = {
+			add_character_modifier = {
+				name = giving_justice
+				duration = 60
+			}
+		}	
+		character_event = { id = trial.0 days = 3 } #call for trial
+		add_character_modifier = {
+			name = getting_justice
+			duration = 30
+		}
+		clr_character_flag = select_champion
+		clr_character_flag = choosing_champion			
+	}
+}
+
+#High Septon nickname
+character_event = {
+	id = religious.207
+
+	hide_window = yes
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = k_the_most_devout 	
+		#has_nickname = no
+		is_theocracy = yes
+		OR = {
+			has_dlc = "Sons of Abraham"
+			NOT = { has_global_flag = need_new_high_septon }
+			had_global_flag = { flag = need_new_high_septon days = 600 }
+		}	
+		NOT = { has_character_flag = nickname_event }
+	}
+	
+	immediate = {
+		#remove claimants
+		k_the_most_devout = {
+			any_claimant = {
+				limit = { NOT = { trait = septon } }
+				remove_claim = PREV
+			}
+		}
+		#add faith authority opinions
+		any_independent_ruler = {
+			limit = {	
+				higher_tier_than = DUKE
+				OR = {
+					tier = EMPEROR
+					primary_title = {
+						NOT = { is_variable_equal = { which = "de_facto_empire" which = 1 } }
+					}
+				}
+				OR = {
+					religion = the_seven
+					is_liege_of = ROOT
+					ROOT = { liege_before_war = { character = PREVPREV } }
+				}
+			}		
+			if = {
+				limit = { primary_title = { has_law = investiture_law_0 } }
+				reverse_opinion = { who = ROOT modifier = opinion_investiture_law_0 }
+			}	
+			if = {
+				limit = { primary_title = { has_law = investiture_law_1 } }
+				reverse_opinion = { who = ROOT modifier = opinion_investiture_law_1 }
+			}
+			if = {
+				limit = { primary_title = { has_law = investiture_law_3 } }
+				reverse_opinion = { who = ROOT modifier = opinion_investiture_law_3 }
+			}
+		}
+		#High Septon Dynasty Fix
+		if = {
+			limit = {
+				NOT = { dynasty = 0 }
+				NAND = {
+					OR = {
+						trait = bastard
+						trait = legit_bastard
+					}
+					OR = {
+						father_even_if_dead = { NOT = { dynasty = 0 } }
+						mother_even_if_dead = { NOT = { dynasty = 0 } }
+					}
+				}
+				NOT = {
+					any_dynasty_member_even_if_dead = { NOT = { character = ROOT } }
+				}
+			}
+			dynasty = 777777
+		}
+		if = { #remove others who somehow have this dynasty
+			limit = { dynasty = 777777 }
+			any_dynasty_member = {
+				limit = {
+					is_alive = yes
+					NOT = { character = ROOT }
+				}
+				dynasty = none
+			}
+		}
+		
+		set_character_flag = nickname_event 
+		remove_special_character_title = title_septon
+		if = {
+			limit = { 
+				
+				has_fair_trait_trigger = yes
+				NOT = { trait = dwarf }
+				NOT = { trait = inbred }
+				NOT = { trait = harelip }
+				NOT = { trait = hunchback }
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_handsome_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				has_fair_trait_trigger = yes
+				NOT = { age = 35 }
+				NOT = { trait = dwarf }
+				NOT = { trait = inbred }
+				NOT = { trait = harelip }
+				NOT = { trait = hunchback }
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_fair_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = strong
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_strong_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = lunatic
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_mad_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = lunatic
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_crazed_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = weak
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_weak_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = imbecile
+					trait = slow
+				}	
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_dimwitted_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = inbred
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_inbred_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = tall
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_large_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = dwarf
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_little_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				has_ugly_trait_trigger = yes
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_ugly_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = clubfooted
+					trait = infirm
+					is_crippled_trigger = yes
+					trait = inbred
+				}
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_lame_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = is_fat
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_fat_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = hunchback
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_hunched_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				NOT = { trait = kind }
+				NOT = { trait = charitable }
+				OR = {
+					trait = cruel
+					trait = impaler
+				}	
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_cruel_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = mystic
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_mysterious_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = wildling
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_wildling_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				NOT = {
+					OR = {
+						culture_group = andal
+						culture_group = dornish
+						culture_group = first_men
+						culture_group = free_folk
+						culture = high_valyrian
+						culture = western_valyrian
+						culture_group = iron_isles_culture
+					}
+				}	
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_eastern_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				culture = dothraki
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_dothraki_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				culture_group = iron_isles_culture	
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_ironborn_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				culture_group = first_men
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_northern_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				culture_group = dornish
+			}
+			random = {
+				chance = 15
+				give_nickname = nick_the_dornish_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = drunkard
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_drunk_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				diplomacy = 10
+				trait = proud
+				trait = gregarious
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_pompous_one
+				break = yes
+			}
+		}		
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = drunkard
+					trait = hedonist
+				}	
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_raucous_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				age = 30
+				learning = 12
+				NOT = { trait = arbitrary }
+				NOT = { trait = wroth }
+				NOT = { trait = slow }
+				NOT = { trait = imbecile }
+				NOT = { trait = inbred }
+				NOT = { trait = incapable }
+				OR = {
+					is_smart_incl_genius_trigger = yes
+					trait = just
+					trait = patient
+					trait = scholar
+				}
+			}
+			random = {
+				chance = 40
+				give_nickname = nick_the_wise_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				OR = {
+					NOT = { piety = 1 }
+					trait = possessed
+					is_any_kinslayer_trigger = yes
+				}
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_wicked_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = dishonorable1
+					trait = dishonorable2
+					trait = dishonorable3
+					trait = dishonorable4
+					trait = dishonorable5
+					trait = dishonorable6
+					trait = dishonorable7
+					trait = dishonorable8
+					trait = dishonorable9
+					trait = dishonorable10			
+				}
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_bloody_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				piety = 2000
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_pious_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				piety = 2000
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_blessed_one
+				break = yes
+			}
+		}
+		# if = {
+			# limit = { 
+				# 
+				# wealth = 2000
+			# }
+			# random = {
+				# chance = 50
+				# give_nickname = nick_the_rich_one
+				# break = yes
+			# }
+		# }
+		if = {
+			limit = { 
+				
+				prestige = 750
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_great_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				NOT = { trait = celibate }
+				NOT = { trait = chaste }
+				OR = {
+					trait = lustful
+					trait = hedonist
+				}	
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_lewd_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				NOT = { age = 21 }
+			}
+			random = {
+				chance = 40
+				give_nickname = nick_the_young_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = knight
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_knightly_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = dragon_rider
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_dragon_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				age = 75
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_old_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = clubfooted
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_clubfooted_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				is_crippled_trigger = yes
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_broken_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = blinded_age
+					trait = blinded
+				}	
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_blind_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = homosexual
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_peculiar_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				has_scarred_trait_trigger = yes
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_scarred_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = infirm
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_gouty_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = eunuch
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_eunuch_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = stutter
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_stuttering_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_warrior_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				martial = 18
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_martial_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = genius
+				OR = {
+					learning = 22
+					trait = elusive_shadow
+					trait = grey_eminence
+					trait = midas_touched
+					trait = brilliant_strategist
+					trait = mastermind_theologian
+					#trait = mastermind_scholar
+				}
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_brilliant_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = proud
+				has_fair_trait_trigger = yes
+				NOT = { trait = dwarf }
+				NOT = { trait = inbred }
+				NOT = { trait = harelip }
+				NOT = { trait = hunchback }
+			}
+			random = {
+				chance = 33
+				give_nickname = nick_the_vain_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				intrigue = 15		
+				NOT = {
+					trait = trusting
+					trait = imbecile
+					trait = slow
+					trait = inbred
+				}
+				OR = {
+					trait = deceitful
+					is_smart_incl_genius_trigger = yes
+					trait = intricate_webweaver
+					trait = elusive_shadow
+				}
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_cunning_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = shy
+				trait = paranoid
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_reclused_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = humble
+				NOT = {
+					trait = strong
+					trait = gregarious
+					trait = proud
+				}
+				OR = {
+					trait = weak
+					trait = shy
+					trait = craven
+				}
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_meek_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = shy
+				OR = {
+					trait = patient
+					trait = humble
+				}
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_silent_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = charitable
+				trait = just
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_good_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = diligent
+				trait = ambitious
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_able_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = honorable
+				diplomacy = 10
+				NOT = { trait = bastard }
+				NOT = { trait = legit_bastard }
+				father_even_if_dead = { NOT = { dynasty = 0 } }
+			}
+			random = {
+				chance = 50
+				give_nickname = nick_the_noble_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = gregarious
+				trait = kind
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_merry_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = scholar
+				NOT = {
+					trait = imbecile
+					trait = slow
+				}
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_scholarly_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				learning = 18
+				OR = {
+					trait = scholar
+					is_smart_incl_genius_trigger = yes
+				}	
+				NOT = {
+					trait = imbecile
+					trait = slow
+				}
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_learned_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = bastard
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_bastard_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = kind
+				trait = patient
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_benign_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = ruthless
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_ruthless_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = stubborn
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_stubborn_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = rude
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_rude_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = wroth
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_angry_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = slothful
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_lazy_one
+				break = yes
+			}
+		}		
+		if = {
+			limit = { 
+				
+				trait = proud
+			}
+			random = {
+				chance = 15
+				give_nickname = nick_the_arrogant_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = proud
+			}
+			random = {
+				chance = 15
+				give_nickname = nick_the_proud_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = craven
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_craven_one
+				break = yes
+			}
+		}	
+		if = {
+			limit = { 
+				
+				trait = shy
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_shy_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = just
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_just_one
+				break = yes
+			}
+		}		
+		if = {
+			limit = { 
+				
+				trait = humble
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_humble_one
+				break = yes
+			}
+		}
+		if = {
+			limit = { 
+				
+				trait = kind
+			}
+			random = {
+				chance = 25
+				give_nickname = nick_the_kind_one
+				break = yes
+			}
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_new_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_next_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_feckless_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_popular_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_luminous_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_boring_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_cagey_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_erratic_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_welcome_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_pointless_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_pointy_nosed_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_big_eared_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_well_endowed_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_plain_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_fast_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_yellow_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_bushy_eyebrowed_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_clumsy_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_black_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_red_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_lackwitted_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_spotty_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_stained_one
+			break = yes
+		}
+		random = {
+			chance = 10
+			give_nickname = nick_the_wet_one
+			break = yes
+		}
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+########################################
+#Bishops don't like being in prison events...
+########################################
+
+#THE SEVEN CHAIN
+character_event = {
+	id = 39220
+	desc = "EVTDESC39220"	#Bishops in prison whine to High Septon..		
+	picture = GFX_evt_into_the_dungeon
+	border = "GFX_event_normal_frame_religion"
+	
+	only_men = yes
+	min_age = 16	
+	capable_only = yes
+	prisoner = yes
+	religion = the_seven
+	
+	trigger = {
+		OR = {
+			is_theocracy = yes
+			trait = septon
+		}			
+		imprisoned_days = 14
+		host = { religion = the_seven }
+		NOT = { rightful_religious_head = ROOT }
+		religion_head = {
+			reverse_opinion = { who = ROOT value = 25 }		#not grovel if we dont like the High Septon.
+		}
+		NOT = {
+			has_character_flag = nag_pope_to_help_me
+		}
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+	}
+
+	mean_time_to_happen = {
+		days = 180
+		modifier = {
+			factor = 0.90
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.50
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.75
+			piety = 25
+		}
+		modifier = {
+			factor = 0.75
+			religion_head = {
+				reverse_opinion = { who = ROOT value = 25 }		
+			}
+		}
+	}	
+
+	immediate = {
+		set_character_flag = nag_pope_to_help_me
+	}
+
+	
+	option = {
+		name = "EVTOPTA39220" # Write a letter to the High Septon.
+		religion_head = { character_event = { id = 39221 days = 5 random = 10 tooltip = EVTTOOLTIP39221 } }
+		if = {
+			limit = {
+				host = { realm_intrigue = 15 }
+			}
+			random = {
+				chance = 25
+				host = { character_event = { id = 39222 days = 3 tooltip = EVTTOOLTIP39222 }  }
+			}
+		}
+		
+	}	
+	option = {
+		name = "EVTOPTB39220" # Pray for Divine Help
+		piety = 10
+		hidden_tooltip = {	
+			host = { character_event = { id = 39223 } }
+		}
+	}	
+}	
+
+#High Septon gets letter.
+character_event = {
+	id = 39221
+	desc = "EVTDESC39221"
+	picture = GFX_evt_into_the_dungeon
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39221"	#try to help bishop
+		FROM = {
+			character_event = { id = 39224 tooltip = EVTTOOLTIP39224 }
+		}
+		prestige = 5
+	}
+	option = {
+		name = "EVTOPTB39221"	#not my problem
+		ai_chance = {
+			factor = 0
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+			}
+			character_event = { id = 39225 tooltip = EVTTOOLTIP39225 }
+		}
+		religion_authority = {
+			modifier = head_of_religion_neglect
+			years = 10
+		}
+		prestige = -5
+	}
+}
+
+
+#We discover bishop writing to High Septon
+character_event = {
+	id = 39222
+	desc = "EVTDESC39222"
+	picture = GFX_evt_recieve_letter
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39222"	#kill
+		trigger = {
+			OR = {
+				trait = cruel
+				trait = impaler
+				trait = wroth
+				trait = ruthless
+			}
+		}	
+		FROM = {
+			death = { 
+				death_reason = death_execution 
+				killer = ROOT
+			}
+		}
+		piety = -200
+		change_variable = { which = "tyrant" value = 5 } 
+		hidden_tooltip = { character_event = { id = maintenance.1 } }#tyrant trait
+		if = {
+			limit = { 
+				NOT = { trait = excommunicated } 
+			}
+			random = {
+				chance = 25
+				excommunicate_effect = yes
+			}	
+		}
+	}	
+	option = {
+		name = "EVTOPTB39222"	#this is bad news
+		piety = -50
+	}	
+}
+
+#pious bishop praying for it..
+character_event = {
+	id = 39223
+	desc = "EVTDESC39223"
+	picture = GFX_evt_into_the_dungeon
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39223"			# kind and release him
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 100
+				trait = kind
+			}
+		}
+		trigger = {
+			NOT = { trait = cruel }
+			NOT = { trait = impaler }
+			NOT = { trait = wroth }				
+			NOT = { trait = cynical }				
+			
+		}
+		piety = 30
+		FROM = { 
+			prisoner = no 
+			clr_character_flag = nag_pope_to_help_me
+		}
+	}	
+	option = {
+		name = "EVTOPTB39223"			#nopes
+		ai_chance = {
+			factor = 10
+		}
+		piety = -50
+	}	
+}
+
+#bishop hears High Septon is helping him.
+character_event = {
+	id = 39224
+	desc = "EVTDESC39224"
+	picture = GFX_evt_pope
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		host = { character_event = { id = 39226 tooltip = EVTTOOLTIP39226 } }
+	}
+	option = {
+		name = "EVTOPTA39224"	#good news
+		piety = 25
+	}	
+}
+
+#bad news, High Septon tells you no
+character_event = {
+	id = 39225
+	desc = "EVTDESC39225"
+	picture = GFX_evt_knight_kneeling
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39225"	#bad news
+		piety = -25		
+	}	
+}
+
+#deal with High Septons demands
+character_event = {
+	id = 39226
+	desc = "EVTDESC39226"
+	picture = GFX_evt_pope
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39226"	#let him go
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 100
+				trait = kind
+			}
+		}
+		FROM = { 
+			prisoner = no 
+			clr_character_flag = nag_pope_to_help_me
+		}
+		piety = 25
+		religion_authority = {
+			modifier = ruler_bowed_to_pope
+			years = 10
+		}
+	}	
+	option = {
+		name = "EVTOPTB39226"	#no
+		trigger = {
+			NOT = {
+				trait = zealous 
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 20
+				NOT = {
+					opinion = {
+						who = FROM
+						value = 20
+					}
+				}
+			}
+		}
+		piety = -100
+		religion_authority = {
+			modifier = ruler_defied_pope
+			years = 10
+		}
+		religion_head = {
+			opinion = {
+				modifier = opinion_ignore_papal_demands
+				who = ROOT
+			}
+		}	
+	}	
+}
+
+###############################################################
+#The Seven flavour: Icons!
+###############################################################
+character_event = { #trigger event
+	id = 39299
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no	
+	min_age = 16
+	hide_window = yes
+	
+	trigger = {	
+		has_knighthood_religion_trigger = yes
+		NOT = {
+			has_character_flag = commisioned_icon
+		}
+		NOT = { trait = cynical }
+		NOT = { trait = excommunicated }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		
+		modifier = {
+			factor = 0.5
+			NOT = { religion = the_seven }
+		}
+		modifier = {
+			factor = 2
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			piety = 100
+		}
+	}
+	
+	immediate = {
+		set_character_flag = commisioned_icon
+		
+		random_list = {
+			10 = { #Mother
+				trigger = {
+					NOT = { trait = ruthless }
+					NOT = { trait = cruel }
+				}
+				modifier = {
+					factor = 0.5
+					is_female = no
+				}
+				modifier = {
+					factor = 2
+					trait = pregnant
+				}
+				modifier = {
+					factor = 2
+					trait = kind
+				}
+				modifier = {
+					factor = 2
+					trait = honorable
+				}
+				character_event = { id = 39300 }
+			}
+			10 = { #Father
+				trigger = {
+					NOT = { trait = arbitrary }
+					NOT = { trait = slothful }
+				}
+				modifier = {
+					factor = 2
+					trait = just
+				}
+				modifier = {
+					factor = 2
+					trait = diligent
+				}
+				modifier = {
+					factor = 1.5
+					trait = authoritative
+				}
+				character_event = { id = 39301 }
+			}
+			10 = { #Warrior
+				trigger = {
+					NOT = { trait = craven }
+					OR = {
+						martial = 10
+						combat_rating = 40
+						trait = knight
+						in_command = yes
+						has_minor_title = title_commander
+						has_job_title = job_marshal
+					}
+				}
+				modifier = {
+					factor = 0.5
+					is_female = yes
+				}
+				modifier = {
+					factor = 1.5
+					OR = {
+						in_command = yes
+						has_minor_title = title_commander
+						has_job_title = job_marshal
+					}
+				}
+				modifier = {
+					factor = 1.5
+					trait = brave
+				}
+				modifier = {
+					factor = 1.5
+					martial = 12
+				}
+				modifier = {
+					factor = 1.5
+					combat_rating = 60
+				}
+				character_event = { id = 39302 }
+			}
+			10 = { #Maiden
+				trigger = {
+					NOT = { trait = lustful }
+					OR = {
+						is_female = yes
+						trait = chaste
+						trait = celibate
+						any_child = {
+							is_female = yes
+							is_alive = yes
+							NOT = { age = 25 }
+						}
+					}
+				}
+				modifier = {
+					factor = 2
+					trait = chaste
+				}
+				modifier = {
+					factor = 2
+					trait = celibate
+				}
+				character_event = { id = 39303 }
+			}
+			10 = { #Smith
+				trigger = {
+					NOT = { trait = content }
+					NOT = { trait = slothful }
+					NOT = { is_weak_trigger = yes }
+				}
+				modifier = {
+					factor = 1.5
+					is_strong_trigger = yes
+				}
+				modifier = {
+					factor = 1.5
+					trait = ambitious
+				}
+				modifier = {
+					factor = 1.5
+					trait = diligent
+				}
+				character_event = { id = 39304 }
+			}
+			10 = { #Crone
+				trigger = {
+					NOT = { trait = proud }
+					NOT = { trait = wroth }
+					NOT = { trait = arbitrary }
+				}
+				modifier = {
+					factor = 1.5
+					trait = erudite
+				}
+				modifier = {
+					factor = 2
+					trait = humble
+				}
+				modifier = {
+					factor = 2
+					trait = patient
+				}
+				modifier = {
+					factor = 1.5
+					trait = scholar
+				}
+				character_event = { id = 39305 }
+			}
+			2 = { #Stranger
+				trigger = {
+					OR = {
+						society_member_of = the_plaguebringers #The Stranger
+						trait = lunatic
+						trait = impaler
+						trait = cruel
+						trait = possessed
+						trait = mystic
+					}
+				}
+				modifier = {
+					factor = 100
+					society_member_of = the_plaguebringers #The Stranger
+				}
+				modifier = {
+					factor = 2
+					trait = lunatic
+				}
+				modifier = {
+					factor = 2
+					trait = impaler
+				}
+				modifier = {
+					factor = 2
+					trait = cruel
+				}
+				modifier = {
+					factor = 2
+					trait = possessed
+				}
+				modifier = {
+					factor = 2
+					trait = mystic
+				}
+				character_event = { id = 39306 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK	
+	} 
+}
+
+character_event = {
+	id = 39300
+	desc = "EVTDESC39300"	# Icon of the Mother
+	border = "GFX_event_normal_frame_religion"
+	picture = "GFX_evt_icon"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA39300"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		fertility = 0.1		
+	} 
+	option = {
+		name = "EVTOPTB39300"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Father
+character_event = {
+	id = 39301
+	desc = "EVTDESC39301"	
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39301"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_diplomacy = 1
+	} 
+	option = {
+		name = "EVTOPTB39301"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Warrior
+character_event = {
+	id = 39302
+	desc = "EVTDESC39302"	
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39302"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_martial = 1
+	} 
+	option = {
+		name = "EVTOPTB39302"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Maiden
+character_event = {
+	id = 39303
+	desc = "EVTDESC39303"	
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA39303"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		piety = 50
+	} 
+	option = {
+		name = "EVTOPTB39303"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Smith
+character_event = {
+	id = 39304
+	desc = "EVTDESC39304"
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA39304"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_stewardship = 1
+	} 
+	option = {
+		name = "EVTOPTB39304"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Crone
+character_event = {
+	id = 39305
+	desc = "EVTDESC39305"
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA39305"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_learning = 1
+	} 
+	option = {
+		name = "EVTOPTB39304"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+}
+
+#Icon of the Stranger
+character_event = {
+	id = 39306
+	desc = "EVTDESC39306"
+	picture = "GFX_evt_icon"
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA39306"	#Yes please
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_intrigue = 1
+		prestige = -50
+		if = {
+			limit = { society_member_of = the_plaguebringers } #The Stranger
+			add_society_currency_minor_effect = yes
+		}
+	} 
+	option = {
+		name = "EVTOPTB39300"	#This we can not afford
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				society_member_of = the_plaguebringers
+			}
+		}
+		if = {
+			limit = { society_member_of = the_plaguebringers } #The Stranger
+			detract_society_currency_minor_effect = yes
+		}
+		clr_character_flag = commisioned_icon
+	} 
+}
+#################
+####Rhllor Events###
+#################
+character_event = {
+	id = 39230
+	desc = "EVTDESC39230"	#rhllor & We got a bishop in jail.
+	picture = GFX_evt_heretic
+	
+	is_triggered_only = yes
+	religion = rhllor
+	
+	trigger = {		
+		in_command = no
+		num_of_prisoners = 1
+		religion_authority = 0.02
+		any_courtier = {
+			prisoner = yes
+			demesne_size = 1
+			OR = {
+				is_theocracy = yes
+				trait = red_priest
+			}	
+			religion = rhllor
+			imprisoned_days = 100
+			host = { character = ROOT }		
+		}
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 1.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 1.5
+			trait = just
+		}
+		modifier = {
+			factor = 1.5
+			religion_authority = 0.25
+		}
+		modifier = {
+			factor = 1.5
+			religion_authority = 0.50
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA39230"	#let him go
+		
+		random_courtier = {
+			limit = {
+				prisoner = yes
+				religion = rhllor
+				imprisoned_days = 100
+				host = { character = ROOT }		
+			}
+			prisoner = no 
+		}
+		religion_authority = {
+			modifier = ruler_bowed_to_pope
+			years = 10
+		}
+		piety = 25
+	}
+	
+	option = {
+		name = "EVTOPTB39230"	#refuse
+		piety = -100
+		religion_authority = {
+			modifier = ruler_defied_pope
+			years = 10
+		}
+	}
+	
+	
+}
+
+#########
+
+#religious.300 - Father Notification (Silent Sisters Descision)
+character_event = {
+	id = religious.300
+	desc = "EVTDESCreligious.300"
+	picture = "GFX_old_new_wife"
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { trait = silent_sister } }
+	
+	option = { 
+		name = "OK" 
+	}
+}
+
+#2101001 - Daughter Notification (Silent Sisters Descision)
+# character_event = {
+	# id = 2101001
+	# desc = "EVTDESC2101001"
+	# picture = "GFX_old_new_wife"
+	# is_triggered_only = yes
+	# option = { name = "Ok" }
+# }
+
+
+#####  Free Cities - Sending sons to the temple
+
+#religious.301 - Father Notification (Rhllor Descision)
+character_event = {
+	id = religious.301
+	desc = "EVTDESCreligious.301"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = OK
+	}
+}
+
+#religious.302 - Child Notification, Potentially Escape
+character_event = {
+	id = religious.302
+	desc = "EVTDESCreligious.302"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = OK 
+		ai_chance = {
+			factor = 50
+		}
+		set_character_flag = no_court_invites
+		# if = {
+			# limit = { religion = rhllor }
+			# FROMFROM = { 
+				# character_event = { id = religious.301 } 
+			# }
+		# }	
+		if = {
+			limit = { religion = bearded_priests }
+			FROMFROM = { 
+				#character_event = { id = religious.303 } 
+				if = {
+					limit = { ai = no }
+					chronicle = {
+						entry = CHRONICLE_SENT_SON_BEARDED_PRIEST
+						portrait = [Root.GetID]
+					}
+				}
+			}
+		}
+		# else_if = {
+			# limit = { 
+				# religion = the_seven	
+				# is_female = yes
+			# }
+			# FROMFROM = { 
+				# character_event = { id = religious.300 } 
+			# }
+		# }
+		piety = 100
+		FROMFROM = { 
+			if = {
+				limit = { has_religion_feature = religion_monastic }
+				piety = -75
+			}	
+			else = {
+				piety = 200 
+			}
+			if = {
+				limit = { 
+					is_parent_of = ROOT
+					NOT = { religion_group = drowned_god_group } 
+				}
+				if = {
+					limit = { tier = EMPEROR }
+					wealth = 100
+				}
+				if = {
+					limit = { tier = KING }
+					wealth = 75
+				}
+				if = {
+					limit = { tier = DUKE }
+					wealth = 50
+				}
+				if = {
+					limit = { lower_tier_than = DUKE }
+					wealth = 25
+				}
+			}
+		}	
+		if = {
+			limit = {
+				is_female = yes
+				religion = the_seven
+			}
+			add_trait = silent_sister
+		}
+		else = {
+			set_character_flag = do_not_change_traits
+			add_priest_trait_effect = yes
+			clr_character_flag = do_not_change_traits
+		}
+		
+		recalc_succession = yes
+		FROMFROM = {
+			if = {
+				limit = { 
+					ai = no 
+					religion = rhllor
+				}
+				chronicle = {
+					entry = CHRONICLE_SENT_SON_RHLLOR
+					portrait = [Root.GetID]
+				}
+			}
+			if = {
+				limit = {
+					religion = bearded_priests
+				}
+				top_liege = {
+					random_realm_lord = {
+						limit = {
+							government = theocratic_feudal_government
+							religion = bearded_priests
+						}
+						ROOT = { move_character = PREV }
+						character_event = { id = religious.306 }
+						break = yes
+					}
+					random_realm_lord = {
+						limit = {
+							is_theocracy = yes
+							religion = bearded_priests
+						}
+						ROOT = { move_character = PREV }
+						break = yes
+					}
+				}
+			}
+			random_vassal = {
+				limit = {
+					religion = ROOT
+					is_theocracy = yes
+				}
+				ROOT = { move_character = PREV }
+				break = yes
+			}
+			random_realm_lord = {
+				limit = {
+					religion = ROOT
+					is_theocracy = yes
+				}
+				ROOT = { move_character = PREV }
+				break = yes
+			}
+			top_liege = {
+				random_realm_lord = {
+					limit = {
+						religion = ROOT
+						is_theocracy = yes
+					}
+					ROOT = { move_character = PREV }
+					break = yes
+				}
+			}	
+		}
+	}
+	
+	option = { 
+		name = NO!
+		trigger = {
+			age = 13
+			OR = {
+				intrigue = 9
+				diplomacy = 9
+				martial = 9
+				wealth = 200
+				prestige = 250
+			}
+			OR = {
+				trait = ambitious
+				trait = dragon_rider
+				trait = proud
+				trait = cynical
+				trait = wroth
+				NOT = { opinion = { who = FROMFROM value = -15 } }
+			}
+		}
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0.25
+				NOT = { age = 16 }
+			}
+			modifier = { #lose manhood
+				factor = 10
+				OR = {
+					religion = boash 
+					religion = boash_reformed
+				}
+			}
+			modifier = {
+				factor = 0.1
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = cynical
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+		}
+		FROMFROM = {
+			if = {
+				limit = { 
+					ai = no 
+					religion = rhllor
+				}
+				chronicle = {
+					entry = CHRONICLE_SENT_SON_RHLLOR_ESCAPE
+					portrait = [Root.GetID]
+				}
+			}
+		}
+		piety = -200
+		opinion = {
+			modifier = opinion_hate
+			who = FROMFROM
+			years = 10
+		}
+		random_playable_ruler = {
+			limit = {
+				valid_exile_destination_ROOT_trigger = yes				
+			}
+			preferred_limit = {
+				culture_group = ROOT
+			}
+			preferred_limit = {
+				higher_tier_than = DUKE
+			}
+			ROOT = { move_character = PREV }
+		}
+		FROM = { FROM = { character_event = { id = religious.305 days = 2 } } }	
+	}
+}
+#religious.303 - Father Notification (Bearded Priests Descision)
+character_event = {
+	id = religious.303
+	desc = "EVTDESCreligious.303"
+	is_triggered_only = yes
+	option = { name = "Ok" }
+}
+
+#religious.305 - Inform son refused to join temple and ran away
+character_event = {
+	id = religious.305
+	desc = "EVTDESCreligious.305"
+	is_triggered_only = yes
+	option = { 
+		name = EVTOPTAreligious.305
+	}
+}
+character_event = { #inform bearded priest
+	id = religious.306
+	desc = "EVTDESCreligious.306"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = EVTOPTAreligious.306
+		if = {
+			limit = { FROMFROMFROM = { tier = EMPEROR } }
+			wealth = -50
+		}
+		if = {
+			limit = { FROMFROMFROM = { tier = KING } }
+			wealth = -35
+		}
+		if = {
+			limit = { FROMFROMFROM = { tier = DUKE } }
+			wealth = -25
+		}
+		if = {
+			limit = { FROMFROMFROM = { lower_tier_than = DUKE } }
+			wealth = -10
+		}
+		show_portrait = FROMFROMFROM
+	}
+}
+#############################
+####Baelor Inspired Events###
+#############################
+
+#Outlaw Prostitution?
+character_event = {
+	id = religious.50
+	desc = "EVTDESCreligious.50"	
+	picture = GFX_evt_lovers
+	border = "GFX_event_normal_frame_religion"
+
+	only_playable = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {	
+		demesne_size = 1	
+		trait = zealous
+		NOT = { capital_scope = { has_province_modifier = prostitution_illegal } }
+		OR = {
+			trait = lunatic
+			trait = possessed
+			trait = just
+		}
+		is_nomadic = no
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		modifier = {
+			factor = 10
+			trait = lunatic
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.50"	#Yes 
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 20
+				trait = lunatic
+			}
+			modifier = {
+				factor = 4
+				trait = chaste
+			}
+			modifier = {
+				factor = 4
+				trait = celibate
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = possessed
+			}
+			modifier = {
+				factor = 0.5
+				trait = hedonist
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.1
+				trait = lustful
+			}
+		}
+		piety = 250
+		capital_scope = {
+			add_province_modifier = {
+				name = prostitution_illegal
+				duration = -1
+			}
+		}
+		any_courtier = {
+			limit = { 
+				age = 16
+				is_female = no
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					trait = just
+					trait = lustful
+					trait = hedonist
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_outlawed_prostitution }
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				letter_event = { id = religious.51 }
+			}
+		}
+	} 
+	option = {
+		name = "EVTOPTBreligious.50"	#No.
+		ai_chance = {
+			factor = 75
+		}
+		piety = -25
+	} 
+}
+letter_event = { #inform realm
+	id = religious.51
+	desc = "EVTDESCreligious.51"	
+	border = "GFX_event_letter_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.51"
+	}
+}	
+#Legalise Prostitution?
+character_event = {
+	id = religious.53
+	desc = "EVTDESCreligious.53"	
+	picture = GFX_evt_lovers
+	border = "GFX_event_normal_frame_religion"
+
+	only_playable = yes
+	prisoner = no
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		demesne_size = 1	
+		NOT = { trait = zealous }
+		capital_scope = { has_province_modifier = prostitution_illegal }
+		NOT = { has_character_flag = legalise_prostitution_reject }
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.53"	#Yes 
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 10
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.1
+				trait = just
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+			modifier = {
+				factor = 0.5
+				trait = chaste
+			}
+			modifier = {
+				factor = 0.5
+				trait = celibate
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 5
+				trait = lustful
+			}
+		}
+		piety = -100
+		capital_scope = {
+			remove_province_modifier = prostitution_illegal
+		}
+		any_courtier = {
+			limit = { 
+				age = 16
+				is_female = no
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					trait = arbitrary
+					trait = lustful
+					trait = hedonist
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_legalised_prostitution }
+		}
+	} 
+	option = {
+		name = "EVTOPTBreligious.53"	#No.
+		ai_chance = {
+			factor = 20
+		}
+		piety = 50
+		set_character_flag = legalise_prostitution_reject
+	} 
+}
+
+#Donate bread to the poor?
+character_event = {
+	id = religious.54
+	desc = "EVTDESCreligious.54"	
+	picture = "GFX_evt_peasants"
+	border = "GFX_event_normal_frame_religion"
+
+	only_playable = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		demesne_size = 1	
+		trait = zealous
+		NOT = { capital_scope = { has_province_modifier = donated_to_poor } }
+		OR = {
+			trait = lunatic
+			trait = possessed
+			trait = charitable
+		}
+		is_nomadic = no
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		modifier = {
+			factor = 10
+			trait = lunatic
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.54"	#Yes 
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 20
+				trait = lunatic
+			}
+			modifier = {
+				factor = 5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = possessed
+			}
+			modifier = {
+				factor = 0.1
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 0.5
+				trait = cruel
+			}
+		}
+		piety = 150
+		if = {
+			limit = { yearly_income = 50 }
+			scaled_wealth = -1
+		}
+		if = {
+			limit = { NOT = { yearly_income = 50 } }
+			wealth = -50
+		}		
+		capital_scope = {
+			add_province_modifier = {
+				name = donated_to_poor
+				duration = 730
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = greedy }
+				NOT = { trait = charitable }
+				NOT = { personality_traits = 6 }
+			}
+			add_trait = charitable
+		}
+		if = {
+			limit = {
+				trait = greedy
+			}
+			remove_trait = greedy
+		}
+		any_courtier = {
+			limit = { 
+				age = 16
+				NOT = { trait = zealous }
+				NOT = { trait = charitable }
+				NOT = { trait = incapable }
+				OR = {
+					is_councillor = yes
+					is_voter = yes
+					trait = cynical
+					trait = proud
+					trait = greedy
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_excessive_donation }
+		}
+	} 
+	option = {
+		name = "EVTOPTBreligious.54"	#No.
+		ai_chance = {
+			factor = 75
+		}
+		piety = -25
+	} 
+}
+
+#Take a Septon's vows?
+character_event = {
+	id = religious.55
+	desc = "EVTDESCreligious.55"	
+	picture = "GFX_evt_coronation"
+	border = "GFX_event_normal_frame_religion"
+
+	only_independent = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		trait = zealous
+		OR = {
+			trait = lunatic
+			trait = possessed
+			trait = celibate
+		}
+		OR = {
+			tier = EMPEROR
+			primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+		}
+		NOT = { trait = septon }
+		NOT = { trait = septa }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		modifier = {
+			factor = 10
+			trait = lunatic
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.55"	#Yes 
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 20
+				trait = lunatic
+			}
+			modifier = {
+				factor = 4
+				trait = chaste
+			}
+			modifier = {
+				factor = 4
+				trait = celibate
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = possessed
+			}
+			modifier = {
+				factor = 0.5
+				trait = hedonist
+			}
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 0.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.1
+				trait = lustful
+			}
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				set_character_flag = religious.56_triggered
+				character_event = { id = religious.56 days = 1 }
+			}
+		}
+		piety = 250
+		if = {
+			limit = { is_female = no }
+			add_trait = septon
+		}
+		if = {
+			limit = { is_female = yes }
+			add_trait = septa
+		}
+		any_spouse = {
+			remove_spouse = ROOT
+			opinion = { who = ROOT modifier = opinion_divorced }
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						ai = no
+						NOT = { has_character_flag = religious.56_triggered } 
+					}
+					set_character_flag = religious.56_triggered
+					character_event = { id = religious.56 days = 1 }
+				}
+			}	
+			any_dynasty_member = {
+				limit = {
+					is_ruler = yes
+					NOT = { dynasty = ROOT }
+					is_close_relative = PREV
+					NOT = { character = PREV }
+				}
+				opinion = { who = ROOT modifier = opinion_divorced_relative }
+				hidden_tooltip = {
+					if = {
+						limit = { 
+							ai = no
+							NOT = { has_character_flag = religious.56_triggered } 
+						}
+						set_character_flag = religious.56_triggered
+						character_event = { id = religious.56 days = 1 }
+					}
+				}
+			}
+		}
+		any_consort = {
+			remove_consort = ROOT
+			opinion = { who = ROOT modifier = opinion_set_aside }
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						ai = no
+						NOT = { has_character_flag = religious.56_triggered } 
+					}
+					set_character_flag = religious.56_triggered
+					character_event = { id = religious.56 days = 1 }
+				}
+			}
+		}
+		betrothed = {
+			remove_spouse = ROOT
+			opinion = { who = ROOT modifier = opinion_betrothal_broken }
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						ai = no
+						NOT = { has_character_flag = religious.56_triggered } 
+					}
+					set_character_flag = religious.56_triggered
+					character_event = { id = religious.56 days = 1 }
+				}
+			}
+			any_dynasty_member = {
+				limit = {
+					is_ruler = yes
+					NOT = { dynasty = ROOT }
+					is_close_relative = PREV
+					NOT = { character = PREV }
+				}
+				opinion = { who = ROOT modifier = opinion_betrothal_broken }
+				hidden_tooltip = {
+					if = {
+						limit = { 
+							ai = no
+							NOT = { has_character_flag = religious.56_triggered } 
+						}
+						set_character_flag = religious.56_triggered
+						character_event = { id = religious.56 days = 1 }
+					}
+				}
+			}
+		}
+		any_courtier = {
+			limit = { 
+				age = 16
+				is_ruler = no
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					is_councillor = yes
+					is_voter = yes
+					trait = cynical
+					trait = proud
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_took_septons_vows }
+		}
+		any_vassal = {
+			limit = { 
+				age = 16
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					trait = cynical
+					trait = proud
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_took_septons_vows }
+		}
+	} 
+	option = {
+		name = "EVTOPTBreligious.55"	#No.
+		ai_chance = {
+			factor = 75
+		}
+		piety = -25
+	} 
+}
+character_event = { #inform realm
+	id = religious.56
+	desc = "EVTDESCreligious.56"	
+	picture = "GFX_evt_coronation"
+	border = "GFX_event_normal_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAreligious.56
+			trigger = {
+				NOT = {
+					OR = {
+						has_opinion_modifier = { who = FROM modifier = opinion_divorced }
+						has_opinion_modifier = { who = FROM modifier = opinion_divorced_relative }
+						has_opinion_modifier = { who = FROM modifier = opinion_betrothal_broken }
+					}
+				}	
+			}
+		}	
+		name = {
+			text = EVTOPTAreligious.56B
+			trigger = {
+				OR = {
+					has_opinion_modifier = { who = FROM modifier = opinion_divorced }
+					has_opinion_modifier = { who = FROM modifier = opinion_divorced_relative }
+					has_opinion_modifier = { who = FROM modifier = opinion_betrothal_broken }
+				}
+			}
+		}
+		clr_character_flag = religious.56_triggered
+	}
+}	
+
+#Replace ravens with doves
+character_event = {
+	id = religious.57
+	desc = "EVTDESCreligious.57"	
+	picture = "GFX_evt_courier"
+	border = "GFX_event_normal_frame_religion"
+
+	only_independent = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		trait = zealous
+		OR = {
+			trait = lunatic
+			trait = possessed
+		}
+		capital_scope = { region = world_westeros }
+		OR = {
+			tier = EMPEROR
+			primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+		}
+		NOT = { has_character_flag = ravens_and_doves }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.57"	#Yes 
+		set_character_flag = ravens_and_doves
+		prestige = -100
+		piety = 100
+		wealth = -100
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				letter_event = { id = religious.58 }
+			}
+		}
+	} 
+}
+letter_event = { #inform realm
+	id = religious.58
+	desc = "EVTDESCreligious.58"	
+	border = "GFX_event_letter_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.58"
+		wealth = -25
+	}
+}	
+
+#Chastity Belts!
+character_event = {
+	id = religious.59
+	desc = "EVTDESCreligious.59"	
+	picture = "GFX_evt_scandal"
+	border = "GFX_event_normal_frame_religion"
+
+	only_independent = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		trait = zealous
+		OR = {
+			trait = lunatic
+			trait = possessed
+		}
+		OR = {
+			tier = EMPEROR
+			primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+		}
+		NOT = { has_character_flag = chastity_belts }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		modifier = {
+			factor = 10
+			trait = celibate
+		}
+		modifier = {
+			factor = 5
+			trait = chaste
+		}
+		modifier = {
+			factor = 0.1
+			trait = lustful
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.59"	#Yes 
+		set_character_flag = chastity_belts
+		scaled_wealth = { value = -0.1 min = -10 max = -75 }
+		prestige = -100
+		piety = 100
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				letter_event = { id = religious.60 }
+			}
+		}
+	} 
+}
+letter_event = { #inform realm
+	id = religious.60
+	desc = "EVTDESCreligious.60"	
+	border = "GFX_event_letter_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.60"
+	}
+	
+	option = {
+		name = "EVTOPTBreligious.60" #Take Advantage
+		trigger = {
+			OR = {
+				AND = {
+					is_female = yes
+					age = 12
+					NOT = { age = 25 }
+					is_married = no
+					NOT = { trait = widowed }
+				}
+				any_child = {
+					is_alive = yes
+					is_female = yes
+					age = 12
+					NOT = { age = 25 }
+					is_married = no
+					is_ruler = no
+					liege = { character = ROOT }
+					NOT = { trait = widowed }
+				}
+			}
+		}
+		scaled_wealth = { value = 0.25 min = 10 max = 75 }
+		if = {
+			limit = {
+				is_female = yes
+				age = 12
+				NOT = { age = 25 }
+				is_married = no		
+				NOT = { trait = widowed }				
+			}
+			add_character_modifier = {
+				name = chastity_belt
+				duration = 730
+			}
+		}
+		any_child = {
+			limit = {
+				is_alive = yes
+				is_female = yes
+				age = 12
+				NOT = { age = 25 }
+				is_married = no
+				is_ruler = no
+				liege = { character = ROOT }
+				NOT = { trait = widowed }
+			}	
+			add_character_modifier = {
+				name = chastity_belt
+				duration = 730
+			}
+		}
+	}
+}	
+
+#Book Burning
+character_event = {
+	id = religious.61
+	desc = "EVTDESCreligious.61"	
+	picture = "GFX_evt_irminsul_burning"
+	border = "GFX_event_normal_frame_religion"
+
+	only_independent = yes
+	prisoner = no
+	is_triggered_only = yes
+	min_age = 16
+	religion = the_seven
+	
+	trigger = {		
+		trait = zealous
+		OR = {
+			trait = lunatic
+			trait = possessed
+		}
+		capital_scope = { region = world_westeros }
+		OR = {
+			tier = EMPEROR
+			primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+		}
+		NOT = { has_character_flag = book_burning }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+	}
+	
+	option = {
+		name = "EVTOPTAreligious.61"	#Yes 
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.25
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = trusting
+			}
+		}
+		prestige = -100
+		piety = 150
+		any_artifact = {
+			limit = { has_artifact_flag = book }
+			destroy_artifact = yes
+		}
+		any_courtier = {
+			limit = { 
+				is_liege_or_above = ROOT
+				any_artifact = { has_artifact_flag = book }
+			}	
+			if = {
+				limit = { ai = yes }
+				any_artifact = {
+					limit = { has_artifact_flag = book }
+					destroy_artifact = yes
+				}
+			}	
+			opinion = { who = ROOT modifier = opinion_burned_books }
+		}
+		any_courtier = {
+			limit = { 
+				age = 16
+				is_ruler = no
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					trait = maester
+					trait = archmaester
+					trait = cynical
+					trait = scholar
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_burned_books }
+		}
+		any_vassal = {
+			limit = { 
+				age = 16
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				OR = {
+					trait = maester
+					trait = archmaester
+					trait = cynical
+					trait = scholar
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_burned_books }
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				character_event = { id = religious.62 days = 1 }
+			}
+		}
+	} 
+	option = {
+		name = "EVTOPTBreligious.61"	#No.
+		ai_chance = {
+			factor = 25
+		}
+		piety = -25
+	} 
+}
+character_event = { #inform realm
+	id = religious.62
+	desc = "EVTDESCreligious.62"	
+	picture = "GFX_evt_irminsul_burning"
+	border = "GFX_event_normal_frame_religion"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAreligious.62"
+		if = {
+			limit = { 
+				is_liege_or_above = FROM
+				FROM = { any_courtier = { character = ROOT } }
+			}
+			any_artifact = {
+				limit = { has_artifact_flag = book }
+				destroy_artifact = yes
+			}
+		}
+	}
+}	
+
+# Increase Godswood Level
+character_event = {
+	id = religious.63
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_rulers = yes
+	
+	trigger = {
+		is_old_gods_religion_trigger = yes
+		tier = BARON
+		is_theocracy = yes
+		any_demesne_title = {
+			tier = BARON
+			holding_type = temple
+			NOT = { has_building = tp_godswood_forest }
+		}
+	}
+	
+	immediate = {
+		piety = 20
+		random_demesne_title = {
+			limit = {
+				tier = BARON
+				holding_type = temple
+				NOT = { has_building = tp_godswood_forest }
+			}
+			save_event_target_as = target_weirwood_holding
+		}
+		random = {
+			chance = 5
+			modifier = {
+				factor = 10
+				event_target:target_weirwood_holding = {
+					NOT = { has_building = tp_weirwood_tree }
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:target_weirwood_holding = {
+					has_building = tp_weirwood_tree
+					NOT = { has_building = tp_small_godswood }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				event_target:target_weirwood_holding = {
+					has_building = tp_godswood
+				}
+			}
+			modifier = {
+				factor = 0.001
+				event_target:target_weirwood_holding = {
+					has_building = tp_large_godswood
+				}
+			}
+			event_target:target_weirwood_holding = {
+				if = {
+					limit = {
+						has_building = tp_large_godswood
+					}
+					add_building = tp_godswood_forest
+				}
+				if = {
+					limit = {
+						has_building = tp_godswood
+					}
+					add_building = tp_large_godswood
+				}
+				if = {
+					limit = {
+						has_building = tp_small_godswood
+					}
+					add_building = tp_godswood
+				}
+				if = {
+					limit = {
+						has_building = tp_weirwood_tree
+					}
+					add_building = tp_small_godswood
+				}
+				if = {
+					limit = {
+						NOT = { has_building = tp_weirwood_tree }
+					}
+					add_building = tp_weirwood_tree
+				}
+			}
+			if = {
+				limit = { 
+					liege = { 
+						ai = no
+						NOT = { has_character_flag = ignore_weirwood_growth }
+					}
+				}
+				liege = { letter_event = { id = religious.64 } } #inform player
+			}
+		}
+	}
+	
+	option = {
+		name = OK		
+	}	
+}
+# Inform player that their vassal's weirwood has grown
+letter_event = {
+	id = religious.64
+	desc = EVTDESCreligious.64
+	picture = GFX_godswood
+	
+	is_triggered_only = yes
+	
+	option = { #Wonderful!
+		name = EVTOPTAreligious.64
+		piety = 20
+	}
+	option = { #Man don't care!
+		name = EVTOPTBreligious.64
+		piety = -20
+		set_character_flag = ignore_weirwood_growth
+	}
+}
+
+#Choose syncretic faith
+character_event = {
+	id = religious.65
+	desc = EVTDESCreligious.65
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #Calculate ai outcome
+			limit = { ai = yes }
+			if = { #Sympathy trait first
+				limit = { has_any_sympathy_trait_trigger = yes }
+				set_character_flag = syncretic_faith_sympathy_trait
+				break = yes
+			}
+			#Head of religion vassal
+			random_vassal = {
+				limit = {
+					NOT = { religion_group = ROOT }
+					controls_religion = yes
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			#Powerful vassals
+			random_vassal = {
+				limit = {
+					relative_power_to_liege = 0.5
+					NOT = { religion_group = ROOT }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					relative_power_to_liege = 0.35
+					NOT = { religion_group = ROOT }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					relative_power_to_liege = 0.25
+					NOT = { religion_group = ROOT }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			#Provinces
+			capital_scope = {
+				if = {
+					limit = {
+						NOT = { religion_group = ROOT }
+					}
+					save_event_target_as = syncretic_faith_target
+					break = yes
+				}	
+			}
+			random_demesne_province = {
+				limit = {
+					NOT = { religion_group = ROOT }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			random_realm_province = {
+				limit = {
+					NOT = { religion_group = ROOT }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			#Neighbouring rulers
+			random_realm_province = {
+				limit = { 
+					any_neighbor_province = { is_land = yes }
+					any_neighbor_province = {
+						owner = { 
+							NOT = { religion_group = ROOT }
+						}
+					}
+				}
+				random_neighbor_province = {
+					limit = {
+						owner = { 
+							NOT = { religion_group = ROOT }
+						}
+					}
+					owner = {  save_event_target_as = syncretic_faith_target }
+					break = yes
+				}
+			}
+			#Neighbouring provinces
+			random_realm_province = {
+				limit = { 
+					any_neighbor_province = { is_land = yes }
+					any_neighbor_province = {
+						has_owner = yes
+						NOT = { religion_group = ROOT }
+					}
+				}
+				random_neighbor_province = {
+					limit = {
+						has_owner = yes
+						NOT = { religion_group = ROOT }
+					}
+					save_event_target_as = syncretic_faith_target
+					break = yes
+				}
+			}
+			#Nearby rulers
+			random_playable_ruler = {
+				limit = {
+					NOT = { religion_group = ROOT }
+					capital_scope = { ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 100 } } } } }
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+			#Diplo range rulers
+			random_playable_ruler = {
+				limit = {
+					NOT = { religion_group = ROOT }
+					is_within_diplo_range = ROOT
+				}
+				save_event_target_as = syncretic_faith_target
+				break = yes
+			}
+		}
+	}
+	
+	option = { #More
+		name = EVTOPTAreligious.65
+		trigger = { ai = no }
+		trigger_switch = {
+			on_trigger = has_character_flag
+			syncretic_faith_pg_1 = { clr_character_flag = syncretic_faith_pg_1 set_character_flag = syncretic_faith_pg_2 character_event = { id = religious.65 } break = yes }
+			syncretic_faith_pg_2 = { clr_character_flag = syncretic_faith_pg_2 set_character_flag = syncretic_faith_pg_3 character_event = { id = religious.65 } break = yes }
+			syncretic_faith_pg_3 = { clr_character_flag = syncretic_faith_pg_3 set_character_flag = syncretic_faith_pg_4 character_event = { id = religious.65 } break = yes }
+			syncretic_faith_pg_4 = { clr_character_flag = syncretic_faith_pg_4 set_character_flag = syncretic_faith_pg_5 character_event = { id = religious.65 } break = yes }
+			syncretic_faith_pg_5 = { clr_character_flag = syncretic_faith_pg_5 set_character_flag = syncretic_faith_pg_6 character_event = { id = religious.65 } break = yes }
+			syncretic_faith_pg_6 = { clr_character_flag = syncretic_faith_pg_6 set_character_flag = syncretic_faith_pg_1 character_event = { id = religious.65 } break = yes }
+		}
+	}
+	option = { #Westerosi
+		name = EVTOPTBreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_1
+			}
+			NOT = { religion_group = westerosi_religion }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_westerosi }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = westerosi_religion }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_westerosi_religion
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_1
+	}
+	option = { #Wildling
+		name = EVTOPTCreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_1
+			}
+			NOT = { religion_group = wildling_religion }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_wildling_religion }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = wildling_religion }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_wildling_religion
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_1
+	}
+	option = { #Drowned God
+		name = EVTOPTDreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_1
+			}
+			NOT = { religion_group = drowned_god_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_drowned_god }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = drowned_god_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_drowned_god_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_1
+	}
+	option = { #Essos
+		name = EVTOPTEreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_2
+			}
+			NOT = { religion_group = essos_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_essos_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = essos_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_essos_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_2
+	}
+	option = { #Valyria
+		name = EVTOPTSreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_2
+			}
+			NOT = { religion_group = valyrian_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_valyrian_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = valyrian_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_valyrian_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_2
+	}
+	option = { #Sarnor
+		name = EVTOPTFreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_2
+			}
+			NOT = { religion_group = sarnor_rel }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_sarnor_rel }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = sarnor_rel }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_sarnor_rel
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_2
+	}
+	option = { #Qarth
+		name = EVTOPTGreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_3
+			}
+			NOT = { religion_group = qarth_rel }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_qarth_rel }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = qarth_rel }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_qarth_rel
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_3
+	}
+	option = { #Ghiscar
+		name = EVTOPTHreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_3
+			}
+			NOT = { religion_group = ghiscar_rel }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_ghiscar_rel }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = ghiscar_rel }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_ghiscar_rel
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_3
+	}
+	option = { #Far East
+		name = EVTOPTIreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_3
+			}
+			NOT = { religion_group = far_east_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_far_east_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = far_east_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_far_east_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_3
+	}
+	option = { #Ibben
+		name = EVTOPTJreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_4
+			}
+			NOT = { religion_group = ibben_rel }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_ibben_rel }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = ibben_rel }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_ibben_rel
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_4
+	}
+	option = { #Dothraki
+		name = EVTOPTKreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_4
+			}
+			NOT = { religion_group = dothraki_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_dothraki_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = dothraki_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_dothraki_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_4
+	}
+	option = { #Jogos
+		name = EVTOPTLreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_4
+			}
+			NOT = { religion_group = jogos_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_jogos_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = jogos_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_jogos_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_4
+	}
+	option = { #Lhazar
+		name = EVTOPTMreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_5
+			}
+			NOT = { religion_group = lhazar_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_lhazar_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = lhazar_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_lhazar_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_5
+	}
+	option = { #Summer Isles
+		name = EVTOPTNreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_5
+			}
+			NOT = { religion_group = summer_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_summer_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = summer_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_summer_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_5
+	}
+	option = { #Pirate and Corsair
+		name = EVTOPTOreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_5
+			}
+			NOT = { religion_group = pirate_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_pirate_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = pirate_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_pirate_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_5
+	}
+	option = { #Islands
+		name = EVTOPTPreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_6
+			}
+			NOT = { religion_group = islands_rel }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					has_character_flag = syncretic_faith_sympathy_trait #no sympathy trait
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = islands_rel }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_islands_rel
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_6
+	}
+	option = { #Sothoryos
+		name = EVTOPTQreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_6
+			}
+			NOT = { religion_group = sothoryos_rel_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_sothoryos_rel_group }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = sothoryos_rel_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_sothoryos_rel_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_6
+	}
+	option = { #Pagan
+		name = EVTOPTRreligious.65
+		trigger = { 
+			OR = {
+				ai = yes
+				has_character_flag = syncretic_faith_pg_6
+			}
+			NOT = { religion_group = pagan_group }
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					AND = {
+						has_character_flag = syncretic_faith_sympathy_trait
+						NOT = { trait = sympathy_pagans }
+					}
+					event_target:syncretic_faith_target = { 
+						NOT = { religion_group = pagan_group }
+					}
+				}
+			}
+		}
+		add_character_modifier = { 
+			name = syncretic_faith_pagan_group
+			duration = -1
+		}
+		clr_character_flag = syncretic_faith_pg_6
+	}
+	after = { clr_character_flag = syncretic_faith_sympathy_trait }
+}
+character_event = { #remove syncretic faith on conversion
+	id = religious.66
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		FROM = { #old religion
+			OR = {
+				religion = moonsingers
+				religion = valyrian_rel
+				has_religion_feature = religion_syncretic
+				has_religion_feature = religion_feature_valyrian_rel
+				has_religion_feature = religion_feature_moonsingers
+				AND = {
+					NOT = { has_dlc = "Holy Fury" }
+					OR = {
+						religion = moonsingers_reformed
+						religion = valyrian_rel_reformed
+					}
+				}
+			}
+		}	
+		has_chosen_syncretic_faith_trigger = yes
+	}
+	
+	immediate = {
+		remove_character_modifier = syncretic_faith_westerosi_religion
+		remove_character_modifier = syncretic_faith_wildling_religion
+		remove_character_modifier = syncretic_faith_drowned_god_group
+		remove_character_modifier = syncretic_faith_essos_group
+		remove_character_modifier = syncretic_faith_sarnor_rel
+		remove_character_modifier = syncretic_faith_qarth_rel
+		remove_character_modifier = syncretic_faith_ghiscar_rel
+		remove_character_modifier = syncretic_faith_far_east_group
+		remove_character_modifier = syncretic_faith_ibben_rel
+		remove_character_modifier = syncretic_faith_dothraki_rel_group
+		remove_character_modifier = syncretic_faith_jogos_rel_group
+		remove_character_modifier = syncretic_faith_lhazar_rel_group
+		remove_character_modifier = syncretic_faith_summer_rel_group
+		remove_character_modifier = syncretic_faith_pirate_group
+		remove_character_modifier = syncretic_faith_islands_rel
+		remove_character_modifier = syncretic_faith_sothoryos_rel_group
+		remove_character_modifier = syncretic_faith_pagan_group
+	}
+}	
+#Execution of religious head consequences
+character_event = {
+	id = religious.80	
+	border = GFX_event_normal_frame_religion	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCreligious.80
+		trigger = { FROM = { NOT = { religion = the_seven } } }
+	}
+	desc = {
+		text = EVTDESCreligious.80B
+		trigger = { FROM = { religion = the_seven } }
+	}
+	
+	option = {
+		name = EVTOPTAreligious.80	
+		any_vassal = {
+			limit = { 
+				religion = FROM 
+				controls_religion = no
+				OR = {
+					trait = zealous
+					trait = honorable
+					is_theocracy = yes
+					NOT = { religion = ROOT }
+				}
+				NOT = { trait = cynical }
+				OR = { #Just characters only care if execution was unjust or zealous
+					NOT = { trait = just }
+					ROOT = { has_character_flag = unjust_execution_religion_head }
+					trait = zealous
+				}
+				
+				liege = { character = ROOT }
+				higher_tier_than = BARON
+			}
+			opinion = { who = ROOT modifier = opinion_executed_religion_head }
+		}		
+		custom_tooltip = {
+			text = TOOLTIPreligious.80
+			hidden_tooltip = {
+				any_courtier = {
+					limit = { 
+						religion = FROM 
+						is_ruler = no
+						controls_religion = no
+						OR = {
+							trait = zealous
+							trait = honorable
+							has_job_title = job_spiritual
+							NOT = { religion = ROOT }
+						}
+						NOT = { trait = cynical }
+						OR = { #Just characters only care if execution was unjust or zealous
+							NOT = { trait = just }
+							ROOT = { has_character_flag = unjust_execution_religion_head }
+							trait = zealous
+						}
+					}
+					opinion = { who = ROOT modifier = opinion_executed_religion_head }
+				}
+				any_realm_lord = {
+					limit = { 
+						religion = FROM 
+						controls_religion = no
+						OR = {
+							trait = zealous
+							trait = honorable
+							is_theocracy = yes
+							NOT = { religion = ROOT }
+						}
+						NOT = { trait = cynical }
+						OR = { #Just characters only care if execution was unjust or zealous
+							NOT = { trait = just }
+							ROOT = { has_character_flag = unjust_execution_religion_head }
+							trait = zealous
+						}
+						NAND = {
+							liege = { character = ROOT }
+							higher_tier_than = BARON
+						}	
+					}
+					opinion = { who = ROOT modifier = opinion_executed_religion_head }
+				}
+				any_playable_ruler = {
+					limit = { 
+						religion = FROM 
+						controls_religion = no
+						NOT = { is_liege_or_above = ROOT }
+						OR = {
+							trait = zealous
+							same_liege = ROOT
+							is_vassal_or_below = ROOT
+							independent = yes
+							higher_tier_than = DUKE
+						}
+						OR = {
+							trait = zealous
+							trait = honorable
+							is_theocracy = yes
+							NOT = { religion = ROOT }
+						}
+						NOT = { trait = cynical }
+						OR = { #Just characters only care if execution was unjust or zealous
+							NOT = { trait = just }
+							ROOT = { has_character_flag = unjust_execution_religion_head }
+							trait = zealous
+						}
+					}
+					opinion = { who = ROOT modifier = opinion_executed_religion_head }
+				}
+			}	
+		}	
+		FROM = {
+			rightful_religious_head_scope = {
+				opinion = { who = ROOT modifier = opinion_executed_religion_head }
+			}
+		}
+		if = {
+			limit = { religion = FROM }
+			piety = -200
+		}	
+		hidden_tooltip = { excommunication_chance_effect = yes }
+		clr_character_flag = unjust_execution_religion_head
+	}
+}	
+character_event = {
+	id = religious.88
+	desc = EVTDESCreligious.88
+	picture = GFX_godswood
+	border = GFX_event_normal_frame_economy
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAreligious.88 #Bow
+		ai_chance = {
+			factor = 50
+		}
+		wealth = -200
+		clr_character_flag = crafting_a_weirwood_weapon
+		add_artifact = weirwood_bow
+	}
+	
+	option = {
+		name = EVTOPTBreligious.88 #Spear
+		ai_chance = {
+			factor = 50
+		}
+		wealth = -200
+		clr_character_flag = crafting_a_weirwood_weapon
+		add_artifact = weirwood_spear
+	}
+	
+	option = {
+		name = EVTOPTCreligious.88 #Cancel
+		trigger = { ai = no }
+		clr_character_flag = crafting_a_weirwood_weapon
+	}
+}
+##God King opinion effects
+character_event = {
+	id = religious.95
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_playable = yes
+	
+	trigger = {
+		has_religion_feature = religion_god_king_head
+		controls_religion = yes
+		has_character_modifier = god_king
+	}
+
+	option = {
+		name = OK
+		any_courtier_or_vassal = {
+			limit = {
+				is_adult = yes
+				is_incapable = no
+				religion = ROOT
+				NOR = {
+					has_opinion_modifier = { who = ROOT modifier = opinion_god_king_good }
+					has_opinion_modifier = { who = ROOT modifier = opinion_god_king_bad }
+				}
+				ai = yes
+			}
+			random_list = {
+				20 = { #good
+					trigger = {
+						OR = {
+							trait = zealous
+							opinion = { who = ROOT value = 20 }
+						}
+						NOT = { trait = cynical }
+						opinion = { who = ROOT value = -49 }
+					}
+					modifier = {
+						factor = 4
+						trait = zealous
+					}
+					modifier = {
+						factor = 2
+						is_close_relative = ROOT
+					}
+					modifier = {
+						factor = 2
+						is_married = ROOT
+					}
+					modifier = {
+						factor = 0.66
+						NOT = { opinion = { who = ROOT value = -25 } }
+					}
+					modifier = {
+						factor = 0.66
+						NOT = { opinion = { who = ROOT value = 0 } }
+					}
+					modifier = {
+						factor = 1.5
+						opinion = { who = ROOT value = 40 }
+					}
+					modifier = {
+						factor = 1.5
+						opinion = { who = ROOT value = 60 }
+					}
+					modifier = {
+						factor = 2
+						opinion = { who = ROOT value = 80 }
+					}
+					modifier = {
+						factor = 2
+						opinion = { who = ROOT value = 100 }
+					}
+					opinion = { who = ROOT modifier = opinion_god_king_good  months = 180 }
+				}
+				60 = {
+				}
+				20 = { #bad
+					trigger = {
+						OR = {
+							trait = cynical
+							NOT = { opinion = { who = ROOT value = -20 } }
+						}
+						NOT = { trait = zealous }
+						NOT = { opinion = { who = ROOT value = 50 } }
+					}
+					modifier = {
+						factor = 4
+						trait = cynical
+					}
+					modifier = {
+						factor = 2
+						is_rival = ROOT
+					}
+					modifier = {
+						factor = 0.66
+						opinion = { who = ROOT value = 25 }
+					}
+					modifier = {
+						factor = 0.66
+						opinion = { who = ROOT value = 0 }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { opinion = { who = ROOT value = -40 } }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { opinion = { who = ROOT value = -60 } }
+					}
+					modifier = {
+						factor = 2
+						NOT = { opinion = { who = ROOT value = -80 } }
+					}
+					modifier = {
+						factor = 2
+						NOT = { opinion = { who = ROOT value = -99 } }
+					}
+					opinion = { who = ROOT modifier = opinion_god_king_bad  months = 180 }
+				}
+			}
+		}
+		any_independent_ruler = {
+			limit = {
+				demesne_size = 1
+				
+				is_adult = yes
+				is_incapable = no
+				religion = ROOT
+				NOR = {
+					has_opinion_modifier = { who = ROOT modifier = opinion_god_king_good }
+					has_opinion_modifier = { who = ROOT modifier = opinion_god_king_bad }
+				}
+				ai = yes
+			}
+			random_list = {
+				20 = { #good
+					trigger = {
+						OR = {
+							trait = zealous
+							opinion = { who = ROOT value = 20 }
+						}
+						NOT = { trait = cynical }
+						opinion = { who = ROOT value = -49 }
+					}
+					modifier = {
+						factor = 4
+						trait = zealous
+					}
+					modifier = {
+						factor = 2
+						is_close_relative = ROOT
+					}
+					modifier = {
+						factor = 2
+						is_married = ROOT
+					}
+					modifier = {
+						factor = 0.66
+						NOT = { opinion = { who = ROOT value = -25 } }
+					}
+					modifier = {
+						factor = 0.66
+						NOT = { opinion = { who = ROOT value = 0 } }
+					}
+					modifier = {
+						factor = 1.5
+						opinion = { who = ROOT value = 40 }
+					}
+					modifier = {
+						factor = 1.5
+						opinion = { who = ROOT value = 60 }
+					}
+					modifier = {
+						factor = 2
+						opinion = { who = ROOT value = 80 }
+					}
+					modifier = {
+						factor = 2
+						opinion = { who = ROOT value = 100 }
+					}
+					opinion = { who = ROOT modifier = opinion_god_king_good  months = 180 }
+				}
+				60 = {
+				}
+				20 = { #bad
+					trigger = {
+						OR = {
+							trait = cynical
+							NOT = { opinion = { who = ROOT value = -20 } }
+						}
+						NOT = { trait = zealous }
+						NOT = { opinion = { who = ROOT value = 50 } }
+					}
+					modifier = {
+						factor = 4
+						trait = cynical
+					}
+					modifier = {
+						factor = 2
+						is_rival = ROOT
+					}
+					modifier = {
+						factor = 0.66
+						opinion = { who = ROOT value = 25 }
+					}
+					modifier = {
+						factor = 0.66
+						opinion = { who = ROOT value = 0 }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { opinion = { who = ROOT value = -40 } }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { opinion = { who = ROOT value = -60 } }
+					}
+					modifier = {
+						factor = 2
+						NOT = { opinion = { who = ROOT value = -80 } }
+					}
+					modifier = {
+						factor = 2
+						NOT = { opinion = { who = ROOT value = -99 } }
+					}
+					opinion = { who = ROOT modifier = opinion_god_king_bad  months = 180 }
+				}
+			}
+		}
+	}
+}
+#on_war_ended_victory moral authority effects
+character_event = { #FROM is the winner
+	id = religious.100
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		NOT = { religion = FROM }
+	}
+	
+	immediate = {
+		if = { #Major war
+			limit = {
+				higher_tier_than = DUKE
+				FROM = { higher_tier_than = DUKE }
+			}
+			religion_authority = { modifier = lost_major_war }
+			FROM = { religion_authority = { modifier = won_major_war } }
+		}
+		else = {
+			religion_authority = { modifier = lost_minor_war }
+			FROM = { religion_authority = { modifier = won_minor_war } }
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}	
+#on_war_ended_defeat moral authority effects
+character_event = { #ROOT is the winner
+	id = religious.101
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		NOT = { religion = FROM }
+	}
+	
+	immediate = {
+		if = { #Major war
+			limit = {
+				higher_tier_than = DUKE
+				FROM = { higher_tier_than = DUKE }
+			}
+			religion_authority = { modifier = won_major_war }
+			FROM = { religion_authority = { modifier = lost_major_war } }
+		}
+		else = {
+			religion_authority = { modifier = won_minor_war }
+			FROM = { religion_authority = { modifier = lost_minor_war } }
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}	
+#on_five_year_pulse authority for controlling a large empire
+character_event = { 
+	id = religious.102
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_independent = yes
+	
+	trigger = {
+		tier = EMPEROR
+		realm_size = 140
+	}
+	
+	immediate = {
+		religion_authority = { modifier = rules_empire }
+	}
+
+	option = {
+		name = OK
+	}
+}	

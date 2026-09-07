@@ -1,0 +1,1261 @@
+########################################################
+# MINOR TITLES
+# Characters can have any number of these
+########################################################
+#	grant_limit: Max number of holders.
+#	realm_in_name: Append the name of the country after the title (Queen [of Sweden])
+#	allowed_to_hold: conditions for the character to hold the title
+#	allowed_to_grant: conditions for a ruler to grant the title
+#	regent: This is the title for regents (not really "minor")
+#	gain_effect: fires when the title is granted
+#	lose_effect: fires when a title is lost through most causes
+#	retire_effect: fires when a title is lost due to the character stepping down
+#	death_effect: fires when a title is lost due to the character dying
+#	message: should fire a message to the its owner when set
+#	The other fields are all character modifiers.
+
+#######################################
+# SPECIAL
+#######################################
+
+###################
+###Normal Titles###
+###################
+# title_ser = {
+	# dignity = 0.25
+	# grant_limit = 100
+	# show_as_title = yes
+	# revoke_allowed = no
+	
+	# allowed_to_hold = {
+		# trait = knight
+		# is_female = no
+	# }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+
+# title_lady = {
+	# dignity = 0.2
+	# grant_limit = 100
+	# show_as_title = yes
+	# revoke_allowed = no
+	
+	# allowed_to_hold = { 
+		# trait = knight
+		# is_female = yes		
+	# }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+
+# title_slave = {
+	# dignity = 0.01
+	# revoke_allowed = no
+	
+	# grant_limit = 100
+	# allowed_to_hold = { trait = slave }
+	# gain_effect = { }
+	# lose_effect = { }
+# }
+
+####################
+###Special Titles###
+####################
+
+# title_hand_of_the_king = {
+	# dignity = 0.9
+	# grant_limit = 1
+	# show_as_title = yes
+	# revoke_allowed = no
+	
+	# allowed_to_hold = {
+		# has_job_title = job_castellan 
+		# FROM = {
+			# tier = emperor
+			# OR = {
+				# is_feudal = yes
+				# is_tribal = yes
+			# }
+			# NOT = { culture = ironborn }
+			# OR = {
+				# culture_group = andal
+				# culture_group = dornish
+				# culture_group = first_men
+				# culture_group = free_folk
+				# culture = summer_islander
+				# primary_title = {
+					# OR = {
+						# capital_scope = { region = world_westeros }
+						# title = e_iron_isles #These titles dont have capitals
+						# title = e_riverlands
+						# title = e_iron_throne
+					# }
+				# }
+			# }
+			# NOT = { culture = moon_clansman }			
+		# }
+	# }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+
+# title_hand_of_the_emperor = {
+	# dignity = 0.9
+	# grant_limit = 1
+	# show_as_title = yes
+	# revoke_allowed = no
+	
+	# allowed_to_hold = {
+		# has_job_title = job_castellan 
+		# FROM = {
+			# tier = emperor
+			# OR = {
+				# is_feudal = yes
+				# is_tribal = yes
+			# }
+			# NOT = { culture = ironborn }
+			# NOT = {
+				# OR = {
+					# culture_group = andal
+					# culture_group = dornish
+					# culture_group = first_men
+					# culture_group = free_folk				
+					# culture = summer_islander
+					# primary_title = {
+						# OR = {
+							# capital_scope = { region = world_westeros }
+							# title = e_iron_isles #These titles dont have capitals
+							# title = e_riverlands
+							# title = e_iron_throne
+						# }
+					# }
+				# }
+			# }		
+		# }
+	# }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+
+# title_master_of_ships = {
+	# is_high_prio = yes
+	# dignity = 0.2
+	# realm_in_name = yes
+	# grant_limit = 1
+	# opinion_effect = 10
+	
+	# monthly_salary = 0.1
+	# monthly_prestige = 1.00
+	# is_voter = yes
+	
+	# allowed_to_hold = {
+		# can_be_admiral_trigger = yes		
+	# }
+	# allowed_to_grant = {	
+		# has_dlc = "Zeus"
+		# OR = {
+			# is_merchant_republic = yes
+			# AND = {
+				# independent = yes
+				# higher_tier_than = DUKE
+				# OR = {
+					# tier = EMPEROR
+					# primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				# }
+				# OR = {
+					# is_seafarer = yes
+					# capital_scope = { port = yes }
+				# }	
+			# }	
+		# }	
+		# OR = {
+			# culture_group = andal
+			# culture_group = dornish
+			# culture_group = first_men
+			# culture_group = hyrkoon_group
+			# culture_group = ibbenese_group
+			# culture_group = sarnor_group
+			# AND = {
+				# culture_group = valyrian
+				# capital_scope = { region = world_westeros }
+			# }
+		# }
+	# }
+	# ai_will_do = {
+		# factor = 1
+		# modifier = {
+			# factor = 0
+			# NOT = { martial = 10 }
+		# }
+	# }
+	
+	# gain_effect = {
+		# if = {
+			# limit = { ai = no }
+			# chronicle = {
+				# entry = CHRONICLE_MINOR_TITLE_MASTER_OF_SHIPS
+				# portrait = [From.GetID]
+			# }
+		# }
+		# if = {
+			# limit = {
+				# has_opinion_modifier = {
+					# who = FROM
+					# modifier = opinion_fired_from_council
+				# }
+			# }
+			# remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			# opinion = { who = FROM modifier = opinion_job_security_concerns }
+		# }
+	# }
+	# lose_effect = {
+		# opinion = { who = FROM modifier = opinion_fired_from_council }
+	# }
+# }
+# title_master_of_ships_B = { #non conclave version needs to be separate (is_voter=yes blocks the title)
+	# dignity = 0.2
+	# realm_in_name = yes
+	# grant_limit = 1
+	# opinion_effect = 10
+	
+	# monthly_salary = 0.1
+	# monthly_prestige = 1.00
+	
+	# allowed_to_hold = {
+		# can_be_admiral_trigger = yes	
+		# is_councillor = no	
+	# }
+	# allowed_to_grant = {	
+		# NOT = { has_dlc = "Zeus" }
+		# OR = {
+			# is_merchant_republic = yes
+			# AND = {
+				# independent = yes
+				# higher_tier_than = DUKE
+				# OR = {
+					# is_seafarer = yes
+					# capital_scope = { port = yes }
+				# }	
+			# }	
+		# }	
+		# OR = {
+			# culture_group = andal
+			# culture_group = dornish
+			# culture_group = first_men
+			# culture_group = hyrkoon_group
+			# culture_group = ibbenese_group
+			# culture_group = sarnor_group
+			# AND = {
+				# culture_group = valyrian
+				# capital_scope = { region = world_westeros }
+			# }
+		# }
+	# }
+	# ai_will_do = {
+		# factor = 1
+		# modifier = {
+			# factor = 0
+			# NOT = { martial = 10 }
+		# }
+	# }
+	
+	# gain_effect = {
+		# if = {
+			# limit = { ai = no }
+			# chronicle = {
+				# entry = CHRONICLE_MINOR_TITLE_MASTER_OF_SHIPS
+				# portrait = [From.GetID]
+			# }
+		# }
+		# if = {
+			# limit = {
+				# has_opinion_modifier = {
+					# who = FROM
+					# modifier = opinion_fired_from_council
+				# }
+			# }
+			# remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			# opinion = { who = FROM modifier = opinion_job_security_concerns }
+		# }
+	# }
+	# lose_effect = {
+		# opinion = { who = FROM modifier = opinion_fired_from_council }
+	# }
+# }
+
+title_justice_of_king = {
+	dignity = 0
+	realm_in_name = yes
+	grant_limit = 1
+	opinion_effect = 4
+	
+	monthly_salary = 0.025
+	monthly_prestige = 0.1
+	
+	is_unique = yes
+	
+	allowed_to_hold = {
+		age = 30
+		NOT = { trait = dragon }
+		OR = {
+			male_can_hold_minor_title_trigger = yes
+			female_can_hold_minor_title_trigger = yes
+		}	
+		is_ruler = no
+		NOT = { trait = kind }
+		NOT = { trait = craven }
+		NOT = { trait = incapable }
+		NOT = { culture = northman }
+		NOT = { trait = archmaester }
+		NOT = { trait = maester }
+		NOT = { has_landed_title = d_kingsguard }
+		NOT = { has_character_flag = guru }		
+		NOT = { has_job_title = job_castellan }	
+		NOT = { has_job_title = job_chancellor }	
+		NOT = { has_job_title = job_marshal }	
+		NOT = { has_job_title = job_treasurer }	
+		NOT = { has_job_title = job_spymaster }	
+	}
+	allowed_to_grant = {
+		is_feudal_monarch_trigger = yes
+		NOT = { government = wildling_feudal_government }
+		is_tribal = no
+		NOT = { culture = northman }
+		NOT = { regent = { character = ROOT } }
+	}
+}
+
+title_small_council_advisor = {
+	dignity = 0.33
+	realm_in_name = no
+	grant_limit = 3
+	opinion_effect = 5
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	is_unique = yes
+	
+	allowed_to_hold = {
+		can_be_advisor_trigger = yes		
+		is_councillor = no	
+	}
+	allowed_to_grant = {
+		has_landed_title = e_iron_throne
+		NOT = { has_dlc = "Zeus" }
+	}
+	gain_effect = {
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MINOR_TITLE_SMALL_COUNCIL
+				portrait = [From.GetID]
+			}
+		}
+	}
+}
+title_prince_AGOT = {
+	dignity = 0.8
+	grant_limit = 50
+	show_as_title = yes
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0.05
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {
+		NOT = { trait = bastard }
+		
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { has_priest_trait_trigger = yes }
+		
+		NOT = { has_minor_title = title_prince }
+		
+		OR = {
+			father_even_if_dead = { 
+				NOT = { trait = bastard }
+				#NOT = { tier = EMPEROR }
+				dynasty = ROOT
+				OR = {
+					father_even_if_dead = { 
+						tier = EMPEROR 
+						dynasty = ROOT
+						primary_title = { has_holder = yes }
+					} 
+					mother_even_if_dead = {
+						tier = EMPEROR 
+						dynasty = ROOT
+						primary_title = { has_holder = yes }
+					} 
+				}	
+			}
+			mother_even_if_dead = { 
+				NOT = { trait = bastard }
+				#NOT = { tier = EMPEROR }
+				dynasty = ROOT
+				OR = {
+					father_even_if_dead = { 
+						tier = EMPEROR 
+						dynasty = ROOT
+						primary_title = { has_holder = yes }
+					} 
+					mother_even_if_dead = {
+						tier = EMPEROR 
+						dynasty = ROOT
+						primary_title = { has_holder = yes }
+					} 
+				}	
+			}
+			any_sibling = {
+				tier = EMPEROR
+				dynasty = ROOT
+				primary_title = { has_holder = yes }
+				# ROOT = {
+					# OR = {
+						# NOT = { age = 16 }
+						# has_character_flag = princed
+					# }
+				# }	
+			}
+		}
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = {
+		#set_character_flag = agot_prince
+		remove_special_character_title = title_ser
+		remove_special_character_title = title_lady
+	}
+	lose_effect = {
+		if = {
+			limit = { 
+				trait = knight
+				is_ruler = no 
+				NOT = { has_minor_title = title_prince }
+				#NOT = { has_minor_title = title_prince_AGOT }
+				NOT = { has_minor_title = title_queen_mother }
+				NOT = { has_minor_title = title_ruler_consort }
+			}
+			if = {
+				limit = { is_female = no } 
+				set_special_character_title = title_ser
+			}
+			if = {
+				limit = { is_female = yes }
+				set_special_character_title = title_lady	
+			}
+		}
+	}
+
+	message = no
+}
+####################
+###Citadel Titles###
+####################
+title_grandmaester = {
+	dignity = 0.5
+	grant_limit = 1
+	show_as_title = yes
+	#realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {
+		has_job_title = job_physician
+	}
+	allowed_to_grant = {
+		always = no
+	}
+
+	gain_effect = {
+	}
+	lose_effect = {
+	}
+
+	message = no
+}
+title_archmaester = {
+	dignity = 0.5
+	grant_limit = 24
+	show_as_title = yes
+	revoke_allowed = no
+	
+	monthly_salary = 0.2
+	monthly_prestige = 0.4
+	
+	allowed_to_hold = {
+		trait = archmaester
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = {
+	}
+	lose_effect = {
+	}
+
+	message = no
+}
+
+# title_maester = {
+	# dignity = 0.05
+	# grant_limit = 100
+	# opinion_effect = 5
+	# show_as_title = yes
+	# revoke_allowed = no
+	
+	# monthly_salary = 0
+	# monthly_prestige = 0.05
+	
+	# allowed_to_hold = {
+		# trait = maester
+	# }
+	
+	# gain_effect = {
+	# }
+	# lose_effect = {
+	# }
+
+	# message = no
+# }
+# title_septon = {
+	# dignity = 0.25
+	# grant_limit = 100
+	# show_as_title = yes
+	# realm_in_name = no
+	# revoke_allowed = no
+	
+	# monthly_prestige = 0.05
+	
+	# allowed_to_hold = {
+		# trait = septon
+		# is_female = no
+	 # }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+# title_septa = {
+	# dignity = 0.25
+	# grant_limit = 100
+	# show_as_title = yes
+	# realm_in_name = no
+	# revoke_allowed = no
+	
+	# monthly_prestige = 0.05
+
+	# allowed_to_hold = {
+		# trait = septa	
+		# is_female = yes
+	# }
+	
+	# gain_effect = { }
+	# lose_effect = { }
+
+	# message = no
+# }
+title_bodyguard = {
+	is_high_prio = yes
+	
+	dignity = 0
+	grant_limit = 5
+	
+	show_as_title = no
+	realm_in_name = no
+	
+	monthly_salary = 0.025
+	monthly_prestige = 0.1
+	opinion_effect = 5
+	
+	allowed_to_hold = {
+		is_ruler = no
+		is_adult = yes
+		OR = {
+			is_councillor  = no
+			has_job_title = job_marshal
+		}	
+		combat_rating = 40
+		OR = {
+			combat_rating = 50
+			NOT = { is_close_relative = FROM }
+		}
+		NOT = { has_severe_disability_trigger = yes }
+		NOT = { trait = dragon }	
+		NOT = { trait = kingsguard }
+	}
+	allowed_to_grant = {
+		NAND = { #Uses the kingsguard instead
+			has_landed_title = e_iron_throne 
+			is_title_active = d_kingsguard
+		} 
+		NOT = { culture = dothraki} #Uses Bloodriders
+	}
+	ai_will_do = {
+		factor = 0.05
+		modifier = {
+			factor = 0
+			NOT = { reverse_opinion = { who = FROM value = 0 } }
+		}
+		modifier = {
+			factor = 5
+			trait = skilled_warrior
+		}
+		modifier = {
+			factor = 10
+			trait = master_warrior
+		}
+	}
+	
+	gain_effect = { }
+	lose_effect = { }
+
+	message = no
+}
+title_bloodrider = {
+	dignity = 0.8
+	grant_limit = 5
+	
+	show_as_title = no
+	realm_in_name = no
+	
+	monthly_salary = 0.2
+	monthly_prestige = 0.4
+	opinion_effect = 40
+	
+	allowed_to_hold = {
+		#is_adult = yes
+		#is_female = no
+		#culture = dothraki
+		#NOT = { is_close_relative = FROM }
+		# NOT = { trait = incapable }
+		# NOT = { trait = crippled }
+		# NOT = { trait = infirm }
+		# OR = {
+			# trait = trained_warrior
+			# trait = skilled_warrior
+			# trait = master_warrior
+			# FROM = { ai = no }
+			# reverse_has_opinion_modifier = { who = FROM modifier = opinion_bloodrider }
+		# }
+		reverse_has_opinion_modifier = { who = FROM modifier = opinion_bloodrider }
+	}
+	allowed_to_grant = {
+		culture = dothraki
+		#is_adult = yes
+		OR = {
+			higher_tier_than = DUKE
+			AND = {
+				tier = DUKE
+				independent = yes
+			}
+		}
+	}
+	
+	gain_effect = { 
+		#character_event = { id = dothraki.408 days = 2 }
+	}
+	lose_effect = { 
+		reverse_remove_opinion = { who = FROM modifier = opinion_bloodrider } 
+	}
+
+	message = no
+}
+title_knight_of_the_greenhand = {
+	dignity = 0.3
+	grant_limit = 100
+	realm_in_name = no
+	
+	monthly_prestige = 0.25
+	monthly_salary = 0
+	
+	allowed_to_hold = {
+		trait = knight	
+		NOT = { trait = slave }	
+	}
+	allowed_to_grant = {
+		tier = EMPEROR
+		OR = {
+			AND = {
+				capital_scope = { region = world_reach }
+				culture_group = andal
+			}
+			dynasty = 1254 #Gardener
+			has_landed_title = e_reach
+		}
+		hidden_tooltip = {
+			OR = {
+				ai = no
+				AND = {
+					wealth = 150
+					OR = {
+						NOT = { has_character_flag = knight_greenhand_grant_cooldown }
+						had_character_flag = { flag = knight_greenhand_grant_cooldown days = 150 }
+					}
+				}	
+			}
+		}
+	}
+	
+	gain_effect = { hidden_tooltip = { FROM = { character_event = { id = knight.30 } } } }
+	lose_effect = { }
+
+	message = no
+}
+
+title_sentinel = {
+	dignity = 0.33
+	show_as_title = yes
+	realm_in_name = no
+	grant_limit = 1
+	is_high_prio = yes
+	
+	opinion_effect = 10
+	monthly_prestige = 0.1
+	monthly_salary = 0.1
+	
+	allowed_to_hold = {		
+		NOT = { trait = slave }
+		is_ruler = no
+		is_councillor = yes
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { has_job_title = job_spiritual }
+		is_adult = yes
+		NOT = { has_severe_disability_trigger = yes }
+		NOT = { trait = dragon }
+	}
+	allowed_to_grant = {
+		dynasty = 1443 # Forrester
+		has_landed_title = c_blackgrove
+	}
+
+	gain_effect = {
+	}
+	lose_effect = {
+		c_blackgrove = { holder_scope = { character_event = { id = maintenance.39 days = 3 } } }
+	}
+	death_effect = {
+		c_blackgrove = { holder_scope = { character_event = { id = maintenance.39 days = 3 } } }
+	}
+	
+	message = yes
+}
+
+title_captain_of_guard = {
+	dignity = 0.2
+	#show_as_title = yes
+	realm_in_name = no
+	grant_limit = 1
+	is_high_prio = yes
+	
+	opinion_effect = 5
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	allowed_to_hold = {	
+		NOT = { trait = slave }
+		is_ruler = no
+		is_adult = yes
+		OR = {
+			is_councillor  = no
+			has_job_title = job_marshal
+		}	
+		combat_rating = 40
+		OR = {
+			combat_rating = 50
+			NOT = { is_close_relative = FROM }
+		}
+		NOT = { has_severe_disability_trigger = yes }
+		NOT = { trait = dragon }	
+		NOT = { trait = kingsguard }
+	}
+	allowed_to_grant = {
+		ai = no
+		is_ruler = yes
+		demesne_size = 1
+		#capital_scope = { has_province_modifier = employed_cityguard } 
+		OR = {
+			capital_holding = {
+				OR = {
+					has_building = ca_household_guard
+					has_building = ct_household_guard
+				}
+			}
+			family_palace = { has_building = fp_household_guard }
+		}
+	}
+
+	gain_effect = {
+		prestige = 50
+	}
+	lose_effect = {
+	}
+	
+	message = yes
+}
+title_military_command_successor = {
+	dignity = 0.5
+	realm_in_name = yes
+	grant_limit = 1
+	opinion_effect = 20
+	
+	#monthly_salary = 0.01
+	monthly_prestige = 0.1
+	
+	allowed_to_hold = {
+		liege = {
+			is_military_command_trigger = yes
+			dynasty = ROOT
+			NOT = { character = ROOT }
+		}
+		prisoner = no
+		is_incapable = no
+		can_press_claims_trigger = yes
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = {
+	}
+	lose_effect = {
+	}
+
+	message = yes
+}
+title_handmaiden = {
+	dignity = 0.05
+	grant_limit = 3
+	
+	show_as_title = no
+	realm_in_name = no
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	opinion_effect = 5
+	
+	allowed_to_hold = {
+		is_female = yes
+		is_ruler = no
+		is_adult = yes
+		is_married = no
+		prisoner = no
+		NOT = { is_incapable = yes }
+		NOT = { trait = in_hiding }
+		NOT = { trait = wikid }
+		NOT = { trait = on_reaving }
+		can_press_claims_trigger = yes
+		FROM = {
+			spouse = {
+				NOT = { age_diff = { who = ROOT years = 20 } }
+				OR = {
+					is_friend = ROOT
+					is_close_relative = ROOT
+					opinion = { who = ROOT  value = 60 }
+				}
+			}
+		}
+	}
+	allowed_to_grant = {
+		NOT = { government = wildling_feudal_government }
+		is_tribal = no
+		OR = {
+			AND = {
+				is_married = yes
+				is_female = no
+				spouse = { liege = { character = ROOT } }
+			}
+			is_female = yes
+		}	
+	}
+	
+	gain_effect = { 
+		FROM = {
+			spouse = {
+				opinion = { who = ROOT modifier = opinion_handmaiden }
+				reverse_opinion = { who = ROOT modifier = opinion_handmaiden }
+			}
+		}
+	}
+	lose_effect = { 
+		FROM = {
+			spouse = {
+				remove_opinion = { who = ROOT modifier = opinion_handmaiden }
+				reverse_remove_opinion = { who = ROOT modifier = opinion_handmaiden }
+			}
+		}
+	}
+
+	message = yes
+}
+
+### Traditional Honourary Titles
+title_knight_of_the_greenhand_manderly = {
+	dignity = 0.3
+	grant_limit = 1
+	realm_in_name = no
+	revoke_allowed = no
+	
+	#monthly_prestige = 0
+	#monthly_salary = 0
+	
+	allowed_to_hold = {
+		dynasty = 80
+		dynasty_head = { character = ROOT }
+		trait = knight	
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	
+	gain_effect = { hidden_tooltip = { FROM = { character_event = { id = knight.30 } } } }
+	lose_effect = { }
+
+	message = no
+}
+title_the_bloodroyal = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 12
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_the_evenstar = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 54
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_keeper_of_the_night_lamp = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 165
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_lord_of_the_tides = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 52
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_shield_of_lannisport = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 190
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_warden_princes_pass = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 14
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_warden_stone_way = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 12
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_warden_white_knife = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 80
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_marshal_of_the_mander = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 80
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_voice_of_oldtown = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 285
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_defender_of_the_fords = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 264
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}
+title_marshal_of_the_marches = {
+	dignity = 0
+	grant_limit = 1
+	
+	show_as_title = no
+	realm_in_name = no
+	revoke_allowed = no
+	
+	monthly_salary = 0
+	monthly_prestige = 0
+	opinion_effect = 0
+	
+	allowed_to_hold = {
+		is_ruler = yes
+		dynasty = 301
+		dynasty_head = { character = ROOT }
+	}
+	allowed_to_grant = {
+		always = no
+	}
+	gain_effect = { 
+	}
+	lose_effect = { 
+	}
+
+	message = no
+}

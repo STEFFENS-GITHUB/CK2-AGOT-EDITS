@@ -1,0 +1,145 @@
+law_groups = {
+	dragon_tamer_laws = {
+		law_type = realm
+	}
+}
+laws = {
+	dragon_tamer_0 = {
+		show_as_title = yes
+		group = dragon_tamer
+
+		allow = {
+			always = yes
+		}
+		potential = {
+			OR = {
+				AND = {
+					higher_tier_than = DUKE
+					independent = yes
+				}
+				AND = {
+					holder_scope = {
+						independent = yes
+						NOT = { has_any_opinion_modifier = opinion_de_facto_liege }
+					}
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+			}
+			modifier = {
+				factor = 0
+				holder_scope = {
+					any_dynasty_member = {
+						trait = dragon_rider
+					}
+				}
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		effect = {
+			hidden_tooltip = {
+				revoke_law = dragon_tamer_1
+				revoke_law = dragon_tamer_2
+			}
+		}
+	}
+
+	dragon_tamer_1 = {
+		show_as_title = yes
+		group = dragon_tamer
+
+		allow = {
+			OR = {
+				has_law = dragon_tamer_0
+				has_law = dragon_tamer_2
+			}
+		}
+		potential = {
+			OR = {
+				AND = {
+					higher_tier_than = DUKE
+					independent = yes
+				}
+				AND = {
+					holder_scope = {
+						independent = yes
+						NOT = { has_any_opinion_modifier = opinion_de_facto_liege }
+					}
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.001
+			}
+			modifier = {
+				factor = 0
+				has_law = dragon_tamer_2
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		effect = {
+			hidden_tooltip = {
+				revoke_law = dragon_tamer_0
+				revoke_law = dragon_tamer_2
+			}
+		}
+	}
+
+	dragon_tamer_2 = {
+		show_as_title = yes
+		group = dragon_tamer
+		default = yes
+
+		allow = {
+			has_law = dragon_tamer_1
+		}
+		potential = {
+			OR = {
+				AND = {
+					higher_tier_than = DUKE
+					independent = yes
+				}
+				AND = {
+					holder_scope = {
+						independent = yes
+						NOT = { has_any_opinion_modifier = opinion_de_facto_liege }
+					}
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.5
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		effect = {
+			hidden_tooltip = {
+				revoke_law = dragon_tamer_0
+				revoke_law = dragon_tamer_1
+			}
+		}
+	}
+}

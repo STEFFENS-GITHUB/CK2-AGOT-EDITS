@@ -1,0 +1,698 @@
+###################################
+#
+# CHARLEMAGNE
+# - Councillor decisions
+#
+###################################
+
+# Written by Henrik "Groogy" Hansson
+
+decisions = {
+	
+	 help_liege_manage_titles = {
+	 	is_high_prio = yes
+		ai = no
+		potential = {		
+			ai = no
+			is_councillor = yes		
+			liege = {
+				NOT = { character = ROOT }
+				NOT = { trait = nightswatch }
+				is_nomadic = no
+			}
+			OR = {
+				has_job_title = job_castellan
+				has_job_title = job_chancellor
+				has_job_title = job_treasurer
+				AND = {
+					has_job_title = job_physician
+					OR = {
+						trait = maester
+						trait = archmaester
+					}				
+				}	
+				liege = { regent = { character = ROOT } }
+			}			
+			OR = {
+				NOT = { has_character_flag = proposed_to_help_liege_with_titles }
+				had_character_flag = { flag = proposed_to_help_liege_with_titles days = 730 }
+			}
+		}
+		allow = {
+			NOT = { trait = slothful }
+			liege = {
+				over_max_demesne_size = 1				
+				custom_tooltip = { 
+					text = HAS_SPARE_TITLE_TOOLTIP
+					hidden_tooltip = {
+						any_demesne_title = {
+							lower_tier_than = DUKE
+							can_be_given_away = yes
+							holder_scope = { 
+								NOT = { capital_holding = { title = PREVPREV } }	
+								NOT = { family_palace = { title = PREVPREV } }							
+							}	
+							OR = {
+								tier = BARON
+								location = { is_capital = no }
+							}
+							NOT = { #Not traditional heir title
+								holder_scope = {
+									higher_tier_than = DUKE
+									is_feudal_monarch_trigger = yes
+									primary_title = {
+										persistent_event_target:heir_title = {
+											title = PREVPREVPREV
+										}
+									}
+								}
+							}
+							#Not traditional title
+							OR = {
+								NOT = {
+									OR = {
+										title = c_dragonstone
+										title = c_summerhall
+									}
+								}	
+								holder_scope = { NOT = { dynasty = 496 } }
+							}
+							OR = {
+								NOT = { title = c_winterfell }	
+								holder_scope = { NOT = { dynasty = 59 } }
+							}
+							OR = {
+								NOT = { title = c_pyke }	
+								holder_scope = { NOT = { dynasty = 107 } }
+							}
+							OR = {
+								NOT = { title = c_orkmont }	
+								holder_scope = { NOT = { dynasty = 66 } }
+							}
+							OR = {
+								NOT = { title = c_riverrun }	
+								holder_scope = { NOT = { dynasty = 159 } }
+							}
+							OR = {
+								NOT = { title = c_the_eyrie }	
+								holder_scope = { NOT = { dynasty = 178 } }
+							}
+							OR = {
+								NOT = { title = c_casterly_rock }	
+								holder_scope = { NOT = { dynasty = 190 } }
+							}
+							OR = {
+								NOT = { title =  c_storms_end }	
+								holder_scope = { 
+									NOT = {
+										OR = {
+											dynasty = 317
+											dynasty = 1544		
+										}
+									}
+								}
+							}
+							OR = {
+								NOT = { title = c_highgarden }	
+								holder_scope = { 
+									NOT = {
+										OR = {
+											dynasty = 253
+											dynasty = 1254	
+										}
+									}
+								}
+							}
+							OR = {
+								NOT = { title = c_sunspear  }	
+								holder_scope = { NOT = { dynasty = 1 } }
+							}
+							OR = {
+								NOT = {
+									OR = {
+										title = c_brightwater
+										title = c_highgarden
+									}
+								}	
+								holder_scope = { NOT = { dynasty = 281 } }
+							}
+							OR = {
+								NOT = { title = c_thetwins  }	
+								holder_scope = { NOT = { dynasty = 127 } }
+							}
+							OR = {
+								NOT = { title = c_blackwoodvale  }	
+								holder_scope = { NOT = { dynasty = 150 } }
+							}
+							OR = {
+								NOT = { title = c_stonehedge  }	
+								holder_scope = { NOT = { dynasty = 149 } }
+							}
+							OR = {
+								NOT = { title = c_dragonstone  }	
+								holder_scope = { NOT = { dynasty = 57 } }
+							}
+						}
+					}
+				}				
+				custom_tooltip = { 
+					text = NOT_PROPOSED_TITLE_HELP_RECENTLY_TOOLTIP
+					hidden_tooltip = {
+						OR = {
+							NOT = { has_character_flag = has_been_proposed_about_titles }
+							had_character_flag = { flag = has_been_proposed_about_titles days = 14 }
+						}
+					}
+  				}
+  				custom_tooltip = {
+  					text = NOT_REFUSED_ANY_HELP_WITH_TITLES_TOOLTIP
+  					hidden_tooltip = {
+  						OR = {
+							AND = { #regents can do this whenever they like
+								regent = { character = ROOT }
+								OR = {
+									NOT = { age = 16 }
+									is_incapable = yes
+								}
+							}	
+  							NOT = { has_character_flag = refused_any_help_with_titles }
+							had_character_flag = { flag = refused_any_help_with_titles days = 712 }
+						}
+  					}
+  				}
+  				custom_tooltip = {
+  					text = NOT_GETTING_HELP_WITH_TITLES_TOOLTIP
+  					hidden_tooltip = {
+  						OR = {
+  							NOT = { has_character_flag = getting_help_with_titles }
+							had_character_flag = { flag = getting_help_with_titles days = 800 }
+						}
+  					}
+  				}
+			}
+		}
+		effect = {
+			set_character_flag = proposed_to_help_liege_with_titles
+			liege = {
+				set_character_flag = has_been_proposed_about_titles
+				character_event = { id = 108000 tooltip = TOOLTIP108000 }
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	ask_help_to_manage_titles = {
+		only_playable = yes
+	 	is_high_prio = yes
+
+		potential = {
+			is_ruler = yes
+			is_nomadic = no
+			NOT = { trait = nightswatch }		
+			OR = {
+				ai = no
+				regent = { ai = no }
+				job_castellan = { ai = no }				
+				job_chancellor = { ai = no }			
+			}	
+			over_max_demesne_size = 1
+			OR = {
+				NOT = { has_character_flag = has_been_proposed_about_titles }
+				had_character_flag = { flag = has_been_proposed_about_titles days = 14 }
+			}
+			OR = {
+				NOT = { has_character_flag = refused_any_help_with_titles }
+				had_character_flag = { flag = refused_any_help_with_titles days = 712 }
+			}
+		}
+		allow = {
+			over_max_demesne_size = 1
+			custom_tooltip = { 
+				text = HAS_SPARE_TITLE_TOOLTIP
+				hidden_tooltip = {
+					any_demesne_title = {
+						lower_tier_than = DUKE
+						can_be_given_away = yes
+						holder_scope = { 
+							NOT = { capital_holding = { title = PREVPREV } }	
+							NOT = { family_palace = { title = PREVPREV } }							
+						}	
+						OR = {
+							tier = BARON
+							location = { is_capital = no }
+						}
+						NOT = { #Not traditional heir title
+							holder_scope = {
+								higher_tier_than = DUKE
+								is_feudal_monarch_trigger = yes
+								primary_title = {
+									persistent_event_target:heir_title = {
+										title = PREVPREVPREV
+									}
+								}
+							}
+						}
+						#Not traditional title
+						OR = {
+							NOT = {
+								OR = {
+									title = c_dragonstone
+									title = c_summerhall
+								}
+							}	
+							holder_scope = { NOT = { dynasty = 496 } }
+						}
+						OR = {
+							NOT = { title = c_winterfell }	
+							holder_scope = { NOT = { dynasty = 59 } }
+						}
+						OR = {
+							NOT = { title = c_pyke }	
+							holder_scope = { NOT = { dynasty = 107 } }
+						}
+						OR = {
+							NOT = { title = c_orkmont }	
+							holder_scope = { NOT = { dynasty = 66 } }
+						}
+						OR = {
+							NOT = { title = c_riverrun }	
+							holder_scope = { NOT = { dynasty = 159 } }
+						}
+						OR = {
+							NOT = { title = c_the_eyrie }	
+							holder_scope = { NOT = { dynasty = 178 } }
+						}
+						OR = {
+							NOT = { title = c_casterly_rock }	
+							holder_scope = { NOT = { dynasty = 190 } }
+						}
+						OR = {
+							NOT = { title =  c_storms_end }	
+							holder_scope = { 
+								NOT = {
+									OR = {
+										dynasty = 317
+										dynasty = 1544		
+									}
+								}
+							}
+						}
+						OR = {
+							NOT = { title = c_highgarden }	
+							holder_scope = { 
+								NOT = {
+									OR = {
+										dynasty = 253
+										dynasty = 1254	
+									}
+								}
+							}
+						}
+						OR = {
+							NOT = { title = c_sunspear  }	
+							holder_scope = { NOT = { dynasty = 1 } }
+						}
+						OR = {
+							NOT = {
+								OR = {
+									title = c_brightwater
+									title = c_highgarden
+								}
+							}	
+							holder_scope = { NOT = { dynasty = 281 } }
+						}
+						OR = {
+							NOT = { title = c_thetwins  }	
+							holder_scope = { NOT = { dynasty = 127 } }
+						}
+						OR = {
+							NOT = { title = c_blackwoodvale  }	
+							holder_scope = { NOT = { dynasty = 150 } }
+						}
+						OR = {
+							NOT = { title = c_stonehedge  }	
+							holder_scope = { NOT = { dynasty = 149 } }
+						}
+						OR = {
+							NOT = { title = c_dragonstone  }	
+							holder_scope = { NOT = { dynasty = 57 } }
+						}
+					}
+				}
+			}	
+			custom_tooltip = {
+  				text = TOOLTIP_RECENTLY_ASKED_HELP_WITH_TITLES
+  				OR = {
+  					NOT = { has_character_flag = getting_help_with_titles }
+					had_character_flag = { flag = getting_help_with_titles days = 800 }
+				}
+			}
+		}
+		effect = {
+			set_character_flag = getting_help_with_titles
+			if = {
+				limit = { ai = no }
+				if = {
+					limit = { has_regent = yes }
+					regent = {
+						hidden_tooltip = { character_event = { id = 108010 } }
+						character_event = { id = 108005 tooltip = TOOLTIP108005 }
+					}
+				}	
+				if = {
+					limit = { has_regent = no }
+					if = {
+						limit = { job_castellan = { always = yes } }
+						job_castellan = {
+							hidden_tooltip = { character_event = { id = 108010 } }
+							character_event = { id = 108005 tooltip = TOOLTIP108005 }
+						}
+					}	
+					if = {
+						limit = { job_castellan = { always = no } }
+						job_chancellor = {
+							hidden_tooltip = { character_event = { id = 108010 } }
+							character_event = { id = 108005 tooltip = TOOLTIP108005 }
+						}
+					}
+				}			
+			}	
+			if = {
+				limit = { ai = yes }
+				if = {
+					limit = { regent = { ai = no } }
+					regent = {
+						hidden_tooltip = { character_event = { id = 108010 } }
+						character_event = { id = 108005 tooltip = TOOLTIP108005 }
+					}
+				}	
+				if = {
+					limit = { NOT = { regent = { ai = no } } }
+					if = {
+						limit = { job_castellan = { ai = no } }
+						job_castellan = {
+							hidden_tooltip = { character_event = { id = 108010 } }
+							character_event = { id = 108005 tooltip = TOOLTIP108005 }
+						}
+					}	
+					if = {
+						limit = { NOT = { job_castellan = { ai = no } } }
+						job_chancellor = {
+							hidden_tooltip = { character_event = { id = 108010 } }
+							character_event = { id = 108005 tooltip = TOOLTIP108005 }
+						}
+					}
+				}			
+			}	
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+targetted_decisions = {
+	reassign_councillor = {
+		ai_target_filter = none
+		filter = sub_realm
+		ai = no
+		from_potential = {
+			ai = no
+		}
+		potential = {
+			liege = { character = FROM }
+			OR = {
+				is_councillor = yes
+				has_minor_title = title_high_admiral
+				has_minor_title = title_councilmember_king
+				has_minor_title = title_councilmember_emperor
+			}			
+		}
+		allow = {
+			FROM = {
+				show_scope_change = no
+				custom_tooltip = {
+					text = TOOLTIPreassign_councillorSPARE
+					hidden_tooltip = {					
+						OR = {
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_castellan } }
+								ROOT = { can_be_castellan_trigger = yes }
+							}	
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_chancellor } }
+								ROOT = { can_be_chancellor_trigger = yes }
+							}
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_marshal } }
+								ROOT = { can_be_marshal_trigger = yes }
+							}
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_treasurer } }
+								ROOT = { can_be_treasurer_trigger = yes }
+							}
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_spymaster } }
+								ROOT = { can_be_spymaster_trigger = yes }
+							}
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_physician } }
+								ROOT = { can_be_physician_trigger = yes }
+							}
+							AND = {
+								NOT = { any_courtier_or_vassal = { vassal_of = PREV has_job_title = job_spiritual } }
+								ROOT = { can_be_spiritual_trigger = yes }
+							}
+							AND = {
+								has_dlc = "Zeus"
+								OR = {
+									AND = {
+										higher_tier_than = DUKE
+										NOT = { has_assigned_minor_title = title_councilmember_king }
+										ROOT = { can_be_advisor_trigger = yes }
+									}	
+									AND = {
+										tier = EMPEROR
+										NOT = { has_assigned_minor_title = title_councilmember_emperor }
+										ROOT = { can_be_advisor_trigger = yes }
+									}
+									AND = {
+										can_assign_admiral_trigger = yes	
+										NOT = { has_assigned_minor_title = title_high_admiral }
+										ROOT = { can_be_admiral_trigger = yes }	
+									}
+								}		
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				hidden_tooltip = {
+					NAND = {
+						FROM = { is_valyrian_freehold_trigger = yes }
+						has_character_flag = elected_valyrian_councillor
+					}
+				}	
+			}
+		}
+		effect = {	
+			FROM = { character_event = { id = councillor.50 tooltip = TOOLTIPcouncillor.50 } }	
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	vote_of_no_confidence = { #With council power law/regency, councillors can kick fellow councillors
+		ai_target_filter = realm
+		filter = realm
+		from_potential = {
+			has_dlc = "Zeus"
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+			}
+			located_in_active_region_trigger = yes #optimisation
+			liege = {			
+				OR = {
+					has_regent = yes
+					primary_title = { has_law = titles_voting_power_1 }
+				}		
+				NOT = { regent = { character = PREVPREV } }
+			}
+			#Ai logic
+			OR = {
+				ai = no
+				NOT = { has_position = loyalist }
+			}
+		}
+		potential = {
+			same_liege = FROM
+			NOT = { character = FROM }
+			NOT = { is_liege_of = FROM }
+			OR = {
+				is_councillor = yes
+				has_minor_title = title_high_admiral
+				has_minor_title = title_councilmember_king
+				has_minor_title = title_councilmember_emperor
+			}			
+		}
+		allow = {
+			liege = { NOT = { regent = { character = ROOT } } }
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_council_sponsor } }
+			conditional_tooltip = {
+				trigger = { liege = { is_valyrian_freehold_trigger = yes } }
+				custom_tooltip = {
+					text = TOOLTIPVALYRIANCOUNCILLOR
+					NOT = { has_character_flag = elected_valyrian_councillor }
+				}
+			}
+			conditional_tooltip = {
+				trigger = { 
+					has_job_title = job_physician
+					liege = { maester_culture_trigger = yes } 
+				}
+				custom_tooltip = {
+					text = TOOLTIPvote_of_no_confidenceA
+					NOR = {
+						trait = maester
+						trait = archmaester
+					}
+				}
+			}			
+			custom_tooltip = {
+				text = TOOLTIPvote_of_no_confidenceB
+				NOT = { has_character_modifier = survived_vote_of_no_confidence }
+			}
+			custom_tooltip = {
+				text = TOOLTIPvote_of_no_confidenceC
+				FROM = {
+					OR = {
+						NOT = { has_character_flag = vote_of_no_confidence }
+						had_character_flag = { flag = vote_of_no_confidence days = 30 }
+					}
+				}	
+			}		
+		}
+		effect = {	
+			FROM = { set_character_flag = vote_of_no_confidence }
+			custom_tooltip = {
+				text = TOOLTIPvote_of_no_confidenceD
+				#Proposer votes for, target votes against, liege against if has no regent
+				if = {
+					limit = { liege = { has_regent = yes } }
+					set_variable = { which = votes_of_no_confidence value = 0 }
+				}
+				else = {
+					set_variable = { which = votes_of_no_confidence value = -1 }
+				}
+				liege = {
+					any_courtier_or_vassal = {
+						limit = {
+							OR = {
+								is_councillor = yes
+								is_voter = yes
+							}
+							NOT = { character = ROOT }
+							NOT = { character = FROM }
+						}
+						character_event = { id = councillor.60 } #the vote
+						character_event = { id = councillor.61 days = 2 } #the result
+					}
+				}
+				FROM = {
+					set_character_flag = councillor.60_vote_FOR
+					character_event = { id = councillor.61 days = 3 } #the result
+				}	
+			}	
+		}
+		ai_check_interval = 24
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.1
+			}	
+			modifier = { #Motives
+				factor = 0
+				FROM = { 
+					opinion = { who = ROOT value = -24 } #Dislike target
+					NAND = { #Pragmatist dislikes bad councillor
+						has_position = pragmatist
+						NOT = { opinion = { who = ROOT value = 0 } }
+						ROOT = {
+							NOR = {
+								stewardship = 8
+								diplomacy = 8
+								martial = 8
+								intrigue = 8
+							}
+						}	
+					}
+					NAND = { #Glory hound dislikes wrong culture
+						has_position = glory_hound
+						NOT = { opinion = { who = ROOT value = 25 } }
+						NOT = { culture_group = ROOT }
+					}
+					NAND = { #Zealot dislikes wrong religion
+						has_position = zealot
+						NOT = { opinion = { who = ROOT value = 25 } }
+						NOT = { religion = ROOT }
+					}
+					NAND = { #Malcontent may cause trouble
+						has_position = malcontent
+						NOT = { opinion = { who = ROOT value = 0 } }
+					}
+					NAND = { #Elephant oppose tiger
+						trait = elephant
+						NOT = { opinion = { who = ROOT value = 0 } }
+						ROOT = { trait = tiger }
+					}
+					NAND = { #Tiger oppose elephant
+						trait = tiger
+						NOT = { opinion = { who = ROOT value = 0 } }
+						ROOT = { trait = elephant }
+					}
+				}
+			}
+			modifier = { #Family loyalty
+				factor = 0
+				FROM = {
+					is_close_relative = ROOT
+					NOT = { is_rival = ROOT }
+					OR = {
+						opinion = { who = ROOT value = -39 }
+						trait = familyperson
+					}
+				}	
+			}		
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { reverse_opinion = { who = FROM value = -24 } }
+			}			
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 0.5
+				reverse_opinion = { who = FROM value = 15 }
+			}
+		}
+	}
+}

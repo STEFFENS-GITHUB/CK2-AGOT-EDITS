@@ -1,0 +1,781 @@
+namespace = far_east
+
+### Far East Events ###
+# by blackninja9939
+
+###Contents
+##Asshai
+#far_east.1-5		Shadowlander tribe raids you
+#far_east.6-8		Strong ruler of duke asshai attacks shadowlanders
+#far_east.9			Fully conquered Asshai, proclaim self King?
+#far_east.10		Yellow Emperor asks for aid against Yi Ti
+##To do Yi Ti
+
+#Shadowlander tribe raids you
+character_event = {
+	id = far_east.1
+	desc = EVTDESCfar_east.1
+	picture = GFX_evt_wildlings
+	
+	only_playable = yes
+	
+	trigger = {
+		capital_scope = { 
+			OR = {
+				region = world_asshai 
+				region = world_jinqi
+			}	
+		}
+		NOT = { government = wildling_feudal_government }
+		# any_playable_ruler = {
+			# independent = yes
+			# culture = shadowlander
+			# government = wildling_feudal_government
+			# capital_scope = {
+				# region = world_asshai
+			# }
+		# }
+		OR = {
+			NOT = { has_character_flag = shadowlander_raids }
+			had_character_flag = { flag = shadowlander_raids days = 730 }
+		}
+	}
+
+	mean_time_to_happen = {
+		years = 5
+		modifier = {
+			factor = 1.2
+			NOT = { martial = 10 }
+		}
+		modifier = {
+			factor = 1.2
+			NOT = { martial = 12 }
+		}
+		modifier = {
+			factor = 0.8
+			martial = 14
+		}
+		modifier = {
+			factor = 0.8
+			martial = 14
+		}
+		modifier = {
+			factor = 0.8
+			martial = 16
+		}
+		modifier = {
+			factor = 0.8
+			martial = 18
+		}
+		modifier = {
+			factor = 0.8
+			martial = 20
+		}
+		modifier = {
+			factor = 0.8
+			martial = 22
+		}
+		modifier = {
+			factor = 1.2
+			war = yes
+		}
+		modifier = {
+			factor = 0.7
+			has_landed_title = k_asshai #less likely against stronger asshai
+		}
+	}
+
+	immediate = {
+		clr_character_flag = shadowlander_raids
+		set_character_flag = shadowlander_raids
+	}
+
+	option = { #I cannot defend every peasant, we must let it slide this time
+		name = EVTOPTAfar_east.1
+		prestige = -50
+		wealth = -25
+	}
+	option = { #The best offence is a good defence, we should fortify our vulnerabilities
+		name = EVTOPTBfar_east.1
+		wealth = -20
+		random_list = {
+			1 = {
+				set_character_flag = shadowlander_raids_defence_win 
+				character_event =  { id = far_east.2 tooltip = TOOLTIPfar_east.2A days = 30 random = 10 }
+			}
+			1 = { 
+				set_character_flag = shadowlander_raids_defence_lose
+				character_event =  { id = far_east.2 tooltip = TOOLTIPfar_east.2B days = 30 random = 10 }
+			}
+			1 = { 
+				set_character_flag = shadowlander_raids_defence_none
+				character_event =  { id = far_east.2 tooltip = TOOLTIPfar_east.2C days = 30 random = 10 }
+			}
+		}
+	}
+	option = { #I will personally lead an attack against them
+		name = EVTOPTCfar_east.1
+		trigger = {
+			block_general_event_trigger = no
+			NOT = { has_severe_disability_trigger = yes }
+			martial = 14
+		}
+		tooltip_info = martial
+		character_event = { id = far_east.3 tooltip = TOOLTIPfar_east.3 days = 30 random = 10 }
+	}
+	option = { #My marshal shall teach them to not return
+		name = EVTOPTDfar_east.1
+		trigger = { job_marshal = { always = yes } }
+		character_event = { id = far_east.5 tooltip = TOOLTIPfar_east.5 days = 30 random = 10 }
+	}
+}
+#The raiders return and are stopped by your defences
+character_event = {
+	id = far_east.2
+	picture = GFX_evt_wildlings
+
+	desc = {
+		text = EVTDESCAfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_win }
+	}
+	desc = {
+		text = EVTDESCBfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_lose }
+	}
+	desc = {
+		text = EVTDESCCfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_none }
+	}
+
+	is_triggered_only = yes
+
+	option = { #Take that you vile brigands!
+		name = EVTOPTAfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_win }
+		wealth = 30
+		prestige = 30
+	}
+	option = { #What a waste...
+		name = EVTOPTBfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_lose }
+		wealth = -10
+		prestige = -30
+	}
+	option = { #Hopefully they never return
+		name = EVTOPTCfar_east.2
+		trigger = { has_character_flag = shadowlander_raids_defence_none }
+		prestige = 10
+	}
+	after = {
+		clr_character_flag = shadowlander_raids_defence_win
+		clr_character_flag = shadowlander_raids_defence_lose
+		clr_character_flag = shadowlander_raids_defence_none
+	}
+}
+#Ruler attacks the camp
+character_event = {
+	id = far_east.3
+	desc = EVTDESCfar_east.3
+	picture = GFX_evt_wildlings
+
+	is_triggered_only = yes
+
+	option = { #Charge!!!
+		name = EVTOPTAfar_east.3
+		random_list = {
+			50 = {
+				modifier = {
+					factor = 1.3
+					trait = strategist
+				}
+				modifier = {
+					factor = 1.2
+					martial = 18
+				}
+				modifier = {
+					factor = 1.2
+					martial = 22
+				}
+				modifier = {
+					factor = 1.2
+					combat_rating = 60
+				}
+				set_character_flag = shadowlander_raids_attack_win
+				character_event = { id = far_east.4 tooltip = TOOLTIPfar_east.4A }
+			}
+			50 = {
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 20 }
+				}
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 40 }
+				}
+				set_character_flag = shadowlander_raids_attack_lose
+				character_event = { id = far_east.4 tooltip = TOOLTIPfar_east.4B }
+			}
+		}
+	}
+	option = { #We should sneak our way into their camp
+		name = EVTOPTBfar_east.3
+		trigger = { intrigue = 12 }
+		tooltip_info = intrigue
+		random_list = {
+			50 = {
+				modifier = {
+					factor = 1.3
+					trait = schemer
+				}
+				modifier = {
+					factor = 1.2
+					intrigue = 18
+				}
+				modifier = {
+					factor = 1.2
+					intrigue = 22
+				}
+				modifier = {
+					factor = 1.2
+					combat_rating = 60
+				}
+				set_character_flag = shadowlander_raids_attack_win
+				character_event = { id = far_east.4 tooltip = TOOLTIPfar_east.4A }
+			}
+			50 = {
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 20 }
+				}
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 40 }
+				}
+				set_character_flag = shadowlander_raids_attack_lose
+				character_event = { id = far_east.4 tooltip = TOOLTIPfar_east.4B }
+			}
+		}
+	}
+}
+#Results from attack
+character_event = {
+	id = far_east.4
+	picture = GFX_evt_wildlings
+
+	desc = {
+		text = EVTDESCAfar_east.4
+		trigger = { has_character_flag = shadowlander_raids_attack_win }
+	}
+	desc = {
+		text = EVTDESCBfar_east.4
+		trigger = { has_character_flag = shadowlander_raids_attack_lose }
+	}
+
+	is_triggered_only = yes
+
+	option = { #That will show them not to trifle with us!
+		name = EVTOPTAfar_east.4
+		trigger = { has_character_flag = shadowlander_raids_attack_win }
+		wealth = 30
+		prestige = 30
+	}
+	option = { #This is terrible!
+		name = EVTOPTBfar_east.4
+		trigger = { has_character_flag = shadowlander_raids_attack_lose }
+		prestige = -50
+		random_list = {
+			70 = {
+				add_trait_silently_wounded_effect = yes
+				trigger = {
+					NOT = { trait = wounded }
+				}
+			}
+			25 = {
+				add_maimed_trait_effect = yes
+				modifier = {
+					factor = 0.8
+					NOT = { trait = wounded }
+				}
+			}
+			5 = {
+				death = { death_reason = death_bandits }
+			}
+		}
+	}
+	after = {
+		clr_character_flag = shadowlander_raids_attack_win
+		clr_character_flag = shadowlander_raids_attack_lose
+	}
+}
+#Marshal outcome event
+character_event = {
+	id = far_east.5
+	picture = GFX_evt_wildlings
+
+	desc = {
+		text = EVTDESCAfar_east.5
+		trigger =  { has_character_flag = shadowlander_raids_marshal_win }
+	}
+	desc = {
+		text = EVTDESCBfar_east.5
+		trigger =  { has_character_flag = shadowlander_raids_marshal_lose }
+	}
+
+	is_triggered_only = yes
+
+	immediate = {
+		random_list = {
+			50 = {
+				modifier = {
+					factor = 1.3
+					trait = strategist
+				}
+				modifier = {
+					factor = 1.2
+					martial = 18
+				}
+				modifier = {
+					factor = 1.2
+					martial = 22
+				}
+				modifier = {
+					factor = 1.2
+					combat_rating = 60
+				}
+				set_character_flag = shadowlander_raids_marshal_win
+			}
+			50 = {
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 20 }
+				}
+				modifier = {
+					factor = 1.3
+					NOT = { combat_rating = 40 }
+				}
+				set_character_flag = shadowlander_raids_marshal_lose
+			}
+		}
+	}
+
+	option = { #Good work marshal! That'll teach those savages!
+		name = EVTOPTAfar_east.5
+		trigger = { has_character_flag = shadowlander_raids_marshal_win }
+		wealth = 30
+	}
+	option = { #Your incompetance has cost us greatly!
+		name = EVTOPTBfar_east.5
+		trigger = { has_character_flag = shadowlander_raids_marshal_lose }
+		prestige = -50
+		job_marshal = {
+			random_list = {
+				70 = {
+					add_trait_silently_wounded_effect = yes
+					trigger = {
+						NOT = { trait = wounded }
+					}
+				}
+				25 = {
+					add_maimed_trait_effect = yes
+					modifier = {
+						factor = 0.8
+						NOT = { trait = wounded }
+					}
+				}
+				5 = {
+					death = { death_reason = death_bandits }
+				}
+			}
+		}
+	}
+	after = {
+		clr_character_flag = shadowlander_raids_marshal_win
+		clr_character_flag = shadowlander_raids_marshal_lose
+	}
+}
+
+#Strong ruler of asshai decides unite shadowlanders
+narrative_event = {
+	id = far_east.6
+	title = EVTTITLEfar_east.6
+	desc = EVTDESCfar_east.6
+	picture = GFX_evt_coronation
+
+	is_triggered_only = yes
+	only_independent = yes
+	only_capable = yes
+	min_age = 16
+	prisoner = no
+	war = no
+	
+	trigger = {
+		OR = {
+			has_landed_title = d_asshai
+			has_landed_title = k_asshai
+		}		
+		OR = {
+			tier = EMPEROR
+			primary_title = { 
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } } 
+			}
+		}	
+		any_playable_ruler = { #Least messy way, better than scoping to all provinces and checking rulers.
+			independent = yes
+			culture = shadowlander
+			government = wildling_feudal_government
+			capital_scope = {
+				region = world_asshai
+			}
+		}
+		OR = {
+			trait = ambitious
+			trait = ruthless
+			trait = greedy
+		}		
+		NOT = { trait = content }	
+		NOT_mythical_creature_trigger = yes
+		NOT = { is_inaccessible_trigger = yes }
+		NOT = { has_character_flag = unite_the_shadowlanders_event }
+	}
+
+	immediate = {
+		set_character_flag = unite_the_shadowlanders_event
+		any_playable_ruler = {
+			limit = {
+				independent = yes
+				culture = shadowlander
+				government = wildling_feudal_government
+				capital_scope = {
+					region = world_asshai
+				}
+			}
+			save_event_target_as = unite_shadowlander_target
+		}
+	}
+
+	option = { #The Shadowmen shall be subdued under my rule!
+		name = EVTOPTAfar_east.6
+		prestige = 150
+		set_character_flag = unite_shadowlander_war
+		event_target:unite_shadowlander_target = {
+			primary_title = { 
+				reverse_unsafe_war = {
+					target = ROOT
+					casus_belli = invasion_ambition
+				}
+			}
+		}
+	}
+	option = { #They are no concern of mine
+		name = EVTOPTBfar_east.6
+		trigger = { ai = no } #ai will give it a shot to shake things up in the region
+		if = {
+			limit = { trait = ambitious }
+			random = {
+				chance = 25
+				remove_trait = ambitious
+			}
+			break = yes
+		}
+		if = {
+			limit = {
+				NOT = { trait = content }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = content
+				hidden_tooltip = { character_event = { id = 38279 } }
+			}
+		}	
+	}
+}
+#Next war against the shadowlanders
+character_event = {
+	id = far_east.7
+	desc = EVTDESCfar_east.7
+	#picture = ABC
+
+	is_triggered_only = yes
+
+	option = { #The next savage must be conquered
+		name = EVTOPTAfar_east.7
+		trigger = {
+			any_playable_ruler = {
+				independent = yes
+				culture = shadowlander
+				government = wildling_feudal_government
+				capital_scope = {
+					region = world_asshai
+				}
+			}
+		}
+		set_character_flag = unite_shadowlander_war
+		random_playable_ruler = {
+			limit = {
+				independent = yes
+				culture = shadowlander
+				government = wildling_feudal_government
+				capital_scope = {
+					region = world_asshai
+				}
+			}
+			primary_title = { 
+				reverse_unsafe_war = {
+					target = ROOT
+					casus_belli = invasion_ambition
+				}
+			}
+		}
+	}
+	option = { #This is enough, there is no need for further bloodshed
+		name = EVTOPTBfar_east.7
+		trigger = {
+			ai = no #ai can fight until they lose to make it more even for tribes
+			any_playable_ruler = {
+				independent = yes
+				culture = shadowlander
+				government = wildling_feudal_government
+				capital_scope = {
+					region = world_asshai
+				}
+			}
+		}
+		prestige = -100
+		piety = 50
+		hidden_tooltip = {
+			any_realm_province = {
+				limit = { has_province_flag = former_shadowlander_province }
+				clr_province_flag = former_shadowlander_province
+			}
+		}
+	}
+	option = { #All of Asshai is mine!
+		name = EVTOPTCfar_east.7
+		trigger = {
+			NOT = {
+				any_playable_ruler = {
+					independent = yes
+					culture = shadowlander
+					government = wildling_feudal_government
+					capital_scope = {
+						region = world_asshai
+					}
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_landed_title = k_asshai } }
+			k_asshai = { gain_title = ROOT }
+		}
+		prestige = 300
+		hidden_tooltip = {
+			any_realm_province = {
+				limit = { has_province_flag = former_shadowlander_province }
+				clr_province_flag = former_shadowlander_province
+			}
+			narrative_event = { id = far_east.9 days = 30 }
+		}
+	}
+}
+#Former shadowlander province reverts to tribals
+province_event = {
+	id = far_east.8
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		clr_province_flag = former_shadowlander_province
+		if = { #If already a shadowlander then make independent
+			limit = { owner = { culture = shadowlander } }
+			owner = { 
+				set_defacto_liege = THIS
+				break = yes
+			}
+		}
+		#Else create a new ruler and make them independent
+		create_character = {
+			random_traits = yes	
+			female = no
+			culture = shadowlander
+			dynasty = none
+		}
+		new_character = {
+			ROOT = { 
+				any_de_jure_vassal_title = {
+					limit = {
+						is_capital = no
+						tier = BARON
+						holder_scope = { NOT = { culture = shadowlander } }
+					}
+					gain_title = PREVPREV
+				}
+				gain_title = PREV
+			}
+			set_defacto_liege = THIS
+		}
+	}
+}
+
+#You control all of Asshai, establish a monarchy?
+narrative_event = {
+	id = far_east.9
+	title = EVTTITLEfar_east.9
+	desc = EVTDESCfar_east.9
+	picture = GFX_evt_coronation
+
+	is_triggered_only = yes
+	only_independent = yes
+	only_capable = yes
+	prisoner = no
+	min_age = 16
+
+	trigger = {
+		NOT = { has_character_flag = asshai_monarchy_event }
+		has_landed_title = k_asshai
+		is_merchant_republic = yes
+		OR = {
+			tier = EMPEROR
+			primary_title = { 
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } } 
+			}
+		}	
+		NOT = {
+			any_playable_ruler = {
+				NOT = { culture = ruin }
+				capital_scope = {
+					region = world_asshai
+				}
+				top_liege = { NOT = { character = ROOT } }
+			}
+		}
+	}
+
+	immediate = {
+		clear_delayed_event = { id = far_east.9 } #if it fires whilst the one from shadowlander chain is coming
+		set_character_flag = asshai_monarchy_event
+	}
+
+	option = { #I proclaim myself the Shadow King!
+		name = EVTOPTAfar_east.9
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				trait = content
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+		}
+		tooltip = { primary_title = { succession = primogenitrue } }
+		hidden_tooltip = {
+			clr_title_flag = alliance_government
+			revoke_law = republic_law_0
+			revoke_law = republic_law_oligarchy
+		}
+		character_event = { id = REP.900 tooltip = TOOLTIPrepublic_law_1 }
+		prestige = 150
+		add_artifact = crown_of_shadows
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_REPUBLIC_KINGDOM
+				picture = GFX_evt_coronation
+			}
+		}
+	}
+	option = { #No, there has never been a single ruling family in Asshai, it would not be tolerated
+		name = EVTOPTBfar_east.9
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 0
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.1
+				trait = proud
+			}
+			modifier = {
+				factor = 0.8
+				trait = greedy
+			}
+		}
+		piety = 500
+		if = {
+			limit = { trait = ambitious }
+			remove_trait = ambitious 
+		}
+		if = {
+			limit = {
+				NOT = { trait = content }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 50
+				add_trait = content
+				hidden_tooltip = { character_event = { id = 38279 } }
+			}
+		}
+		if = {
+			limit = { trait = proud }
+			random = {
+				chance = 50
+				remove_trait = proud 
+				hidden_tooltip = { character_event = { id = 38300 } }
+			}
+		}
+	}
+}
+
+#Yellow Emperor descendants invade Yi Ti and ask for support from Asshai
+character_event = {
+	id = far_east.10
+	desc = EVTDESCfar_east.10
+	picture = GFX_god_emperor
+	
+	is_triggered_only = yes
+	
+	option = { # Yi Ti shall know the might of Asshai
+		name = EVTOPTAfar_east.10
+		ai_chance = {
+			factor = 35
+			modifier = {
+				factor = 0
+				trait = content
+			}
+		}
+		join_attacker_wars = FROM
+		opinion = {
+			modifier = in_non_aggression_pact
+			years = 10
+			who = FROM
+		}
+		reverse_opinion = {
+			modifier = in_non_aggression_pact
+			years = 10
+			who = FROM
+		}
+		custom_tooltip = {
+			text = TOOLTIPfar_east.10
+			hidden_tooltip = { d_carcosa_raiders = { set_title_flag = asshai_aid_war } }
+		}
+	}
+	option = { # Begone beggar, your supposed "Sorcerer King" does not frighten me
+		name = EVTOPTBfar_east.10
+		ai_chance = {
+			factor = 65
+			modifier = {
+				factor = 0.1
+				trait = ambitious
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_angry
+			who = FROM
+			years = 10
+		}
+	}
+}

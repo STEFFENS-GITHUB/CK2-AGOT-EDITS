@@ -1,0 +1,3982 @@
+namespace = flavour_events
+
+### By blackninja9939 , knuckey and Rodri
+
+# Wake up next to your 'partner'...
+character_event = {
+	id = flavour_events.1
+	desc = EVTDESCflavour_events.1
+	picture = GFX_evt_lovers
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	
+	hide_new = yes
+	
+	trigger = {
+		trait = drunkard
+		OR = {
+			trait = hedonist
+			trait = lustful
+		}
+		NOT = { trait = homosexual }
+	}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			capital_scope = {
+				random_list = {
+					70 = {
+						create_random_diplomat = {
+							random_traits = yes
+							dynasty = none
+							religion = THIS
+							culture = THIS
+							female = no
+							age = 21
+						}
+						new_character = {
+							save_event_target_as = the_man
+						}
+					}
+					10 = {
+						create_random_priest = {
+							random_traits = yes
+							dynasty = none
+							religion = THIS
+							culture = THIS
+							female = no
+							age = 21
+						}
+						new_character = {
+							add_priest_trait_effect = yes
+							save_event_target_as = the_man
+						}
+					}
+					10 = {
+						create_random_diplomat = {
+							random_traits = yes
+							dynasty = none
+							religion = THIS
+							culture = THIS
+							female = no
+							age = 21
+							trait = dwarf
+						}
+						new_character = {
+							save_event_target_as = the_man
+						}
+					}
+					10 = {
+						create_random_diplomat = {
+							random_traits = yes
+							dynasty = none
+							religion = THIS
+							culture = THIS
+							female = no
+							age = 21
+							trait = eunuch
+						}
+						new_character = {
+							save_event_target_as = the_man
+						}
+					}
+				}
+			}	
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 0.25
+			trait = chaste
+		}
+		modifier = {
+			factor = 1.5
+			is_summer_rel_trigger = yes
+		}
+		modifier = {
+			factor = 1.5
+			culture_group = dornish
+		}
+		modifier = {
+			factor = 2
+			trait = lunatic
+		}
+	}
+	
+	option = {
+		name = EVTOPTAflavour_events.1
+		trigger = {
+			NOT = { trait = lunatic }
+		}
+		event_target:the_man = {
+			add_lover = ROOT
+		}
+	}
+	option = {
+		name = EVTOPTBflavour_events.1
+		trigger = {
+			trait = lunatic
+		}
+		give_nickname = nick_the_sheep_lover
+	}
+}
+
+# Brave Danny Flint event chain - daughter goes to Night's Watch
+character_event = {
+	id = flavour_events.2
+	desc = EVTDESCflavour_events.2
+	picture = GFX_evt_the_wall
+	
+	min_age = 13
+	max_age = 18
+	only_women = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		northman_culture_trigger = yes
+		NOT = { has_character_modifier = disguised_at_nightswatch }
+		NOT = { has_character_flag = brave_dany_flint_event }
+		is_female = yes	
+		OR = {
+			trait = brave
+			trait = honorable
+		}
+		OR = {
+			trait = trained_warrior
+			trait = skilled_warrior
+			trait = master_warrior
+		}
+		NOT = { trait = craven }
+		NOT = { trait = timid }
+		NOT = { trait = content }
+		NOT = { trait = wildling }
+		can_press_claims_trigger = yes
+		OR = { # Need a parent to look for them
+			AND = {
+				father = {
+					is_alive = yes
+					is_ruler = yes
+					higher_tier_than = BARON
+				}
+			}
+			AND = {
+				mother = {
+					is_alive = yes
+					is_ruler = yes
+					higher_tier_than = BARON
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 140
+		modifier = {
+			factor = 0.75
+			trait = brave
+		}	
+		modifier = {
+			factor = 0.85
+			trait = honorable
+		}		
+		modifier = {
+			factor = 0.85
+			trait = rowdy
+		}	
+		modifier = {
+			factor = 0.85
+			trait = willful
+		}
+		modifier = {
+			factor = 0.85
+			trait = conscientious
+		}	
+		modifier = {
+			factor = 0.85
+			trait = stubborn
+		}
+		modifier = {
+			factor = 0.70
+			trait = skilled_warrior
+		}
+		modifier = {
+			factor = 0.60
+			trait = master_warrior
+		}
+		modifier = {
+			factor = 0.65
+			trait = ambitious
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				trait=  is_fat
+				trait = gluttonous
+			}	
+		}
+		modifier = {
+			factor = 3
+			trait = haughty
+		}	
+		modifier = {
+			factor = 5
+			trait = slothful
+		}
+		modifier = {
+			factor = 5
+			trait = indolent
+		}	
+		modifier = {
+			factor = 5
+			trait = familyperson
+		}
+		modifier = {
+			factor = 0.6
+			is_strong_trigger = yes
+		}
+		modifier = {
+			factor = 0.6
+			trait = tall
+		}
+		modifier = {
+			factor = 5
+			is_ill = yes
+		}
+		modifier = {
+			factor = 5
+			has_epidemic = yes
+		}
+	}
+	
+	immediate = {
+		set_character_flag = brave_dany_flint_event
+		save_event_target_as = daughter_at_watch
+		if = {
+			limit = {
+				father = {
+					is_alive = yes
+					is_ruler = yes
+					higher_tier_than = BARON
+				}
+			}
+			father = {
+				save_event_target_as = parent
+			}
+			break = yes
+		}
+		if = {
+			limit = {
+				mother = {
+					is_alive = yes
+					is_ruler = yes
+					higher_tier_than = BARON
+				}
+			}
+			mother = {
+				save_event_target_as = parent
+			}
+			break = yes
+		}
+	}
+	
+	option = {
+		name = EVTOPTAflavour_events.2
+		set_character_flag = no_court_invites
+		set_character_flag = NW_volunteer
+		custom_tooltip = { 
+			text = TOOLTIPBANISHTONW 
+			hidden_tooltip = { character_event = { id = nightswatch.20 } }
+		}
+		add_character_modifier = {
+			name = disguised_at_nightswatch
+			duration = -1
+			hidden = yes
+		}
+		event_target:parent = {
+			character_event = { id = flavour_events.3 }
+		}
+	}
+}
+# Your daughter has gone to the Night's Watch
+character_event = {
+	id = flavour_events.3
+	desc = EVTDESCflavour_events.3
+	picture = GFX_evt_the_wall
+	
+	is_triggered_only = yes
+	
+	option = { # Send a second party
+		name = EVTOPTAflavour_events.3
+		wealth = -100
+		random_list = {
+			50 = { character_event = { id = flavour_events.4 days = 30 tooltip = TOOLTIPflavour_events.4 } } # Success
+			50 = { character_event = { id = flavour_events.5 days = 30 tooltip = TOOLTIPflavour_events.5 } } # Failure - stop searching
+		}
+	}
+	option = { # Let her go
+		name = EVTOPTBflavour_events.3
+		prestige = -200
+		hidden_tooltip = {
+			event_target:daughter_at_watch = {
+				character_event = {	id = flavour_events.6 days = 360 random = 180 }
+			}
+		}
+	}
+}
+# Search party success
+character_event = {
+	id = flavour_events.4
+	desc = EVTDESCflavour_events.4
+	picture = GFX_evt_the_wall
+	
+	is_triggered_only = yes
+	
+	option = { # This is embarrassing
+		name = EVTOPTAflavour_events.4
+		event_target:daughter_at_watch = {
+			remove_trait = nightswatch
+			ROOT = { recalc_succession = yes }
+			remove_character_modifier = disguised_at_nightswatch
+			move_character = ROOT
+			clr_character_flag = no_court_invites
+		}
+		prestige = -150
+	}
+}
+# Search party fails
+character_event = {
+	id = flavour_events.5
+	desc = EVTDESCflavour_events.5
+	picture = GFX_evt_the_wall
+	
+	is_triggered_only = yes
+	
+	option = { # This is terrible
+		name = EVTOPTAflavour_events.5
+		prestige = -100
+		hidden_tooltip = {
+			event_target:daughter_at_watch = {
+				character_event = {	id = flavour_events.6 days = 360 random = 180 }
+			}
+		}
+	}
+}
+# The random outcome happens to the daughter
+character_event = {
+	id = flavour_events.6
+	picture = GFX_evt_the_wall
+	
+	desc = {
+		text = EVTDESCAflavour_events.6
+		trigger = { 
+			OR = {
+				has_character_flag = raped_murdered
+				has_character_flag = raped_pregnant
+				has_character_flag = raped_not_pregnant
+				has_character_flag = abused_not_pregnant
+			}
+		}
+	}
+	desc = {
+		text = EVTDESCBflavour_events.6
+		trigger = { has_character_flag = eloped_btw }
+	}
+	desc = {
+		text = EVTDESCCflavour_events.6
+		trigger = { has_character_flag = undiscovered }
+	}
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		remove_character_modifier = disguised_at_nightswatch
+		hidden_tooltip = {
+			liege = {
+				random_courtier = {
+					limit = { 
+						trait = nightswatch 
+						is_female = no	
+						age = 16
+						OR = {
+							trait = cruel
+							trait = lustful
+							trait = ruthless
+						}
+						NOR = {
+							trait = just
+							trait = kind
+							trait = honorable
+						}
+						is_ruler = no
+						has_infertile_trait_trigger = no
+					}
+					save_event_target_as = NW_rapist
+				}
+				random_courtier = {
+					limit = { 
+						trait = nightswatch 
+						is_female = no	
+						age = 16
+						in_command = no
+						is_ruler = no
+						is_attractive_trigger = yes
+						has_infertile_trait_trigger = no
+						NOT = { trait = honorable }
+						NOT = { trait = just }
+						NOT = { trait = honest }
+						NOT = { trait = craven }
+						NOT = { trait = content }
+						opinion = { who = ROOT value = -15 }
+						reverse_opinion = { who = ROOT value = -15 }
+						location = {
+							any_neighbor_province = {
+								wildling_culture_trigger = yes
+								owner = {
+									NOT = { culture_group = unoccupied_group }
+									NOT = { culture_group = winter_group }
+									NOT = { trait = nightswatch }
+								}	
+							}
+						}	
+					}
+					save_event_target_as = NW_eloper
+				}
+			}
+		}
+		random_list = {
+			10 = { set_character_flag = raped_murdered }
+			10 = { 
+				trigger = {
+					is_pregnant = no
+					fertility = 0.1
+					age = 13
+				}
+				set_character_flag = raped_pregnant 
+			}
+			10 = { set_character_flag = raped_not_pregnant }
+			10 = { set_character_flag = abused_not_pregnant }
+			10 = { 
+				trigger = {
+					event_target:NW_eloper = { always = yes }
+					is_pregnant = no
+					fertility = 0.1
+					age = 13
+				}
+				set_character_flag = eloped_btw 
+			}
+			10 = { set_character_flag = undiscovered }
+		}
+	}
+	
+	option = { # Murdered
+		name = EVTOPTAflavour_events.6
+		trigger = { has_character_flag = raped_murdered }
+		death = {
+			death_reason = death_murder_unknown
+			killer = event_target:NW_rapist
+		}
+		event_target:NW_rapist = { show_portrait = yes }	
+	}
+	option = { # Raped
+		name = EVTOPTBflavour_events.6
+		trigger = { has_character_flag = raped_pregnant }
+		add_trait = depressed
+		if = {
+			limit = { event_target:NW_rapist = { always = yes } }
+			event_target:NW_rapist = {
+				ROOT = {
+					impregnate_cuckoo = PREV
+				}								
+			}
+		}	
+		if = {
+			limit = { NOT = { event_target:NW_rapist = { always = yes } } }
+			impregnate_cuckoo = yes
+		}
+	}
+	option = { # Not-pregnant
+		name = EVTOPTCflavour_events.6
+		trigger = { has_character_flag = raped_not_pregnant }
+		add_trait = depressed
+	}
+	option = { # Assaulted
+		name = EVTOPTDflavour_events.6
+		trigger = { has_character_flag = abused_not_pregnant }
+		add_trait_silently_wounded_effect = yes		
+	}
+	option = { # Eloped
+		name = EVTOPTEflavour_events.6
+		trigger = { has_character_flag = eloped_btw }
+		event_target:NW_eloper = {
+			add_spouse = ROOT	
+			add_lover = ROOT
+			location = {
+				random_neighbor_province = {
+					limit = {
+						wildling_culture_trigger = yes
+						owner = {
+							NOT = { culture_group = unoccupied_group }
+							NOT = { culture_group = winter_group }
+							NOT = { trait = nightswatch }
+						}	
+					}
+					event_target:NW_eloper = {
+						hidden_tooltip = { d_nightswatch = { holder_scope = { character_event = { id = nightswatch.15 } } } }
+						remove_trait = nightswatch
+						clr_character_flag = no_court_invites
+						add_trait = deserter	
+						add_trait = disinherited
+						add_trait = wildling
+						abdicate = yes
+						create_title = {
+							tier = DUKE
+							landless = yes
+							temporary = yes
+							rebel = yes
+							culture = ROOT
+							name = "NW_DESERTER"
+							holder = THIS
+						}
+						spawn_unit = {
+							province = PREV
+							home = PREVPREV
+							scaled_by_biggest_garrison = 1.25
+							troops = {
+								heavy_infantry = { 4 4 }
+								light_infantry = { 7 7 }
+								archers = { 5 5 }
+								light_cavalry = { 4 4 }
+							}
+						}
+						ROOT = {
+							move_character = PREV 
+							impregnate = PREV
+							remove_trait = nightswatch
+							clr_character_flag = no_court_invites
+						}
+					}
+					county = {
+						reverse_war = {
+							target = ROOT
+							casus_belli = invasion
+						}
+					}
+				}
+			}
+		}
+		father = {
+			if = {
+				limit = { is_alive = yes }
+				opinion = { who = ROOT modifier = opinion_eloped }
+				opinion = { who = event_target:NW_eloper modifier = opinion_eloped_with_my_child }
+			}	
+		}
+		mother = {
+			if = {
+				limit = { is_alive = yes }
+				opinion = { who = ROOT modifier = opinion_eloped }
+				opinion = { who = event_target:NW_eloper modifier = opinion_eloped_with_my_child }
+			}	
+		}
+		d_nightswatch = { holder_scope = { opinion = { who = event_target:NW_eloper modifier = opinion_traitor } } }
+	}
+	option = { # Undiscovered
+		name = EVTOPTFflavour_events.6
+		trigger = { has_character_flag = undiscovered }
+	}
+	after = {
+		if = {
+			limit = {
+				OR = {
+					has_character_flag = raped_pregnant
+					has_character_flag = raped_not_pregnant
+					has_character_flag = abused_not_pregnant
+				}
+				event_target:NW_rapist = { always = yes }
+			}
+			event_target:NW_rapist = { show_portrait = yes }
+			opinion = { who = event_target:NW_rapist modifier = opinion_forced_upon_me }
+			father = {
+				if = {
+					limit = { is_alive = yes }
+					opinion = { who = event_target:NW_rapist modifier = opinion_forced_upon_kin }
+				}	
+			}
+			mother = {
+				if = {
+					limit = { is_alive = yes }
+					opinion = { who = event_target:NW_rapist modifier = opinion_forced_upon_kin }
+				}	
+			}
+			any_dynasty_member = {
+				limit = {
+					is_alive = yes
+					is_close_relative = ROOT
+					NOT = { character = ROOT }
+					NOT = { character = event_target:NW_rapist }
+					NOT = { is_parent_of = ROOT }
+				}
+				opinion = { who = event_target:NW_rapist modifier = opinion_forced_upon_kin }
+			}
+			d_nightswatch = { holder_scope = { opinion = { who = event_target:NW_rapist modifier = opinion_raper } } }
+		}
+		if = {
+			limit = { NOT = { has_character_flag = undiscovered } }
+			d_nightswatch = { holder_scope = { character_event = { id = flavour_events.799 } } }
+		}	
+		event_target:parent = {
+			character_event = { id = flavour_events.7 days = 1 }
+		}		
+	}
+}
+# Father informed of outcome to daughter
+character_event = {
+	id = flavour_events.7
+	picture = GFX_evt_the_wall
+	
+	desc = {
+		text = EVTDESCAflavour_events.7
+		trigger = { FROM = { is_alive = no } }
+	}
+	desc = {
+		text = EVTDESCBflavour_events.7
+		trigger = { FROM = { has_character_flag = raped_pregnant } }
+	}
+	desc = {
+		text = EVTDESCCflavour_events.7
+		trigger = { FROM = { has_character_flag = raped_not_pregnant } }
+	}
+	desc = {
+		text = EVTDESCDflavour_events.7
+		trigger = { FROM = { has_character_flag = abused_not_pregnant } }
+	}
+	desc = {
+		text = EVTDESCEflavour_events.7
+		trigger = { FROM = { has_character_flag = eloped_btw } }
+	}
+	desc = {
+		text = EVTDESCFflavour_events.7
+		trigger = { FROM = { has_character_flag = undiscovered } }
+	}
+	
+	is_triggered_only = yes
+	
+	option = { # Those animals!
+		name = EVTOPTAflavour_events.7
+		trigger = { FROM = { is_alive = no } }
+	}
+	option = { # Those animals!
+		name = EVTOPTBflavour_events.7
+		trigger = {
+			OR = {
+				FROM = { has_character_flag = raped_pregnant }
+				FROM = { has_character_flag = raped_not_pregnant }
+				FROM = { has_character_flag = abused_not_pregnant }
+			}
+		}
+		FROM = {
+			move_character = ROOT
+			add_trait = depressed
+		}
+		event_target:NW_rapist = { show_portrait = yes }
+	}
+	option = { # How dare she!
+		name = EVTOPTCflavour_events.7
+		trigger = { FROM = { has_character_flag = eloped_btw } }
+		FROM = { 
+			if = {
+				limit = { NOT = { trait = legit_bastard } }
+				add_trait = disinherited
+				set_character_flag = forbidden_marriage
+				spouse = { set_character_flag = forbidden_marriage_spouse }
+			}	
+			if = {
+				limit = { trait = legit_bastard }
+				add_trait = bastard
+				remove_trait = legit_bastard
+			}
+			opinion = {
+				who = ROOT
+				modifier = opinion_disinherited_me
+				years = 50
+			}
+		}
+		event_target:NW_eloper = { show_portrait = yes }
+	}
+	option = { # Hopefully she will be safe!
+		name = EVTOPTDflavour_events.7
+		trigger = { FROM = { has_character_flag = undiscovered } }		
+	}
+	after = {
+		hidden_tooltip = {
+			FROM = {
+				clr_character_flag = raped_murdered
+				clr_character_flag = raped_pregnant
+				clr_character_flag = raped_not_pregnant
+				clr_character_flag = abused_not_pregnant
+				clr_character_flag = eloped_btw
+				clr_character_flag = undiscovered
+			}
+		}
+	}
+}
+# Inform Lord Commander
+character_event = {
+	id = flavour_events.799
+	picture = GFX_evt_the_wall
+	
+	desc = {
+		text = EVTDESCAflavour_events.799
+		trigger = { FROM = { is_alive = no } }
+	}
+	desc = {
+		text = EVTDESCBflavour_events.799
+		trigger = { FROM = { has_character_flag = raped_pregnant } }
+	}
+	desc = {
+		text = EVTDESCCflavour_events.799
+		trigger = { FROM = { has_character_flag = raped_not_pregnant } }
+	}
+	desc = {
+		text = EVTDESCDflavour_events.799
+		trigger = { FROM = { has_character_flag = abused_not_pregnant } }
+	}
+	desc = {
+		text = EVTDESCEflavour_events.799
+		trigger = { FROM = { has_character_flag = eloped_btw } }
+	}
+	# desc = {
+		# text = EVTDESCFflavour_events.799
+		# trigger = { FROM = { has_character_flag = undiscovered } }
+	# }
+	
+	is_triggered_only = yes
+	
+	option = { # Those animals!
+		name = EVTOPTAflavour_events.799
+		trigger = { FROM = { is_alive = no } }
+	}
+	option = { # Those animals!
+		name = EVTOPTBflavour_events.799
+		trigger = {
+			OR = {
+				FROM = { has_character_flag = raped_pregnant }
+				FROM = { has_character_flag = raped_not_pregnant }
+				FROM = { has_character_flag = abused_not_pregnant }
+			}
+		}
+		event_target:NW_rapist = { show_portrait = yes }
+	}
+	option = { # How dare she!
+		name = EVTOPTCflavour_events.799
+		trigger = { FROM = { has_character_flag = eloped_btw } }
+		event_target:NW_eloper = { show_portrait = yes }
+	}
+	# option = { # Hopefully she will be safe!
+		# name = EVTOPTDflavour_events.799
+		# trigger = { FROM = { has_character_flag = undiscovered } }		
+	# }
+}
+
+## Stacy's mum has got it going on
+character_event = {
+	id = flavour_events.8
+	desc = EVTDESCflavour_events.8
+	picture = GFX_evt_lovers
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	
+	trigger = {
+		spouse = {
+			is_alive = yes
+			mother = { 
+				possibly_romantically_interested_in_each_other_trigger = yes
+				is_alive = yes
+				age = 16
+				NOT = { age = 50 }
+				opinion = { who = ROOT value = 70 }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 0.5
+			trait = kind
+		}
+		modifier = {
+			factor = 0.5
+			trait = honorable
+		}
+		modifier = {
+			factor = 2
+			trait = lustful
+		}
+		modifier = {
+			factor = 1.5
+			trait = hedonist
+		}
+		modifier = {
+			factor = 2
+			spouse = { mother = { trait = lustful } }
+		}
+		modifier = {
+			factor = 1.5
+			spouse = { mother = { trait = hedonist } } 
+		}
+		modifier = {
+			factor = 1.5
+			spouse = { mother = { has_fair_trait_trigger = yes } } 
+		}
+		modifier = {
+			factor = 0.33
+			trait = is_fat
+		}
+		modifier = {
+			factor = 0.2
+			trait = slothful
+		}
+		modifier = {
+			factor = 1.5
+			has_fair_trait_trigger = yes
+		}
+		modifier = {
+			factor = 0.2
+			is_ill = yes
+		}
+		modifier = {
+			factor = 0.2
+			has_epidemic = yes
+		}
+	}
+	
+	option = { # Spouse's mum has got it going on
+		name = EVTOPTAflavour_events.8
+		piety = -25
+		spouse = { mother = { add_lover = ROOT } }
+		random = { # Spouse finds out
+			chance = 20
+			character_event = { id = flavour_events.9 days = 30 random = 10 tooltip = TOOLTIPflavour_events.9 }
+		}
+		if = {
+			limit = { trait = chaste }
+			random = {
+				chance = 25
+				add_trait = stressed
+			}
+			character_event = { id = 38282 }
+		}
+		if = {
+			limit = { 
+				NOT = { trait = lustful }
+				NOT = { trait = chaste }
+			}
+			random = {
+				chance = 25
+				add_trait = lustful
+			}
+			character_event = { id = 38272 }
+		}
+	}
+	option = { # I could never do that my spouse
+		name = EVTOPTBflavour_events.8
+		piety = 25
+		if = {
+			limit = { trait = lustful }
+			random = {
+				chance = 25
+				add_trait = stressed
+			}
+			character_event = { id = 38282 }
+		}
+		if = {
+			limit = { 
+				NOT = { trait = lustful }
+				NOT = { trait = chaste }
+			}
+			random = {
+				chance = 25
+				add_trait = chaste
+			}
+			character_event = { id = 38274 }
+		}
+	}
+}
+# Spouse finds out
+character_event = {
+	id = flavour_events.9
+	desc = EVTDESCflavour_events.9
+	picture = GFX_evt_bad_news
+	
+	is_triggered_only = yes
+	
+	option = { # Oh dear...
+		name = EVTOPTAflavour_events.9
+		if = {
+			limit = { is_female = yes }
+			spouse = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_unfaithful_wife
+					months = 120
+				}
+			}
+		}
+		if = {
+			limit = { is_female = no }
+			spouse = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_unfaithful_husband
+					months = 120
+				}
+			}
+		}
+		spouse = {
+			mother = {
+				PREV = { 
+					opinion = {
+						who = PREV
+						modifier = slut_seductress
+						months = 120
+					}
+				}
+			}
+		}
+		if = {
+			limit = { spouse = { is_lover = ROOT } }
+			spouse = { remove_lover = ROOT }
+		}
+	}
+}
+
+##Son is Craven event chain- by knuckey
+#Your Son is Craven
+character_event = {
+	id = flavour_events.200
+	desc = "EVTDESCflavour_events.200"
+	picture = GFX_evt_child_reading
+	
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		demesne_size = 1
+		is_feudal = yes
+		current_heir = { 	
+			is_child_of = ROOT	
+			liege = { character = ROOT }
+			is_married = no
+			is_ruler = no
+			is_female = no
+			age = 13
+			NOT = { age = 22 }
+			trait = craven
+			OR = { 	
+				NOT = { martial = 9 }
+				is_weak_trigger = yes
+				is_dumb_trigger = yes
+				trait = imbecile
+				trait = shy
+				trait = hunchback
+				trait = dwarf
+				trait = gluttonous
+				trait = is_fat
+			}
+		}
+		NOT = { has_character_flag = craven_son }
+		OR = {
+			trait = cruel
+			trait = ambitious
+			trait = proud
+			trait = arbitrary
+			trait = ruthless
+		}	
+		NOT = { trait = craven }
+		NOT = { trait = honorable }
+		OR = { 	
+			martial = 15
+			is_strong_trigger = yes
+			trait = skilled_warrior
+			trait = master_warrior
+			trait = skilled_tactician
+			trait = brilliant_strategist
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	immediate = {
+		#find second heir
+		current_heir = {
+			add_trait = disinherited 
+			set_character_flag = craven_heir
+		}
+		recalc_succession = yes
+		current_heir = { save_event_target_as = second_heir }
+		any_child = {
+			limit = { has_character_flag = craven_heir }
+			remove_trait = disinherited 
+		}
+		recalc_succession = yes
+	}
+	
+	option = { 
+		name = "EVTOPTAflavour_events.200" #He is my son
+		ai_chance = {
+			factor = 15
+			
+			modifier = {
+				factor = 1.5
+				current_heir = { is_strong_trigger = yes }
+			}
+			modifier = {
+				factor = 1.25
+				current_heir = { trait = duelist }
+			}
+			modifier = {
+				factor = 1.25
+				current_heir = { trait = hunter }
+			}
+			modifier = {
+				factor = 2
+				current_heir = { reverse_opinion = { who = ROOT value = 25 } }
+			}
+			modifier = {
+				factor = 1.5
+				current_heir = { reverse_opinion = { who = ROOT value = 0 } }
+			}
+			modifier = {
+				factor = 2
+				trait = familyperson			
+			}
+			modifier = {
+				factor = 2
+				trait = just			
+			}
+			modifier = {
+				factor = 2
+				trait = humble			
+			}
+			modifier = {
+				factor = 2
+				trait = content			
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		prestige = -20
+		if = {
+			limit = { 
+				NOT = { trait = patient } 
+				NOT = { trait = wroth }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = patient
+				hidden_tooltip = {
+					character_event = { id = 38264 days = 1 }
+				}
+			}
+		}	
+		set_character_flag = craven_son
+	}
+	option = { 
+		name = "EVTOPTBflavour_events.200" #I will try to teach him
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 1.5
+				current_heir = { is_strong_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				current_heir = { reverse_opinion = { who = ROOT value = 25 } }
+			}
+			modifier = {
+				factor = 1.5
+				current_heir = { reverse_opinion = { who = ROOT value = 0 } }
+			}
+			modifier = {
+				factor = 2
+				trait = diligent	
+			}
+			modifier = {
+				factor = 2
+				trait = patient			
+			}
+			modifier = {
+				factor = 2
+				trait = proud		
+			}	
+			modifier = {
+				factor = 0.5
+				trait = slothful		
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble		
+			}
+			modifier = {
+				factor = 0.5
+				is_ill = yes
+			}
+		}
+		current_heir = {
+			random = {
+				chance = 25
+				change_martial = 1
+			}
+			random = {
+				chance = 15
+				remove_trait = craven
+				hidden_tooltip = {
+					character_event = { id = 38196 }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = stressed } }
+				random = {
+					chance = 50
+					add_trait = stressed
+					hidden_tooltip = {
+						character_event = { id = 38182  }
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = { id = 38282 }
+				}
+			}
+		}	
+	}
+	option = { 
+		name = "EVTOPTCflavour_events.200" #Beat the fear out of him!
+		trigger = { trait = wroth }
+		tooltip_info = wroth
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					trait = kind
+					trait = patient
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = cruel		
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic		
+			}
+		}
+		current_heir = {
+			random = {
+				chance = 50
+				change_martial = 1
+			}
+			random = {
+				chance = 5
+				remove_trait = craven
+				hidden_tooltip = {
+					character_event = { id = 38196 }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = stressed } }
+				random = {
+					chance = 75
+					add_trait = stressed
+					hidden_tooltip = {
+						character_event = { id = 38182 }
+					}
+				}
+			}	
+			opinion = {
+				who = root
+				modifier = opinion_beaten
+			}
+		}	
+	}
+	option = { 
+		name = "EVTOPTDflavour_events.200" #Threaten to murder your son if he does not take the black!
+		trigger = {
+			d_nightswatch = { holder_scope = { demesne_size = 1 } }
+			nightswatch_culture_trigger = yes
+			OR = {
+				trait = ruthless
+				trait = cruel
+				trait = arbitrary
+				trait = ambitious
+			}
+		}
+		ai_chance = {
+			factor = 20
+			
+			modifier = {
+				factor = 1.33
+				current_heir = { NOT = { martial = 6 } }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { NOT = { martial = 4 } }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { is_maimed_trigger = yes }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { trait = hunchback }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { trait = dwarf }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { is_weak_trigger = yes }
+			}	
+			modifier = {
+				factor = 1.33
+				current_heir = { trait = gluttonous }
+			}
+			modifier = {
+				factor = 1.33
+				current_heir = { trait = is_fat }
+			}	
+			modifier = {
+				factor = 1.33
+				current_heir = { trait = shy }
+			}
+			modifier = {
+				factor = 0
+				current_heir = { reverse_opinion = { who = ROOT value = 50 } }
+			}
+			modifier = {
+				factor = 2
+				current_heir = { NOT = { reverse_opinion = { who = ROOT value = -25 } } }
+			}
+			modifier = {
+				factor = 2
+				current_heir = { NOT = { reverse_opinion = { who = ROOT value = -50 } } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { trait = scholar }
+				current_heir = { trait = scholar }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { trait = poet }
+				current_heir = { trait = poet }
+			}
+			modifier = {
+				factor = 0	
+				NOT = {
+					event_target:second_heir = { 	
+						is_child_of = ROOT
+						is_female = no
+						NOT = { trait = craven }
+						NOT = { is_weak_trigger = yes }
+					}
+				}			
+			}
+			modifier = {
+				factor = 1.5
+				event_target:second_heir = { trait = brave }			
+			}
+			modifier = {
+				factor = 1.5
+				event_target:second_heir = { is_strong_trigger = yes }			
+			}
+			modifier = {
+				factor = 1.5
+				event_target:second_heir = { martial = 13 }			
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary		
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious		
+			}
+			modifier = {
+				factor = 2
+				trait = cruel	
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 2
+				trait = proud		
+			}
+			modifier = {
+				factor = 2
+				trait = wroth		
+			}	
+			modifier = {
+				factor = 0.5
+				trait = familyperson			
+			}
+			modifier = {
+				factor = 0.5
+				trait = just			
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble			
+			}
+			modifier = {
+				factor = 0.5
+				trait = content			
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+		}
+		current_heir = {
+			character_event = { id = flavour_events.201 days = 5 tooltip = EVTTOOLTIPflavour_events.200}
+		}	
+	}
+}
+
+# heir responds
+character_event = {
+	id = flavour_events.201
+	desc = "EVTDESCflavour_events.201"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			is_ruler = yes
+			is_liege_of = ROOT
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAflavour_events.201" #Take the Black
+		ai_chance = {
+			factor = 80		
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			modifier = {
+				factor = 1.5
+				trait = patient
+			}
+			modifier = {
+				factor = 1.5
+				trait = honorable
+			}
+			
+			modifier = {
+				factor = 0.66
+				trait = just
+			}
+			modifier = {
+				factor = 0.66
+				trait = proud
+			}
+			modifier = {
+				factor = 0.66
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.66
+				trait = ambitious
+			}
+		}
+		FROM = { character_event = { id = flavour_events.206 } }
+	}
+	option = {
+		name = "EVTOPTBflavour_events.201" #refuse
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = trusting
+			}
+		}
+		FROM = { character_event = { id = flavour_events.202 } }
+	}
+	option = {
+		name = "EVTOPTCflavour_events.201" #Try to flee
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = paranoid
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+		}
+		random_list = {
+			80 = { #caught
+				imprison = yes
+				FROM = { character_event = { id = flavour_events.204 } }
+			}
+			20 = { #escapes
+				leave_court_effect = yes
+				add_trait = disinherited
+				recalc_succession = yes
+				FROM = { character_event = { id = flavour_events.205 } }
+			}	
+		}	
+	}
+}
+#heir refuses
+character_event = {
+	id = flavour_events.202
+	desc = "EVTDESCflavour_events.202"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAflavour_events.202" #Have murdered
+		ai_chance = {
+			factor = 75
+			
+			modifier = {
+				factor = 2
+				trait = arbitrary		
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious		
+			}
+			modifier = {
+				factor = 2
+				trait = cruel	
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 2
+				trait = proud		
+			}
+			modifier = {
+				factor = 2
+				trait = wroth		
+			}	
+			modifier = {
+				factor = 0.5
+				trait = familyperson			
+			}
+			modifier = {
+				factor = 0.5
+				trait = just			
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble			
+			}
+			modifier = {
+				factor = 0.5
+				trait = content			
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+		}
+		tooltip = { FROM = { death = yes } }
+		random = {
+			chance = 20
+			modifier = {
+				factor = 2
+				NOT = { intrigue = 5 }
+			}
+			modifier = {
+				factor = 0.5
+				intrigue = 10
+				NOT = { intrigue = 15 }
+			}
+			modifier = {
+				factor = 0.25
+				intrigue = 15
+			}
+			hidden_tooltip = {
+				FROM = {
+					death = {
+						death_reason = death_murder
+						killer = ROOT
+					}
+				}
+			}
+			character_event = { id = flavour_events.203 tooltip = "EVTTOOLTIPflavour_events.203" } #discovered
+			set_character_flag = murder_event_override
+			FROM = { save_event_target_as = target_victim }
+			hidden_tooltip = { character_event = { id = 10 } }#consequences
+			break = yes
+		}
+		hidden_tooltip = {
+			FROM = {
+				death = {
+					death_reason = death_murder_unknown
+					killer = ROOT
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBflavour_events.202" #imprison
+		ai_chance = {
+			factor = 20
+		}
+		FROM = { 
+			imprison = yes 
+			opinion = {
+				who = ROOT
+				modifier = insulted 
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCflavour_events.202" #alright then
+		ai_chance = {
+			factor = 5		
+			modifier = {
+				factor = 0
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 0
+				trait = cruel	
+			}
+		}
+		prestige = -100
+	}
+}
+#Murder discovered!
+character_event = {
+	id = flavour_events.203
+	desc = "EVTDESCflavour_events.203"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAflavour_events.203" #
+		FROMFROM = { save_event_target_as = kinslayer_target } #check for kinslayer
+		add_kinslayer_trait_effect = yes
+		prestige = -100
+	}
+}
+#heir caught escaping
+character_event = {
+	id = flavour_events.204
+	desc = "EVTDESCflavour_events.204"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAflavour_events.204" #Have murdered
+		ai_chance = {
+			factor = 95
+			
+			modifier = {
+				factor = 2
+				trait = arbitrary		
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious		
+			}
+			modifier = {
+				factor = 2
+				trait = cruel	
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 2
+				trait = proud		
+			}
+			modifier = {
+				factor = 2
+				trait = wroth		
+			}	
+			modifier = {
+				factor = 0.5
+				trait = familyperson			
+			}
+			modifier = {
+				factor = 0.5
+				trait = just			
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble			
+			}
+			modifier = {
+				factor = 0.5
+				trait = content			
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+		}
+		tooltip = { FROM = { death = yes } }
+		random = {
+			chance = 20
+			modifier = {
+				factor = 2
+				NOT = { intrigue = 5 }
+			}
+			modifier = {
+				factor = 0.5
+				intrigue = 10
+				NOT = { intrigue = 15 }
+			}
+			modifier = {
+				factor = 0.25
+				intrigue = 15
+			}
+			hidden_tooltip = {
+				FROM = {
+					death = {
+						death_reason = death_murder
+						killer = ROOT
+					}
+				}
+			}
+			character_event = { id = flavour_events.203 tooltip = "EVTTOOLTIPflavour_events.203" } #discovered
+			set_character_flag = murder_event_override
+			FROM = { save_event_target_as = target_victim }
+			hidden_tooltip = { character_event = { id = 10 } }#consequences
+			break = yes
+		}
+		hidden_tooltip = {
+			FROM = {
+				death = {
+					death_reason = death_murder_unknown
+					killer = ROOT
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCflavour_events.204" #leave for now
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				trait = ruthless		
+			}
+			modifier = {
+				factor = 0
+				trait = cruel	
+			}
+		}
+		prestige = -100
+	}
+}
+#heir escaped!
+character_event = {
+	id = flavour_events.205
+	desc = "EVTDESCflavour_events.205"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAflavour_events.205" #blast
+		recalc_succession = yes
+		FROM = { 
+			opinion = {
+				who = ROOT
+				modifier = attempted_murder
+			}
+		}
+	}
+}
+#heir takes black!
+character_event = {
+	id = flavour_events.206
+	desc = "EVTDESCflavour_events.206"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAflavour_events.206" #good
+		FROM = {	
+			custom_tooltip = { 
+				text = TOOLTIPBANISHTONW 
+				hidden_tooltip = { character_event = { id = nightswatch.2098 } } #set banisher as FROMFROM
+			}
+			opinion = {
+				who = ROOT
+				modifier = opinion_forced_take_black
+			}
+		}
+	}		
+}
+
+#Dead Men Walking - by Rodri
+character_event = {
+	id = flavour_events.210
+	desc = "EVTDESCflavour_events.210"
+	picture = GFX_dead_men_walking
+
+	is_triggered_only = yes
+	only_playable = yes
+	religion_group = wildling_religion
+	capable_only = yes
+	has_global_flag = asoiaf_harsh_winter
+	
+	trigger = {		
+		demesne_size = 1
+		NOT = { has_character_flag = dead_men_walking }
+	}
+
+	weight_multiplier = {
+		days = 1
+	}
+
+	option = {
+		name = "EVTOPTAflavour_events.210" #Ridiculous
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 1.25
+				trait = cynical
+			}
+			modifier = {
+				factor = 1.25
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.25
+				trait = brave
+			}
+			modifier = {
+				factor = 0.75
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.75
+				trait = scholar
+			}
+			modifier = {
+				factor = 0.75
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.75
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.75
+				trait = craven
+			}
+		}
+		prestige = 20
+		set_character_flag = dead_men_walking
+
+		if = {
+			limit = {
+				any_courtier = {
+					trait = cynical
+					not = { trait = paranoid }
+					not = { trait = scholar }
+					NOT = { trait = dragon }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = cynical
+						not = { trait = paranoid}
+						not = { trait = scholar }
+						NOT = { trait = dragon }
+					}
+						opinion = {
+							modifier = opinion_dead_men_cynical
+							who = ROOT
+							months = 60
+						}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = paranoid
+					not = { trait = cynical }
+					not = { trait = scholar }
+					NOT = { trait = dragon }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = paranoid
+						not = { trait = cynical }
+						not = { trait = scholar }
+						NOT = { trait = dragon }
+					}
+					opinion = {
+						modifier = opinion_dead_men_paranoid_neg
+						who = ROOT
+						months = 60
+
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBflavour_events.210"  #+1 Learning, -Prestige, +Opinion with Scholar
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				trait = scholar
+			}
+			modifier = {
+				factor = 1.20
+				trait = genius
+			}
+			modifier = {
+				factor = 1.15
+				is_smart_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.80
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.75
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.75
+				is_dumb_trigger = yes
+			}
+			modifier = {
+				factor = 0.50
+				trait = imbecile
+			}
+		}
+		prestige = -20
+		set_character_flag = dead_men_walking
+		random = {
+			chance = 30
+			change_learning = 1
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = scholar
+					not = { trait = paranoid }
+					not = { trait = cynical }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = scholar
+						not = { trait = paranoid }
+						not = { trait = cynical }
+					}
+					opinion = {
+						modifier = opinion_dead_men_scholar
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = paranoid
+					OR = {
+						NOT = { trait = scholar }
+						NOT = { trait = cynical }
+					}
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = paranoid
+						not = { trait = scholar}
+						not = { trait = cynical}
+
+					}
+					opinion = {
+						modifier = opinion_dead_men_paranoid_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCflavour_events.210"  #-2xPrestige, chance of getting Paranoid, +Opinion with Paranoid
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 1.25
+				trait = craven
+			}
+			modifier = {
+				factor = 1.15
+				trait = trusting
+			}
+			modifier = {
+				factor = 1.15
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.75
+				trait = scholar
+			}
+			modifier = {
+				factor = 0.75
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.75
+				is_dumb_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = brave
+			}
+		}
+		prestige = -40
+		set_character_flag = dead_men_walking
+		if ={
+			limit = { 
+				NOT = { trait = paranoid } 
+				NOT = { trait = trusting }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 30
+				add_trait = paranoid
+				hidden_tooltip = { character_event = { id = 38275 } }
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = paranoid
+					not = { trait = scholar }
+					not = { trait = cynical }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = paranoid
+						not = { trait = scholar }
+						not = { trait = cynical }
+					}
+					opinion = {
+						modifier = opinion_dead_men_paranoid
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					OR = {
+						trait = scholar
+						trait = cynical
+					}
+					NOT = { trait = paranoid }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = scholar
+						not = { trait = paranoid}
+					}
+					opinion = {
+						modifier = opinion_dead_men_scholar_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+						trait = cynical
+						not = { trait = paranoid}
+					}
+					opinion = {
+						modifier = opinion_dead_men_cynical_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+	}
+}
+
+character_event = {
+	id = flavour_events.211
+	desc = "EVTDESCflavour_events.211"
+	picture = GFX_dead_men_walking
+
+	is_triggered_only = yes
+	only_playable = yes
+	has_character_flag = dead_men_walking
+	
+	trigger = {
+		demesne_size = 1	
+	}
+
+	weight_multiplier = {
+		days = 1
+	}
+
+	option = {
+		name = "EVTOPTAflavour_events.211" # A) Send for my executioner -Prestige
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.20
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.90
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.90
+				trait = brave
+			}
+			modifier = {
+				factor = 1.25
+				trait = shy
+			}
+			modifier = {
+				factor = 0.75
+				trait = content
+			}
+			modifier = {
+				factor = 1.25
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.90
+				trait = craven
+			}
+			modifier = {
+				factor = 1.10
+				trait = just
+			}
+		}
+		prestige = -10
+	}
+	option = {
+		name = "EVTOPTBflavour_events.211"
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.25
+				trait = just
+			}
+			modifier = {
+				factor = 1.20
+				northman_culture_trigger = yes #check cultures
+			}
+			modifier = {
+				factor = 0.15
+				is_maimed_trigger = yes #blind
+			}
+			modifier = {
+				factor = 0.90
+				trait = dwarf
+			}
+			modifier = {
+				factor = 1.05
+				trait = hunter
+			}
+			modifier = {
+				factor = 1.10
+				trait = duelist
+			}
+			modifier = {
+				factor = 0.50
+				trait = imbecile
+			}
+			modifier = {
+				factor = 0.90
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.10
+				trait = proud
+			}
+			modifier = {
+				factor = 0.80
+				trait = craven
+			}
+			modifier = {
+				factor = 0.75
+				trait = shy
+			}
+			modifier = {
+				factor = 1.10
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.75
+				trait = kind
+			}
+			modifier = {
+				factor = 0.75
+				is_ill = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = pneumonic
+			}
+			modifier = {
+				factor = 0.75
+				trait = infirm
+			}
+		}
+		prestige = 20
+		if = {
+			limit = {
+				any_courtier = {
+					trait = kind
+					not = { trait = just }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = kind
+					not = { trait = just }
+					}
+					opinion = {
+						modifier = opinion_swinged_the_sword_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = just
+					not = { trait = kind }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = just
+					not = { trait = kind }
+					}
+					opinion = {
+						modifier = opinion_swinged_the_sword
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCflavour_events.211"  #C) Escort him back to the Wall #+Opinion with Kind, chance of getting Craven
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.50
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 1.10
+				trait = stressed
+			}
+			modifier = {
+				factor = 1.15
+				trait = trusting
+			}
+			modifier = {
+				factor = 1.15
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.50
+				trait = just
+			}
+			modifier = {
+				factor = 1.25
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.75
+				trait = cruel
+			}
+			modifier = {
+				factor = 0
+				trait = brave
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = craven }
+				NOT = { trait = brave }
+				NOT = { trait = berserker }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 30
+				add_trait = craven
+				hidden_tooltip = { character_event = { id = 38257 } }
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = just
+					NOT = { trait = kind }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = just
+					NOT = { trait = kind }
+					}
+					opinion = {
+						modifier = opinion_sent_to_wall_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = kind
+					NOT = { trait = just }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = kind
+					NOT = { trait = just }
+					}
+					opinion = {
+						modifier = opinion_sent_to_wall
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTDflavour_events.211"  #D) Let the man go free. I'd flee the Wall too, if I were him! #+Opinion with Kind, -Prestige, Chance of getting Arbitrary/Dishonourable
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.50
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 1.10
+				trait = stressed
+			}
+			modifier = {
+				factor = 1.10
+				trait = trusting
+			}
+			modifier = {
+				factor = 0
+				trait = just
+			}
+			modifier = {
+				factor = 1.50
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.50
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.50
+				trait = brave
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = arbitrary }
+				NOT = { trait = just }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 30
+				add_trait = arbitrary
+				hidden_tooltip = { character_event = { id = 38266 } }
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = just
+					NOT = { trait = kind }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = just
+					NOT = { trait = kind }
+					}
+					opinion = {
+						modifier = opinion_sent_to_wall_neg
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_courtier = {
+					trait = kind
+					NOT = { trait = just }
+				}
+			}
+			hidden_tooltip = {
+				any_courtier = {
+					limit = {
+					trait = kind
+					NOT = { trait = just }
+					}
+					opinion = {
+						modifier = opinion_sent_to_wall
+						who = ROOT
+						months = 60
+					}
+				}
+			}
+		}
+	}
+}
+##Blue winter roses in Winterfell (idea and event text by Pekay)
+character_event = {
+	id = flavour_events.25
+	desc = "EVTDESCflavour_events.25"
+	picture = GFX_evt_garden
+
+	is_triggered_only = yes
+	ai = no
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	in_command = no
+	
+	trigger = {
+		location = { province_id = 47 }
+		NOT = { has_severe_disability_trigger = yes }
+	}
+
+	weight_multiplier = {
+		days = 1
+	}
+	
+	option = {
+		name = "EVTOPTAflavour_events.25" #I like them
+		trigger = {
+			OR = {
+				NOT = {
+					calc_true_if = {
+						amount = 2
+						trait = lunatic
+						trait = cruel
+						trait = ruthless
+						trait = arbitrary
+					}
+				}
+				trait = gardener
+				trait = kind
+				trait = honorable
+			}	
+		}
+		47 = { owner = { prestige = 10 } }
+		if = {
+			limit = { trait = stressed }
+			random = {
+				chance = 25
+				remove_trait = stressed
+				hidden_tooltip = { character_event = { id = 38313 } }
+			}
+		}
+		if = {
+			limit = { trait = depressed }
+			random = {
+				chance = 15
+				remove_trait = depressed
+				hidden_tooltip = { character_event = { id = 38314 } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBflavour_events.25" #Trample them
+		trigger = {
+			NOR = {
+				trait = gardener
+				trait = honorable
+			}	
+		}
+		piety = -10
+		prestige = 10
+		47 = { 
+			owner = {
+				if = {
+					limit = { NOT = { character = ROOT } }
+					opinion = {
+						who = ROOT
+						modifier = opinion_annoyed
+						months = 12
+					}
+				}
+			} 
+		}	
+	}
+	option = {
+		name = "EVTOPTCflavour_events.25"  #Pick flower
+		trigger = {
+			OR = {
+				NOT = { 47 = { owner = { character = ROOT } } } 
+				is_female = yes
+				has_fashionable_groomed_trigger = yes
+				AND = {
+					is_female = no
+					any_spouse = {
+						is_alive = yes
+						prisoner = no
+						is_incapable = no
+					}
+				}
+				any_lover = {
+					is_alive = yes
+					is_female = yes
+					prisoner = no
+					is_incapable = no
+					NOT = { is_married = ROOT }
+				}
+			}
+			OR = {
+				NOT = {
+					calc_true_if = {
+						amount = 2
+						trait = lunatic
+						trait = cruel
+						trait = ruthless
+						trait = arbitrary
+					}
+				}
+				trait = gardener
+				trait = kind
+				trait = honorable
+			}
+		}
+		character_event = { id = flavour_events.26 tooltip = TOOLTIPflavour_events.26 }
+	}
+}
+character_event = { #Picked flower
+	id = flavour_events.26
+	desc = "EVTDESCflavour_events.26"
+	picture = GFX_evt_garden
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAflavour_events.26" #Plant in garden
+		trigger = { NOT = { 47 = { owner = { character = ROOT } } } }
+		prestige = 10
+		if = {
+			limit = { 
+				NOT = { lifestyle_traits = 1 }
+				NOT = { trait = gardener }
+				OR = {
+					NOT = { has_dlc = "Way of Life" }
+					has_focus = focus_business
+				}
+			}
+			random = {
+				chance = 50
+				add_trait = gardener
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBflavour_events.26" #Put in hair
+		trigger = {
+			OR = {
+				is_female = yes
+				has_fashionable_groomed_trigger = yes
+			}
+		}
+		if = {
+			limit = { has_fashionable_groomed_trigger = yes }
+			prestige = 10
+		}
+		if = {
+			limit = { 
+				NOT = { personality_traits = 6 }
+				NOT = { has_fashionable_groomed_trigger = yes }
+				NOT = { trait = uncouth }
+			}
+			random = {
+				chance = 50
+				add_fashionable_groomed_effect = yes
+				hidden_tooltip = { character_event = { id = trait_notification.3 } }
+			}
+		}		
+	}
+	option = {
+		name = "EVTOPTCflavour_events.26"  #give to wife
+		trigger = {
+			is_female = no
+			any_spouse = {
+				is_alive = yes
+				prisoner = no
+				is_incapable = no
+			}
+		}
+		random_spouse = {
+			limit = {
+				is_alive = yes
+				prisoner = no
+				is_incapable = no
+			}	
+			opinion = {
+				who = ROOT
+				modifier = opinion_grateful 
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTDflavour_events.26"  #give to lover
+		trigger = {
+			any_lover = {
+				is_alive = yes
+				is_female = yes
+				prisoner = no
+				is_incapable = no
+				NOT = { is_married = ROOT }
+			}
+		}
+		random_lover = {
+			limit = {
+				is_alive = yes
+				is_female = yes
+				prisoner = no
+				is_incapable = no
+				NOT = { is_married = ROOT }
+			}	
+			opinion = {
+				who = ROOT
+				modifier = opinion_grateful 
+			}
+		}
+	}
+}
+##Leviathans (idea and event text by Pekay)
+character_event = {
+	id = flavour_events.30
+	desc = "EVTDESCflavour_events.30"
+	picture = GFX_evt_merchant_ship_at_sea_republic
+
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	
+	trigger = {
+		is_at_sea = yes
+		NOT = { has_severe_disability_trigger = yes }
+		location = { 
+			any_neighbor_province = { 
+				OR = {
+					region = world_shivering_sea 
+					region = world_the_wall
+					region = world_north
+					region = world_beyond_the_wall
+				}	
+			} 
+		}		
+		NOT = { has_character_flag = seen_leviathan }
+	}
+
+	weight_multiplier = {
+		days = 1
+		modifier = { #Gather and breed in Lorath Bay and at Leviathan Sound
+			factor = 5
+			location = {
+				OR = {
+					province_id = 973
+					province_id = 1117
+				}
+			}
+		}
+	}
+	
+	immediate = { set_character_flag = seen_leviathan }
+
+	option = {
+		name = "EVTOPTAflavour_events.30" #Observe
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = scholar
+			}
+		}
+		change_learning = 1
+	}
+	option = {
+		name = "EVTOPTBflavour_events.30" #Imagine to kill something this big
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+		}
+		prestige = 10
+		if = {
+			limit = { 
+				NOT = { personality_traits = 6 }
+			}
+			random_list = {
+				65 = { }
+				25 = {
+					modifier = {
+						factor = 0
+						OR = {
+							trait = wroth
+							trait = patient
+						}
+					}
+					add_trait = wroth
+					hidden_tooltip = { character_event = { id = 38254 } }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						OR = {
+							trait = ambitious
+							trait = content
+						}
+					}
+					add_trait = ambitious
+					hidden_tooltip = { character_event = { id = 38278 } }
+				}
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTCflavour_events.30" #Run away!
+		trigger = {
+			NOT = { trait = brave }
+			NOT = { trait = berserker }
+		}
+		ai_chance = {
+			factor = 4
+			modifier = {
+				factor = 10
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0.5
+				trait = trusting
+			}
+		}
+		prestige = -10
+		if = {
+			limit = { 
+				NOT = { personality_traits = 6 }
+			}
+			random_list = {
+				65 = { }
+				25 = {
+					modifier = {
+						factor = 0
+						trait = craven
+					}
+					add_trait = craven
+					hidden_tooltip = { character_event = { id = 38257 } }
+				}
+				10 = {
+					modifier = {
+						factor = 0
+						OR = {
+							trait = wroth
+							trait = patient
+						}
+					}
+					add_trait = patient
+					hidden_tooltip = { character_event = { id = 38264 } }
+				}
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTDflavour_events.30" #Jump in!
+		trigger = {
+			trait = lunatic
+			NOT = { trait = whale }
+			is_ill = no
+		}
+		tooltip_info = lunatic
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 0.2
+				trait = craven
+			}
+		}
+		character_event = { id = flavour_events.31 tooltip = TOOLTIPflavour_events.31 }
+	}
+}
+character_event = { #Jumped in
+	id = flavour_events.31
+	desc = "EVTDESCflavour_events.31"
+	picture = GFX_evt_merchant_ship_at_sea_republic
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAflavour_events.31" #I have to speak dragon language with it!
+		random_list = {
+			45 = {
+				prestige = -30
+			}
+			25 = {
+				if = {
+					limit = { NOT = { has_dlc = Reapers } }
+					add_trait = ill
+				}
+				if = {
+					limit = { has_dlc = Reapers }
+					set_character_flag = disease_not_serious
+					add_trait = cough
+					hidden_tooltip = { character_event = { id = RIP.11002 days = 10 random = 30 } }
+				}	
+			}			
+			20 = {
+				add_trait = whale
+				prestige = 100
+			}
+			10 = {
+				death = {
+					death_reason = death_accident_drowning
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBflavour_events.31" #I have to pet its belly to tame it!
+		random_list = {
+			45 = {
+				prestige = -30
+			}
+			25 = {
+				if = {
+					limit = { NOT = { has_dlc = Reapers } }
+					add_trait = ill
+				}
+				if = {
+					limit = { has_dlc = Reapers }
+					set_character_flag = disease_not_serious
+					add_trait = cough
+					hidden_tooltip = { character_event = { id = RIP.11002 days = 10 random = 30 } }
+				}	
+			}
+			20 = {
+				add_trait = whale
+				prestige = 100
+			}
+			10 = {
+				death = {
+					death_reason = death_accident_drowning
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCflavour_events.31" #The water is way too cold, get back on the ship
+		prestige = -30
+	}
+}	
+
+##Build/use a wine cellar?
+character_event = {
+	id = flavour_events.35	
+	picture = GFX_evt_relaxed_ruler
+
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	
+	desc = {
+		text = "EVTDESCflavour_events.35" #Build
+		trigger = {
+			capital_holding = { NOT = { has_building = ca_cellar_1 } }
+		}
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.35B" #Re-Stock
+		trigger = {
+			capital_holding = { has_building = ca_cellar_1 }
+		}
+	}
+	
+	trigger = {
+		demesne_size = 1
+		OR = {
+			trait = hedonist
+			trait = drunkard
+		}
+		capital_holding = { 
+			holding_type = castle 
+		}
+		NOT = { has_character_modifier = wine_cellar }
+	}
+
+	weight_multiplier = {
+		days = 1
+	}
+	
+	option = {
+		name = {
+			text = "EVTOPTAflavour_events.35" #Build!
+			trigger = {
+				capital_holding = { NOT = { has_building = ca_cellar_1 } }
+			}
+		}	
+		name = {
+			text = "EVTOPTAflavour_events.35B" #Re-Stock!
+			trigger = {
+				capital_holding = { has_building = ca_cellar_1 }
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 4
+				trait = hedonist
+			}
+			modifier = {
+				factor = 4
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = lustful
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = gluttonous
+			}
+		}	
+		if = {
+			limit = { capital_holding = { has_building = ca_cellar_1 } }
+			wealth = -50
+			prestige = 35
+		}		
+		if = {
+			limit = { capital_holding = { NOT = { has_building = ca_cellar_1 } } }
+			wealth = -100
+			capital_holding = { add_building = ca_cellar_1 }
+			prestige = 75
+		}	
+		add_character_modifier = {
+			name = wine_cellar
+			duration = 3650
+		}
+	}
+	option = {
+		name = "EVTOPTBflavour_events.35" #No!
+		ai_chance = {
+			factor = 20
+			
+			modifier = {
+				factor = 2
+				trait = chaste
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+		}
+	}
+}	
+#Relative refuses to marry betrothed
+character_event = {
+	id = flavour_events.39
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		had_global_flag = { flag = scenario_initialised days = 2 } #not for historically scripted marriages
+		FROM = {
+			age = 12
+			prisoner = no
+			is_incapable = no
+			is_ruler = no
+			liege = { is_close_relative = PREV character = ROOT }
+			NOT = { trait = content }
+		}	
+		new_character = {
+			OR = { #Motives
+				NOT = { reverse_opinion = { who = ROOT_FROM value = -25 } } #dislike
+				ROOT_FROM = { trait = homosexual } #doesn't swing that way			
+				is_unattractive_trigger = yes #is unattractive
+				age_diff = { who = ROOT_FROM years = 15 } #age difference
+				AND = { #Heathen
+					NOT = { religion = ROOT_FROM }
+					ROOT_FROM = { trait = zealous }
+				}
+				AND = { #mildly incestuous
+					OR = {
+						is_parent_of = ROOT_FROM
+						is_grandparent_of = ROOT_FROM
+						is_child_of = ROOT_FROM
+						is_grandchild_of = ROOT_FROM
+						sibling = ROOT_FROM
+						is_nibling_of = ROOT_FROM
+						is_aunt_uncle_of = ROOT_FROM						
+					}
+					ROOT_FROM = {
+						practices_incest_trigger = no
+					}
+				}	
+				AND = { #Too lowly
+					ROOT_FROM = { 
+						OR = {
+							trait = envious
+							trait = proud
+							trait = ambitious
+						}
+						NOT = { trait = content }
+					}
+					NOR = { 
+						trait = dragon_rider
+						higher_tier_than = DUKE
+						ROOT = { NOT = { higher_tier_than = PREV } }
+						any_heir_title = { 
+							OR = {
+								higher_tier_than = DUKE
+								ROOT = { NOT = { higher_tier_than = PREV } }
+							}	
+						}
+						any_claim = { 
+							OR = {
+								higher_tier_than = DUKE
+								ROOT = { NOT = { higher_tier_than = PREV } }
+							}	
+						}
+						father_even_if_dead = { 
+							OR = {
+								higher_tier_than = DUKE
+								ROOT = { NOT = { higher_tier_than = PREV } }
+							}	
+						}
+						mother_even_if_dead = { 
+							OR = {
+								higher_tier_than = DUKE
+								ROOT = { NOT = { higher_tier_than = PREV } }
+							}	
+						}
+					}				
+				}
+				ROOT_FROM = { #Doesn't want to get married
+					NOT = { has_ambition = obj_get_married }
+					OR = {
+						trait = celibate 
+						AND = {
+							trait = chaste
+							has_lover = yes
+						}
+						trait = lustful
+						trait = shy
+						trait = depressed
+						trait = stubborn
+						trait = lunatic
+					}	
+				}
+			}
+			NOT = { is_lover = ROOT_FROM }
+			NOT = { reverse_has_opinion_modifier = { who = ROOT_FROM modifier = opinion_resentful } }
+		}
+	}
+	
+	immediate = {
+		new_character = { save_event_target_as = FROMs_betrothed }
+		FROM = { character_event = { id = flavour_events.40 } }
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = flavour_events.40
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		OR = {
+			is_married = event_target:FROMs_betrothed
+			betrothed = { character = event_target:FROMs_betrothed }
+		}
+	}
+
+	option = {
+		name = ACCEPT
+		ai_chance = {
+			factor = 25
+		}
+	}
+	option = {
+		name = REJECT
+		ai_chance = {
+			factor = 1
+			modifier = { #I've already rejected this!
+				factor = 1000
+				event_target:FROMs_betrothed = { has_opinion_modifier = { who = ROOT modifier = opinion_betrothal_broken } }
+			}
+			modifier = {
+				factor = 10
+				has_character_flag = has_refused_a_betrothal
+			}
+			modifier = {
+				factor = 5
+				has_ambition = obj_become_kingsguard
+			}		
+			modifier = {
+				factor = 4
+				trait = homosexual
+			}
+			modifier = {
+				factor = 10
+				trait = celibate 
+			}
+			modifier = {
+				factor = 5
+				trait = chaste
+				has_lover = yes 
+			}
+			modifier = {
+				factor = 2
+				trait = lustful 
+				NOT = { has_ambition = obj_get_married }
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+				NOT = { has_ambition = obj_get_married }
+			}
+			modifier = {
+				factor = 2
+				trait = depressed
+			}
+			modifier = {
+				factor = 2
+				trait = stubborn
+			}
+			
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				trait = authoritative
+			}
+			modifier = {
+				factor = 1.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 1.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = selfish
+			}
+			modifier = {
+				factor = 0.5
+				trait = just
+			}
+			modifier = {
+				factor = 0.25
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = craven
+			}
+			
+			modifier = {
+				factor = 0.33
+				event_target:FROMs_betrothed = { reverse_opinion = { who = ROOT value = 25 } }
+			}
+			modifier = {
+				factor = 2
+				event_target:FROMs_betrothed = { NOT = { reverse_opinion = { who = ROOT value = -25 } } }
+			}
+			modifier = {
+				factor = 2
+				event_target:FROMs_betrothed = { NOT = { reverse_opinion = { who = ROOT value = -60 } } }
+			}
+			
+			modifier = {
+				factor = 0.5
+				NOT = { trait = homosexual }
+				event_target:FROMs_betrothed = { is_attractive_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				event_target:FROMs_betrothed = { is_unattractive_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				event_target:FROMs_betrothed = { age_diff = { who = PREV years = 15 } }
+			}
+			modifier = {
+				factor = 2
+				event_target:FROMs_betrothed = { age_diff = { who = PREV years = 25 } }
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+				event_target:FROMs_betrothed = { NOT = { religion = ROOT } }
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					is_parent_of = event_target:FROMs_betrothed
+					is_grandparent_of = event_target:FROMs_betrothed
+					is_child_of = event_target:FROMs_betrothed
+					is_grandchild_of = event_target:FROMs_betrothed
+					sibling = event_target:FROMs_betrothed
+					is_nibling_of = event_target:FROMs_betrothed
+					is_aunt_uncle_of = event_target:FROMs_betrothed					
+				}
+				practices_incest_trigger = no
+			}
+		}
+		#chance of never getting married
+		if = {
+			limit = {
+				NOT = { has_ambition = obj_get_married }
+				NOT = { trait = ambitious }
+				OR = {
+					has_ambition = obj_become_kingsguard
+					trait = celibate
+					trait = homosexual
+					trait = lustful
+					trait = shy
+					trait = depressed
+					trait = stubborn
+					trait = lunatic
+				}			
+			}
+			random = {
+				chance = 25
+				set_character_flag = never_wants_marriage
+			}
+		}	
+		set_character_flag = rejecting_betrothal
+		set_character_flag = has_refused_a_betrothal #makes it more likely in future
+		liege = { character_event = { id = flavour_events.41 } }	
+	}
+}	
+character_event = {
+	id = flavour_events.41	
+	border = GFX_event_normal_frame_diplomacy
+	
+	picture = { 
+		trigger = { 
+			is_female = yes
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_mother
+	}
+	picture = { 
+		trigger = { 
+			is_female = no
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_father
+	}
+	picture = { 
+		trigger = { 
+			FROM = { is_female = no }
+		} 
+		picture = GFX_evt_son_asking_father
+	}	
+	
+	desc = {
+		text = "EVTDESCflavour_events.41"
+		trigger = {
+			FROM = {
+				NOT = { opinion = { who = event_target:FROMs_betrothed value = -25 } } #dislike
+			}	
+		}
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.41B"
+		trigger = {
+			FROM = { trait = homosexual }	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41C"
+		trigger = {
+			event_target:FROMs_betrothed = { is_unattractive_trigger = yes }	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41D"
+		trigger = {
+			event_target:FROMs_betrothed = { 
+				age_diff = { who = FROM years = 15 }
+				is_older_than = FROM
+			}	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41E"
+		trigger = {
+			event_target:FROMs_betrothed = { 
+				age_diff = { who = FROM years = 15 }
+				NOT = { is_older_than = FROM }
+			}	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41F"
+		trigger = {
+			FROM = { 
+				NOT = { religion = event_target:FROMs_betrothed }
+				trait = zealous
+			}	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41G"
+		trigger = {
+			FROM = { 
+				OR = {
+					trait = envious
+					trait = proud
+					trait = ambitious
+				}
+				NOT = { trait = content }
+			}	
+			event_target:FROMs_betrothed = { 
+				NOR = { 
+					trait = dragon_rider
+					higher_tier_than = DUKE
+					ROOT = { NOT = { higher_tier_than = PREV } }
+					any_heir_title = { 
+						OR = {
+							higher_tier_than = DUKE
+							ROOT = { NOT = { higher_tier_than = PREV } }
+						}	
+					}
+					any_claim = { 
+						OR = {
+							higher_tier_than = DUKE
+							ROOT = { NOT = { higher_tier_than = PREV } }
+						}	
+					}
+					father_even_if_dead = { 
+						OR = {
+							higher_tier_than = DUKE
+							ROOT = { NOT = { higher_tier_than = PREV } }
+						}	
+					}
+					mother_even_if_dead = { 
+						OR = {
+							higher_tier_than = DUKE
+							ROOT = { NOT = { higher_tier_than = PREV } }
+						}	
+					}
+				}
+			}
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41H"
+		trigger = {
+			FROM = { #Doesn't want to get married
+				NOT = { has_ambition = obj_get_married }
+				OR = {
+					has_ambition = obj_become_kingsguard
+					trait = celibate 
+					AND = {
+						trait = chaste
+						has_lover = yes
+					}
+					trait = lustful
+					trait = shy
+					trait = depressed
+					trait = stubborn
+					trait = lunatic
+				}	
+			}	
+		}
+	}
+	desc = {
+		text = "EVTDESCflavour_events.41I"
+		trigger = {
+			FROM = { #mildly incestuous
+				OR = {
+					is_parent_of = event_target:FROMs_betrothed
+					is_grandparent_of = event_target:FROMs_betrothed
+					is_child_of = event_target:FROMs_betrothed
+					is_grandchild_of = event_target:FROMs_betrothed
+					sibling = event_target:FROMs_betrothed
+					is_nibling_of = event_target:FROMs_betrothed
+					is_aunt_uncle_of = event_target:FROMs_betrothed					
+				}
+				practices_incest_trigger = no
+			}	
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAflavour_events.41" #Fine
+		FROM = {
+			hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_refused_betrothal months = 60 } }
+			event_target:FROMs_betrothed = {
+				if = { #has not also rejected it
+					limit = { NOT = { has_character_flag = rejecting_betrothal } }
+					opinion = {
+						who = PREV
+						modifier = opinion_betrothal_broken
+					}
+				}	
+				if = {
+					limit = { is_ruler = yes }
+					opinion = {
+						who = ROOT
+						modifier = opinion_betrothal_broken
+					}
+					character_event = { id = flavour_events.42 }
+				}
+				else_if = {
+					limit = { 
+						liege = { 
+							is_close_relative = PREV 
+							NOT = { character = ROOT }
+						}
+					}
+					liege = {
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						opinion = {
+							who = PREVPREV
+							modifier = opinion_betrothal_broken
+						}
+						character_event = { id = flavour_events.42 }
+					}
+				}
+				else = {
+					father = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT } 
+								NOT = { character = ROOT_FROM }
+								NOT = { is_married = ROOT } 
+								NAND = {
+									is_ruler = no
+									liege = { character = ROOT }
+									is_close_relative = ROOT
+								}
+							}
+							opinion = {
+								who = ROOT
+								modifier = opinion_betrothal_broken
+							}
+							opinion = {
+								who = PREVPREV
+								modifier = opinion_betrothal_broken
+							}
+							character_event = { id = flavour_events.42 }
+						}	
+					}
+					mother = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT } 
+								NOT = { character = ROOT_FROM }
+								NOT = { is_married = ROOT } 
+								NAND = {
+									is_ruler = no
+									liege = { character = ROOT }
+									is_close_relative = ROOT
+								}
+							}
+							opinion = {
+								who = ROOT
+								modifier = opinion_betrothal_broken
+							}
+							opinion = {
+								who = PREVPREV
+								modifier = opinion_betrothal_broken
+							}
+							character_event = { id = flavour_events.42 }
+						}
+					}
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							is_ruler = yes
+							is_close_relative = PREV
+							NOT = { any_child = { character = PREVPREV } }
+							NOT = { character = ROOT }
+							NOT = { character = ROOT_FROM }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						opinion = {
+							who = PREVPREV
+							modifier = opinion_betrothal_broken
+						}
+						character_event = { id = flavour_events.42 }
+					}
+				}
+				if = {
+					limit = { is_married = PREV }
+					remove_spouse = PREV
+				}
+				else = {
+					break_betrothal = PREV
+				}	
+			}
+			if = {
+				limit = { has_character_flag = never_wants_marriage }
+				add_trait = refusing_marriage
+				clr_character_flag = never_wants_marriage
+			}
+			else_if = {
+				limit = { ROOT = { ai = yes } }
+				add_character_modifier = { #prevent further AI betrothals for a while
+					name = child
+					duration = 500
+					hidden = yes
+				}
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		tiered_piety_negative_effect = yes
+	}
+	option = {
+		name = "EVTOPTBflavour_events.41" #No!
+		trigger = {
+			NAND = { #can't refuse council during regency
+				OR = {
+					is_incapable = yes
+					prisoner = yes
+					is_adult = no
+				}
+				FROM = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+						has_minor_title = title_regent
+					}
+				}
+			}
+			FROM = { #Can't be forced if they are strong
+				NAND = {
+					is_adult = yes
+					OR = {
+						is_female = no
+						female_get_masculine_event_trigger = yes
+						martial = 20
+					}
+					OR = {
+						trait = authoritative
+						martial = 15
+						diplomacy = 15
+					}
+					NOR = {
+						trait = craven
+						trait = content
+						trait = incapable
+						trait = inbred
+						trait = imbecile
+						
+						has_ambition = obj_become_kingsguard
+					}
+				}
+			}
+		}
+		FROM = {
+			opinion = { who = ROOT modifier = opinion_forced_betrothal months = 120 }
+			opinion = { who = event_target:FROMs_betrothed modifier = opinion_resentful multiplier = 3 }
+			clr_character_flag = never_wants_marriage
+		}
+	}	
+	after = {
+		FROM = { clr_character_flag = rejecting_betrothal }
+	}
+}	
+character_event = {
+	id = flavour_events.42
+	desc = EVTDESCflavour_events.42
+	picture = GFX_evt_bad_news
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAflavour_events.42
+		show_portrait = FROMFROM
+		show_portrait = event_target:FROMs_betrothed
+	}
+}	
+
+##Your heir has become indolent##
+character_event = {
+	id = flavour_events.50
+
+	is_triggered_only = yes
+	only_playable = yes
+	
+	show_portrait = event_target:my_heir
+	
+	desc = {
+		text = "EVTDESCflavour_events.50A"
+		trigger = { current_heir = { has_character_flag = heir_gain_arbitrary } }
+		picture = GFX_evt_beheading
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.50B"
+		trigger = { current_heir = { has_character_flag = heir_gain_cruel } }
+		picture = GFX_evt_torture
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.50C"
+		trigger = { current_heir = { has_character_flag = heir_gain_slothful } }
+		picture = GFX_evt_drunk
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.50D"
+		trigger = { current_heir = { has_character_flag = heir_gain_gluttonous } }
+		picture = GFX_evt_feast
+	}	
+	desc = {
+		text = "EVTDESCflavour_events.50E"
+		trigger = { current_heir = { has_character_flag = heir_gain_hedonist } }
+		picture = GFX_evt_feast
+	}	
+	
+	trigger = {
+		demesne_size = 1
+		is_feudal = yes
+		current_heir = { 	
+			is_close_relative = ROOT
+			is_liege_or_above = ROOT
+			age = 18
+			is_incapable = no
+			prisoner = no
+			is_inaccessible_trigger = no
+			ai = yes
+			war = no
+			NOR = { #has no job
+				is_voter = yes
+				is_councillor = yes
+				has_minor_title = title_commander
+				has_minor_title = title_high_admiral_B
+				has_minor_title = title_small_council_advisor
+				is_military_command_trigger = yes
+				AND = {
+					is_female = yes
+					any_child = { is_alive = yes NOT = { age = 18 } }
+				}
+				AND = {
+					is_ruler = yes
+					OR = {
+						higher_tier_than = DUKE
+						NOT = { is_descendant_of = ROOT }
+					}
+				}
+			}
+			NOT = { trait = diligent }
+			NOT = { trait = ambitious }
+			NOT = { personality_traits = 6 }
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 2
+			current_heir = { trait = slothful }
+		}
+	}
+	
+	immediate = {
+		#find trait to gain
+		current_heir = { 
+			save_event_target_as = my_heir
+			random_list = {
+				10 = {
+					trigger = {
+						NOT = { trait = arbitrary }
+						NOT = { trait = just }
+						NOT = { diplomacy = 10 }
+					}
+					set_character_flag = heir_gain_arbitrary
+				}
+				10 = {
+					trigger = {
+						NOT = { trait = kind }
+						NOT = { trait = cruel }
+						NOT = { trait = honorable }
+					}
+					set_character_flag = heir_gain_cruel
+				}
+				10 = {
+					trigger = {
+						NOT = { trait = slothful }
+					}
+					set_character_flag = heir_gain_slothful
+				}
+				10 = {
+					trigger = {
+						NOT = { trait = temperate }
+						NOT = { trait = gluttonous }
+					}
+					set_character_flag = heir_gain_gluttonous
+				}
+				10 = {
+					trigger = {
+						NOT = { lifestyle_traits = 1 }
+						NOT = { trait = temperate }
+						OR = {
+							trait = lustful
+							trait = gluttonous
+							trait = drunkard
+						}
+					}
+					set_character_flag = heir_gain_hedonist
+				}
+			}
+		}	
+	}
+	
+	option = { 
+		name = "EVTOPTAflavour_events.50" #Oh well
+		ai_chance = {
+			factor = 3		
+		}
+		prestige = -100
+		current_heir = { 
+			if = {
+				limit = { has_character_flag = heir_gain_arbitrary }
+				add_trait = arbitrary
+			}
+			else_if = {
+				limit = { has_character_flag = heir_gain_cruel }
+				add_trait = cruel
+			}
+			else_if = {
+				limit = { has_character_flag = heir_gain_slothful }
+				add_trait = slothful
+			}
+			else_if = {
+				limit = { has_character_flag = heir_gain_gluttonous }
+				add_trait = gluttonous
+			}
+			else_if = {
+				limit = { has_character_flag = heir_gain_hedonist }
+				add_trait = hedonist
+			}
+			prestige = -100
+		}	
+	}
+	option = { 
+		name = "EVTOPTBflavour_events.50" #Grant him minor adminstrative job
+		trigger = { stewardship = 12 }
+		tooltip_info = stewardship
+		ai_chance = {
+			factor = 15
+		}
+		scaled_wealth = { value = -0.2 min = -5 max = -50 }
+		current_heir = {
+			random = {
+				chance = 33
+				if = {
+					limit = { has_character_flag = heir_gain_arbitrary }
+					add_trait = arbitrary
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_cruel }
+					add_trait = cruel
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_slothful }
+					add_trait = slothful
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_gluttonous }
+					add_trait = gluttonous
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_hedonist }
+					add_trait = hedonist
+				}
+			}
+			random = {
+				chance = 33
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = { id = 38182  }
+				}
+			}	
+		}		
+	}
+	option = { 
+		name = "EVTOPTCflavour_events.50" #Grant him minor command
+		trigger = { martial = 12 }
+		tooltip_info = martial
+		ai_chance = {
+			factor = 15
+		}
+		job_marshal = { opinion = { who = ROOT modifier = opinion_annoyed months = 12 } }
+		current_heir = {
+			random = {
+				chance = 33
+				if = {
+					limit = { has_character_flag = heir_gain_arbitrary }
+					add_trait = arbitrary
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_cruel }
+					add_trait = cruel
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_slothful }
+					add_trait = slothful
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_gluttonous }
+					add_trait = gluttonous
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_hedonist }
+					add_trait = hedonist
+				}
+			}
+			random = {
+				chance = 33
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = { id = 38182  }
+				}
+			}	
+		}		
+	}
+	option = { 
+		name = "EVTOPTDflavour_events.50" #Send him to meet minor lords
+		trigger = { diplomacy = 12 }
+		tooltip_info = diplomacy
+		ai_chance = {
+			factor = 15
+		}
+		job_chancellor = { opinion = { who = ROOT modifier = opinion_annoyed months = 12 } }
+		current_heir = {
+			random = {
+				chance = 33
+				if = {
+					limit = { has_character_flag = heir_gain_arbitrary }
+					add_trait = arbitrary
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_cruel }
+					add_trait = cruel
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_slothful }
+					add_trait = slothful
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_gluttonous }
+					add_trait = gluttonous
+				}
+				else_if = {
+					limit = { has_character_flag = heir_gain_hedonist }
+					add_trait = hedonist
+				}
+			}
+			random = {
+				chance = 33
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = { id = 38182  }
+				}
+			}	
+		}		
+	}
+	after = {
+		current_heir = {
+			clr_character_flag = heir_gain_arbitrary
+			clr_character_flag = heir_gain_cruel
+			clr_character_flag = heir_gain_slothful
+			clr_character_flag = heir_gain_gluttonous
+			clr_character_flag = heir_gain_hedonist
+		}	
+	}
+}

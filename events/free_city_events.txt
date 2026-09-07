@@ -1,0 +1,5051 @@
+###Free City Events go here###
+
+namespace = free_cities
+#############################
+# Free Cities Flavor Events #
+#############################
+
+# Free Cities teenagers want to become bravos
+character_event = {
+	id = free_cities.100
+	desc = "EVTDESCFREECITIES100"
+	picture = GFX_evt_child_sword
+	
+	min_age = 10
+	max_age = 18
+	capable_only = yes
+	prisoner = no
+	culture_group = free_cities
+	
+	trigger = {	
+		# Some code to the effect that they should be in one of the free cities goes here
+		NOT = { lifestyle_traits = 1 }
+		OR = {
+			trait = trained_warrior
+			trait = skilled_warrior
+			trait = master_warrior
+		}
+		NOT = { trait = craven }
+		NOT = { trait = timid }
+		has_severe_disability_trigger = no
+		has_medium_disability_trigger = no
+	}
+	
+	mean_time_to_happen = {
+		months = 600
+		
+		modifier = {
+			factor = 0.8
+			trait = trained_warrior
+		}
+		modifier = {
+			factor = 0.66
+			trait = skilled_warrior
+		}
+		modifier = {
+			factor = 0.5
+			trait = master_warrior
+		}
+		modifier = {
+			factor = 2
+			is_female = yes
+		}
+		
+		modifier = {
+			factor = 0.5
+			trait = brave
+		}
+		modifier = {
+			factor = 2
+			trait = humble
+		}
+		modifier = {
+			factor = 0.5
+			trait = proud
+		}
+		modifier = {
+			factor = 2
+			trait = patient
+		}
+		modifier = {
+			factor = 0.5
+			trait = wroth
+		}
+		modifier = {
+			factor = 2
+			trait = kind
+		}
+		modifier = {
+			factor = 0.5
+			trait = cruel
+		}
+		
+		modifier = {
+			factor = 2
+			trait = fussy
+		}
+		modifier = {
+			factor = 2
+			trait = affectionate
+		}
+		modifier = {
+			factor = 0.66
+			trait = willful
+		}
+		modifier = {
+			factor = 0.66
+			trait = haughty
+		}
+		modifier = {
+			factor = 0.66
+			trait = rowdy
+		}
+		modifier = {
+			factor = 0.66
+			trait = brooding
+		}
+		
+		modifier = {
+			factor = 0.5
+			educator = { trait = duelist }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAFREECITIES100"
+		add_trait = duelist
+		hidden_tooltip = { educator = { character_event = { id = free_cities.1001 } } }
+	}
+}
+
+character_event = {
+	id = free_cities.1001
+	desc = "EVTDESCFREECITIES1001"
+	picture = GFX_evt_child_sword
+	is_triggered_only = yes
+	
+	immediate = { FROM = { remove_trait = duelist } } # This decision will overwrite the previous event
+	
+	option = {
+		name = "EVTOPTAFREECITIES1001"
+		FROM = {
+			add_trait = duelist
+			hidden_tooltip = { character_event = { id = free_cities.1002 } }
+		}
+		ai_chance = {
+			factor = 100
+			
+			modifier = {
+				factor = 2
+				trait = duelist
+			}
+			
+			modifier = {
+				factor = 0.2
+				FROM = { is_female = yes }
+				NAND = {
+					is_female = yes
+					trait = duelist
+				}
+			}
+			
+			modifier = {
+				factor = 0.5
+				FROM = { is_weak_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_strong_trigger = yes }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBFREECITIES1001"
+		hidden_tooltip = { FROM = { character_event = { id = free_cities.1003 } } }
+		ai_chance = { factor = 100 }
+	}
+}
+
+character_event = {
+	id = free_cities.1002
+	desc = "EVTDESCFREECITIES1002"
+	picture = GFX_evt_child_sword
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTAFREECITIES1002" }
+}
+
+character_event = {
+	id = free_cities.1003
+	desc = "EVTDESCFREECITIES1003"
+	picture = GFX_evt_child_sword
+	is_triggered_only = yes
+	
+	option = { name = "EVTOPTAFREECITIES1003" }
+}
+# Pentos famine- kill Prince?
+character_event = {
+	id = free_cities.101
+	desc = "EVTDESCFREECITIES101"
+	picture = GFX_evt_child_sword
+	
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = k_pentos
+		is_republic = yes
+		any_vassal = { 
+			has_landed_title = d_prince_pentos
+			is_patrician = no
+			NOT = { character = ROOT }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 100
+		
+		modifier = {
+			factor = 0.8
+			capital_scope = { has_province_modifier = asoiaf_mild_winter }
+		}
+		modifier = {
+			factor = 0.6
+			capital_scope = { has_province_modifier = asoiaf_normal_winter }
+		}
+		modifier = {
+			factor = 0.3
+			capital_scope = { has_province_modifier = asoiaf_harsh_winter }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 5 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 8 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 11 }
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 15
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 18
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 21
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 24
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 27
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAFREECITIES101" #It must be done
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 2
+				culture = pentosi
+			}
+			modifier = {
+				factor = 0.5
+				d_prince_pentos = {
+					holder_scope = { is_close_relative = ROOT }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -24 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -49 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -74 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 24 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 49 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 74 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 99 } }
+				}
+			}		
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+		}
+		piety = 50
+		d_prince_pentos = {
+			holder_scope = { character_event = { id = free_cities.1011 tooltip = TOOLTIPfree_cities.1011 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCFREECITIES101" #Not my choice
+		trigger = {
+			OR = {
+				prisoner = yes
+				trait = incapable
+			}	
+		}
+		regent = {
+			piety = 50
+		}
+		d_prince_pentos = {
+			holder_scope = { character_event = { id = free_cities.1011 tooltip = TOOLTIPfree_cities.1011 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBFREECITIES101" #No
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 5
+		}
+		piety = -50
+		prestige = -50
+		any_vassal = {
+			limit = { culture = pentosi } 
+			opinion = {
+				who = ROOT
+				modifier = opinion_no_execution
+			}
+		}
+	}
+}
+#Prince informed
+character_event = {
+	id = free_cities.1011
+	desc = "EVTDESCFREECITIES1011"
+	picture = "GFX_evt_beheading"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1011" 
+		hidden_tooltip = {
+			FROM = {
+				any_realm_lord = {
+					limit = { 
+						ai = no 
+						NOT = { character = ROOT }
+						NOT = { character = FROM }
+					}
+					character_event = { id = free_cities.1012 }
+				}
+			}
+		}
+		death = { 
+			death_reason = death_sacrificed
+			killer = FROM
+		}
+	}
+}
+#Realm informed
+character_event = {
+	id = free_cities.1012
+	desc = "EVTDESCFREECITIES1012"
+	picture = "GFX_evt_beheading"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1012" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+
+#Pentos lost war- kill Prince?
+character_event = { #pentos lose aggressive war, root is defender
+	id = free_cities.1023
+	
+	is_triggered_only = yes	
+	hide_window = yes
+	
+	trigger = {
+		FROM = {
+			has_landed_title = k_pentos
+			OR = {
+				is_merchant_republic = yes
+				is_republic = yes
+			}
+		}	
+	}
+	
+	immediate = {
+		FROM = { character_event = { id = free_cities.102 days = 1 } }
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #pentos lose defensive war, root is defender
+	id = free_cities.102
+	desc = "EVTDESCFREECITIES102"
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_landed_title = k_pentos
+		OR = {
+			is_merchant_republic = yes
+			is_republic = yes
+		}
+		any_vassal = { 
+			has_landed_title = d_prince_pentos
+			is_patrician = no
+			NOT = { character = ROOT }
+		}
+		# NOT = { has_character_modifier = victory_timer }
+		# OR = {
+			# FROM = { has_character_modifier = victory_timer }
+			# FROMFROM = { has_character_modifier = victory_timer } 
+		# }
+	}
+	
+	option = {
+		name = "EVTOPTAFREECITIES101" #It must be done		
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 95
+			modifier = {
+				factor = 0.5
+				d_prince_pentos = {
+					holder_scope = { is_close_relative = ROOT }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -24 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -49 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -74 } } }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				d_prince_pentos = {
+					holder_scope = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 24 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 49 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 74 } }
+				}
+			}
+			modifier = {
+				factor = 0.8
+				d_prince_pentos = {
+					holder_scope = { reverse_opinion = { who = ROOT value = 99 } }
+				}
+			}		
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+		}
+		piety = 50
+		d_prince_pentos = {
+			holder_scope = { character_event = { id = free_cities.1021 tooltip = TOOLTIPfree_cities.1011 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCFREECITIES101" #Not my choice
+		trigger = {
+			OR = {
+				prisoner = yes
+				trait = incapable
+			}	
+		}
+		regent = {
+			piety = 50
+		}
+		d_prince_pentos = {
+			holder_scope = { character_event = { id = free_cities.1021 tooltip = TOOLTIPfree_cities.1011 } }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBFREECITIES101" #No
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 5
+		}
+		piety = -50
+		prestige = -50
+		any_vassal = {
+			limit = { culture = pentosi } 
+			opinion = {
+				who = ROOT
+				modifier = opinion_no_execution
+			}
+		}
+	}
+}
+#Prince informed
+character_event = {
+	id = free_cities.1021
+	desc = "EVTDESCFREECITIES1021"
+	picture = "GFX_evt_beheading"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1011" 
+		hidden_tooltip = {
+			FROM = {
+				any_realm_lord = {
+					limit = { 
+						ai = no 
+						NOT = { character = ROOT }
+						NOT = { character = FROM }
+					}
+					character_event = { id = free_cities.1022 }
+				}
+			}
+		}
+		death = { 
+			death_reason = death_sacrificed
+			killer = FROM
+		}
+	}
+}
+#Realm informed
+character_event = {
+	id = free_cities.1022
+	desc = "EVTDESCFREECITIES1022"
+	picture = "GFX_evt_beheading"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1022" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+#Inform character they are neww Prince
+character_event = {
+	id = free_cities.1025
+	desc = "EVTDESCFREECITIES1025"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1025" 
+		if = {
+			limit = { is_feudal = yes }
+			primary_title = { succession = primogeniture }
+			recalc_succession = yes
+		}
+		k_pentos = {
+			holder_scope = {
+				character_event = { id = free_cities.1026 days = 1 }
+				any_realm_lord = { 
+					limit = { ai = no }
+					character_event = { id = free_cities.1026 days = 1 } 
+				}
+			}
+		}
+	}
+}
+#Inform realm of new prince
+character_event = {
+	id = free_cities.1026	
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	desc = { #Inherited after death
+		text = "EVTDESCFREECITIES1026"
+		trigger = { FROMFROM = { is_alive = no } 	}	
+	}
+	desc = { #Nominated by magister
+		text = "EVTDESCFREECITIES1026B"
+		trigger = { FROMFROM = { is_alive = yes } }	
+	}
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1026" 
+	}
+}
+#prince succession maintenance
+character_event = { #move courtiers back
+	id = free_cities.1926
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		event_target:prince_successor = { 
+			if = {
+				limit = { is_ruler = yes }
+				ROOT = { move_character = PREV }
+			}	
+			if = {
+				limit = { is_ruler = no }
+				liege = { ROOT = { move_character = PREV } }
+			}
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}
+# Assign "Maid of the Fields" minor title
+character_event = {
+	id = free_cities.1027
+	desc = "EVT_DESC_free_cities_1207"
+	picture = "GFX_evt_throne_room"
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_landed_title = d_prince_pentos
+		is_feudal = yes
+		NOT = { higher_tier_than = DUKE }
+		is_patrician = no
+		liege = {
+			is_republic = yes
+			has_landed_title = k_pentos
+		}
+		NOT = {
+			any_courtier = {
+				is_female = yes
+				is_married = no
+				has_minor_title = title_maid_fields
+			}
+		}
+	}
+	
+	option = { 
+		name = "HIDDEN" 
+		random_courtier = {
+			limit = {
+				is_female = yes
+				culture = pentosi
+				is_ruler = no
+				is_married = no
+				NOT = { has_minor_title = title_maid_fields }
+				NOT = { has_minor_title = title_maid_seas }
+				age = 14
+				NOT = { age = 17 }
+				has_fair_trait_trigger = yes
+			}
+			give_minor_title = title_maid_fields
+			add_trait = disinherited
+			add_trait = forbid_marriage
+			ROOT = { set_character_flag = maid_fields_chosen }
+		}
+		if = {
+			limit = { NOT = { ROOT = { has_character_flag = maid_fields_chosen } } }
+			random_courtier = {
+				limit = {
+					is_female = yes
+					culture = pentosi
+					is_ruler = no
+					is_married = no
+					NOT = { has_minor_title = title_maid_fields }
+					NOT = { has_minor_title = title_maid_seas }
+					age = 14
+					NOT = { age = 17 }
+				}
+				give_minor_title = title_maid_fields
+				add_trait = disinherited
+				add_trait = forbid_marriage
+				ROOT = { set_character_flag = maid_fields_chosen }
+			}
+		}
+		if = {
+			limit = { NOT = { ROOT = { has_character_flag = maid_fields_chosen } } }
+			create_character = {
+				random_traits = yes
+				dynasty = NONE
+				female = yes
+				age = 16
+			}
+			new_character = {
+				remove_trait = imbecile
+				remove_trait = inbred
+				remove_trait = slow
+				remove_trait = infirm
+				remove_trait = incapable
+				remove_trait = leper
+				remove_trait = possessed
+				remove_trait = ill
+				remove_trait = pneumonic
+				remove_trait = maimed
+				remove_trait = crippled
+				add_trait = fair
+				add_trait = disinherited
+				add_trait = forbid_marriage
+				give_minor_title = title_maid_fields
+				ROOT = { set_character_flag = maid_fields_chosen }
+			}
+		}
+		clr_character_flag = maid_fields_chosen
+	}
+}
+# Assign "Maid of the Seas" minor title
+character_event = {
+	id = free_cities.1028
+	desc = "HIDDEN"
+	picture = "GFX_evt_throne_room"
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_landed_title = d_prince_pentos
+		is_feudal = yes
+		NOT = { higher_tier_than = DUKE }
+		is_patrician = no
+		liege = {
+			is_republic = yes
+			has_landed_title = k_pentos
+		}
+		NOT = {
+			any_courtier = {
+				is_female = yes
+				is_married = no
+				has_minor_title = title_maid_seas
+			}
+		}
+	}
+	
+	option = { 
+		name = "HIDDEN" 
+		random_courtier = {
+			limit = {
+				is_female = yes
+				culture = pentosi
+				is_ruler = no
+				is_married = no
+				NOT = { has_minor_title = title_maid_fields }
+				NOT = { has_minor_title = title_maid_seas }
+				age = 14
+				NOT = { age = 17 }
+				has_fair_trait_trigger = yes
+			}
+			give_minor_title = title_maid_seas
+			add_trait = disinherited
+			add_trait = forbid_marriage
+			ROOT = { set_character_flag = maid_seas_chosen }
+		}
+		if = {
+			limit = { NOT = { ROOT = { has_character_flag = maid_seas_chosen } } }
+			random_courtier = {
+				limit = {
+					is_female = yes
+					culture = pentosi
+					is_ruler = no
+					is_married = no
+					NOT = { has_minor_title = title_maid_fields }
+					NOT = { has_minor_title = title_maid_seas }
+					age = 14
+					NOT = { age = 17 }
+				}
+				give_minor_title = title_maid_seas
+				add_trait = disinherited
+				add_trait = forbid_marriage
+				ROOT = { set_character_flag = maid_seas_chosen }
+			}
+		}
+		if = {
+			limit = { NOT = { ROOT = { has_character_flag = maid_seas_chosen } } }
+			create_character = {
+				random_traits = yes
+				dynasty = NONE
+				female = yes
+				age = 16
+			}
+			new_character = {
+				remove_trait = imbecile
+				remove_trait = inbred
+				remove_trait = slow
+				remove_trait = infirm
+				remove_trait = incapable
+				remove_trait = leper
+				remove_trait = possessed
+				remove_trait = ill
+				remove_trait = pneumonic
+				remove_trait = maimed
+				remove_trait = crippled
+				add_trait = fair
+				add_trait = disinherited
+				add_trait = forbid_marriage
+				give_minor_title = title_maid_seas
+				ROOT = { set_character_flag = maid_seas_chosen }
+			}
+		}
+		clr_character_flag = maid_seas_chosen
+	}
+}
+# Have a feast and the Prince of Pentos deflowers the maids
+character_event = {
+	id = free_cities.1029
+	desc = "EVT_DESC_free_cities_1209"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no
+	war = no
+	
+	trigger = {
+		has_landed_title = k_pentos
+		is_republic = yes
+		d_prince_pentos = {
+			holder_scope = {
+				liege = { character = ROOT }
+				any_courtier = {
+					has_minor_title = title_maid_fields
+				}
+				any_courtier = {
+					has_minor_title = title_maid_seas
+				}
+			}
+		}
+		NOT = { has_character_modifier = holding_large_feast }	
+	}
+	
+	option = {
+		name = "EVT_OPTA_free_cities_1209" # Hold the feast
+		ai_chance = {
+			factor = 45
+			modifier = {
+				factor = 1.2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 1.2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.2
+				trait = kind
+			}
+		}
+		treasury = -50			
+		add_character_modifier = {
+			name = holding_large_feast
+			duration = 365
+		}		
+		hidden_tooltip = {
+			set_character_flag = feastcooldown
+			clr_character_flag = coming_to_feast		
+			clr_character_flag = guest_feast_started				
+			character_event = {
+				id = 72003
+				days = 25
+				random = 10
+			}			
+			letter_event = { 
+				id = 72109  
+			}
+			character_event = { id = 72999 days = 150 } # Safety catch flag clearing
+			set_character_flag = prince_deflower_maids
+		}
+	}
+	
+	option = {
+		name = "EVT_OPTB_free_cities_1209" # Do not hold the feast
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 1.2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 1.2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.2
+				trait = selfish
+			}
+			modifier = {
+				factor = 1.2
+				has_character_flag = loan_default
+			}
+		}
+		any_vassal = {
+			limit = {
+				culture = pentosi
+			}
+			opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 2
+			}
+		}
+		prestige = -150
+	}
+		
+}
+###Golden Company hiring events###
+character_event = {
+	id = free_cities.2
+	desc = "EVTDESCfree_cities.2"
+	
+	is_triggered_only = yes
+	war = no
+	in_command = no
+	
+	trigger = {
+		FROM = { is_alive = yes }
+		NOT = { demesne_size = 1 }
+	}
+	
+	option = {
+		name = "EVTOPTAfree_cities.2" #I demand much gold
+		trigger = { FROM = { ai = no } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 0.5
+				trait = honest
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = just
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 12 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 10 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 8 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 6 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 4 } } }
+			}
+		}
+		if = {
+			limit = { trait = greedy }
+			random_list = {								
+				20 = { set_character_flag = demand_250_gold }
+				20 = { set_character_flag = demand_200_gold }
+				20 = { set_character_flag = demand_150_gold }
+				20 = { set_character_flag = demand_100_gold }
+				20 = { set_character_flag = demand_50_gold }
+			}
+		}
+		if = {
+			limit = { NOT = { trait = greedy } }
+			random_list = {
+				5 = { set_character_flag = demand_250_gold }
+				10 = { set_character_flag = demand_200_gold }
+				20 = { set_character_flag = demand_150_gold }
+				30 = { set_character_flag = demand_100_gold }
+				35 = { set_character_flag = demand_50_gold }
+			}
+		}
+		FROM = { letter_event = { id = free_cities.3 } }
+	}	
+	option = {
+		name = "EVTOPTBfree_cities.2" #Yes
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				FROM = { ai = yes }
+			}
+			modifier = {
+				factor = 1.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.75
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.75
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 20 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 40 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 60 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 80 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 100 } 
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 14 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 16 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 18 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 20 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 24 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 26 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 28 } } 
+			}
+		}
+		FROM = { letter_event = { id = free_cities.4 } }
+	}	
+	option = {
+		name = "EVTOPTCfree_cities.2" #No
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				FROM = { ai = yes }
+			}
+			modifier = {
+				factor = 0.75
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				trait = content
+			}
+			modifier = {
+				factor = 0.75
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 12 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 10 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 8 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 6 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 4 } } }
+			}
+		}
+		FROM = { letter_event = { id = free_cities.5 } }
+	}	
+	
+}
+#inform commander demands gold
+letter_event = {
+	id = free_cities.3
+	desc = "EVTDESCfree_cities.3"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfree_cities.3" #OK
+		if = {
+			limit = { FROM = { has_character_flag = demand_250_gold } }
+			wealth = -75
+			hidden_tooltip = { FROM = { wealth = 75 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_200_gold } }
+			wealth = -50
+			hidden_tooltip = { FROM = { wealth = 50 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_150_gold } }
+			wealth = -30
+			hidden_tooltip = { FROM = { wealth = 30 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_100_gold } }
+			wealth = -20
+			hidden_tooltip = { FROM = { wealth = 20 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_50_gold } }
+			wealth = -10
+			hidden_tooltip = { FROM = { wealth = 10 } }
+		}
+		FROM = { set_defacto_liege = ROOT }
+		custom_tooltip = { 
+			text = TOOLTIPCANHIREGOLDENCOMPANY 
+			hidden_tooltip = {
+				226 = { province_event = { id = free_cities.6 days = 30 } } #sets the company independent again, province_event rather than character event to esnure it always triggers
+				add_character_modifier = { name = golden_company_hired duration = 30 hidden = yes }
+			}
+		}
+	}	
+	option = {
+		name = "EVTOPTBfree_cities.3" #No
+		set_character_flag = golden_company_decision
+	}	
+}
+#inform commander accepts offer
+letter_event = {
+	id = free_cities.4
+	desc = "EVTDESCfree_cities.4"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfree_cities.4" #OK
+		FROM = { set_defacto_liege = ROOT }
+		custom_tooltip = { 
+			text = TOOLTIPCANHIREGOLDENCOMPANY 
+			hidden_tooltip = {
+				226 = { province_event = { id = free_cities.6 days = 30 } } #sets the company independent again, province_event rather than character event to esnure it always triggers
+				add_character_modifier = { name = golden_company_hired duration = 30 hidden = yes }
+			}
+		}
+	}	
+	option = {
+		name = "EVTOPTBfree_cities.4" #No
+		trigger = { ai = no }
+		set_character_flag = golden_company_decision
+	}	
+}
+#inform commander declines
+letter_event = {
+	id = free_cities.5
+	desc = "EVTDESCfree_cities.5"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTBfree_cities.5" #OK
+		set_character_flag = golden_company_decision
+	}	
+}
+#not hired, reset independence
+province_event = {
+	id = free_cities.6
+	desc = "EVTDESCfree_cities.6"
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		d_golden_company = {
+			if = {
+				limit = { NOT = { has_raised_standing_troops = yes } }
+				holder_scope = { set_defacto_liege = THIS }
+				break = yes
+			}	
+		}
+		province_event = { id = free_cities.6 days = 60 } #check bi-monthly
+	}
+	
+	option = {
+		name = "OK" #OK
+	}	
+}
+
+#### Braavos celebrates the anniversary of the Uncloaking
+character_event = {
+	id = free_cities.8
+	desc = "EVTDESCfree_cities.8"
+	picture = "GFX_braavos" 
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no
+	war = no
+	in_command = no
+	
+	trigger = {
+		OR = {
+			start_date = 7589.1.1
+			has_global_flag = braavos_uncloaked
+		}	
+		OR = {
+			has_landed_title = k_braavos
+			has_landed_title = e_braavos
+			capital_scope = { province_id = 470 }
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		NOT = { has_character_modifier = holding_large_feast }		
+	}
+	
+	option = {
+		name = "EVTOPTAfree_cities.8" # Hold the feast
+		ai_chance = {
+			factor = 45
+			
+			modifier = {
+				factor = 3
+				culture = braavosi
+			}
+			modifier = {
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = gluttonous
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+			modifier = {
+				factor = 1.5
+				trait = kind
+			}
+		}
+		treasury = -60			
+		add_character_modifier = {
+			name = holding_large_feast
+			duration = 365
+		}		
+		hidden_tooltip = {
+			set_character_flag = feastcooldown
+			clr_character_flag = coming_to_feast		
+			clr_character_flag = guest_feast_started		
+			set_character_flag = do_not_disturb			
+			character_event = {
+				id = 72003
+				days = 25
+				random = 10
+			}	
+			character_event = { id = 72112 days = 25 } #cancel feast
+			letter_event = { 
+				id = 72109  
+			}
+			character_event = { id = 72999 days = 150 } # Safety catch flag clearing
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBfree_cities.8" # Do not hold the feast
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = selfish
+			}
+			modifier = {
+				factor = 3
+				has_character_modifier = loan_timer
+				OR = {
+					stewardship = 9
+					trait = temperate
+					NOT = { 
+						OR = {
+							trait = gluttonous 
+							trait = hedonist
+							trait = slothful
+						}	
+					}	
+				}
+			}
+		}
+		any_vassal = {
+			limit = {
+				culture = braavosi
+			}
+			opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 2
+			}
+		}
+		if = {
+			limit = { culture = braavosi }
+			prestige = -150
+		}	
+	}		
+}
+
+######  Courtesans of Braavos events.
+
+#courtesan gains trait at 16
+character_event = { 
+	id = free_cities.9
+	desc = "EVTDESCfree_cities.9"
+	picture = GFX_evt_wildlings
+
+	hide_from = yes
+	is_triggered_only = yes
+	min_age = 16
+	max_age = 17
+	only_women = yes
+
+	trigger = {
+		OR = {
+			dynasty = 300513
+			dynasty = 700010
+			dynasty = 700011
+			dynasty = 700012
+			dynasty = 700013
+			dynasty = 700014
+			dynasty = 700015
+			dynasty = 700016
+			dynasty = 700017
+		}
+		NOT = { trait = courtesan }
+		NOT = { trait = former_courtesan }
+	}
+
+	immediate = { add_trait = courtesan }
+
+	option = {
+		name = "EVTOPTAfree_cities.9"
+		add_trait = courtesan
+		add_trait = fair
+		c_braavos = {
+			holder_scope = {
+				ROOT = { move_character = PREV }
+			}
+		}
+		if = {
+			limit = { dynasty = 300513 }
+			give_nickname = nick_black_pearl
+		}
+		if = {
+			limit = { dynasty = 700010 }
+			give_nickname = nick_mistress_swords
+		}
+		if = {
+			limit = { dynasty = 700011 }
+			give_nickname = nick_wild_flower
+		}
+		if = {
+			limit = { dynasty = 700012 }
+			give_nickname = nick_vieled_lady
+		}
+		if = {
+			limit = { dynasty = 700013 }
+			give_nickname = nick_merling_queen
+		}
+		if = {
+			limit = { dynasty = 700014 }
+			give_nickname = nick_moonshadow
+		}
+		if = {
+			limit = { dynasty = 700015 }
+			give_nickname = nick_daughter_dusk
+		}
+		if = {
+			limit = { dynasty = 700016 }
+			give_nickname = nick_nightingale
+		}
+		if = {
+			limit = { dynasty = 700017 }
+			give_nickname = nick_poetess
+		}
+	}
+}
+
+#courtesan loses trait at 43 when daughter recieves trait
+character_event = { 
+	id = free_cities.10
+	desc = "EVTDESCfree_cities.10"
+	picture = GFX_evt_throne_room
+	
+	is_triggered_only = yes
+	min_age = 43
+	max_age = 44
+	only_women = yes
+
+	trigger = {
+		trait = courtesan
+	}
+
+	option = {
+		name = "EVTOPTAfree_cities.10"
+		remove_trait = courtesan
+		add_trait = former_courtesan
+		remove_nickname = yes
+	}
+}
+
+#courtesan automatically has daughter to continue the line
+character_event = {
+	id = free_cities.11
+	desc = "EVTDESCfree_cities.11"
+	picture = GFX_evt_pregnancy
+	
+	is_triggered_only = yes
+	min_age = 27
+	max_age = 28
+	only_women = yes
+	capable_only = yes
+	
+	trigger = {
+		trait = courtesan
+	}
+	
+	option = {
+		name = "EVTOPTAfree_cities.11"
+		hidden_tooltip = {
+			create_character = {
+				age = 0
+				female = yes
+				genetic_mother = ROOT
+			}
+			new_character = {
+				set_mother = PREV
+				dynasty = PREV
+			}
+		}
+	}
+}
+
+#courtesan automatically move to Braavos
+character_event = {
+	id = free_cities.12
+	desc = "EVTDESCfree_cities.12"
+	picture = GFX_evt_pregnancy
+	
+	is_triggered_only = yes
+	only_women = yes
+	prisoner = no
+	
+	trigger = {
+		trait = courtesan
+		NOT = { liege = { has_landed_title = c_braavos } }
+	}
+	
+	option = {
+		name = "EVTOPTAfree_cities.12"
+		if = {
+			limit = {
+				OR = {
+					trait = slave
+					is_consort = yes
+					is_married = yes
+					trait = silent_sister
+					has_character_flag = exiled
+				}
+			}
+			remove_trait = courtesan
+			break = yes
+		}
+		c_braavos = {
+			holder_scope = {
+				ROOT = { move_character = PREV }
+			}
+		}
+	}
+}
+
+###Three Daughters Events###
+character_event = { #Inform new 'king' of the triarchy
+	id = free_cities.13
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		any_realm_lord = {
+			limit = {
+				ai = no
+				NOT = { character = ROOT }
+			}
+			character_event = { id = free_cities.14 }
+		}
+	}
+	
+	option = {
+		name = OK
+		set_character_flag = elected_triarchy_leader
+	}
+}
+#Inform realm of new king
+character_event = {
+	id = free_cities.14
+	desc = "EVTDESCfree_cities.14"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = OK
+	}
+}
+#Triarchy disbanded after lost war
+character_event = {
+	id = free_cities.15
+	desc = "EVTDESCfree_cities.15"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = {
+					ai = no
+					NOT = { character = ROOT }
+				}
+				character_event = { id = free_cities.16 }
+			}
+			if = {
+				limit = { has_character_flag = conquest }
+				any_vassal = { 
+					limit = { 
+						NOT = { tier = BARON } 
+						lower_tier_than = FROM
+					}
+					set_defacto_liege = FROM 
+					any_demesne_title = { revoke_law = republic_alliance_member }
+				}
+				any_vassal = { 
+					limit = { 
+						NOT = { tier = BARON } 
+						NOT = { lower_tier_than = FROM }
+					}
+					any_demesne_title = {
+						limit = {
+							controls_religion = no
+							NOT = { lower_tier_than = FROM }
+						}
+						usurp_title = { target = FROM type = invasion }
+						revoke_law = republic_alliance_member
+					}
+					set_defacto_liege = FROM
+				}
+				any_demesne_title = { 
+					limit = { has_title_flag = alliance_government }
+					clr_title_flag = alliance_government
+					destroy_landed_title = THIS 
+					# hidden_tooltip = {
+						# if = {
+							# limit = { title = e_three_daughters }
+							# any_direct_de_jure_vassal_title = {
+								# de_jure_liege = e_new_valyria
+							# }
+						# }	
+					# }
+				}
+			}
+		}	
+	}
+	
+	option = { 
+		name = "EVTOPTAfree_cities.15" 
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { has_character_flag = conquest } }
+				any_vassal = { 
+					limit = { NOT = { tier = BARON } }
+					set_defacto_liege = THIS 
+					any_demesne_title = { revoke_law = republic_alliance_member }
+				}
+			}						
+		}
+		any_demesne_title = { 
+			limit = { has_title_flag = alliance_government }
+			clr_title_flag = alliance_government
+			destroy_landed_title = THIS 
+			# hidden_tooltip = {
+				# if = {
+					# limit = { title = e_three_daughters }
+					# any_direct_de_jure_vassal_title = {
+						# de_jure_liege = e_new_valyria
+					# }
+				# }	
+			# }
+		}
+		clr_character_flag = conquest
+	}
+}
+character_event = { #Inform realm 
+	id = free_cities.16
+	desc = "EVTDESCfree_cities.16"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAfree_cities.15" 
+	}
+}
+#leader of the triarchy gets opinion bonus with members
+character_event = { 
+	id = free_cities.17
+
+	only_independent = yes
+	hide_window = yes
+	has_character_flag = elected_triarchy_leader
+	
+	trigger = {
+		tier = EMPEROR
+		government = alliance_government
+		any_vassal = {
+			is_merchant_republic = yes
+			any_demesne_title = {
+				has_law = republic_alliance_member
+			}
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_triarchy_three_daughters } }
+		}	
+	}
+	
+	immediate = {
+		any_vassal = {
+			limit = {
+				is_merchant_republic = yes
+				any_demesne_title = {
+					has_law = republic_alliance_member
+				}
+				NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_triarchy_three_daughters } }
+			}
+			opinion = { who = ROOT modifier = opinion_triarchy_three_daughters }
+			diplomatic_immunity = yes
+		}
+	}
+	
+	option = { 
+		name = OK
+	}
+}
+
+# Triarchy established
+character_event = {
+	id = free_cities.18
+	picture = GFX_evt_throne_room
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCAfree_cities.18
+		trigger = {
+			OR = {
+				has_landed_title = k_myr
+				has_landed_title = k_lys
+				has_landed_title = k_tyrosh
+			}
+		}
+	}
+	desc = {
+		text = EVTDESCBfree_cities.18
+		trigger = {
+			NOT = { has_landed_title = k_myr }
+			NOT = { has_landed_title = k_lys }
+			NOT = { has_landed_title = k_tyrosh }
+		}
+	}
+	
+	option = {
+		name = EVTOPTAfree_cities.18
+	}
+}
+
+####  Princes of Lorath
+
+#Inform character they are neww Prince
+character_event = {
+	id = free_cities.11025
+	desc = "EVTDESCFREECITIES11025"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAFREECITIES1025" 
+		if = {
+			limit = { is_feudal = yes }
+			primary_title = { succession = primogeniture }
+			recalc_succession = yes
+		}
+		k_lorath = {
+			holder_scope = {
+				character_event = { id = free_cities.11026 days = 1 }
+				any_realm_lord = { 
+					limit = { ai = no }
+					character_event = { id = free_cities.11026 days = 1 } 
+				}
+			}
+		}
+	}
+}
+#Inform realm of new prince
+character_event = {
+	id = free_cities.11026
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	desc = { #Inherited after death
+		text = "EVTDESCFREECITIES11026"
+		trigger = { FROMFROM = { is_alive = no } 	}	
+	}
+	desc = { #Nominated by magister
+		text = "EVTDESCFREECITIES11026B"
+		trigger = { FROMFROM = { is_alive = yes } }	
+	}
+	
+	option = { 
+		name = "EVTOPTAFREECITIES11026" 
+	}
+}
+#Elect secondary Princes
+character_event = {
+	id = free_cities.11027
+	
+	is_triggered_only = yes #check yearly
+	hide_window = yes
+	war = no
+	
+	trigger = {
+		is_republic = yes
+		has_landed_title = k_lorath
+	}
+	
+	immediate = {
+		##Fisher Prince
+		#Check existing
+		event_target:title_fisher_prince = {
+			if = {
+				limit = {
+					OR = {
+						is_alive = no
+						NOR = {
+							character = ROOT
+							any_liege = {
+								OR = {
+									character = ROOT
+									liege_before_war = { character = ROOT }
+								}
+							}
+						}
+					}
+				}
+				clr_character_flag = title_fisher_prince
+				clear_global_event_target = title_fisher_prince
+			}
+		}
+		#If one exists, make sure they have the title
+		event_target:title_fisher_prince = { 
+			if = {
+				limit = {
+					is_alive = yes
+					OR = {
+						character = ROOT
+						any_liege = {
+							OR = {
+								character = ROOT
+								liege_before_war = { character = ROOT }
+							}
+						}
+					}
+					has_character_flag = title_fisher_prince
+					NOT = { has_minor_title = title_fisher_prince }
+				}
+				give_minor_title = title_fisher_prince
+			}
+		} 
+		#Find a new one if needed
+		if = {
+			limit = { NOT = { event_target:title_fisher_prince = { always = yes } } }
+			random_list = {
+				33 = { #Existing noble from patrician family
+					random_realm_character = {
+						limit = {
+							is_female = no
+							age = 18
+							is_ruler = no
+							is_primary_heir = no
+							culture = lorathi
+							NOT = { trait = incapable }
+							can_press_claims_trigger = yes
+							liege = {
+								dynasty = PREV
+								is_patrician = yes						
+							}
+						}
+						set_character_flag = title_fisher_prince
+						save_global_event_target_as = title_fisher_prince
+						give_minor_title = title_fisher_prince
+					}
+				}
+				33 = { #random noble merchant
+					471 = {#Lorath
+						ROOT = {			
+							create_random_steward = {
+								random_traits = yes
+								dynasty = actually_culture
+								religion = PREV
+								culture = lorathi
+								female = no
+							}
+							new_character = {
+								set_character_flag = title_fisher_prince
+								save_global_event_target_as = title_fisher_prince
+								give_minor_title = title_fisher_prince
+							}
+						}	
+					}
+				}	
+				33 = { #random common merchant
+					471 = {#Lorath
+						ROOT = {			
+							create_random_steward = {
+								random_traits = yes
+								dynasty = none
+								religion = PREV
+								culture = lorathi
+								female = no
+							}
+							new_character = {
+								change_stewardship = 4
+								set_character_flag = title_fisher_prince
+								save_global_event_target_as = title_fisher_prince
+								give_minor_title = title_fisher_prince
+							}
+						}	
+					}
+				}
+			}
+			character_event = { id = free_cities.11028 days = 1 }
+			any_realm_lord = { 
+				limit = { ai = no }
+				character_event = { id = free_cities.11028 days = 1 } 
+			}
+		}
+		
+		##Prince of The Streets
+		#Check existing
+		event_target:title_princeof_the_streets = {
+			if = {
+				limit = {
+					OR = {
+						is_alive = no
+						NOR = {
+							character = ROOT
+							any_liege = {
+								OR = {
+									character = ROOT
+									liege_before_war = { character = ROOT }
+								}
+							}
+						}
+					}
+				}
+				clr_character_flag = title_prince_of_the_streets
+				clear_global_event_target = title_prince_of_the_streets
+			}
+		}
+		#If one exists, make sure they have the title
+		event_target:title_prince_of_the_streets = { 
+			if = {
+				limit = {
+					is_alive = yes
+					OR = {
+						character = ROOT
+						any_liege = {
+							OR = {
+								character = ROOT
+								liege_before_war = { character = ROOT }
+							}
+						}
+					}
+					has_character_flag = title_prince_of_the_streets
+					NOT = { has_minor_title = title_prince_of_the_streets }
+				}
+				give_minor_title = title_prince_of_the_streets
+			}
+		} 
+		#Find a new one if needed
+		if = {
+			limit = { NOT = { event_target:title_prince_of_the_streets = { always = yes } } }
+			random_list = {
+				33 = { #Existing noble family
+					random_realm_character = {
+						limit = {
+							is_female = no
+							age = 18
+							is_ruler = no
+							is_primary_heir = no
+							culture = lorathi
+							NOT = { trait = incapable }
+							can_press_claims_trigger = yes
+							liege = { dynasty = PREV	}
+						}
+						set_character_flag = title_prince_of_the_streets
+						save_global_event_target_as = title_prince_of_the_streets
+						give_minor_title = title_prince_of_the_streets
+					}
+				}
+				33 = { #random noble
+					471 = {#Lorath
+						ROOT = {			
+							create_character = {
+								random_traits = yes
+								dynasty = actually_culture
+								religion = PREV
+								culture = lorathi
+								female = no
+							}
+							new_character = {
+								set_character_flag = title_prince_of_the_streets
+								save_global_event_target_as = title_prince_of_the_streets
+								give_minor_title = title_prince_of_the_streets
+							}
+						}	
+					}
+				}	
+				33 = { #random commoner
+					471 = {#Lorath
+						ROOT = {			
+							create_character = {
+								random_traits = yes
+								dynasty = none
+								religion = PREV
+								culture = lorathi
+								female = no
+							}
+							new_character = {
+								set_character_flag = title_prince_of_the_streets
+								save_global_event_target_as = title_prince_of_the_streets
+								give_minor_title = title_prince_of_the_streets
+							}
+						}	
+					}
+				}
+			}
+			character_event = { id = free_cities.11029 days = 1 }
+			any_realm_lord = { 
+				limit = { ai = no }
+				character_event = { id = free_cities.11029 days = 1 } 
+			}
+		}
+	}
+	
+	option = { 
+		name = "OK"
+	}
+}
+#Inform realm of new Fisher Prince
+character_event = {
+	id = free_cities.11028
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	desc = "EVTDESCFREECITIES11028"
+	
+	option = { 
+		name = "EVTOPTAFREECITIES11026" 
+		event_target:title_fisher_prince = { tooltip = { show_portrait = yes } }
+	}
+}
+#Inform realm of new Prince of the Streets
+character_event = {
+	id = free_cities.11029
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	desc = "EVTDESCFREECITIES11029"
+	
+	option = { 
+		name = "EVTOPTAFREECITIES11026" 
+		event_target:title_princeof_the_streets = { tooltip = { show_portrait = yes } }
+	}
+}
+
+### Qohor Events ###
+
+#Prisoner sacrificed to black goat
+character_event = {
+	id = free_cities.200
+	desc = "EVTDESCfree_cities.200"
+	
+	picture = GFX_evt_bishop_aztec
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAfree_cities.200"
+	}
+}
+character_event = {
+	id = free_cities.201
+	desc = "EVTDESCfree_cities.201"
+	
+	picture = GFX_evt_bishop_aztec
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfree_cities.201"
+		death = {
+			death_reason = death_sacrificed
+			killer = FROM
+		}
+	}
+}
+
+# Qohor crisis- sacrifice children?
+character_event = {
+	id = free_cities.202	
+	picture = GFX_evt_bishop_aztec
+	border = GFX_event_normal_frame_war
+	
+	only_playable = yes
+	
+	
+	desc = { #famine
+		text = "EVTDESCFREECITIES202"
+		trigger = {
+			is_primary_war_defender = no
+		}
+	}
+	desc = { #war
+		text = "EVTDESCFREECITIES202B"
+		trigger = {
+			is_primary_war_defender = yes
+		}
+	}
+	
+	trigger = {	
+		has_black_goat_sacrifice_religion_trigger = yes	
+		higher_tier_than = COUNT
+		OR = {
+			independent = yes
+			is_primary_war_defender = yes
+		}
+		OR = {
+			NOT = { has_character_flag = black_goat_crisis_sacrifice }
+			had_character_flag = { flag = black_goat_crisis_sacrifice days = 1825 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 100
+		
+		modifier = {
+			factor = 0.005
+			is_primary_war_defender = yes
+			any_war = {
+				defender = { character = ROOT }
+				war_score = 30
+			}
+		}
+		modifier = {
+			factor = 0.8
+			capital_scope = { has_province_modifier = asoiaf_mild_winter }
+		}
+		modifier = {
+			factor = 0.6
+			capital_scope = { has_province_modifier = asoiaf_normal_winter }
+		}
+		modifier = {
+			factor = 0.3
+			capital_scope = { has_province_modifier = asoiaf_harsh_winter }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 5 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 8 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { stewardship = 11 }
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 15
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 18
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 21
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 24
+		}
+		modifier = {
+			factor = 1.2
+			stewardship = 27
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAFREECITIES202" #It must be done
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 150	
+			modifier = {
+				factor = 10
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.2
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+			modifier = {
+				factor = 0.2
+				trait = familyperson
+			}
+		}
+		piety = 75
+		custom_tooltip = {
+			text = TOOLTIPFREECITIES202
+			hidden_tooltip = {
+				character_event = { id = free_cities.203 }
+				any_vassal = {
+					limit = {
+						NOT = { tier = BARON }
+						is_theocracy = no
+						has_black_goat_sacrifice_religion_trigger = yes	
+						NOT = { trait = kingsguard }
+						NOT = { trait = archmaester }
+					}
+					character_event = { id = free_cities.203 }
+				}
+				character_event = { id = free_cities.204 days = 2 } #sacrifices made
+			}
+		}
+		clr_character_flag = black_goat_crisis_sacrifice
+		set_character_flag = black_goat_crisis_sacrifice
+	}
+	
+	option = {
+		name = "EVTOPTCFREECITIES202" #Not my choice
+		trigger = {
+			OR = {
+				prisoner = yes
+				trait = incapable
+			}	
+		}
+		regent = {
+			piety = 75
+		}
+		custom_tooltip = {
+			text = TOOLTIPFREECITIES202
+			hidden_tooltip = {
+				character_event = { id = free_cities.203 }
+				any_vassal = {
+					limit = {
+						NOT = { tier = BARON }
+						is_theocracy = no
+						has_black_goat_sacrifice_religion_trigger = yes	
+						NOT = { trait = kingsguard }
+						NOT = { trait = archmaester }
+					}
+					character_event = { id = free_cities.203 }
+				}
+				character_event = { id = free_cities.204 days = 2 } #sacrifices made
+			}
+		}
+		clr_character_flag = black_goat_crisis_sacrifice
+		set_character_flag = black_goat_crisis_sacrifice
+	}
+	
+	option = {
+		name = "EVTOPTBFREECITIES202" #No
+		trigger = {
+			prisoner = no
+			NOT = { trait = incapable }
+		}
+		ai_chance = {
+			factor = 5
+		}
+		piety = -125
+		prestige = -125
+		any_vassal = {
+			limit = { has_black_goat_sacrifice_religion_trigger = yes } 
+			opinion = {
+				who = ROOT
+				modifier = opinion_no_execution
+			}
+		}
+		clr_character_flag = black_goat_crisis_sacrifice
+		set_character_flag = black_goat_crisis_sacrifice
+	}
+}
+# Noble chooses sacrifice
+character_event = {
+	id = free_cities.203
+	picture = GFX_evt_bishop_aztec
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+		
+	desc = { #famine
+		text = "EVTDESCFREECITIES203"
+		trigger = {
+			NOT = { character = FROM }
+			FROM = { is_primary_war_defender = no }
+		}
+	}
+	desc = { #war
+		text = "EVTDESCFREECITIES203B"
+		trigger = {
+			NOT = { character = FROM }
+			FROM = { is_primary_war_defender = yes }
+		}
+	}
+	desc = { #Is Ruler
+		text = "EVTDESCFREECITIES203C"
+		trigger = {
+			character = FROM
+		}
+	}
+	
+	immediate = {
+		#find potential sacrifices
+		random_courtier = {
+			limit = {
+				OR = {
+					is_child_of = ROOT
+					father_even_if_dead = { is_child_of = ROOT }
+					mother_even_if_dead = { is_child_of = ROOT }
+				}	
+				dynasty = ROOT
+				is_alive = yes
+				is_ruler = no
+				liege = { character = ROOT }
+			}
+			save_event_target_as = black_goat_sacrifice_1
+			set_character_flag = black_goat_sacrifice_choice
+		}
+		random_courtier = {
+			limit = {
+				OR = {
+					is_child_of = ROOT
+					father_even_if_dead = { is_child_of = ROOT }
+					mother_even_if_dead = { is_child_of = ROOT }
+				}	
+				dynasty = ROOT
+				is_alive = yes
+				is_ruler = no
+				liege = { character = ROOT }
+				NOT = { has_character_flag = black_goat_sacrifice_choice }
+			}
+			save_event_target_as = black_goat_sacrifice_2
+			set_character_flag = black_goat_sacrifice_choice
+		}
+		random_courtier = {
+			limit = {
+				OR = {
+					is_child_of = ROOT
+					father_even_if_dead = { is_child_of = ROOT }
+					mother_even_if_dead = { is_child_of = ROOT }
+				}	
+				dynasty = ROOT
+				is_alive = yes
+				is_ruler = no
+				liege = { character = ROOT }
+				NOT = { has_character_flag = black_goat_sacrifice_choice }
+			}
+			save_event_target_as = black_goat_sacrifice_3
+			set_character_flag = black_goat_sacrifice_choice
+		}
+		random_courtier = {
+			limit = {
+				OR = {
+					is_child_of = ROOT
+					father_even_if_dead = { is_child_of = ROOT }
+					mother_even_if_dead = { is_child_of = ROOT }
+				}	
+				dynasty = ROOT
+				is_alive = yes
+				is_ruler = no
+				liege = { character = ROOT }
+				NOT = { has_character_flag = black_goat_sacrifice_choice }
+			}
+			save_event_target_as = black_goat_sacrifice_4
+		}
+		#If no children select random relative
+		if = {
+			limit = { NOT = { event_target:black_goat_sacrifice_1 = { always = yes } } }
+			random_courtier = {
+				limit = {
+					is_alive = yes
+					is_ruler = no
+					liege = { character = ROOT }
+					dynasty = ROOT
+					NOT = { character = ROOT }
+				}
+				save_event_target_as = black_goat_sacrifice_1
+				set_character_flag = black_goat_sacrifice_choice
+			}
+			#If no kin, random courtier
+			if = {
+				limit = { NOT = { event_target:black_goat_sacrifice_1 = { always = yes } } }
+				random_courtier = {
+					limit = {
+						is_alive = yes
+						is_ruler = no
+						liege = { character = ROOT }
+						NOT = { character = ROOT }
+						
+						NOT = { trait = dragon }
+						NOT = { trait = slave }
+					}
+					save_event_target_as = black_goat_sacrifice_1
+					set_character_flag = black_goat_sacrifice_choice
+				}
+			}
+		}
+	}
+		
+	option = {
+		name = "EVTOPTAFREECITIES203"			
+		event_target:black_goat_sacrifice_1 = { 
+			custom_tooltip = { text = TOOLTIPFREECITIES203 }
+			set_character_flag = black_goat_sacrifice
+			clr_character_flag = black_goat_sacrifice_choice
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			piety = 75
+		}
+		hidden_tooltip = {
+			event_target:black_goat_sacrifice_2 = { clr_character_flag = black_goat_sacrifice_choice }
+			event_target:black_goat_sacrifice_3 = { clr_character_flag = black_goat_sacrifice_choice }
+		}
+	}
+	option = {
+		name = "EVTOPTBFREECITIES203"	
+		trigger = { event_target:black_goat_sacrifice_2 = { always = yes } }
+		event_target:black_goat_sacrifice_2 = { 
+			custom_tooltip = { text = TOOLTIPFREECITIES203 }
+			set_character_flag = black_goat_sacrifice
+			clr_character_flag = black_goat_sacrifice_choice
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			piety = 75
+		}
+		hidden_tooltip = {
+			event_target:black_goat_sacrifice_1 = { clr_character_flag = black_goat_sacrifice_choice }
+			event_target:black_goat_sacrifice_3 = { clr_character_flag = black_goat_sacrifice_choice }
+		}
+	}
+	option = {
+		name = "EVTOPTCFREECITIES203"	
+		trigger = { event_target:black_goat_sacrifice_3 = { always = yes } }		
+		event_target:black_goat_sacrifice_3 = { 
+			custom_tooltip = { text = TOOLTIPFREECITIES203 }
+			set_character_flag = black_goat_sacrifice
+			clr_character_flag = black_goat_sacrifice_choice
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			piety = 75
+		}
+		hidden_tooltip = {
+			event_target:black_goat_sacrifice_2 = { clr_character_flag = black_goat_sacrifice_choice }
+			event_target:black_goat_sacrifice_1 = { clr_character_flag = black_goat_sacrifice_choice }
+		}
+	}
+	option = {
+		name = "EVTOPTDFREECITIES203"		
+		trigger = { event_target:black_goat_sacrifice_4 = { always = yes } }		
+		event_target:black_goat_sacrifice_4 = { 
+			custom_tooltip = { text = TOOLTIPFREECITIES203 }
+			set_character_flag = black_goat_sacrifice
+			clr_character_flag = black_goat_sacrifice_choice
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			piety = 75
+		}
+		hidden_tooltip = {
+			event_target:black_goat_sacrifice_1 = { clr_character_flag = black_goat_sacrifice_choice }
+			event_target:black_goat_sacrifice_2 = { clr_character_flag = black_goat_sacrifice_choice }
+			event_target:black_goat_sacrifice_3 = { clr_character_flag = black_goat_sacrifice_choice }
+		}
+	}
+	after = {
+		if = {
+			limit = { has_blood_magic_religion_trigger = yes }
+			change_variable = { which = "warlock_magic" value = 2 }
+		}
+	}
+}
+# Perform sacrifices
+character_event = {
+	id = free_cities.204
+	picture = GFX_evt_bishop_aztec
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+		
+	desc = { #famine
+		text = "EVTDESCFREECITIES204"
+		trigger = {
+			is_primary_war_defender = no
+		}
+	}
+	desc = { #war
+		text = "EVTDESCFREECITIES204B"
+		trigger = {
+			is_primary_war_defender = yes
+		}
+	}
+		
+	option = {
+		name = "EVTOPTAFREECITIES204"
+		random_courtier = {
+			limit = { has_character_flag = black_goat_sacrifice }
+			death = {
+				death_reason = death_sacrificed
+				killer = PREV
+			}
+		}
+		any_vassal = {
+			limit = {
+				NOT = { tier = BARON }
+				is_theocracy = no
+				has_black_goat_sacrifice_religion_trigger = yes	
+				NOT = { trait = kingsguard }
+				NOT = { trait = archmaester }
+			}
+			random_courtier = {
+				limit = { has_character_flag = black_goat_sacrifice }
+				death = {
+					death_reason = death_sacrificed
+					killer = PREV
+				}
+			}
+		}		
+	}
+}	
+
+###Norvos Events###
+#Player mechanics explanation event
+character_event = {
+	id = free_cities.219
+	desc = "EVTDESCfree_cities.219"
+	picture = "GFX_evt_norvos"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAfree_cities.219" 
+		custom_tooltip = {
+			text = TOOLTIPfree_cities.219
+		}
+	}
+}
+character_event = { #On norvoshi theocratic order succession
+	id = free_cities.220
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		OR = {
+			has_dynasty_flag = bearded_priest_order
+			higher_tier_than = BARON
+		}
+	}
+	
+	immediate = {
+		if = { #Create order dynasty if needed
+			limit = {
+				OR = {
+					dynasty = 0
+					NOT = { has_dynasty_flag = bearded_priest_order }
+				}	
+			}
+			if = {
+				limit = { 
+					NOT = { any_dynasty_member_even_if_dead = { NOT = { character = ROOT } } } 
+					NOT = { dynasty = 0 }
+				}
+				set_dynasty_flag = bearded_priest_order
+			}
+			else = {
+				create_random_priest = {
+					dynasty = actually_culture
+					female = no
+					religion = bearded_priests
+					culture = bearded_priest_culture
+				}
+				new_character = {
+					ROOT = { dynasty = PREV }
+					dynasty = none
+					death = yes
+				}
+				set_dynasty_flag = bearded_priest_order
+			}
+		}
+		random_courtier_or_vassal = {
+			limit = { 
+				has_minor_title = title_bearded_priest_designated_heir 
+				liege = { character = ROOT }
+				trait = bearded_priest
+				religion = bearded_priests
+			}
+			dynasty = ROOT
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		random_courtier = {
+			limit = { 
+				liege = { character = ROOT }
+				is_ruler = no
+				religion = bearded_priests
+				prisoner = no
+				is_incapable = no
+				is_adult = yes
+				is_councillor = yes
+				NOT = { trait = slave }
+				OR = {
+					trait = bearded_priest
+					AND = {
+						is_female = no
+						is_married = no
+					}	
+				}
+			}
+			dynasty = ROOT
+			add_trait = bearded_priest
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		random_courtier = {
+			limit = { 
+				liege = { character = ROOT }
+				is_ruler = no
+				religion = bearded_priests
+				prisoner = no
+				is_incapable = no
+				is_adult = yes
+				NOT = { trait = slave }		
+				OR = {
+					trait = bearded_priest
+					AND = {
+						is_female = no
+						is_married = no
+					}	
+				}				
+			}
+			dynasty = ROOT
+			add_trait = bearded_priest
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		capital_scope = {
+			ROOT = {
+				create_random_priest = {
+					random_traits = yes
+					dynasty = none
+					female = no
+					religion = bearded_priests
+					culture = PREV
+					trait = bearded_priest
+				}
+				new_character = {
+					dynasty = ROOT
+					save_event_target_as = bearded_priest_successor
+					remove_trait = imbecile
+					remove_trait = inbred
+					remove_trait = slow
+					random_list = {
+						20 = { add_trait = poor_warrior }
+						50 = { add_trait = trained_warrior }
+						30 = { add_trait = skilled_warrior }
+					}
+				}
+			}
+		}	
+	}
+		
+	option = {
+		name = OK	
+		event_target:bearded_priest_successor = { set_immune_to_pruning = yes }
+		if = {
+			limit = { has_character_flag = elected_high_priest }
+			transfer_scaled_wealth = { to = event_target:bearded_priest_successor value = 1 }
+			any_demesne_title = { 
+				limit = { has_title_flag = title_to_inherit }
+				gain_title = event_target:bearded_priest_successor
+				clr_title_flag = title_to_inherit
+			}
+			event_target:bearded_priest_successor = {
+				set_government_type = theocratic_feudal_government
+				character_event = { id = free_cities.2219 days = 1 }
+			}
+		}
+		else = {		
+			event_target:bearded_priest_successor = { save_event_target_as = debt_inheritor }
+			inherit_debt_effect = yes
+			e_rebels = {
+				holder_scope = {
+					ROOT = {
+						primary_title = { succession = open_elective }
+						any_courtier = { #temporarily move everyone else out
+							limit = {
+								liege = { character = ROOT }
+								is_ruler = no
+								NOT = { character = event_target:bearded_priest_successor }
+							}
+							move_character = PREVPREV
+							character_event = { id = free_cities.221 days = 1 }
+						}
+						recalc_succession = yes						
+						if = { #check it worked, transfer titles if not
+							limit = { NOT = { current_heir = {  character = event_target:bearded_priest_successor } } }
+							transfer_scaled_wealth = { to = event_target:bearded_priest_successor value = all }
+							any_demesne_title = {
+								gain_title = event_target:bearded_priest_successor
+							}
+							if = {
+								limit = { ai = no }
+								set_player_character = event_target:bearded_priest_successor
+							}
+						}	
+						event_target:bearded_priest_successor = {
+							set_government_type = theocratic_feudal_government
+							character_event = { id = free_cities.2219 days = 1 }
+						}
+					}							
+				}
+			}	
+		}
+		clr_character_flag = elected_high_priest
+	}
+}	
+character_event = { #move courtiers back
+	id = free_cities.221
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		event_target:bearded_priest_successor = { 
+			if = {
+				limit = { is_ruler = yes }
+				ROOT = { move_character = PREV }
+			}	
+			if = {
+				limit = { is_ruler = no }
+				liege = { ROOT = { move_character = PREV } }
+			}
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #check gov type
+	id = free_cities.2219
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		set_government_type = theocratic_feudal_government
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #On High Priest Death, find successor
+	id = free_cities.222
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		if = { #create order dynasty if needed
+			limit = { 
+				OR = {
+					dynasty = 0 
+					NOT = { has_dynasty_flag = bearded_priest_order }
+				}	
+			}
+			create_random_priest = {
+				dynasty = actually_culture
+				female = no
+				religion = bearded_priests
+				culture = bearded_priest_culture
+			}
+			new_character = {
+				ROOT = { dynasty = PREV }
+				dynasty = none
+				death = yes
+			}
+			set_dynasty_flag = bearded_priest_order
+		}
+		random_realm_lord = {
+			limit = {
+				government = theocratic_feudal_government
+				religion = bearded_priests
+				prisoner = no
+				is_incapable = no
+				is_adult = yes				
+			}
+			score_value = {
+				value = 1
+				
+				additive_modifier = {
+					value = 1
+					tier = BARON
+				}
+				additive_modifier = {
+					value = 2
+					tier = COUNT
+				}
+				additive_modifier = {
+					value = 3
+					tier = DUKE
+				}
+				additive_modifier = {
+					value = 4
+					tier = KING
+				}
+				
+				additive_modifier = {
+					value = -1
+					NOT = { age = 21 }
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { age = 30 }
+				}
+				additive_modifier = {
+					value = 1
+					age = 40
+				}
+				additive_modifier = {
+					value = 1
+					age = 50
+				}
+				
+				additive_modifier = {
+					value = 1
+					piety = 750
+				}
+				additive_modifier = {
+					value = 1
+					piety = 500
+				}
+				additive_modifier = {
+					value = 1
+					piety = 250
+				}
+				additive_modifier = {
+					value = 1
+					piety = 100
+				}
+				additive_modifier = {
+					value = -2
+					NOT = { piety = 0 }
+				}
+				additive_modifier = {
+					value = 1
+					prestige = 1000
+				}
+				additive_modifier = {
+					value = 1
+					prestige = 750
+				}
+				additive_modifier = {
+					value = 1
+					prestige = 500
+				}
+				additive_modifier = {
+					value = 1
+					prestige = 250
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { prestige = 100 }
+				}
+				
+				additive_modifier = {
+					value = 1
+					diplomacy = 20
+				}
+				additive_modifier = {
+					value = 1
+					diplomacy = 17
+				}
+				additive_modifier = {
+					value = 1
+					diplomacy = 14
+				}
+				additive_modifier = {
+					value = 1
+					diplomacy = 11
+				}
+				additive_modifier = {
+					value = 1
+					diplomacy = 8
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { diplomacy = 5 }
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { diplomacy = 2 }
+				}				
+				additive_modifier = {
+					value = 1
+					learning = 20
+				}
+				additive_modifier = {
+					value = 1
+					learning = 17
+				}
+				additive_modifier = {
+					value = 1
+					learning = 14
+				}
+				additive_modifier = {
+					value = 1
+					learning = 11
+				}
+				additive_modifier = {
+					value = 1
+					learning = 8
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { learning = 5 }
+				}
+				additive_modifier = {
+					value = -1
+					NOT = { learning = 2 }
+				}
+				
+				
+				additive_modifier = {
+					value = 0.5
+					martial = 20
+				}
+				additive_modifier = {
+					value = 0.5
+					martial = 17
+				}
+				additive_modifier = {
+					value = 0.5
+					martial = 14
+				}
+				additive_modifier = {
+					value = 0.5
+					martial = 11
+				}
+				additive_modifier = {
+					value = 0.5
+					martial = 8
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { martial = 5 }
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { martial = 2 }
+				}	
+				
+				additive_modifier = {
+					value = 0.5
+					intrigue = 20
+				}
+				additive_modifier = {
+					value = 0.5
+					intrigue = 17
+				}
+				additive_modifier = {
+					value = 0.5
+					intrigue = 14
+				}
+				additive_modifier = {
+					value = 0.5
+					intrigue = 11
+				}
+				additive_modifier = {
+					value = 0.5
+					intrigue = 8
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { intrigue = 5 }
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { intrigue = 2 }
+				}
+				
+				additive_modifier = {
+					value = 0.5
+					stewardship = 20
+				}
+				additive_modifier = {
+					value = 0.5
+					stewardship = 17
+				}
+				additive_modifier = {
+					value = 0.5
+					stewardship = 14
+				}
+				additive_modifier = {
+					value = 0.5
+					stewardship = 11
+				}
+				additive_modifier = {
+					value = 0.5
+					stewardship = 8
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { stewardship = 5 }
+				}
+				additive_modifier = {
+					value = -0.5
+					NOT = { stewardship = 2 }
+				}
+			}
+			add_trait = bearded_priest
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		random_courtier = {
+			limit = {
+				trait = bearded_priest
+				religion = bearded_priests
+				prisoner = no
+				is_incapable = no
+				is_adult = yes
+				dynasty = ROOT
+			}
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		random_courtier = {
+			limit = {
+				trait = bearded_priest
+				religion = bearded_priests
+				prisoner = no
+				is_incapable = no
+				is_adult = yes
+			}
+			if = {
+				limit = { 
+					dynasty = 0
+					ROOT = { has_dynasty_flag = bearded_priest_order }
+				}
+				dynasty = ROOT
+			}
+			save_event_target_as = bearded_priest_successor
+			break = yes
+		}
+		capital_scope = {
+			create_random_priest = {
+				random_traits = yes
+				dynasty = none
+				female = no
+				religion = bearded_priests
+				culture = THIS
+				trait = bearded_priest
+			}
+			new_character = {
+				if = {
+					limit = { 
+						ROOT = { has_dynasty_flag = bearded_priest_order }
+					}
+					dynasty = ROOT
+				}
+				remove_trait = imbecile
+				remove_trait = inbred
+				remove_trait = slow
+				random_list = {
+					20 = { add_trait = poor_warrior }
+					50 = { add_trait = trained_warrior }
+					30 = { add_trait = skilled_warrior }
+				}
+				save_event_target_as = bearded_priest_successor
+			}
+		}	
+	}
+		
+	option = {
+		name = OK	
+		event_target:bearded_priest_successor = {
+			set_immune_to_pruning = yes
+			if = { #create order dynasty if needed
+				limit = { 
+					OR = {
+						dynasty = 0 
+						NOT = { has_dynasty_flag = bearded_priest_order }
+					}	
+				}
+				create_random_priest = {
+					dynasty = actually_culture
+					female = no
+					religion = bearded_priests
+					culture = bearded_priest_culture
+				}
+				new_character = {
+					event_target:bearded_priest_successor = { dynasty = PREV }
+					dynasty = none
+					death = yes
+				}
+				set_dynasty_flag = bearded_priest_order
+			}
+		}
+		#If player, find new player character
+		if = {
+			limit = { ai = no }
+			if = {
+				limit = { #all is well
+					dynasty = event_target:bearded_priest_successor
+					event_target:bearded_priest_successor = { ai = yes }
+				}
+				#event_target:bearded_priest_successor = { save_event_target_as = new_player_character }
+			}
+			else = { #change player character immediately				
+				random_courtier_or_vassal = {
+					limit = { 
+						has_minor_title = title_bearded_priest_designated_heir
+						liege = { character = ROOT }
+						ai = yes
+						trait = bearded_priest
+						religion = bearded_priests
+					}
+					preferred_limit = {
+						tier = KING
+					}
+					preferred_limit = {
+						tier = DUKE
+					}
+					preferred_limit = {
+						tier = COUNT
+					}
+					preferred_limit = {
+						tier = BARON
+					}
+					if = {
+						limit = {
+							government = theocratic_feudal_government
+							higher_tier_than = BARON
+						}
+						ROOT = { 
+							set_player_character = PREV 
+							set_character_flag = new_player_found
+						}
+					}
+					else = {
+						save_event_target_as = order_successor
+						ROOT = {
+							random_demesne_title = {
+								limit = {
+									tier = COUNT
+									location = { is_capital = no }
+								}
+								gain_title = event_target:order_successor
+								ROOT = { set_character_flag = new_player_found }
+							}
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { has_character_flag = new_player_found } }
+					random_realm_lord = {
+						limit = { 
+							government = theocratic_feudal_government
+							religion = bearded_priests
+							higher_tier_than = BARON
+							dynasty = ROOT
+							ai = yes
+						}
+						preferred_limit = {
+							tier = KING
+						}
+						preferred_limit = {
+							tier = DUKE
+						}
+						preferred_limit = {
+							tier = COUNT
+						}
+						ROOT = { 
+							set_player_character = PREV 
+							set_character_flag = new_player_found
+						}
+					}
+				}	
+				if = {
+					limit = { NOT = { has_character_flag = new_player_found } }
+					random_realm_character = {
+						limit = {
+							trait = bearded_priest
+							religion = bearded_priests
+							prisoner = no
+							is_incapable = no
+							is_adult = yes
+							dynasty = ROOT
+							ai = yes
+						}
+						save_event_target_as = order_successor
+					}
+					if = {
+						limit = { NOT = { event_target:order_successor = { always = yes } } }
+						capital_scope = {
+							create_random_priest = {
+								random_traits = yes
+								dynasty = none
+								female = no
+								religion = bearded_priests
+								culture = THIS
+								trait = bearded_priest
+							}
+							new_character = {
+								dynasty = ROOT
+								remove_trait = imbecile
+								remove_trait = inbred
+								remove_trait = slow
+								random_list = {
+									20 = { add_trait = poor_warrior }
+									50 = { add_trait = trained_warrior }
+									30 = { add_trait = skilled_warrior }
+								}
+								save_event_target_as = order_successor
+							}
+						}	
+					}
+					random_demesne_title = {
+						limit = {
+							tier = COUNT
+							location = { is_capital = no }
+						}
+						gain_title = event_target:order_successor
+					}
+					event_target:order_successor = { set_government_type = theocratic_feudal_government }
+					ROOT = { set_player_character = event_target:order_successor } #If no title is found, a game over will occur
+				}
+			}
+			clr_character_flag = new_player_found
+		}
+		else_if = { #try to maintain order for the AI
+			limit = {
+				NOT = { any_realm_lord = { dynasty = ROOT } }
+				NOT = { dynasty = event_target:bearded_priest_successor }
+			}
+			random_realm_character = {
+				limit = {
+					trait = bearded_priest
+					religion = bearded_priests
+					prisoner = no
+					is_incapable = no
+					is_adult = yes
+					dynasty = ROOT
+					ai = yes
+				}
+				save_event_target_as = order_successor
+			}
+			if = {
+				limit = { NOT = { event_target:order_successor = { always = yes } } }
+				capital_scope = {
+					create_random_priest = {
+						random_traits = yes
+						dynasty = none
+						female = no
+						religion = bearded_priests
+						culture = THIS
+						trait = bearded_priest
+					}
+					new_character = {
+						dynasty = ROOT
+						remove_trait = imbecile
+						remove_trait = inbred
+						remove_trait = slow
+						random_list = {
+							20 = { add_trait = poor_warrior }
+							50 = { add_trait = trained_warrior }
+							30 = { add_trait = skilled_warrior }
+						}
+						save_event_target_as = order_successor
+					}
+				}	
+			}
+			random_demesne_title = {
+				limit = {
+					tier = COUNT
+					location = { is_capital = no }
+				}
+				gain_title = event_target:order_successor
+			}
+			event_target:order_successor = { set_government_type = theocratic_feudal_government }
+		}
+		capital_holding = { save_event_target_as = realm_capital_holding }
+		#The Handover
+		event_target:bearded_priest_successor = {
+			save_event_target_as = debt_inheritor
+			if = {
+				limit = { is_ruler = yes }
+				any_demesne_title = { set_title_flag = title_to_inherit }
+			}	
+			ROOT = { 
+				transfer_scaled_wealth = { to = event_target:bearded_priest_successor value = all }
+				inherit_debt_effect = yes
+				abdicate_to = PREV 
+			}
+			if = {
+				limit = { 
+					is_ruler = yes 
+					any_demesne_title = { has_title_flag = title_to_inherit }
+				}
+				set_character_flag = elected_high_priest
+				character_event = { id = free_cities.220 } #order sucession	
+			}
+			capital = event_target:realm_capital_holding
+			character_event = { id = free_cities.224 days = 1 } #inform				
+		}
+	}
+}	
+character_event = { #Initial setup
+	id = free_cities.223
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		government = theocratic_feudal_government
+	}
+	
+	immediate = {
+		add_trait = bearded_priest
+		if = {
+			limit = { NOT = { dynasty = 0 } }
+			any_dynasty_member_even_if_dead = {	
+				set_father = 0
+				set_mother = 0
+				if = {
+					limit = { is_ruler = yes }
+					add_trait = bearded_priest
+				}
+				if = {
+					limit = { is_ruler = no }
+					dynasty = none
+					if = {
+						limit = { is_alive = yes }
+						death = yes
+					}
+				}	
+			}
+		}
+		any_spouse = { remove_spouse = ROOT }
+		set_father = 0
+		set_mother = 0		
+		if = { #create order dynasty if needed
+			limit = { 
+				OR = {
+					dynasty = 0 
+					NOT = { start_date = 7996.1.1 }
+				}	
+			}
+			create_random_priest = {
+				dynasty = actually_culture
+				female = no
+				religion = bearded_priests
+				culture = bearded_priest_culture
+			}
+			new_character = {
+				ROOT = { dynasty = PREV }
+				dynasty = none
+				death = yes
+			}
+		}
+		set_dynasty_flag = bearded_priest_order
+		any_demesne_title = {
+			limit = {
+				tier = COUNT
+				location = { is_capital = no }
+			}
+			create_random_priest = {
+				random_traits = yes
+				dynasty = none
+				female = no
+				religion = bearded_priests
+				culture = ROOT
+				trait = bearded_priest
+			}
+			new_character = {
+				dynasty = ROOT
+				gain_title = PREV
+				remove_trait = imbecile
+				remove_trait = inbred
+				remove_trait = slow
+				random_list = {
+					20 = { add_trait = poor_warrior }
+					50 = { add_trait = trained_warrior }
+					30 = { add_trait = skilled_warrior }
+				}
+			}
+		}
+		if = {
+			limit = { ai = no }
+			character_event = { id = free_cities.219 } #player mechanics explanation event
+		}
+		any_realm_lord = {
+			limit = { government = theocratic_feudal_government }
+			add_trait = bearded_priest
+			any_spouse = { remove_spouse = PREV }
+			set_father = 0
+			set_mother = 0
+			if = {
+				limit = { NOT = { dynasty = 0 } }
+				any_dynasty_member_even_if_dead = {	
+					set_father = 0
+					set_mother = 0
+					if = {
+						limit = { is_ruler = yes }
+						add_trait = bearded_priest
+					}
+					if = {
+						limit = { is_ruler = no }
+						dynasty = none
+						if = {
+							limit = { is_alive = yes }
+							death = yes
+						}
+					}	
+				}
+			}
+			if = { #create order dynasty if needed
+				limit = { 
+					OR = {
+						dynasty = 0 
+						NOT = { start_date = 7996.1.1 }
+					}	
+					NOT = { has_dynasty_flag = bearded_priest_order }
+				}
+				save_event_target_as = change_dynasty
+				create_random_priest = {
+					dynasty = actually_culture
+					female = no
+					religion = bearded_priests
+					culture = bearded_priest_culture
+				}
+				new_character = {
+					event_target:change_dynasty = { dynasty = PREV }
+					dynasty = none
+					death = yes
+				}
+			}
+			clear_event_target = change_dynasty
+			if = {
+				limit = { NOT = { dynasty = 0 } }
+				set_dynasty_flag = bearded_priest_order
+			}
+			if = {
+				limit = { 
+					tier = COUNT
+					capital_holding = { holding_type = temple }
+				}
+				capital_scope = {
+					random_province_holding = {
+						limit = { holding_type = castle }
+						gain_title = PREVPREV
+						make_capital_holding = yes
+					}
+				}
+			}
+			if = {
+				limit = { ai = no }
+				character_event = { id = free_cities.219 } #player mechanics explanation event
+			}
+		}
+		if = { #check monastic order has a vassal title in realm
+			limit = {
+				NOT = {
+					any_realm_lord = {
+						higher_tier_than = BARON
+						dynasty = ROOT
+						NOT = { character = ROOT }
+					}
+				}
+			}
+			random_realm_lord = {
+				limit = {
+					higher_tier_than = BARON
+					NOT = { character = ROOT }
+					government = theocratic_feudal_government
+				}
+				dynasty = ROOT
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+#Inform character they are new High Priest
+character_event = {
+	id = free_cities.224
+	desc = "EVTDESCfree_cities.224"
+	picture = "GFX_evt_norvos"
+	
+	is_triggered_only = yes
+	
+	immediate = { set_government_type = theocratic_feudal_government }
+	
+	option = { 
+		name = "EVTOPTAfree_cities.224" 
+		any_realm_lord = { 
+			limit = {
+				ai = no 
+				NOT = { character = ROOT }
+			}
+			character_event = { id = free_cities.225 } 
+		}
+		if = {
+			limit = { 
+				has_landed_title = d_bearded_priests 
+				NOT = { has_landed_title = k_norvos }
+			}
+			k_norvos = { add_claim = ROOT }
+			c_norvos = { add_claim = ROOT }
+		}
+	}
+}
+#Inform realm of new High Priest
+character_event = {
+	id = free_cities.225
+	desc = "EVTDESCfree_cities.225"
+	picture = "GFX_evt_norvos"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = OK
+		show_portrait = FROMFROM
+	}
+}
+#Noble sells child to priests
+character_event = {
+	id = free_cities.226
+	desc = "EVTDESCfree_cities.226"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	only_playable = yes
+	
+	trigger = {
+		government = theocratic_feudal_government
+		religion = bearded_priests
+		OR = {
+			wealth = 100
+			scaled_wealth = 0.2
+		}	
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	immediate = {
+		capital_scope = {
+			ROOT = {
+				random_list = {
+					10 = {
+						create_character = {
+							random_traits = yes
+							dynasty = none
+							culture = PREV
+							female = no
+							age = 6
+						}
+					}
+					10 = {
+						create_character = {
+							random_traits = yes
+							dynasty = none
+							culture = PREV
+							female = no
+							age = 8
+						}
+					}
+					10 = {
+						create_character = {
+							random_traits = yes
+							dynasty = none
+							culture = PREV
+							female = no
+							age = 10
+						}
+					}
+					10 = {
+						create_character = {
+							random_traits = yes
+							dynasty = none
+							culture = PREV
+							female = no
+							age = 12
+						}
+					}
+					10 = {
+						create_character = {
+							random_traits = yes
+							dynasty = none
+							culture = PREV
+							female = no
+							age = 14
+						}
+					}
+				}
+				new_character = {
+					save_event_target_as = child_offer
+					random_list = {
+						20 = { }
+						30 = { add_trait = poor_warrior }
+						40 = { 
+							trigger = { age = 8 }
+							modifier = {
+								factor = 0.5
+								NOT = { age = 10 }
+							}
+							add_trait = trained_warrior
+						}
+						10 = { 
+							trigger = { age = 12 }
+							modifier = {
+								factor = 0.5
+								NOT = { age = 14 }
+							}
+							add_trait = skilled_warrior 
+						}
+					}
+				}
+			}	
+		}	
+	}
+	
+	option = { 
+		name = EVTOPTAfree_cities.226
+		scaled_wealth = { value = -0.1 min = -5 max = -75 }
+		tooltip = { event_target:child_offer = { move_character = ROOT } }
+	}
+	option = { 
+		name = EVTOPTBfree_cities.226
+		hidden_tooltip = { event_target:child_offer = { death = { death_reason = death_missing } } }
+	}
+}
+#Bearded Priest self flagellates
+character_event = {
+	id = free_cities.227
+	desc = "EVTDESCfree_cities.227"
+	picture = "GFX_evt_bearded_priests"
+	
+	is_triggered_only = yes
+
+	option = { 
+		name = EVTOPTAfree_cities.227
+		piety = 50
+		tooltip = {
+			add_character_modifier = {
+				name = bearded_priest_flagellated
+				duration = 1825
+			}
+		}	
+		random = {
+			chance = 20
+			add_trait_wounded_effect = yes
+		}
+	}
+}	
+# Bells of Norvos
+character_event = {
+	id = free_cities.229
+	desc = "EVTDESCFREECITIES229"
+	picture = GFX_evt_norvos
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no
+	min_age = 16
+	capable_only = yes
+	in_command = no
+	culture = norvosi
+	
+	trigger = {
+		OR = {
+			capital_scope = { region = world_norvos }
+			location = { province_id = 433 }
+		}
+		is_ill = no
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = { #Work
+		name = "EVTOPTAFREECITIES229"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = diligent
+			}
+			modifier = {
+				factor = 0
+				trait = slothful
+			}
+		}
+		prestige = 25
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+	}
+	option = { #Rest
+		name = "EVTOPTBFREECITIES229"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = diligent
+			}
+			modifier = {
+				factor = 4
+				trait = slothful
+			}
+		}
+		add_character_modifier = {
+			name = taking_it_easy
+			duration = 365
+		}
+		if = {
+			limit = { trait = stressed }
+			random = {
+				chance = 33
+				remove_trait = stressed
+				hidden_tooltip = { character_event = { id = 38313 } }
+			}
+		}
+	}
+	option = { #Pray
+		name = "EVTOPTCFREECITIES229"
+		trigger = { 
+			NOT = { trait = cynical } 
+			OR = {
+				trait = zealous
+				NOT = { month = 6 } #only part of the year
+			}	
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = zealous
+			}
+		}
+		piety = 25
+		any_courtier = {
+			limit = {
+				religion = ROOT
+				OR = {
+					trait = zealous
+					has_job_title = job_spiritual
+				}
+			}
+			opinion = { who = ROOT modifier = zealous_pos months = 12 }
+		}
+	}
+	option = { #Carnal relations
+		name = "EVTOPTDFREECITIES229"
+		trigger = { 
+			NOT = { trait = eunuch }
+			NOT = { trait = celibate }
+			OR = {
+				month = 6 #only part of the year
+				has_ambition = obj_have_a_daughter
+				has_ambition = obj_have_a_son
+				has_ambition = obj_five_children
+			}	
+			any_courtier = {
+				OR = {
+					is_married = ROOT
+					is_consort = ROOT
+					is_lover = ROOT
+				}
+				NOT = { trait = eunuch }
+				NOT = { trait = celibate }
+				is_incapable = no
+				age = 14
+				opinion = { who = ROOT value = 0 }
+				reverse_opinion = { who = ROOT value = 0 }
+				NOT = { is_inaccessible_trigger = yes }				
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = lustful
+			}
+		}
+		if = {
+			limit = { trait = stressed }
+			random = {
+				chance = 10
+				remove_trait = stressed
+				hidden_tooltip = { character_event = { id = 38313 } }
+			}
+		}
+		random_courtier = {
+			limit = {
+				OR = {
+					is_married = ROOT
+					is_consort = ROOT
+					is_lover = ROOT
+				}
+				NOT = { trait = eunuch }
+				NOT = { trait = celibate }
+				is_incapable = no
+				age = 14
+				opinion = { who = ROOT value = 0 }
+				reverse_opinion = { who = ROOT value = 0 }
+				NOT = { is_inaccessible_trigger = yes }	
+			}	
+			opinion = { who = ROOT modifier = opinion_rekindle_love months = 12 }
+			hidden_tooltip = {
+				if = {
+					limit = {
+						fertility = 0.1
+						ROOT = { fertility = 0.1 }
+						NOT = { same_sex = ROOT }
+					}
+					if = {
+						limit = {
+							is_female = yes
+							is_pregnant = no
+						}
+						random = {
+							chance = 20
+							impregnate_cuckoo = ROOT
+						}
+					}
+					else_if = {
+						limit = {
+							ROOT = {
+								is_female = yes
+								is_pregnant = no
+							}	
+						}
+						random = {
+							chance = 20
+							ROOT = { impregnate_cuckoo = PREV }
+						}
+					}
+				}
+			}	
+		}
+	}
+	option = { #Train
+		name = "EVTOPTEFREECITIES229"
+		trigger = { 
+			has_severe_disability_trigger = no
+			NOT = { trait = master_warrior }
+			NOT = { trait = wounded }
+			OR = {
+				NOT = { month = 6 } #only part of the year
+				has_ambition = obj_improve_combat_ability
+			}
+			OR = {
+				is_female = no
+				female_get_masculine_event_trigger = yes
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+		}
+		if = {
+			limit = { trait = skilled_warrior }
+			random = {
+				chance = 2
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = master_warrior }
+			}
+		}
+		else_if = {
+			limit = { trait = trained_warrior }
+			random = {
+				chance = 10
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = skilled_warrior }
+			}
+		}
+		else_if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 25
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		else = {
+			random = {
+				chance = 50
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}
+		random = {
+			chance = 20
+			add_trait_silently_wounded_effect = yes
+			hidden_tooltip = { character_event = { id = 38280 } }
+		}
+	}
+	option = { #Eat
+		name = "EVTOPTFFREECITIES229"
+		trigger = { 
+			NOT = { trait = temperate }
+			OR = {
+				month = 6 #only part of the year
+				trait = gluttonous
+				trait = is_fat
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = gluttonous
+			}
+		}
+		add_character_modifier = {
+			name = well_fed
+			duration = 365
+		}
+		gain_weight_small_effect = yes
+		weight_trait_check_effect = yes
+	}	
+}	
+# Bearded priest demands execution of black goat worshipper
+character_event = {
+	id = free_cities.230
+	desc = "EVTDESCFREECITIES230"
+	picture = GFX_evt_catching_heretic
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no
+	min_age = 16
+	capable_only = yes
+	religion = bearded_priests
+	
+	portrait = event_target:black_goat_worshipper
+	
+	trigger = {
+		job_spiritual = {
+			trait = bearded_priest
+			NOT = { trait = cynical }
+			OR = {
+				trait = zealous
+				NOT = { trait = kind }
+			}
+			NOT = { is_inaccessible_trigger = yes }
+			ai = yes
+		}
+		any_courtier = {
+			age = 10
+			OR = {
+				religion = black_goat
+				religion = black_goat_reformed
+			}	
+			NOT = { ROOT = { job_spiritual = { opinion = { who = PREVPREV value = 0 } } } }
+			OR = {
+				AND = {
+					prisoner = no
+					liege = { character = ROOT }
+				}
+				AND = {
+					prisoner = yes
+					host = { character = ROOT }
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 4
+			job_spiritual = { trait = zealous }
+		}
+	}
+	
+	immediate = {
+		job_spiritual = {
+			save_event_target_as = bearded_priest
+		}
+		random_courtier = {
+			limit = {
+				age = 10
+				OR = {
+					religion = black_goat
+					religion = black_goat_reformed
+				}
+				NOT = { ROOT = { job_spiritual = { opinion = { who = PREVPREV value = 0 } } } }
+				OR = {
+					AND = {
+						prisoner = no
+						liege = { character = ROOT }
+					}
+					AND = {
+						prisoner = yes
+						host = { character = ROOT }
+					}
+				}
+				NOT = { is_inaccessible_trigger = yes }
+			}	
+			save_event_target_as = black_goat_worshipper
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTAFREECITIES230" #Yes!
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 5
+				event_target:black_goat_worshipper = { just_execution_reason_PREV_trigger = yes }
+			}
+			modifier = { #Most characters must have a reason to execute
+				factor = 0
+				NOT = { trait = arbitrary }
+				NOT = { trait = lunatic }
+				NOT = { trait = cruel }
+				NOT = { trait = lunatic }
+				NOT = { trait = zealous }
+				NOT = { opinion = { who = event_target:bearded_priest value = 30 } }
+				NOR = {
+					event_target:black_goat_worshipper = { just_execution_reason_PREV_trigger = yes }
+					is_rival = event_target:black_goat_worshipper
+					event_target:black_goat_worshipper = { is_foe = PREV }
+					AND = { #trying to inspire fear
+						trait = ruthless
+						OR = {
+							is_close_relative = event_target:black_goat_worshipper
+							is_vassal_or_below = event_target:black_goat_worshipper
+							event_target:black_goat_worshipper = { liege = { liege_before_war = { character = ROOT } } }
+						}
+					}
+				}		
+			}
+			modifier = { #Dont execute if like prisoner...
+				factor = 0
+				opinion = { who = event_target:black_goat_worshipper value = 20 }
+				#...except if have valid reason and are just, ruthless or wroth, and not a lunatic
+				OR = {
+					NOR = {
+						trait = just
+						trait = ruthless
+						trait = wroth
+						trait = zealous
+					}
+					NOT = { event_target:black_goat_worshipper = { just_execution_reason_PREV_trigger = yes } }
+				}
+				NOT = { trait = lunatic }
+			}
+			
+			modifier = { #avoid kinslayer
+				factor = 0.05
+				NOT = { has_cutthroat_religion_trigger = yes }
+				OR = {
+					is_close_relative = event_target:black_goat_worshipper
+					AND = {
+						dynasty = event_target:black_goat_worshipper
+						NOT = { dynasty = 0 }
+					}
+				}	
+			}
+			modifier = { #avoid kinslayer
+				factor = 0
+				NOT = { has_cutthroat_religion_trigger = yes }
+				OR = {
+					is_close_relative = event_target:black_goat_worshipper
+					AND = {
+						dynasty = event_target:black_goat_worshipper
+						NOT = { dynasty = 0 }
+					}
+				}
+				OR = {
+					trait = honorable
+					trait = just
+					trait = familyperson
+					trait = patient
+				}
+				NOT = { trait = ruthless }
+				NOT = { trait = zealous }
+			}
+			modifier = { #trying to inspire fear
+				factor = 2
+				OR = {
+					trait = ruthless
+					trait = cruel
+				}
+				OR = {
+					is_close_relative = event_target:black_goat_worshipper
+					is_vassal_or_below = event_target:black_goat_worshipper
+					event_target:black_goat_worshipper = { liege = { liege_before_war = { character = ROOT } } }
+				}
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					is_lover = event_target:black_goat_worshipper
+					any_consort = { character = event_target:black_goat_worshipper }
+					is_married = event_target:black_goat_worshipper
+				}	
+			}
+			modifier = {
+				factor = 0.05 #Enemy has your relative
+				any_current_enemy = {
+					dynasty = event_target:black_goat_worshipper
+					is_close_relative = event_target:black_goat_worshipper
+					any_courtier = {
+						is_close_relative = ROOT
+						dynasty = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0 #Is your enemy and can enforce a victory
+				any_current_enemy = {
+					character = event_target:black_goat_worshipper
+				}
+			}
+			modifier = {
+				factor = 0.01
+				trait = just 
+				NOT = { trait = zealous }
+				NOT = { event_target:black_goat_worshipper = { just_execution_reason_PREV_trigger = yes } }
+			}
+			modifier = {
+				factor = 2
+				trait = just 
+				event_target:black_goat_worshipper = { just_execution_reason_PREV_trigger = yes }
+			}
+			
+			modifier = {
+				factor = 4
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.25
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}		
+			modifier = {
+				factor = 1.5
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = impaler
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = event_target:black_goat_worshipper value = 20 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = event_target:black_goat_worshipper value = 0 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = event_target:black_goat_worshipper value = -25 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = event_target:black_goat_worshipper value = -50 } }
+			}
+			
+			
+			modifier = {
+				factor = 0.5
+				event_target:black_goat_worshipper = {
+					is_ruler = yes
+				}
+			}
+			modifier = {
+				factor = 0.5
+				event_target:black_goat_worshipper = {
+					OR = {
+						is_voter = yes
+						is_councillor = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				is_devil_worshiper_trigger = yes
+			}	
+		}
+		event_target:black_goat_worshipper = {
+			character_event = { id = free_cities.231 }
+			character_event = { id = 154 } #On executed
+			tooltip = {
+				death = {
+					death_reason = death_execution_beheading
+					killer = ROOT
+				}
+			}	
+		}
+		piety = 40
+		event_target:bearded_priest = {
+			opinion = { who = ROOT modifier = opinion_satisfied multiplier = 4 months = 60 }
+		}
+	}
+	option = { 
+		name = "EVTOPTBFREECITIES230" #No
+		ai_chance = { 
+			factor = 20			
+		}
+		piety = -60
+		event_target:bearded_priest = {
+			opinion = { who = ROOT modifier = opinion_angry multiplier = 2 months = 60 }
+		}
+		event_target:black_goat_worshipper = {
+			character_event = { id = free_cities.232 }	
+		}
+	}
+}	
+character_event = { #Inform executed
+	id = free_cities.231
+	desc = "EVTDESCFREECITIES231"
+	picture = GFX_evt_catching_heretic
+	
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAFREECITIES231"
+		show_portrait = event_target:bearded_priest
+		death = {
+			death_reason = death_execution_beheading
+			killer = FROM
+		}
+	}
+}	
+character_event = { #Inform liege did not execute
+	id = free_cities.232
+	desc = "EVTDESCFREECITIES232"
+	picture = GFX_evt_catching_heretic
+	
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAFREECITIES232"
+		show_portrait = event_target:bearded_priest
+		add_rival = event_target:bearded_priest
+	}
+}	
+
+# Bearded Priest demands land
+character_event = {
+	id = free_cities.233
+	
+	is_triggered_only = yes
+	hide_window = yes
+	min_age = 16
+	only_men = yes
+	capable_only = yes
+	prisoner = no
+	religion = bearded_priests
+	
+	trigger = {
+		OR = {
+			is_ruler = no
+			AND = {
+				tier = BARON
+				capital_scope = { is_capital = no }
+			}
+		}	
+		liege = { religion = bearded_priests }
+		OR = {	
+			trait = ambitious
+			AND = {
+				OR = {
+					trait = proud
+					trait = envious
+					trait = greedy
+					trait = zealous
+				}	
+				NOT = { trait = content }
+			}
+		}
+		NOT = { trait = wikid }
+		liege = {
+			demesne_size = 2
+			OR = { #Let Doges keep spare title
+				demesne_size = 3
+				NOR = {
+					is_merchant_republic = yes
+					government = noble_oligarchy
+					AND = {
+						government = feudal_government_LP
+						top_liege = { is_valyrian_freehold_trigger = yes }
+					}
+				}				
+			}
+			war = no
+			NOT = { has_character_flag = asked_for_landed_title }
+			NOT =  { #Interregnum
+				primary_title = {
+					higher_tier_than = DUKE
+					is_variable_equal = { which = "lord_paramount_status" value = 2 }	
+				}
+			}
+			any_demesne_title = {
+				can_be_given_away = yes
+				NOT = { is_primary_holder_title = yes }
+				lower_tier_than = DUKE
+				controls_religion = no
+				NOT = { title = c_ghastongrey } #no-one wants this crappy rock
+				NOT = { #Not a bloodline title
+					holder_scope = {
+						any_owned_bloodline = {
+							has_bloodline_flag = dynastic_bloodline
+							has_bloodline_flag = dynastic_claim_@PREVPREV
+							ROOT = { NOT = { is_bloodline_member_of = PREV } }
+						}
+					}
+				}
+				NOT = { #Not traditional heir title
+					holder_scope = {
+						higher_tier_than = DUKE
+						is_feudal_monarch_trigger = yes
+						primary_title = {
+							persistent_event_target:heir_title = {
+								title = PREVPREVPREV
+							}
+						}
+					}
+				}
+				NAND = {
+					tier = COUNT
+					OR = {
+						location = { is_capital = yes }
+						holder_scope = { tier = COUNT }
+					}	
+				}
+				NOT = { location = { has_province_flag = colony_province } }
+				NOT = { has_title_flag = military_command }
+				NAND = { #is not valyrian colony
+					has_law = valyria_colony
+					holder_scope = { top_liege = { is_valyrian_freehold_trigger = yes } }
+				}
+			}
+			#Is above count
+			#any_demesne_title = {
+			#		OR = {	
+			#			tier = duke
+			#			tier = king
+			#			tier = emperor
+			#		}
+			#}
+		}
+		liege = {
+			OR = {
+				AND = {
+					NOR = {
+						NOT = { age = 16 }
+						prisoner = yes
+						is_incapable = yes
+					}
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_denied_title } }
+				}
+				AND = {
+					OR = {
+						NOT = { age = 16 }
+						prisoner = yes
+						is_incapable = yes
+					}
+					regent = { NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_denied_title } } }
+				}
+			}	
+		}
+		OR = {
+			NOT = { has_character_flag = flag_promised_title }
+			had_character_flag = { flag = flag_promised_title days = 200 }
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 10
+			liege = { regent = { character = PREVPREV } }
+		}
+		modifier = {
+			factor = 2
+			liege = { 
+				OR = {
+					sibling = ROOT 
+					ROOT = { is_child_of = PREV }
+				}	
+			}
+		}
+		#job keeps him happy 
+		modifier = {
+			factor = 0.2
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+		}
+		#more stuff
+		modifier = {
+			factor = 5
+			trait = ambitious
+		}
+		modifier = {
+			factor = 2
+			trait = envious
+		}
+		modifier = {
+			factor = 2
+			trait = greedy
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 2
+			trait = just
+		}
+		modifier = {
+			factor = 2
+			trait = selfish
+		}
+		modifier = {
+			factor = 1.5
+			trait = wroth
+		}
+		modifier = {
+			factor = 1.5
+			trait = proud
+		}	
+		modifier = {
+			factor = 0.5
+			trait = patient
+		}
+		modifier = {
+			factor = 0.2
+			trait = humble
+		}
+		modifier = {
+			factor = 0.5
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.5
+			trait = arbitrary
+		}
+		modifier = {
+			factor = 0.2
+			trait = content
+		}
+		
+		modifier = {
+			factor = 0.5
+			trait = stressed
+		}
+		modifier = {
+			factor = 0.5
+			trait = depressed
+		}
+		modifier = {
+			factor = 0.2
+			is_ill = yes
+		}
+		modifier = {
+			factor = 0.2
+			is_maimed_trigger = yes
+		}
+		modifier = {
+			factor = 0.2
+			is_crippled_trigger = yes
+		}
+		modifier = {
+			factor = 0.2
+			trait = infirm
+		}
+		modifier = {
+			factor = 0.2
+			trait = blinded
+		}
+		modifier = {
+			factor = 0.2
+			trait = blinded_age
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTA37000" # Ask liege for a title
+		set_character_flag = bearded_priest_land_request
+		liege = { 
+			custom_tooltip = { text = EVTTOOLTIP37001 } 
+		}		
+		hidden_tooltip = { liege = { character_event = { id = 37991 } } }		
+	}
+}
+
+###Lysene Patron God###
+character_event = {
+	id = free_cities.300
+	desc = "EVTDESCfree_cities.300"	
+	border = "GFX_event_normal_frame_religion"
+	picture = "GFX_evt_icon"
+
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no	
+	min_age = 16
+	
+	trigger = {	
+		OR = {
+			religion = weeping_lady_reformed
+			religion = weeping_lady
+		}
+		NOT = {
+			has_character_flag = lysene_patron_god
+		}
+		NOT = { trait = cynical }
+		NOT = { trait = excommunicated }
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		
+		modifier = {
+			factor = 2
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			piety = 100
+		}
+	}
+	
+	immediate = {
+		set_character_flag = lysene_patron_god
+	}	
+	
+	option = {
+		name = "EVTOPTAfree_cities.300"	#No.
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+		}
+		piety = -25
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+	} 
+	option = {
+		name = "EVTOPTBfree_cities.300"	#Weeping Lady
+		trigger = {
+			NOT = { trait = ruthless }
+			NOT = { trait = cruel }
+		}
+		ai_chance = {
+			factor = 1
+			
+			modifier = { #worshipped by old women
+				factor = 4
+				is_female = yes
+				age = 50
+			}
+			modifier = {
+				factor = 0.5
+				is_female = no
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_diplomacy = 1	
+	} 
+	option = {
+		name = "EVTOPTCfree_cities.300"	#Bakkalon
+		trigger = {
+			NOT = { trait = craven }
+			OR = {
+				martial = 10
+				combat_rating = 40
+				in_command = yes
+				has_minor_title = title_commander
+				has_job_title = job_marshal
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.5
+				is_female = yes
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					in_command = yes
+					has_minor_title = title_commander
+					has_job_title = job_marshal
+				}
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				martial = 12
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating = 60
+			}
+		}
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_martial = 1	
+	} 
+	option = {
+		name = "EVTOPTDfree_cities.300"	#Pantera
+		trigger = {
+			OR = {
+				intrigue = 10
+				has_character_modifier = pet_cat
+				has_education_intrigue_trigger = yes
+				has_lifestyle_intrigue_trigger = yes
+				has_job_title = job_spymaster
+			}
+		}
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 5
+				has_character_modifier = pet_cat
+			}
+		}
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }		
+		if = {
+			limit =  { NOT = { has_character_modifier = pet_cat } }
+			add_cat_effect = yes
+		}
+		else = {
+			change_intrigue = 1	
+		}
+	}
+	option = {
+		name = "EVTOPTEfree_cities.300"	#Yndros
+		trigger = {
+			NOT = { trait = chaste }
+			NOT = { trait = celibate }
+			NOT = { trait = eunuch }
+		}
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 5
+				trait = lustful
+			}
+			modifier = {
+				factor = 2
+				trait = homosexual
+			}
+		}	
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		fertility = 0.1
+		if = {
+			limit = { 
+				NOT = { trait = lustful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = lustful
+				hidden_tooltip = { character_event = { id = 38272 } }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = homosexual }
+			}
+			random = {
+				chance = 20
+				add_trait = homosexual
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTFfree_cities.300"	#Saagael
+		trigger = {
+			OR = {
+				trait = cruel
+				trait = ruthless
+				trait = lunatic
+			}
+			NOT = { trait = kind }
+			NOT = { trait = honorable }
+		}
+		ai_chance = {
+			factor = 0.5
+			
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = impaler
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}		
+		scaled_wealth = { value = -0.25 min = -5 max = -75 }
+		change_variable = { which = fear_actions value = 25 } 
+		character_event = { id = faction_event_new.90 } #fear modifier
+		if = {
+			limit = { 
+				NOT = { trait = cruel }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = cruel
+				hidden_tooltip = { character_event = { id = 38259 } }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = impaler }
+				NOT = { lifestyle_traits = 1 }
+			}
+			add_trait = impaler
+		}
+		else = {
+			change_intrigue = 1
+		}
+	}
+}

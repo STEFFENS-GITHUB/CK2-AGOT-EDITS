@@ -1,0 +1,5063 @@
+#Created by jjstinson
+#finished by knuckey
+#protection and healing by Fashbinder
+
+# Healing events also apply to qartheen warlocks
+
+namespace = red_priest
+
+# A Strange Priest FROM Essos aprroaches me.
+character_event = {
+	id = red_priest.1
+	desc = "EVTDESCred_priest.1"
+	picture = "GFX_evt_red_priest_approaches"
+	border = "GFX_event_normal_frame_religion"
+	
+	only_playable = yes
+	min_age = 16 
+	prisoner = no
+	
+	trigger = {
+		OR = {
+			higher_tier_than = COUNT
+			capital_scope = {
+				OR = {
+					religion = rhllor
+					
+					region = world_volantis 
+					region = world_myr
+					region = world_pentos
+					region = world_lys
+				}			
+			}
+		}	
+		d_rhllor = { has_holder = yes }
+		demesne_size = 1
+		NOT = { religion = rhllor }
+		NOT = { any_courtier = { trait = red_priest } }
+		is_devil_worshiper_trigger = no
+		NOT_mythical_creature_trigger = yes
+	}
+
+	mean_time_to_happen = { 
+		years = 350
+		
+		modifier = {
+			factor = 0.5
+			any_liege = { capital_scope = { religion = rhllor } NOT = { character = ROOT } }
+		}
+		modifier = {
+			factor = 0.5
+			capital_scope = { religion = rhllor }
+		}
+		modifier = {
+			factor = 0.5
+			capital_scope = {
+				region = world_lys			
+			}
+			NAND = {
+				culture_group = valyrian
+				religion = valyrian_rel
+			}
+		}
+		modifier = {
+			factor = 0.2
+			capital_scope = {
+				OR = {
+					region = world_volantis 
+					region = world_myr
+					region = world_pentos
+				}			
+			}
+			NAND = {
+				culture_group = valyrian
+				religion = valyrian_rel
+			}
+		}
+		modifier = { #initial priests after founding
+			factor = 0.05
+			d_rhllor = { has_character_flag = first_red_priest }
+			religion = valyrian_rel
+			NOT = { culture_group = valyrian }
+		}
+	}
+	
+	immediate = {
+		random_playable_ruler = {
+			limit = { 
+				religion = rhllor 
+				capital_scope = { religion = rhllor }
+			}
+			random_list = {
+				50 = {
+					create_character = {
+						min_age = 20
+						max_age = 60
+						religion = rhllor
+						culture = THIS
+						trait = red_priest
+						random_traits = yes
+						dynasty = none
+						female = no
+					}			
+				}
+				50 = {
+					create_character = {
+						min_age = 20
+						max_age = 40
+						religion = rhllor
+						culture = THIS
+						trait = red_priest
+						random_traits = yes
+						dynasty = none
+						female = yes
+					}		
+				}
+			}
+			new_character = {
+				change_stewardship = 2
+				change_intrigue = 4
+				change_diplomacy = 4
+				change_learning = 10
+				move_character = ROOT
+				set_character_flag = red_priest_target
+				if = {
+					limit = { is_female = yes }
+					random = {
+						chance = 5
+						set_character_flag = shadowbinder_magic_knowledge
+					}
+				}
+			}	
+			break = yes
+		}
+		#If no playable rhllor characters create random priest FROM Volantis
+		create_character = {
+			religion = rhllor
+			culture = volantene
+			trait = red_priest
+			random_traits = yes
+			dynasty = none
+			female = no
+		}	
+		new_character = {
+			change_stewardship = 2
+			change_intrigue = 4
+			change_diplomacy = 4
+			change_learning = 10
+			move_character = ROOT
+			set_character_flag = red_priest_target
+		}
+	}
+	option = {
+		name = "EVTOPTAred_priest.1" # Embrace this new religion!
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 5
+				capital_scope = { religion = rhllor }
+			}
+			modifier = {
+				factor = 0
+				trait = zealous
+			}
+			modifier = { 
+				factor = 4
+				religion = valyrian_rel
+				NOT = { culture_group = valyrian }
+			}
+		}
+		tooltip = {
+			if = {
+				limit = { trait = pirate }
+				remove_trait = pirate
+				if = {
+					limit = { government = pirate_government }
+					set_government_type = feudal_government
+				}
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50	
+				add_sympathy_trait_effect = yes
+			}
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes			
+		}
+		random_courtier = {
+			limit = { has_character_flag = red_priest_target }
+			clr_character_flag = red_priest_target
+			tooltip = { show_portrait = yes }
+			ROOT = { religion = PREV }
+		}
+		#custom_tooltip = { text = TOOLTIPCONVERTTORHLLOR }
+	}
+	
+	option = {
+		name = "EVTOPTBred_priest.1" # Have this heretic jailed!
+		trigger = { NOT = { trait = cynical } }
+		ai_chance = {
+			factor = 45
+		}
+		piety = 25
+		if = { 
+			limit = { 
+				NOT = { trait = zealous }
+				NOT = { trait = cynical } 	
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 }  }
+			}
+		}	
+		random_courtier = {
+			limit = { has_character_flag = red_priest_target }
+			clr_character_flag = red_priest_target
+			hidden_tooltip = {
+				d_rhllor = {
+					holder_scope = {
+						reverse_banish = PREVPREV
+					}
+				}
+			}	
+			imprison = ROOT			
+		}
+	}
+		
+	option = {
+		name = "EVTOPTCred_priest.1" # Ignore him.
+		ai_chance = { 
+			factor = 45 
+			modifier = {
+				factor = 10
+				trait = cynical
+			}
+		}
+		random_courtier = {
+			limit = { has_character_flag = red_priest_target }
+			clr_character_flag = red_priest_target
+			tooltip = { show_portrait = yes }	
+		}
+		if = { 
+			limit = { 
+				NOT = { trait = zealous }
+				NOT = { trait = cynical } 	
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify Cynical
+					}
+				}
+			}
+		}		
+	}
+}
+
+#Gain the trait "favored_by_rhllor"
+character_event = {
+	id = red_priest.2
+	desc = "EVTDESCred_priest.2"
+	picture = "GFX_evt_red_priest_approaches"
+	border = "GFX_event_normal_frame_religion"
+	
+	religion = rhllor
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {	
+		piety = 100
+		NOT = { trait = chosen_by_rhllor }
+		NOT = { trait = favored_by_rhllor }
+		is_devil_worshiper_trigger = no
+	}
+	
+	mean_time_to_happen = { 
+		years = 400 
+		
+		#King's Blood
+		modifier = {
+			factor = 0.33
+			OR = {
+				is_feudal_monarch_trigger = yes
+				father_even_if_dead = { is_feudal_monarch_trigger = yes }
+				mother_even_if_dead = { father_even_if_dead = { is_feudal_monarch_trigger = yes } }
+				father_even_if_dead = { father_even_if_dead = { is_feudal_monarch_trigger = yes } }
+				any_claim = { holder_scope = { is_feudal_monarch_trigger = yes } }
+			}	
+		}
+		#Great Warrior
+		modifier = {
+			factor = 0.33
+			trait = master_warrior 
+			martial = 20	
+		}
+		#Awoke Dragons
+		modifier = {
+			factor = 0.33
+			trait = dragon_rider
+		}
+		#Demon Child
+		modifier = {
+			factor = 0.1
+			has_character_flag = demon_child_non_pagan
+		}
+		#Blood of Azor Ahai
+		modifier = {
+			factor = 0.66
+			any_owned_bloodline = { has_bloodline_flag = blood_of_azor_ahai }
+		}
+				
+		modifier = {
+			factor = 3
+			trait = slave
+		}
+		modifier = {
+			factor = 0.8
+			piety = 150
+		}
+		modifier = {
+			factor = 0.8
+			piety = 200
+		}
+		modifier = {
+			factor = 0.8
+			piety = 300
+		}
+		modifier = {
+			factor = 0.85
+			piety = 400
+		}
+		modifier = {
+			factor = 0.85
+			piety = 500
+		}
+		modifier = {
+			factor = 0.85
+			piety = 600
+		}
+		modifier = {
+			factor = 0.85
+			piety = 700
+		}
+		modifier = {
+			factor = 0.85
+			piety = 800
+		}
+		modifier = {
+			factor = 0.85
+			piety = 900
+		}
+		modifier = {
+			factor = 0.85
+			piety = 1000
+		}
+		modifier = {
+			factor = 0.5
+			piety = 1500
+		}
+		modifier = {
+			factor = 0.5
+			piety = 2000
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 3
+			trait = cynical
+		}
+	}
+	
+	
+	option = {
+		name = "EVTOPTAred_priest.2" #Thank the Lord of Light!
+		add_trait = favored_by_rhllor
+	}
+}
+
+#Gain the trait "chosen_by_rhllor"
+narrative_event = {
+	id = red_priest.3
+	desc = "EVTDESCred_priest.3"
+	picture = "GFX_evt_red_priest_approaches"
+	title= "EVTTITLEred_priest.3"
+	
+	only_playable = yes
+	religion = rhllor
+	major = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {		
+		trait = favored_by_rhllor
+		NOT = { trait = chosen_by_rhllor }
+		NOT = { chosen_by_rhllor = { is_alive = yes } }
+		OR = {
+			is_feudal_monarch_trigger = yes #King's Blood
+			father_even_if_dead = { is_feudal_monarch_trigger = yes }
+			mother_even_if_dead = { father_even_if_dead = { is_feudal_monarch_trigger = yes } }
+			father_even_if_dead = { father_even_if_dead = { is_feudal_monarch_trigger = yes } }
+			any_claim = { holder_scope = { is_feudal_monarch_trigger = yes } }
+			AND = { #Great Warrior
+				trait = master_warrior 
+				martial = 20
+			}	
+			trait = dragon_rider #Awoke Dragons
+			character = 1002059 #Why not :)
+			any_owned_bloodline = { has_bloodline_flag = blood_of_azor_ahai }
+		}		
+		is_devil_worshiper_trigger = no
+	}
+	
+	mean_time_to_happen = { 
+		years = 500
+		
+		modifier = { #try not to happen too often
+			factor = 4
+			has_global_flag = chosen_by_rhllor_found
+			NOT = { had_global_flag = { flag = chosen_by_rhllor_found days = 36500 } }
+		}
+		
+		modifier = {
+			factor = 2
+			NOT = { magic_returned_trigger = yes }
+		}
+		modifier = {
+			factor = 0.25
+			has_global_flag = cold_winds
+		}
+		
+		modifier = {
+			factor = 0.25
+			has_character_flag = demon_child_non_pagan
+		}
+		modifier = {
+			factor = 0.66
+			any_owned_bloodline = { has_bloodline_flag = blood_of_azor_ahai }
+		}
+		modifier = {
+			factor = 3
+			trait = slave
+		}
+		modifier = {
+			factor = 0.75
+			trait = dragon_rider
+		}
+		modifier = {
+			factor = 0.75
+			trait = master_warrior
+		}
+		modifier = {
+			factor = 0.75
+			martial = 20
+		}
+		modifier = {
+			factor = 0.25
+			character = 1002059
+		}
+		
+		modifier = {
+			factor = 0.8
+			higher_tier_than = BARON
+		}
+		modifier = {
+			factor = 0.8
+			higher_tier_than = COUNT
+		}
+		modifier = {
+			factor = 0.8
+			higher_tier_than = DUKE
+		}
+		modifier = {
+			factor = 0.8
+			tier = EMPEROR
+		}
+		
+		modifier = {
+			factor = 0.95
+			piety = 300
+		}
+		modifier = {
+			factor = 0.9
+			piety = 400
+		}
+		modifier = {
+			factor = 0.9
+			piety = 500
+		}
+		modifier = {
+			factor = 0.8
+			piety = 600
+		}
+		modifier = {
+			factor = 0.8
+			piety = 700
+		}
+		modifier = {
+			factor = 0.8
+			piety = 800
+		}
+		modifier = {
+			factor = 0.8
+			piety = 900
+		}
+		modifier = {
+			factor = 0.8
+			piety = 1000
+		}
+		modifier = {
+			factor = 0.8
+			piety = 1100
+		}
+		modifier = {
+			factor = 0.8
+			piety = 1200
+		}
+		modifier = {
+			factor = 0.8
+			piety = 1500
+		}
+		modifier = {
+			factor = 0.5
+			piety = 2000
+		}
+		modifier = {
+			factor = 0.75
+			trait = zealous
+		}	
+	}
+
+	
+	option = {
+		name = "EVTOPTAred_priest.3" #For Rhllor!
+		trigger = { character = FROM }
+		ai_chance = { factor = 100 }
+		clr_global_flag = chosen_by_rhllor_found
+		set_global_flag = chosen_by_rhllor_found
+		add_trait = chosen_by_rhllor
+		hidden_tooltip = {
+			remove_trait = favored_by_rhllor  
+			any_owned_bloodline = { #remove existing bloodlines
+				limit = { has_bloodline_flag = blood_of_azor_ahai }
+				remove_bloodline_member = ROOT				
+			}
+			any_dynasty_member_even_if_dead = {
+				limit = { is_descendant_of = ROOT }
+				any_owned_bloodline = { #remove existing bloodlines
+					limit = { has_bloodline_flag = blood_of_azor_ahai }
+					remove_bloodline_member = PREV			
+				}
+			}
+		}	
+		create_bloodline = { 
+			type = blood_of_azor_ahai
+		}					
+	}
+	option = {
+		name = "EVTOPTBred_priest.3" #I am NOT bothered
+		trigger = { NOT = { character = FROM } }
+	}
+}
+
+#Sacrifice someone as an offering to Rhllor
+character_event = {
+	id = red_priest.5
+	desc = "EVTDESCred_priest.5"
+	picture = "GFX_evt_red_priest_approaches"
+	border = "GFX_event_normal_frame_religion"
+	
+	only_playable = yes
+	religion = rhllor
+	min_age = 20
+	
+	trigger = {	
+		OR = {
+			is_feudal = yes
+			is_tribal = yes
+			trait = zealous
+		}
+		capital_scope = { NOT = { has_province_modifier = burned_peasant } }
+	}
+	
+	mean_time_to_happen = {
+		years = 30
+		modifier = {
+			factor = 0.5
+			trait = favored_by_rhllor 
+		}
+		modifier = {
+			factor = 0.33
+			trait = chosen_by_rhllor 
+		}
+	}
+	
+	immediate = {
+		random_courtier = { 
+			limit = { 
+				host = { character = ROOT }
+				OR = { #reasons to target courtier
+					prisoner = yes #prisoner
+					
+					#Unbeliever priest
+					AND = {
+						has_priest_trait_trigger = yes
+						NOT = { trait = red_priest }
+					}	
+					
+					#kings blood
+					is_feudal_monarch_trigger = yes
+					any_claim = { holder_scope = { is_feudal_monarch_trigger = yes } }
+					any_heir_title = { holder_scope = { is_feudal_monarch_trigger = yes } }
+					father_even_if_dead = { is_feudal_monarch_trigger = yes }
+					mother_even_if_dead = { is_feudal_monarch_trigger = yes }
+					
+					#Blasphemous unbeliever
+					AND = {
+						NOT = { religion = rhllor }
+						trait = zealous
+					}
+				}
+				ai = yes
+				NOT = { is_close_relative = ROOT }
+				NOT = { trait = dragon }
+			}
+			save_event_target_as = burning_target
+		}
+		#Find temple
+		random_vassal = {
+			limit = {
+				NOT = { religion = ROOT }
+				NOR = {
+					religion = old_gods_reformed
+					religion = old_gods
+				}	
+				any_demesne_title = {
+					tier = BARON
+					location = { owner = { character = ROOT } }
+					holding_type = temple
+					NOT = { has_holding_modifier = burned_for_rhllor }
+				}
+			}
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+					location = { owner = { character = ROOT } }
+					holding_type = temple
+					NOT = { has_holding_modifier = burned_for_rhllor }
+				}
+				save_event_target_as = burn_temple
+			}
+		}
+		#Find Godswood
+		random_demesne_title = {
+			limit = {
+				tier = BARON
+				holding_type = temple
+				has_building = tp_weirwood_tree
+			}
+			save_event_target_as = burn_godswood
+		}
+		random_vassal = {
+			limit = {			
+				any_demesne_title = {
+					tier = BARON
+					location = { owner = { character = ROOT } }
+					holding_type = temple
+					has_building = tp_weirwood_tree
+				}
+			}
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+					location = { owner = { character = ROOT } }
+					holding_type = temple
+					has_building = tp_weirwood_tree
+				}
+				save_event_target_as = burn_godswood
+			}
+		}
+	}
+	
+	option = {  #Sacrifice one of my courtiers.
+		name = {
+			text = "EVTOPTAred_priest.5" 
+			trigger = {
+				event_target:burning_target = { prisoner = yes }
+			}
+		}	
+		name = {
+			text = "EVTOPTAred_priest.5B" 
+			trigger = {
+				event_target:burning_target = {
+					OR = { #reasons to target courtier
+						#Unbeliever priest
+						AND = {
+							has_priest_trait_trigger = yes
+							NOT = { trait = red_priest }
+						}		
+						#Blasphemous unbeliever
+						AND = {
+							NOT = { religion = rhllor }
+							trait = zealous
+						}
+					}
+				}	
+			}
+		}
+		name = {
+			text = "EVTOPTAred_priest.5C" 
+			trigger = {
+				event_target:burning_target = { 
+					OR = {
+						is_feudal_monarch_trigger = yes
+						any_claim = { holder_scope = { is_feudal_monarch_trigger = yes } }
+						any_heir_title = { holder_scope = { is_feudal_monarch_trigger = yes } }
+						father_even_if_dead = { is_feudal_monarch_trigger = yes }
+						mother_even_if_dead = { is_feudal_monarch_trigger = yes }
+					}
+				}
+			}
+		}
+		trigger = {
+			event_target:burning_target = { always = yes }
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 0.05
+				event_target:burning_target = {
+					OR = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+					}	
+				}
+			}
+			modifier = {
+				factor = 0.5
+				event_target:burning_target = {
+					is_ruler = yes
+				}
+			}
+			modifier = {
+				factor = 0.5
+				event_target:burning_target = {
+					OR = {
+						is_voter = yes
+						is_councillor = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:burning_target = {
+					NOT = { reverse_opinion = { who = ROOT value = -75 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:burning_target = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:burning_target = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:burning_target = {
+					NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:burning_target = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 0
+				event_target:burning_target = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = fire_obsessed
+			}
+		}	
+		event_target:burning_target = {
+			hidden_tooltip = { 
+				ROOT = { 
+					save_event_target_as = executioner 
+				}
+				character_event = { id = 45342 } #Universal execution event	
+			}
+			tooltip = { show_portrait = yes }
+			death = {
+				death_reason = death_sacrificed_rhllor
+				killer = ROOT
+			}			
+		}
+		piety = 100	
+		if = { 
+			limit = { NOT = { trait = fire_obsessed } }
+			random = {
+				chance = 10
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 }  }
+			}
+		}	
+		custom_tooltip = {
+			text = TOOLTIPred_priest.5CRUEL
+			hidden_tooltip = {
+				any_vassal = {
+					limit = { 
+						NOT = { religion = rhllor } 
+						age = 12
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_burned_a_prisoner
+					}
+				}
+				any_courtier = {
+					limit = { 
+						NOT = { religion = rhllor } 
+						age = 12
+						NOT = { trait = dragon } 
+						is_ruler = no
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_burned_a_prisoner
+					}
+				}
+				any_independent_ruler = {
+					limit = { 
+						NOT = { religion = rhllor } 
+						age = 12
+						has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } 
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_burned_a_prisoner
+					}
+				}
+			}
+		}	
+		event_target:burning_target = { increase_red_god_magic = yes }
+ 	}
+
+	option = { 
+		name = "EVTOPTBred_priest.5" #Sacrifice some random peasant. 
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 1.75
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = fire_obsessed
+			}
+		}		
+		capital_scope = {
+			add_province_modifier = {
+				name = burned_peasant
+				duration = 730
+			}
+		}
+		piety = 50
+		custom_tooltip = { text = CUSTOMTOOLTIPredgod_nosacrafice }
+		if = { 
+			limit = { NOT = { trait = fire_obsessed } }
+			random = {
+				chance = 10
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 }  }
+			}
+		}	
+ 	}
+	option = { 
+		name = "EVTOPTDred_priest.5" #Burn Godswood
+		trigger = {
+			event_target:burn_godswood = { always = yes }
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 1.75
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = fire_obsessed
+			}
+		}
+		event_target:burn_godswood = {
+			if = {
+				limit = {
+					has_building = tp_godswood_forest
+				}
+				remove_building = tp_godswood_forest
+			}
+			if = {
+				limit = {
+					has_building = tp_large_godswood
+					NOT = { has_building = tp_godswood_forest }
+				}
+				remove_building = tp_large_godswood
+			}
+			if = {
+				limit = {
+					has_building = tp_godswood
+					NOT = { has_building = tp_large_godswood }
+				}
+				remove_building = tp_godswood
+			}
+			if = {
+				limit = {
+					has_building = tp_small_godswood
+					NOT = { has_building = tp_godswood }
+				}
+				remove_building = tp_small_godswood
+			}
+			if = {
+				limit = {
+					NOT = { has_building = tp_small_godswood }
+				}
+				remove_building = tp_weirwood_tree
+			}
+		}
+		piety = 100
+		change_variable = { which = "red_god_magic" value = 2 }
+		if = { 
+			limit = { NOT = { trait = fire_obsessed } }
+			random = {
+				chance = 10
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 }  }
+			}
+		}	
+		event_target:burn_godswood = {
+			location = {
+				if = {
+					limit = {
+						is_old_gods_religion_trigger = yes
+					}
+					add_province_modifier = {
+						name = religious_unrest
+						duration = 1825
+					}
+				}
+				hidden_tooltip = {
+					any_neighbor_province = {
+						limit = {
+							is_old_gods_religion_trigger = yes
+							owner = {
+								OR = {
+									character = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+						}
+						add_province_modifier = {
+							name = religious_unrest
+							duration = 1825
+						}
+					}
+				}	
+			}
+			holder_scope = {
+				if = {
+					limit = {
+						is_old_gods_religion_trigger = yes
+					}
+					hidden_tooltip = {
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+							multiplier = 2
+						}
+					}
+					event_target:burn_godswood = { gain_title = ROOT }
+				}
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPred_priest.5BURNEDGODSWOOD
+			hidden_tooltip = {
+				any_courtier = {
+					limit = { 
+						is_old_gods_religion_trigger = yes
+						is_ruler = no
+						age = 12
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+							multiplier = 2
+						}
+					}
+				}
+				any_vassal = {
+					limit = { 
+						is_old_gods_religion_trigger = yes
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+							multiplier = 2
+						}
+					}
+				}
+				any_independent_ruler = {
+					limit = { 
+						is_old_gods_religion_trigger = yes
+						OR = {
+							has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } 
+							culture_group = ROOT
+						}
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+							multiplier = 2
+						}
+					}
+				}
+			}
+		}
+ 	}		
+	option = { 
+		name = "EVTOPTEred_priest.5" #Burn Temple
+		trigger = {
+			event_target:burn_temple = { always = yes }
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 1.75
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = fire_obsessed
+			}
+		}
+		event_target:burn_temple = {
+			add_holding_modifier = {
+				name = burned_for_rhllor
+				duration = 5475
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_6
+				}
+				remove_building = tp_monastery_6
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_5
+					NOT = { has_building = tp_monastery_6 }
+				}
+				remove_building = tp_monastery_5
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_4
+					NOT = { has_building = tp_monastery_5 }
+				}
+				remove_building = tp_monastery_4
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_3
+					NOT = { has_building = tp_monastery_4 }
+				}
+				remove_building = tp_monastery_3
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_2
+					NOT = { has_building = tp_monastery_3 }
+				}
+				remove_building = tp_monastery_2
+			}
+			if = {
+				limit = {
+					has_building = tp_monastery_1
+					NOT = { has_building = tp_monastery_2 }
+				}
+				remove_building = tp_monastery_1
+			}
+			hidden_tooltip = {
+				remove_building = tp_wall_q_1
+				remove_building = tp_barracks_1
+				remove_building = tp_elite_barracks_1
+			}
+		}
+		piety = 100
+		change_variable = { which = "red_god_magic" value = 2 }
+		if = { 
+			limit = { NOT = { trait = fire_obsessed } }
+			random = {
+				chance = 10
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 }  }
+			}
+		}	
+		event_target:burn_temple = {
+			location = {
+				if = {
+					limit = {
+						event_target:burn_temple = { holder_scope = { religion = PREVPREV } }
+					}
+					add_province_modifier = {
+						name = religious_unrest
+						duration = 1825
+					}
+				}
+				hidden_tooltip = {
+					any_neighbor_province = {
+						limit = {
+							event_target:burn_temple = { holder_scope = { religion = PREVPREV } }
+							owner = {
+								OR = {
+									character = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+						}
+						add_province_modifier = {
+							name = religious_unrest
+							duration = 1825
+						}
+					}
+				}	
+			}
+			holder_scope = {
+				hidden_tooltip = {
+					opinion = {
+						who = ROOT
+						modifier = opinion_burned_temple
+						multiplier = 2
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPred_priest.5BURNEDTEMPLE
+			hidden_tooltip = {
+				any_courtier = {
+					limit = { 
+						event_target:burn_temple = { holder_scope = { religion = PREVPREV } }
+						is_ruler = no
+						age = 12
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_temple
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_temple
+							multiplier = 2
+						}
+					}	
+				}
+				any_vassal = {
+					limit = { 
+						event_target:burn_temple = { holder_scope = { religion = PREVPREV } } 
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_temple
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_temple
+							multiplier = 2
+						}
+					}
+				}
+				any_independent_ruler = {
+					limit = { 
+						event_target:burn_temple = { holder_scope = { religion = PREVPREV } } 
+						OR = {
+							has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } 
+							culture_group = ROOT
+						}
+					}
+					if = {
+						limit = { NOT = { trait = zealous } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+						}
+					}	
+					if = {
+						limit = { trait = zealous }
+						opinion = {
+							who = ROOT
+							modifier = opinion_burned_godswood
+							multiplier = 2
+						}
+					}
+				}
+			}
+		}
+		event_target:burn_temple = { gain_title = ROOT }
+ 	}
+	option = { 
+		name = "EVTOPTCred_priest.5" #Defy your god! 
+		ai_chance = { 
+			factor = 40
+			modifier = {
+				factor = 10
+				is_devil_worshiper_trigger = yes
+			}		
+			modifier = {
+				factor = 0.25
+				trait = favored_by_rhllor
+			}
+			modifier = {
+				factor = 0
+				trait = chosen_by_rhllor
+			}
+		}
+		if = {
+			limit = { is_devil_worshiper_trigger = yes }
+			add_society_currency_minor_effect = yes
+		}
+		if = {
+			limit = { trait = favored_by_rhllor }
+			remove_trait = favored_by_rhllor 
+		}
+		if = {
+			limit = { trait = chosen_by_rhllor }
+			remove_trait = chosen_by_rhllor
+		}		
+		piety = -75
+		custom_tooltip = {
+			text = TOOLTIPred_priest.5UNZEALOUS
+			hidden_tooltip = {
+				any_courtier = {
+					limit = { 
+						religion = rhllor 
+						is_ruler = no
+						age = 12
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_unzealous
+					}
+				}
+				any_vassal = {
+					limit = { 
+						religion = rhllor 
+						age = 12
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_unzealous
+					}
+				}
+			}
+		}	
+ 	}	
+}
+
+#Red Priest Magic Can Kill an Enemy, Nope! Shadowbinder magic can kill an enemy :P
+character_event = {
+	id = red_priest.699
+	desc = "EVTDESCred_priest.6"	
+	picture = "GFX_evt_shadowbinder"
+	border = "GFX_event_normal_frame_religion"
+	
+	hide_window = yes
+	only_playable = yes
+	is_part_of_plot = yes
+	min_age = 16
+	only_men = yes
+	
+	trigger = { 
+		has_plot = plot_kill_character
+		any_courtier = {
+			is_female = yes
+			OR = {
+				trait = shadowbinder
+				has_character_flag = shadowbinder_magic_knowledge
+			}
+			prisoner = no
+			is_incapable = no
+			opinion = { who = ROOT value = 0 }
+		}
+		NOT = { has_character_flag = no_rhollor_magic }
+		piety = 200
+		OR = {
+			trait = chosen_by_rhllor
+			piety = 1000
+		}
+		plot_target_char = {
+			OR = {
+				NOT = { has_character_flag = shadow_baby_valyrian_steel }
+				had_character_flag = { flag = shadow_baby_valyrian_steel days = 2000 }
+			}
+		}
+	}
+	
+	mean_time_to_happen = { days = 60 }
+	
+	immediate = { 
+		plot_target_char = { save_event_target_as = shadow_baby_target }
+		character_event = { id = red_priest.6 } 
+	}
+	
+	option = { 
+		name = OK
+	}
+}	
+character_event = {
+	id = red_priest.6
+	desc = "EVTDESCred_priest.6"	
+	picture = "GFX_evt_shadowbinder"
+	border = "GFX_event_normal_frame_religion"
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		event_target:shadow_baby_target = { is_alive = yes }
+		any_courtier = {
+			is_female = yes
+			OR = {
+				trait = shadowbinder
+				has_character_flag = shadowbinder_magic_knowledge
+			}
+			prisoner = no
+			is_incapable = no
+			opinion = { who = ROOT value = 0 }
+		}
+	}
+	
+	immediate = {
+		random_courtier = {
+			limit = {
+				is_female = yes
+				OR = {
+					trait = shadowbinder
+					has_character_flag = shadowbinder_magic_knowledge
+				}
+				prisoner = no
+				is_incapable = no
+				opinion = { who = ROOT value = 0 }
+			}	
+			save_event_target_as = shadowbinder_target
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTAred_priest.6" #Kill my enemy!
+		ai_chance = { 
+			factor = 80 
+			
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = honest
+				NOT = { character = 4317 }
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+		piety = -200
+		health = -2
+		if = {
+			limit = { 
+				event_target:shadow_baby_target = { character = 5317 }
+				has_character_flag = shadow_baby_ftw 
+			}
+			clr_character_flag = shadow_baby_ftw 
+			event_target:shadow_baby_target = {
+				narrative_event = { id = clash_of_kings.62 tooltip = "EVTTOOLTIPred_priest.7" days = 1 } 
+			} 	
+		}	
+		else = {
+			set_character_flag = murder_in_motion
+			random_list = {
+				85 = {
+					event_target:shadow_baby_target = { character_event = { id = red_priest.7 tooltip = "EVTTOOLTIPred_priest.7" days = 1 } } 
+				}
+				15 = {
+					event_target:shadow_baby_target = { character_event = { id = red_priest.8 tooltip = "EVTTOOLTIPred_priest.8" days = 1 } } 
+				}			
+			}	
+		}		
+		if = { 
+			limit = { NOT = { trait = zealous } }
+			random = {
+				chance = 25
+				if = {
+					limit = { trait = cynical }
+					remove_trait = cynical
+				}
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 }  }
+			}
+		}	
+		if = { 
+			limit = { NOT = { trait = lunatic } }
+			random = {
+				chance = 10
+				add_trait = lunatic 
+				hidden_tooltip = { character_event = { id = 38304 }  }
+			}
+		}	
+ 	}
+	option = { 
+		name = "EVTOPTBred_priest.6" #I will not stoop to that level!
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 4
+				NOT = { health = 3 }
+			}
+			modifier = {
+				factor = 6
+				NOT = { health = 2 }
+			}
+			modifier = {
+				factor = 8
+				NOT = { health = 1 }
+			}
+		}
+		event_target:shadowbinder_target = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 2
+			}
+		}
+		set_character_flag = no_rhollor_magic
+		clr_character_flag = shadow_baby_ftw 
+ 	}
+}	
+#Inform killed by red priest
+character_event = {
+	id = red_priest.7
+	desc = "EVTDESCred_priest.7"	
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #find sword for loc
+			limit = { ai = no }
+			random_artifact = {
+				limit = {
+					OR = {
+						has_artifact_flag = valyrian_steel 
+						artifact_type = lightbringer
+					}
+				}
+				save_event_target_as = valyrian_steel_sword
+			}	
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTAred_priest.7"
+		trigger = {
+			OR = {
+				NOT = {
+					any_artifact = { 
+						OR = {
+							has_artifact_flag = valyrian_steel 
+							artifact_type = lightbringer
+						}	
+					}
+				}
+				NOT = { age = 12 }
+				is_incapable = yes
+				prisoner = yes
+			}	
+		}
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = {
+			death_reason = death_murder_unknown_shadow
+			killer = FROM
+		}
+ 	}
+	
+	option = { 
+		name = "EVTOPTBred_priest.7"
+		trigger = {
+			any_artifact = { 
+				OR = {
+					has_artifact_flag = valyrian_steel 
+					artifact_type = lightbringer
+				}	
+			}
+			age = 12
+			is_incapable = no
+			prisoner = no
+		}
+		tooltip_info = valyrian_steel
+		random_list = {
+			80 = {
+				character_event = { id = red_priest.10 tooltip = TOOLTIPred_priest.10 }
+				hidden_tooltip = { FROM = { character_event = { id = red_priest.11 } } }
+			}
+			20 = {
+				FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_unknown_shadow
+					killer = FROM
+				}
+			}			
+		}	
+ 	}
+}	
+#Inform killed by red priest + discovered
+character_event = {
+	id = red_priest.8
+	desc = "EVTDESCred_priest.8"	
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAred_priest.8"
+		trigger = {
+			OR = {
+				NOT = {
+					any_artifact = { 
+						OR = {
+							has_artifact_flag = valyrian_steel 
+							artifact_type = lightbringer
+						}	
+					}
+				}
+				NOT = { age = 12 }
+				is_incapable = yes
+				prisoner = yes
+			}	
+		}
+		hidden_tooltip = { 
+			save_event_target_as = target_victim
+			FROM = { 
+				set_character_flag = murder_event_override
+				character_event = { id = 10 } # Consequences of discovery
+				character_event = { id = red_priest.9 } 
+			} 
+			clear_event_target = target_victim
+		}
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = {
+			death_reason = death_murder_shadow
+			killer = FROM
+		}		
+ 	}
+	option = { 
+		name = "EVTOPTBred_priest.7"
+		trigger = {
+			any_artifact = { 
+				OR = {
+					has_artifact_flag = valyrian_steel 
+					artifact_type = lightbringer
+				}	
+			}
+			age = 12
+			is_incapable = no
+			prisoner = no
+		}
+		tooltip_info = valyrian_steel
+		random_list = {
+			80 = {
+				hidden_tooltip = { 
+					save_event_target_as = target_victim
+					FROM = { 
+						set_character_flag = murder_event_override
+						character_event = { id = 11 } # Consequences of discovery
+					} 
+					clear_event_target = target_victim
+				}
+				character_event = { id = red_priest.10 tooltip = TOOLTIPred_priest.10 }
+				
+			}
+			20 = {
+				hidden_tooltip = { 
+					save_event_target_as = target_victim
+					FROM = { 
+						set_character_flag = murder_event_override
+						character_event = { id = 10 } # Consequences of discovery
+					} 
+					clear_event_target = target_victim
+				}
+				FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_shadow
+					killer = FROM
+				}
+			}			
+		}	
+		hidden_tooltip = { 
+			FROM = { 
+				set_character_flag = valyrian_steel_shadow_counter
+				character_event = { id = red_priest.9 } 
+			} 
+		}
+ 	}
+}	
+# Falling Accident - Notification: Success, but discovered
+character_event = {
+	id = red_priest.9	
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		trigger = { NOT = { has_character_flag = valyrian_steel_shadow_counter } }
+		text = "EVTDESCred_priest.9"
+	}
+	desc = {
+		trigger = { has_character_flag = valyrian_steel_shadow_counter }
+		text = "EVTDESCred_priest.9B"
+	}
+	
+	immediate = {
+		if = { #find sword for loc
+			limit = { ai = no }
+			FROM = {
+				random_artifact = {
+					limit = {
+						OR = {
+							has_artifact_flag = valyrian_steel 
+							artifact_type = lightbringer
+						}
+					}
+					save_event_target_as = valyrian_steel_sword
+				}	
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.9"
+		if = {
+			limit = {
+				NOT = { trait = deceitful }
+				NOT = { trait = honest }
+				NOT = { trait = honorable }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = deceitful
+				hidden_tooltip = {
+					character_event = {
+						id = 38255 #Notify Deceitful
+					}
+				}				
+			}	
+		}		
+		if = {
+			limit = { trait = honest }
+			remove_trait = honest
+		}	
+		if = {
+			limit = { trait = honorable }
+			remove_trait = honorable
+		}
+		if = {
+			limit = { NOT = { has_cutthroat_religion_trigger = yes } }
+			tooltip = { change_variable = { which = "dishonorable" value = 10 } }
+		}
+		clr_character_flag = valyrian_steel_shadow_counter
+	}
+}
+
+character_event = { #used valyrian steel to survive attack
+	id = red_priest.10
+	desc = "EVTDESCred_priest.10"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #find sword for loc
+			limit = { ai = no }
+			random_artifact = {
+				limit = {
+					OR = {
+						has_artifact_flag = valyrian_steel 
+						artifact_type = lightbringer
+					}
+				}
+				save_event_target_as = valyrian_steel_sword
+			}	
+		}
+	}
+
+	option = {
+		name = "EVTOPTAred_priest.10"
+		set_character_flag = shadow_baby_valyrian_steel
+	}
+}
+character_event = { #target used valyrian steel to survive attack
+	id = red_priest.11
+	desc = "EVTDESCred_priest.11"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	immediate = {
+		if = { #find sword for loc
+			limit = { ai = no }
+			FROM = {
+				random_artifact = {
+					limit = {
+						OR = {
+							has_artifact_flag = valyrian_steel 
+							artifact_type = lightbringer
+						}
+					}
+					save_event_target_as = valyrian_steel_sword
+				}	
+			}	
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAred_priest.11"
+	}
+}
+
+# From approaches me and asks if I would like my ailments cured. All I need to do is believe in the red god.
+character_event = {
+	id = red_priest.13
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	desc = {
+		text = "EVTDESCred_priest.13"
+		trigger = { 
+			FROMFROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.13B"
+		trigger = {
+			FROMFROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.13C"
+		trigger = {
+			FROMFROM = { has_dark_magic_religion_trigger = yes } 
+		}
+	}
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = { NOT = { trait = dragon } }
+
+	option = { #yes
+		name = {
+			text  = "EVTOPTAred_priest.13"
+			trigger = { 
+				FROMFROM = { religion = rhllor } 
+			}
+		}	
+		name = {
+			text  = "EVTOPTAred_priest.13B"
+			trigger = { 
+				FROMFROM = { religion = qarth_warlocks } 
+			}
+		}
+		name = {
+			text  = "EVTOPTAred_priest.13C"
+			trigger = { 
+				FROMFROM = { has_dark_magic_religion_trigger = yes } 
+			}
+		}
+		ai_chance = {
+			factor = 50 ##powerful healing less likely refused
+			modifier = {
+				factor = 100
+				religion = FROMFROM
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { religion = FROMFROM }
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.2
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.66
+				trait = paranoid
+			}
+			modifier = {
+				factor = 1.5
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.66
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			
+			modifier = {
+				factor = 0.75
+				higher_tier_than = BARON
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.5
+				higher_tier_than = COUNT
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.25
+				higher_tier_than = DUKE
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.1
+				tier = EMPEROR
+			}
+			modifier = {
+				factor = 2
+				liege = { character = FROMFROM }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 75 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 25 }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { opinion = { who = FROMFROM value = -25 } }
+			}
+			modifier = {
+				factor = 0
+				NOT = { opinion = { who = FROMFROM value = -50 } }
+			}
+		}
+		FROMFROM = {
+			job_spiritual = {
+				random_list = {
+					100 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicSUCCESS
+							hidden_tooltip = {
+								hidden_tooltip = { liege = { character_event = { id = red_priest.30 } } }
+							}
+						}
+						modifier = {
+							factor = 0.25
+							NOT = { magic_returned_trigger = yes }
+						}
+						modifier = {
+							factor = 2
+							liege = { trait = chosen_by_rhllor }
+						}
+						modifier = {
+							factor = 2
+							trait = chosen_by_rhllor
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							learning = 12
+						}
+						modifier = {
+							factor = 1.5
+							learning = 16
+						}
+						modifier = {
+							factor = 1.5
+							learning = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 12
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 16
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 0 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 50 }
+						}
+						modifier = {
+							factor = 1.5
+							piety = 150
+						}
+						modifier = {
+							factor = 1.5
+							piety = 250
+						}
+						modifier = {
+							factor = 1.5
+							piety = 400
+						}
+						modifier = {
+							factor = 1.5
+							piety = 600
+						}	
+					}
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicFAIL
+							hidden_tooltip = {
+								hidden_tooltip = { liege = { character_event = { id = red_priest.31 } } }
+							}
+						}	
+					}
+				}
+			}
+		}
+		
+	}
+
+	option = { #refuse conversion and gift
+		name = "EVTOPTBred_priest.13"
+		ai_chance = {
+			factor = 50
+		}
+		piety = 50
+		FROMFROM = { character_event = { id = red_priest.16 } }
+		reverse_opinion = {
+			modifier = opinion_refused_convert
+			who = FROMFROM
+			months = 120
+		}	
+	}
+}
+
+# From approaches me and asks if I would like my ailments and disfigurements cured. All I need to do is believe in the red god.
+character_event = {
+	id = red_priest.14
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	desc = {
+		text = "EVTDESCred_priest.14"
+		trigger = { 
+			FROMFROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.14B"
+		trigger = {
+			FROMFROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.14C"
+		trigger = {
+			FROMFROM = { has_dark_magic_religion_trigger = yes } 
+		}
+	}
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = { NOT = { trait = dragon } }
+
+	option = {
+		name = "EVTOPTAred_priest.13"
+		ai_chance = {
+			factor = 100 ##Super healing is less likely refused
+			modifier = {
+				factor = 100
+				religion = FROMFROM
+			}
+			modifier = {
+				factor = 0
+				NOT = { religion = FROMFROM }
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.2
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.66
+				trait = paranoid
+			}
+			modifier = {
+				factor = 1.5
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.66
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			
+			modifier = {
+				factor = 0.75
+				higher_tier_than = BARON
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.5
+				higher_tier_than = COUNT
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.25
+				higher_tier_than = DUKE
+				NOT = { liege = { character = FROMFROM } }
+			}
+			modifier = {
+				factor = 0.1
+				tier = EMPEROR
+			}
+			modifier = {
+				factor = 2
+				liege = { character = FROMFROM }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 75 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 25 }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { opinion = { who = FROMFROM value = -25 } }
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { opinion = { who = FROMFROM value = -50 } }
+			}
+		}
+		FROMFROM = {
+			job_spiritual = {
+				random_list = {
+					100 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicSUCCESS
+							hidden_tooltip = {
+								hidden_tooltip = { liege = { character_event = { id = red_priest.34 } } }
+							}
+						}
+						modifier = {
+							factor = 0.25
+							NOT = { magic_returned_trigger = yes }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							learning = 12
+						}
+						modifier = {
+							factor = 1.5
+							learning = 16
+						}
+						modifier = {
+							factor = 1.5
+							learning = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 12
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 16
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 0 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 50 }
+						}
+						modifier = {
+							factor = 1.5
+							piety = 150
+						}
+						modifier = {
+							factor = 1.5
+							piety = 250
+						}
+						modifier = {
+							factor = 1.5
+							piety = 400
+						}
+						modifier = {
+							factor = 1.5
+							piety = 600
+						}	
+					}
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicFAIL
+							hidden_tooltip = {
+								hidden_tooltip = { liege = { character_event = { id = red_priest.35 } } }
+							}
+						}	
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTBred_priest.13"
+		ai_chance = {
+			factor = 25
+		}
+		piety = 100
+		FROMFROM = { character_event = { id = red_priest.16 } }
+		reverse_opinion = {
+			modifier = opinion_refused_convert
+			who = FROMFROM
+			months = 120
+		}
+		
+	}
+}
+
+# # Inform Converted.
+# character_event = {
+	# id = red_priest.15
+	# desc = "EVTDESCred_priest.15"
+	# picture = GFX_evt_shadowy_cabal
+	# border = GFX_event_normal_frame_intrigue
+	
+	# is_triggered_only = yes
+
+	# option = {
+		# name = "EVTOPTAred_priest.15"
+		# piety = 50
+	# }
+# }
+
+# Inform refused healing and conversion.
+character_event = {
+	id = red_priest.16
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	desc = {
+		text = "EVTDESCred_priest.16"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.16B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.16C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAred_priest.16"
+		piety = -50
+		if = {
+			limit = { religion = rhllor }
+			change_variable = { which = "red_god_magic" value = 1 }
+		}	
+		else = {
+			change_variable = { which = "warlock_magic" value = 1 }
+		}
+	}
+}
+
+#My red priest FROM has a plan to expediate province conversion
+character_event = {
+	id = red_priest.18
+	desc = "EVTDESCred_priest.18"
+	picture = GFX_evt_red_priest_approaches
+	border = GFX_event_normal_frame_intrigue
+	
+	only_playable = yes
+	religion = rhllor
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		trait = chosen_by_rhllor
+		NOT = { has_artifact = lightbringer }
+		job_spiritual = {
+			trait = red_priest
+			OR = { 
+				has_job_action = action_inquisition
+				has_job_action = action_charity
+			}		
+			location = {
+				owner = { character = ROOT }
+			}
+		}	
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+		modifier = {
+			factor = 1.25
+			job_spiritual = { NOT = { learning = 2 } }
+		}
+		modifier = {
+			factor = 1.25
+			job_spiritual = { NOT = { learning = 3 } }
+		}
+		modifier = {
+			factor = 1.25
+			job_spiritual = { NOT = { learning = 4 } }
+		}
+		modifier = {
+			factor = 1.25
+			job_spiritual = { NOT = { learning = 5 } }
+		}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { learning = 10 }
+		}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { learning = 11 }
+		}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { learning = 12 }
+		}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { learning = 14 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 16 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 18 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 20 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 22 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 24 }
+		}
+		modifier = {
+			factor = 0.90
+			job_spiritual = { learning = 26 }
+		}
+		#modifier = {
+		#	factor = 2.0
+		#	NOT = { religion_authority = 0.4 }
+		#}
+		#modifier = {
+		#	factor = 4.0
+		#	NOT = { religion_authority = 0.2 }
+		#}
+		#modifier = {
+		#	factor = 0.75
+		#	religion_authority = 0.6
+		#}
+		#modifier = {
+		#	factor = 0.75
+		#	religion_authority = 0.8
+		#}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { location = { has_province_modifier = force_converting } }
+		}
+		modifier = {
+			factor = 0.75
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.75
+			job_spiritual = { trait = zealous }
+		}
+		modifier = {
+			factor = 2.0
+			job_spiritual = { location = { has_province_modifier = heretic_stronghold } }
+		}
+	}
+	
+	immediate = { job_spiritual = { save_event_target_as = rhllor_priest } }
+
+	option = { #Yes
+		name = "EVTOPTAred_priest.18"
+		add_artifact = lightbringer
+		wealth = -100
+		event_target:rhllor_priest = {
+			location = {
+				religion = rhllor
+				hidden_tooltip = { 
+					any_province_character = { 
+						limit = {
+							NOT = { character = ROOT }
+							NOT = { character = event_target:rhllor_priest }
+							NOT = { trait = dragon }
+						}
+						character_event = { id = red_priest.19 } 
+					} 
+				}
+			}
+		}
+		hidden_tooltip = { 
+			any_courtier = {
+				limit = { 
+					NOT = { at_location = event_target:rhllor_priest }
+					NOT = { character = ROOT }
+					NOT = { character = event_target:rhllor_priest }
+					NOT = { trait = dragon }
+				}
+				character_event = { id = red_priest.19 }
+			}
+		}	
+		custom_tooltip = { text = CUSTOMTOOLTIPmassrhllorconversion }##Everyone at this location will be radicalized, R'hllor followers will become zealous and all but the most devout heretics will be converted.
+		if = {
+			limit = {
+				top_liege = {
+					NOT = { character = ROOT }
+					religion = ROOT
+				}
+			}
+			top_liege = { letter_event = { id = 20001 } }
+		}
+	}
+
+	option = { #No but has wealth
+		name = "EVTOPTBred_priest.18"
+		ai_chance = { factor = 0 }
+		piety = -500
+	}
+}
+
+#I witnessed FROM, chosen by Rhllod pull Lightbringer FROM the flames
+character_event = {
+	id = red_priest.19
+	desc = "EVTDESCred_priest.19"
+	picture = GFX_evt_red_priest_approaches
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	
+	is_triggered_only = yes
+
+	option = { #Rhllor followers become zealous
+		name = "EVTOPTAred_priest.19"
+		trigger = { religion = rhllor }
+		if = {
+			limit = { trait = cynical }
+			remove_trait = cynical
+		}
+		else_if = {
+			limit = { NOT = { trait = zealous } }
+			random = {
+				chance = 50
+				add_trait = zealous
+				hidden_tooltip = {
+					character_event = {
+						id = 38269 #Notify Zealous
+					}
+				}
+			}	
+		}	
+		opinion = {
+			modifier = zealous_pos
+			who = FROM
+		}
+	}
+
+	option = { #Non Rhllor becomes rhllor if NOT zealous
+		name = "EVTOPTBred_priest.19"
+		trigger = { 
+			NOT = { religion = rhllor } 
+			NOT = { trait = zealous } 
+		}
+		opinion = {
+			modifier = zealous_pos
+			who = FROM
+		}
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes	
+			}
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes				
+		}
+		if = {
+			limit = { is_devil_worshiper_trigger = yes }
+			leave_society = yes
+		}
+		religion = rhllor
+	}
+
+	option = { #no 
+		name = "EVTOPTCred_priest.19"
+		trigger = { 
+			NOT = { religion = rhllor }
+			trait = zealous
+			ai = yes
+		}
+		opinion = {
+			modifier = zealous_neg
+			who = FROM
+		}
+	}
+
+	option = { #no dont force player
+		name = "EVTOPTDred_priest.19"
+		trigger = { 
+			ai = no
+		}
+		opinion = {
+			modifier = zealous_neg
+			who = FROM
+		}
+	}
+}
+
+# #From scope adjusting because im retarded noob
+# character_event = {
+	# id = red_priest.21
+	# desc = "EVTDESCred_priest.21"
+	# picture = GFX_evt_red_priest_approaches
+	# border = GFX_event_normal_frame_intrigue
+	
+	# is_triggered_only = yes
+	# option = {
+		# name = "EVTOPTAred_priest.21"
+		# FROM = { character_event = { id = red_priest.20 } }
+	# }
+# }
+
+# #What will you bestow upon FROM (rhllor action list) FROM (actions) FROM ?
+# character_event = {
+	# id = red_priest.20
+	# desc = "EVTDESCred_priest.20"
+	# picture = GFX_evt_red_priest_approaches
+	# border = GFX_event_normal_frame_intrigue
+	
+	# is_triggered_only = yes
+
+	# option = { ##Protect FROM Plot
+		# name = "EVTOPTAred_priest.20"
+		# trigger = { FROM = { NOT = { has_character_flag = redgod_protection_plot } } }
+		# change_variable = { which = "red_god_magic" value = -1 }
+		# FROM = { 
+			# character_event = { id = red_priest.11 } #inform
+			# set_character_flag = redgod_protection_plot
+			# opinion = {
+				# modifier = opinion_protected_me
+				# who = ROOT
+				# years = 10
+			# }		
+		# }
+		# hidden_tooltip = {
+			# FROM = { remove_opinion = { who = ROOT modifier = sent_gift } }
+			# clr_character_flag = in_interaction
+		# }
+	# }
+
+	# option = { ##Protect FROM battle
+		# name = "EVTOPTBred_priest.20"
+		# trigger = { FROM = { NOT = { has_character_flag = redgod_protection_battle } } }
+		# change_variable = { which = "red_god_magic" value = -1 }
+		# FROM = { 
+			# character_event = { id = red_priest.12 } #inform
+			# set_character_flag = redgod_protection_battle
+			# opinion = {
+				# modifier = opinion_protected_me
+				# who = ROOT
+				# years = 10
+			# }		
+		# }
+		# hidden_tooltip = {
+			# FROM = { remove_opinion = { who = ROOT modifier = sent_gift } }
+			# clr_character_flag = in_interaction
+		# }
+	# }
+
+	# option = { ##cure FROM sick
+		# name = "EVTOPTCred_priest.20"
+		# trigger = { 
+			# or = {
+				# trait = chosen_by_rhllor 
+				# trait = favored_by_rhllor 
+			# }
+			# or = {				
+				# FROM = { trait = has_grey_plague }
+				# FROM = { trait = has_bubonic_plague}
+				# FROM = { trait = has_greyscale}
+				# FROM = { trait = has_bloody_flux}
+				# FROM = { trait = infirm}
+				# FROM = { trait = maimed}
+				# FROM = { trait = incapable}
+				# FROM = { trait = wounded}
+				# FROM = { trait = has_pox}
+				# FROM = { trait = leper}
+				# FROM = { trait = depressed}
+				# FROM = { trait = syphilitic}
+				# FROM = { trait = possessed}
+				# FROM = { trait = pneumonic}
+				# FROM = { trait = ill}
+				# FROM = { trait = lunatic}
+				# FROM = { trait = stressed}
+				# FROM = { trait = drunkard}
+				# FROM = { trait = has_aztec_disease}
+				# FROM = { trait = has_red_death}
+				# FROM = { trait = has_red_death}
+			# }
+
+		# }
+			# change_variable = { which = "red_god_magic" value = -1 }
+			# if = {
+				# limit = {
+					# FROM = { religion = rhllor }
+				# }
+				# FROM = { remove_trait = has_grey_plague }
+				# FROM = { remove_trait = has_bubonic_plague}
+				# FROM = { remove_trait = has_greyscale}
+				# FROM = { remove_trait = has_bloody_flux}
+				# FROM = { remove_trait = infirm}
+				# FROM = { remove_trait = maimed}
+				# FROM = { remove_trait = incapable}
+				# FROM = { remove_trait = wounded}
+				# FROM = { remove_trait = has_pox}
+				# FROM = { remove_trait = leper}
+				# FROM = { remove_trait = depressed}
+				# FROM = { remove_trait = syphilitic}
+				# FROM = { remove_trait = possessed}
+				# FROM = { remove_trait = pneumonic}
+				# FROM = { remove_trait = ill}
+				# FROM = { remove_trait = lunatic}
+				# FROM = { remove_trait = stressed}
+				# FROM = { remove_trait = drunkard}
+				# FROM = { remove_trait = has_aztec_disease}
+				# FROM = { remove_trait = has_red_death}
+				# FROM = { remove_trait = has_red_death}
+
+			# }
+
+
+			# if = {
+				# limit = { 
+					# FROM = { NOT = { religion = rhllor } }
+				# }
+				# FROM = { character_event = { id = red_priest.13 } }
+			# } 
+		# hidden_tooltip = {
+			# FROM = { remove_opinion = { who = ROOT modifier = sent_gift } }
+			# clr_character_flag = in_interaction
+		# }
+
+	# }
+
+	# option = { ##cure FROM malformation
+		# name = "EVTOPTDred_priest.20"
+		# trigger = { 
+			# trait = chosen_by_rhllor 
+			# or = {
+				# FROM = { trait = clubfooted}
+				# FROM = { trait = harelip}
+				# FROM = { trait = hunchback}
+				# FROM = { trait = lisp }
+				# FROM = { trait = stutter}
+				# FROM = { trait = ugly}
+				# FROM = { trait = slow }
+				# FROM = { trait = imbecile}
+				# FROM = { trait = weak }
+				# FROM = { trait = homosexual}
+				# FROM = { trait = inbred}
+				# FROM = { is_crippled_trigger = yes }
+				# FROM = { trait = disfigured_AGOT }
+			# }
+		# }
+			# change_variable = { which = "red_god_magic" value = -1 }
+			# if = {
+				# limit = {
+					# FROM = { religion = rhllor }
+				# }
+				# FROM = { remove_trait = clubfooted}
+				# FROM = { remove_trait = harelip}
+				# FROM = { remove_trait = hunchback}
+				# FROM = { remove_trait = lisp }
+				# FROM = { remove_trait = stutter}
+				# FROM = { remove_trait = ugly}
+				# FROM = { remove_trait = slow }
+				# FROM = { remove_trait = imbecile}
+				# FROM = { remove_trait = weak }
+				# FROM = { remove_trait = homosexual}
+				# FROM = { remove_trait = inbred}
+				# FROM = { remove_trait = crippled }
+				# FROM = { remove_trait = disfigured_AGOT }
+			# }
+
+
+			# if = {
+				# limit = { 
+					# FROM = { NOT = { religion = rhllor } }
+				# }
+				# FROM = { character_event = { id = red_priest.14 } }
+			# } 
+		# hidden_tooltip = {
+			# FROM = { remove_opinion = { who = ROOT modifier = sent_gift } }
+			# clr_character_flag = in_interaction
+		# }
+
+	# }
+	# option = { ##Nevermind - Chosen might NOT see this but shouldnt be a retard in the first place
+		# name = "EVTOPTEred_priest.20"
+		# hidden_tooltip = {
+			# FROM = { remove_opinion = { who = ROOT modifier = sent_gift } }
+			# clr_character_flag = in_interaction
+		# }
+
+	# }
+# }
+
+#Gazed into the flames to reveal plots
+character_event = { #Success
+	id = red_priest.23
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.23"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			NOT = { has_character_flag = drank_shade_of_the_evening }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.23B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+			NOT = { has_character_flag = drank_shade_of_the_evening }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.23C"
+		picture = GFX_evt_warlock
+		trigger = {
+			has_character_flag = drank_shade_of_the_evening
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.23D"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			NOT = { has_character_flag = drank_shade_of_the_evening }
+		}
+	}
+	
+	immediate = {
+		clear_event_target = red_priest_plotter_reveal
+		#find plot to reveal
+		random_unknown_plotter = {
+			limit = { 
+				plot_target_char = { always = yes }
+				NOT = { has_plot = plot_rescue_prisoner } 
+				NOT = { plot_is_known_by = ROOT }
+				NOT = { character = ROOT }
+			}
+			save_event_target_as = red_priest_plotter_reveal
+			break = yes
+		}
+		random_close_relative = {
+			limit = {
+				OR = {
+					dynasty = ROOT
+					is_child_of = ROOT
+					is_grandchild_of = ROOT
+					is_parent_of = ROOT
+					is_grandparent_of = ROOT
+					sibling = ROOT							
+				}
+				any_unknown_plotter = {
+					plot_target_char = { always = yes }
+					NOT = { has_plot = plot_rescue_prisoner }
+					NOT = { plot_is_known_by = ROOT }
+					NOT = { character = ROOT }
+				}
+			}
+			random_unknown_plotter = {
+				limit = { 
+					plot_target_char = { always = yes }
+					NOT = { has_plot = plot_rescue_prisoner } 
+					NOT = { plot_is_known_by = ROOT }
+					NOT = { character = ROOT }
+				}
+				save_event_target_as = red_priest_plotter_reveal
+				break = yes
+			}
+		}
+		random_spouse = {
+			limit = {
+				any_unknown_plotter = {
+					plot_target_char = { always = yes }
+					NOT = { has_plot = plot_rescue_prisoner }
+					NOT = { plot_is_known_by = ROOT }
+					NOT = { character = ROOT }
+				}
+			}
+			random_unknown_plotter = {
+				limit = { 
+					plot_target_char = { always = yes }
+					NOT = { has_plot = plot_rescue_prisoner } 
+					NOT = { plot_is_known_by = ROOT }
+					NOT = { character = ROOT }
+				}
+				save_event_target_as = red_priest_plotter_reveal
+				break = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.23" 
+		event_target:red_priest_plotter_reveal = {
+			hidden_tooltip = { character_event = { id = red_priest.25 } }
+			tooltip = { show_portrait = yes }
+			plot_target_char = { tooltip = { hidden_tooltip = { prestige = 0 } } }
+			reveal_plot = ROOT
+		}
+		if = { 
+			limit = { 
+				religion = rhllor
+				NOT = { trait = fire_obsessed } 
+				NOT = { has_character_flag = drank_shade_of_the_evening }
+			}
+			random = {
+				chance = 10
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 } }
+			}
+		}
+		if = { 
+			limit = { 
+				OR = {
+					has_blood_magic_religion_trigger = yes
+					has_character_flag = drank_shade_of_the_evening
+				}	
+				NOT = { trait = mystic } 
+			}
+			random = {
+				chance = 10
+				add_trait = mystic
+				hidden_tooltip = { character_event = { id = trait_notification.19 } }
+			}				
+		}
+		if = {
+			limit = { NOT = { has_character_flag = drank_shade_of_the_evening } }
+			job_spiritual = {
+				if = { 
+					limit = { 
+						religion = rhllor
+						NOT = { trait = fire_obsessed } 
+					}
+					random = {
+						chance = 20
+						add_trait = fire_obsessed
+						hidden_tooltip = { character_event = { id = trait_notification.2 } }
+					}
+				}
+				if = { 
+					limit = { 
+						has_blood_magic_religion_trigger = yes
+						NOT = { trait = mystic } 
+					}
+					random = {
+						chance = 20
+						add_trait = mystic
+						hidden_tooltip = { character_event = { id = trait_notification.19 } }
+					}				
+				}
+			}
+		}	
+		hidden_tooltip = { remove_character_modifier = redgod_reveal_plots_timer }
+		clr_character_flag = drank_shade_of_the_evening
+	}
+}
+character_event = { #Fail
+	id = red_priest.24
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.24"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.24B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.24C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.24"
+		piety = -25
+		job_spiritual = { piety = -25 }
+		if = { 
+			limit = { 
+				religion = rhllor
+				NOT = { trait = fire_obsessed } 
+			}
+			random = {
+				chance = 5
+				add_trait = fire_obsessed
+				hidden_tooltip = { character_event = { id = trait_notification.2 } }
+			}
+		}
+		if = { 
+			limit = { 
+				has_blood_magic_religion_trigger = yes
+				NOT = { trait = mystic } 
+			}
+			random = {
+				chance = 5
+				add_trait = mystic
+				hidden_tooltip = { character_event = { id = trait_notification.19 } }
+			}				
+		}
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 10
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 10
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+		}
+	}
+}
+character_event = { #Inform plotter
+	id = red_priest.25
+	border = GFX_event_normal_frame_intrigue
+	desc = "EVTDESCred_priest.25"
+	
+	is_triggered_only = yes
+	
+	picture = {
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			FROM = { religion = rhllor } 
+		}
+	}
+	picture = {
+		picture = GFX_evt_warlock
+		trigger = {
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	picture = {
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.25"
+	}
+}
+#Heal self basic
+character_event = { #Success
+	id = red_priest.26
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.26"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.26B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.26C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.26" 
+		heal_basic_effect = yes	
+		random_list = {
+			100 = { }
+			10 = {
+				if = { 
+					limit = { 
+						 religion = rhllor
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						has_blood_magic_religion_trigger = yes
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			15 = {
+				if = { 
+					limit = { NOT = { trait = zealous } }
+					if = {
+						limit = { trait = cynical }
+						remove_trait = cynical
+					}
+					add_trait = zealous
+					hidden_tooltip = { character_event = { id = 38269 }  }
+				}
+			}
+			5 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 20
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 20
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+		}
+		hidden_tooltip = { remove_character_modifier = redgod_healing_timer }
+	}
+}
+character_event = { #Fail
+	id = red_priest.27
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.27"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.27B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.27C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.27"
+		piety = -25
+		job_spiritual = { piety = -25 }
+		
+		random_list = {
+			100 = { }
+			5 = {
+				if = { 
+					limit = { 
+						religion = rhllor
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						has_blood_magic_religion_trigger = yes
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			15 = {
+				if = { 
+					limit = { NOT = { trait = disfigured_AGOT } }
+					add_trait = disfigured_AGOT
+					#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			10 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 10
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 10
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+		}
+	}
+}
+#Heal self chosen
+character_event = { #Success
+	id = red_priest.28
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.28"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.28B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.28C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.28" 
+		heal_advanced_effect = yes		
+		random_list = {
+			100 = { }
+			15 = {
+				if = { 
+					limit = { 
+						ROOT = { religion = rhllor }
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						ROOT = { 
+							has_blood_magic_religion_trigger = yes
+						}
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			25 = {
+				if = { 
+					limit = { NOT = { trait = zealous } }
+					if = {
+						limit = { trait = cynical }
+						remove_trait = cynical
+					}
+					add_trait = zealous
+					hidden_tooltip = { character_event = { id = 38269 }  }
+				}
+			}
+			10 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 40
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 40
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+		}
+		hidden_tooltip = { remove_character_modifier = redgod_healing_timer }
+	}
+}
+character_event = { #Fail
+	id = red_priest.29
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.29"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.29B"
+		picture = GFX_evt_warlock
+		trigger = {
+			religion = qarth_warlocks
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.29C"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.29"
+		piety = -50
+		job_spiritual = { piety = -50 }
+		
+		random_list = {
+			100 = { }
+			5 = {
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_accident
+				}
+			}
+			10 = {
+				if = { 
+					limit = { 
+						ROOT = { religion = rhllor }
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						ROOT = { 
+							has_blood_magic_religion_trigger = yes
+						}
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			25 = {
+				if = { 
+					limit = { NOT = { trait = disfigured_AGOT } }
+					add_trait = disfigured_AGOT
+					#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			20 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 20
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 20
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+		}
+	}
+}
+#Heal courtier basic
+character_event = { #Success
+	id = red_priest.30	
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.30"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.30B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { NOT = { religion = rhllor } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.30C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.30D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { NOT = { religion = qarth_warlocks } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.30E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.30F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.30" 
+		piety = 25
+		job_spiritual = { piety = 25 }
+		FROM = {
+			tooltip = {
+				heal_basic_effect = yes
+				if = {
+					limit = { 
+						NOT = { religion = ROOT } 
+					}
+					religion = ROOT
+				}
+				if = {
+					limit = { 
+						ROOT = { religion = rhllor }
+					}
+					ROOT = { change_variable = { which = "red_god_magic" value = -1 } }
+				}
+				else = {
+					ROOT = { change_variable = { which = "warlock_magic" value = -1 } }
+				}
+				random_list = {
+					100 = { }
+					10 = {
+						if = { 
+							limit = { 
+								ROOT = { religion = rhllor }
+								NOT = { trait = fire_obsessed } 
+							}
+							add_trait = fire_obsessed
+							hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+						if = { 
+							limit = { 
+								ROOT = { 
+									has_blood_magic_religion_trigger = yes
+								}
+								NOT = { trait = mystic } 
+							}
+							add_trait = mystic
+							hidden_tooltip = { character_event = { id = trait_notification.19 } }
+						}
+					}
+					15 = {
+						if = { 
+							limit = { NOT = { trait = zealous } }
+							if = {
+								limit = { trait = cynical }
+								remove_trait = cynical
+							}
+							add_trait = zealous
+							hidden_tooltip = { character_event = { id = 38269 }  }
+						}
+					}
+					5 = {
+						if = { 
+							limit = { NOT = { trait = lunatic } }
+							add_trait = lunatic 
+							hidden_tooltip = { character_event = { id = 38304 }  }
+						}
+					}
+				}
+			}	
+			opinion = {
+				who = ROOT
+				modifier = opinion_healed_me
+			}
+			hidden_tooltip = { 
+				character_event = { id = red_priest.32 }
+			}
+		}	
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 20
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 20
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+			hidden_tooltip = {
+				FROM = {
+					opinion = {
+						who = PREV
+						modifier = opinion_healed_me
+					}
+				}
+			}
+		}
+		
+	}
+}
+character_event = { #Fail courtier basic
+	id = red_priest.31
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.31"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.31B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { NOT = { religion = rhllor } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.31C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.31D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { NOT = { religion = qarth_warlocks } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.31E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.31F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.31"
+		piety = -25
+		job_spiritual = { piety = -25 }
+		
+		FROM = {
+			if = {
+				limit = { 
+					ROOT = { religion = rhllor }
+				}
+				ROOT = { change_variable = { which = "red_god_magic" value = -1 } }
+			}
+			else = {
+				ROOT = { change_variable = { which = "warlock_magic" value = -1 } }
+			}
+			tooltip = {
+				random_list = {
+					100 = { }
+					5 = {
+						if = { 
+							limit = { 
+								ROOT = { religion = rhllor }
+								NOT = { trait = fire_obsessed } 
+							}
+							add_trait = fire_obsessed
+							hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+						if = { 
+							limit = { 
+								ROOT = { 
+									has_blood_magic_religion_trigger = yes
+								}
+								NOT = { trait = mystic } 
+							}
+							add_trait = mystic
+							hidden_tooltip = { character_event = { id = trait_notification.19 } }
+						}
+					}
+					15 = {
+						if = { 
+							limit = { NOT = { trait = disfigured_AGOT } }
+							add_trait = disfigured_AGOT
+							#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+					}
+					10 = {
+						if = { 
+							limit = { NOT = { trait = lunatic } }
+							add_trait = lunatic 
+							hidden_tooltip = { character_event = { id = 38304 }  }
+						}
+					}
+				}
+			}	
+			opinion = {
+				who = PREV
+				modifier = opinion_failed_to_heal_me
+			}
+			hidden_tooltip = { 
+				character_event = { id = red_priest.33 }
+			}
+		}	
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 10
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 10
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+			hidden_tooltip = {
+				FROM = {
+					opinion = {
+						who = PREV
+						modifier = opinion_failed_to_heal_me
+					}
+				}
+			}
+		}
+	}
+}
+character_event = { #Inform target Success basic
+	id = red_priest.32
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.32"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			NOT = { religion = rhllor }
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			NOT = { religion = qarth_warlocks }
+			FROM = { religion = qarth_warlocks }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.26" 
+		heal_basic_effect = yes
+		if = {
+			limit = { 
+				NOT = { religion = FROM } 
+			}
+			if = {
+				limit = { 
+					NOT = { trait = zealous } 
+					NOT = { trait = cynical }
+				}
+				random = {
+					chance = 50
+					add_sympathy_trait_effect = yes			
+				}
+			}
+			if = {
+				limit = { trait = cynical }
+				add_sympathy_trait_effect = yes				
+			}
+			if = {
+				limit = { is_devil_worshiper_trigger = yes }
+				leave_society = yes
+			}
+			religion = FROM
+		}
+		random_list = {
+			100 = { }
+			10 = {
+				if = { 
+					limit = { 
+						ROOT = { religion = rhllor }
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						ROOT = { 
+							has_blood_magic_religion_trigger = yes
+						}
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			15 = {
+				if = { 
+					limit = { NOT = { trait = zealous } }
+					if = {
+						limit = { trait = cynical }
+						remove_trait = cynical
+					}
+					add_trait = zealous
+					hidden_tooltip = { character_event = { id = 38269 }  }
+				}
+			}
+			5 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		hidden_tooltip = { remove_character_modifier = redgod_healing_timer }
+	}
+}
+character_event = { #Inform target Fail basic
+	id = red_priest.33
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.33"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.33B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			NOT = { religion = rhllor }
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.33C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.33D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			NOT = { religion = qarth_warlocks }
+			FROM = { religion = qarth_warlocks }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.33E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.32F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.33"
+		random_list = {
+			100 = { }
+			5 = {
+				if = { 
+					limit = { 
+						ROOT = { religion = rhllor }
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						ROOT = { 
+							has_blood_magic_religion_trigger = yes
+						}
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			15 = {
+				if = { 
+					limit = { NOT = { trait = disfigured_AGOT } }
+					add_trait = disfigured_AGOT
+					#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			10 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+	}
+}
+#Heal courtier chosen
+character_event = { #Success
+	id = red_priest.34
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.34"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.34B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { NOT = { religion = rhllor } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.34C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.34D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { NOT = { religion = qarth_warlocks } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.34E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.34F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.28" 
+		piety = 50
+		job_spiritual = { piety = 50 }
+		FROM = {
+			tooltip = {
+				heal_advanced_effect = yes
+				if = {
+					limit = { 
+						NOT = { religion = ROOT } 
+					}
+					religion = ROOT
+				}
+				if = {
+					limit = { 
+						ROOT = { religion = rhllor }
+					}
+					ROOT = { change_variable = { which = "red_god_magic" value = -2 } }
+				}
+				else = {
+					ROOT = { change_variable = { which = "warlock_magic" value = -2 } }
+				}
+				random_list = {
+					100 = { }
+					15 = {
+						if = { 
+							limit = { 
+								ROOT = { religion = rhllor }
+								NOT = { trait = fire_obsessed } 
+							}
+							add_trait = fire_obsessed
+							hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+						if = { 
+							limit = { 
+								ROOT = { 
+									has_blood_magic_religion_trigger = yes
+								}
+								NOT = { trait = mystic } 
+							}
+							add_trait = mystic
+							hidden_tooltip = { character_event = { id = trait_notification.19 } }
+						}
+					}
+					25 = {
+						if = { 
+							limit = { NOT = { trait = zealous } }
+							if = {
+								limit = { trait = cynical }
+								remove_trait = cynical
+							}
+							add_trait = zealous
+							hidden_tooltip = { character_event = { id = 38269 }  }
+						}
+					}
+					10 = {
+						if = { 
+							limit = { NOT = { trait = lunatic } }
+							add_trait = lunatic 
+							hidden_tooltip = { character_event = { id = 38304 }  }
+						}
+					}
+				}
+			}	
+			opinion = {
+				who = ROOT
+				modifier = opinion_healed_me
+				multiplier = 2
+			}		
+			hidden_tooltip = { 
+				character_event = { id = red_priest.36 }
+			}
+		}	
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 40
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 40
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+			hidden_tooltip = {
+				FROM = {
+					opinion = {
+						who = PREV
+						modifier = opinion_healed_me
+						multiplier = 2
+					}
+				}
+			}
+		}		
+	}
+}
+character_event = { #Fail courtier chosen
+	id = red_priest.35
+	picture = GFX_evt_red_priest_approaches
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.35"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.35B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { NOT = { religion = rhllor } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.35C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.35D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { NOT = { religion = qarth_warlocks } } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.35E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.35F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			has_dark_magic_religion_trigger = yes
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.35"
+		piety = -50
+		job_spiritual = { piety = -50 }
+		
+		FROM = {
+			if = {
+				limit = { 
+					ROOT = { religion = rhllor }
+				}
+				ROOT = { change_variable = { which = "red_god_magic" value = -2 } }
+			}
+			else = {
+				ROOT = { change_variable = { which = "warlock_magic" value = -2 } }
+			}
+			tooltip = {
+				random_list = {
+					100 = { }
+					5 = {
+						death = {
+							death_reason = death_accident
+						}
+					}
+					10 = {
+						if = { 
+							limit = { 
+								ROOT = { religion = rhllor }
+								NOT = { trait = fire_obsessed } 
+							}
+							add_trait = fire_obsessed
+							hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+						if = { 
+							limit = { 
+								ROOT = { has_blood_magic_religion_trigger = yes }
+								NOT = { trait = mystic } 
+							}
+							add_trait = mystic
+							hidden_tooltip = { character_event = { id = trait_notification.19 } }
+						}
+					}
+					25 = {
+						if = { 
+							limit = { NOT = { trait = disfigured_AGOT } }
+							add_trait = disfigured_AGOT
+							#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+						}
+					}
+					20 = {
+						if = { 
+							limit = { NOT = { trait = lunatic } }
+							add_trait = lunatic 
+							hidden_tooltip = { character_event = { id = 38304 }  }
+						}
+					}
+				}
+			}	
+			opinion = {
+				who = ROOT
+				modifier = opinion_failed_to_heal_me
+				multiplier = 2
+			}
+			hidden_tooltip = { 
+				character_event = { id = red_priest.37 }
+			}
+		}	
+		job_spiritual = {
+			if = { 
+				limit = { 
+					religion = rhllor
+					NOT = { trait = fire_obsessed } 
+				}
+				random = {
+					chance = 20
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			if = { 
+				limit = { 
+					has_blood_magic_religion_trigger = yes
+					NOT = { trait = mystic } 
+				}
+				random = {
+					chance = 20
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}				
+			}
+			hidden_tooltip = {
+				FROM = {
+					opinion = {
+						who = PREV
+						modifier = opinion_failed_to_heal_me
+						multiplier = 2
+					}
+				}
+			}
+		}
+	}
+}
+character_event = { #Inform target Success chosen
+	id = red_priest.36
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.36"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.36B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			NOT = { religion = rhllor }
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.36C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.36D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			NOT = { religion = qarth_warlocks }
+			FROM = { religion = qarth_warlocks }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.36E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.36F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.28" 
+		heal_advanced_effect = yes
+		if = {
+			limit = { 
+				NOT = { religion = FROM } 
+			}
+			if = {
+				limit = { 
+					NOT = { trait = zealous } 
+					NOT = { trait = cynical }
+				}
+				random = {
+					chance = 50
+					add_sympathy_trait_effect = yes			
+				}
+			}
+			if = {
+				limit = { trait = cynical }
+				add_sympathy_trait_effect = yes				
+			}
+			if = {
+				limit = { is_devil_worshiper_trigger = yes }
+				leave_society = yes
+			}
+			religion = FROM
+		}
+		random_list = {
+			100 = { }
+			15 = {
+				if = { 
+					limit = { 
+						religion = rhllor
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						has_blood_magic_religion_trigger = yes
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			25 = {
+				if = { 
+					limit = { NOT = { trait = zealous } }
+					if = {
+						limit = { trait = cynical }
+						remove_trait = cynical
+					}
+					add_trait = zealous
+					hidden_tooltip = { character_event = { id = 38269 }  }
+				}
+			}
+			10 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+		hidden_tooltip = { remove_character_modifier = redgod_healing_timer }
+	}
+}
+character_event = { #Inform target Fail chosen
+	id = red_priest.37
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.37"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			religion = rhllor
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.37B"
+		picture = GFX_evt_red_priest_approaches
+		trigger = { 
+			NOT = { religion = rhllor }
+			FROM = { religion = rhllor } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.37C"
+		picture = GFX_evt_warlock
+		trigger = { 
+			religion = qarth_warlocks
+			FROM = { religion = qarth_warlocks } 
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.37D"
+		picture = GFX_evt_warlock
+		trigger = { 
+			NOT = { religion = qarth_warlocks }
+			FROM = { religion = qarth_warlocks }
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.37E"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			religion = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCred_priest.37F"
+		picture = GFX_evt_magic_ritual
+		trigger = {
+			FROM = { has_dark_magic_religion_trigger = yes }
+			NOT = { religion = FROM }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.29"
+		random_list = {
+			100 = { }
+			5 = {
+				death = {
+					death_reason = death_accident
+				}
+			}
+			10 = {
+				if = { 
+					limit = { 
+						ROOT = { religion = rhllor }
+						NOT = { trait = fire_obsessed } 
+					}
+					add_trait = fire_obsessed
+					hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+				if = { 
+					limit = { 
+						ROOT = { has_blood_magic_religion_trigger = yes }
+						NOT = { trait = mystic } 
+					}
+					add_trait = mystic
+					hidden_tooltip = { character_event = { id = trait_notification.19 } }
+				}
+			}
+			25 = {
+				if = { 
+					limit = { NOT = { trait = disfigured_AGOT } }
+					add_trait = disfigured_AGOT
+					#hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				}
+			}
+			20 = {
+				if = { 
+					limit = { NOT = { trait = lunatic } }
+					add_trait = lunatic 
+					hidden_tooltip = { character_event = { id = 38304 }  }
+				}
+			}
+		}
+	}
+}
+# redgod_protection_battle
+# redgod_protection_plot
+#Resurrected by Rhllor
+character_event = {
+	id = red_priest.38
+	picture = GFX_evt_red_priest_approaches
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCred_priest.38"
+		trigger = { trait = resurrected_by_rhllor }
+	}
+	desc = {
+		text = "EVTDESCred_priest.38B" #First Time
+		trigger = { NOT = { trait = resurrected_by_rhllor } }
+	}
+	
+	immediate = {
+		job_spiritual = {
+			save_event_target_as = red_priest
+		}	
+		#make sure old women are infertile
+		if = {
+			limit = {
+				is_female = yes
+				age = 40				
+			}
+			fertility = -100
+		}
+		#remove special execution traits 
+		hidden_tooltip = {
+			remove_trait = fed_to_dragon
+			# remove_trait = flayed
+			# remove_trait = burned_alive
+			# remove_trait = thrown_out_moon_door
+			# remove_trait = crucified
+			# remove_trait = snu_snu
+		}
+		#Injury
+		random_list = {
+			25 = {
+				modifier = {
+					factor = 0
+					NOR = {
+						has_character_flag = eye_injury
+						trait = stutter
+						has_scarred_trait_trigger = yes
+						trait = disfigured_AGOT
+						is_maimed_trigger = yes
+						trait = wounded
+					}
+				}
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					is_crippled_trigger = yes
+				}
+				set_character_flag = crippled
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_character_flag = eye_injury
+				}
+				modifier = {
+					factor = 0
+					trait = blinded
+				}
+				set_character_flag = new_eye_injury
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = stutter
+				}
+				set_character_flag = stutter
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = scarred_high 
+				}
+				set_character_flag = scarred
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = disfigured_AGOT
+				}
+				set_character_flag = disfigured
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = maimed
+				}
+				set_character_flag = maimed
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = wounded
+				}
+				set_character_flag = wounded
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = burned
+				}
+				set_character_flag = burned
+			}
+		}
+		#Crazy
+		random_list = {
+			18 = {
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = zealous
+				}
+				set_character_flag = zealous
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = lunatic
+				}
+				set_character_flag = lunatic
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = possessed
+				}
+				set_character_flag = possessed
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = fire_obsessed
+				}
+				set_character_flag = fire_obsessed
+			}	
+			2 = {
+				modifier = {
+					factor = 0
+					trait = undead
+				}
+				set_character_flag = undead
+			}			
+		}
+			
+		#Lose Personality Trait
+		if = {
+			limit = { trait = kind }
+			set_character_flag = resurrected_kind
+			break = yes
+		}
+		if = {
+			limit = { trait = honorable }
+			set_character_flag = resurrected_honorable
+			break = yes
+		}
+		if = {
+			limit = { trait = patient }
+			set_character_flag = resurrected_patient
+			break = yes
+		}
+		if = {
+			limit = { trait = gregarious }
+			set_character_flag = resurrected_gregarious
+			break = yes
+		}
+		if = {
+			limit = { trait = just }
+			set_character_flag = resurrected_just
+			break = yes
+		}
+		if = {
+			limit = { trait = diligent }
+			set_character_flag = resurrected_diligent
+			break = yes
+		}
+		if = {
+			limit = { trait = humble }
+			set_character_flag = resurrected_humble
+			break = yes
+		}
+		if = {
+			limit = { trait = familyperson }
+			set_character_flag = resurrected_familyperson
+			break = yes
+		}
+		if = {
+			limit = { trait = chaste }
+			set_character_flag = resurrected_chaste
+			break = yes
+		}
+		if = {
+			limit = { trait = temperate }
+			set_character_flag = resurrected_temperate
+			break = yes
+		}
+		if = {
+			limit = { trait = charitable }
+			set_character_flag = resurrected_charitable
+			break = yes
+		}
+		if = {
+			limit = { trait = honest }
+			set_character_flag = resurrected_honest
+			break = yes
+		}
+		if = {
+			limit = { trait = brave }
+			set_character_flag = resurrected_brave
+			break = yes
+		}
+		if = {
+			limit = { trait = trusting }
+			set_character_flag = resurrected_trusting
+			break = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.38"
+		if = {
+			limit = { NOT = { trait = resurrected_by_rhllor } }
+			add_trait = resurrected_by_rhllor
+		}
+		prestige = 200
+		piety = 200
+		if = {
+			limit = { NOT = { check_variable = { which = "red_god_magic" value = 10 } } }
+			set_variable = { which = "red_god_magic" value = 0 }
+		}
+		if = {
+			limit = { check_variable = { which = "red_god_magic" value = 10 } }
+			change_variable = { which = "red_god_magic" value = -10 }
+		}
+		#Crazy
+		if = {
+			limit = { has_character_flag = lunatic }
+			add_trait = lunatic
+			clr_character_flag = lunatic
+		}
+		if = {
+			limit = { has_character_flag = possessed }
+			add_trait = possessed
+			clr_character_flag = possessed
+		}
+		if = {
+			limit = { has_character_flag = zealous }
+			if = {
+				limit = { trait = cynical }
+				remove_trait = cynical
+			}	
+			add_trait = zealous
+			clr_character_flag = zealous
+		}
+		if = {
+			limit = { has_character_flag = fire_obsessed }
+			add_trait = fire_obsessed
+			clr_character_flag = fire_obsessed
+		}
+		if = {
+			limit = { has_character_flag = undead }
+			add_trait = undead
+			clr_character_flag = undead
+		}
+		#Injuries
+		if = {
+			limit = { has_character_flag = crippled }
+			add_crippled_trait_effect = yes
+			clr_character_flag = crippled
+		}
+		if = {
+			limit = { has_character_flag = new_eye_injury }
+			add_trait = one_eyed
+			clr_character_flag = new_eye_injury
+		}
+		if = {
+			limit = { has_character_flag = stutter }
+			add_trait = stutter
+			clr_character_flag = stutter
+		}
+		if = {
+			limit = { has_character_flag = scarred }
+			add_scarred_tiered_effect = yes
+			clr_character_flag = scarred
+		}
+		if = {
+			limit = { has_character_flag = disfigured }
+			add_trait = disfigured_AGOT
+			clr_character_flag = disfigured
+		}
+		if = {
+			limit = { has_character_flag = maimed }
+			add_maimed_trait_effect = yes
+			clr_character_flag = maimed
+		}
+		if = {
+			limit = { has_character_flag = burned }
+			add_trait = burned
+			clr_character_flag = burned
+		}
+		#Remove good personality
+		if = {
+			limit = { has_character_flag = resurrected_kind }
+			remove_trait = kind
+			clr_character_flag = resurrected_kind
+		}
+		if = {
+			limit = { has_character_flag = resurrected_honorable }
+			remove_trait = honorable
+			clr_character_flag = resurrected_honorable
+		}
+		if = {
+			limit = { has_character_flag = resurrected_patient }
+			remove_trait = patient
+			clr_character_flag = resurrected_patient
+		}
+		if = {
+			limit = { has_character_flag = resurrected_gregarious }
+			remove_trait = gregarious
+			clr_character_flag = resurrected_gregarious
+		}
+		if = {
+			limit = { has_character_flag = resurrected_just }
+			remove_trait = just
+			clr_character_flag = resurrected_just
+		}
+		if = {
+			limit = { has_character_flag = resurrected_diligent }
+			remove_trait = diligent
+			clr_character_flag = resurrected_diligent
+		}
+		if = {
+			limit = { has_character_flag = resurrected_humble }
+			remove_trait = humble
+			clr_character_flag = resurrected_humble
+		}
+		if = {
+			limit = { has_character_flag = resurrected_familyperson }
+			remove_trait = familyperson
+			clr_character_flag = resurrected_familyperson
+		}
+		if = {
+			limit = { has_character_flag = resurrected_chaste }
+			remove_trait = chaste
+			clr_character_flag = resurrected_chaste
+		}
+		if = {
+			limit = { has_character_flag = resurrected_temperate }
+			remove_trait = temperate
+			gain_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+			clr_character_flag = resurrected_temperate
+		}
+		if = {
+			limit = { has_character_flag = resurrected_charitable }
+			remove_trait = charitable
+			clr_character_flag = resurrected_charitable
+		}
+		if = {
+			limit = { has_character_flag = resurrected_honest }
+			remove_trait = honest
+			clr_character_flag = resurrected_honest
+		}
+		if = {
+			limit = { has_character_flag = resurrected_brave }
+			remove_trait = brave
+			clr_character_flag = resurrected_brave
+		}
+		if = {
+			limit = { has_character_flag = resurrected_trusting }
+			remove_trait = trusting
+			clr_character_flag = resurrected_trusting
+		}	
+	}
+}
+character_event = { #Dies of old age
+	id = red_priest.39
+	desc = "EVTDESCred_priest.39"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	min_age = 50
+	
+	trigger = {
+		trait = resurrected_by_rhllor
+		NOT = { trait = immortal }
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 420
+		modifier = {
+			factor = 0.5
+			age = 80
+		}
+		modifier = {
+			factor = 0.5
+			age = 90
+		}
+		modifier = {
+			factor = 0.5
+			age = 100
+		}
+	}
+	
+	immediate = {
+		random = {
+			chance = 20
+			modifier = {
+				factor = 2
+				trait = chosen_by_rhllor
+			}
+			modifier = {
+				factor = 2
+				magic_returned_trigger = yes
+			}
+			modifier = {
+				factor = 1.33
+				check_variable = { which = "red_god_magic" value = 1 }
+			}
+			modifier = {
+				factor = 1.5
+				check_variable = { which = "red_god_magic" value = 5 }
+			}
+			set_character_flag = rhllor_resurrected
+		}
+		job_spiritual = {
+			save_event_target_as = red_priest
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAred_priest.39"
+		ai_chance = { factor = 0 }
+		death = yes
+	}
+	option = {
+		name = "EVTOPTBred_priest.39"
+		trigger = {
+			has_character_flag = rhllor_resurrected
+		}
+		character_event = { id = red_priest.38 tooltip = CUSTOMTOOLTIPrhllor_saved_me }
+		clr_character_flag = rhllor_resurrected
+	}
+}	
+# #From used red priest hax to avoid death. Omigawsh!!
+# character_event = {
+	# id = red_priest.22
+	# desc = "EVTDESCred_priest.22"
+	# picture = GFX_evt_red_priest_approaches
+	# border = GFX_event_normal_frame_intrigue
+	
+	# is_triggered_only = yes
+	# option = {
+		# name = "EVTOPTAred_priest.22" 
+		# if = {
+			# limit = { 
+				# NOT = { religion = rhllor }
+				# trait = zealous	
+			# }
+			# random = {
+				# chance = 75
+				# remove_trait = zealous
+				# hidden_tooltip = { character_event = { id = 38310 } }
+			# }
+		# }
+	# }
+# }
+#From used red priest hax to avoid murder. Omigawsh!!
+character_event = {
+	id = red_priest.40
+	desc = "EVTDESCred_priest.40"
+	picture = GFX_evt_red_priest_approaches
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAred_priest.40" 
+		if = {
+			limit = { 
+				NOT = { religion = rhllor }
+				trait = zealous	
+			}
+			random = {
+				chance = 75
+				remove_trait = zealous
+				hidden_tooltip = { character_event = { id = 38310 } }
+			}
+		}
+	}
+}

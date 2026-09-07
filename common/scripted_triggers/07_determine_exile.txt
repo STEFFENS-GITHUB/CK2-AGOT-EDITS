@@ -1,0 +1,46 @@
+######################################
+# Scripted Triggers for determine exile
+######################################
+
+# Allows mods to limit where the game will move characters that are in need of a new court.
+# Root = character being exiled.
+# From = Potential new employer
+valid_exile_court_trigger = {
+	OR = {
+		same_realm = FROM
+		is_within_diplo_range = FROM
+	}	
+	FROM = {
+		demesne_size = 1
+		NOT = { trait = nightswatch }
+		NOT = { culture_group = unoccupied_group }
+		NOT = { culture_group = winter_group }
+		OR = {
+			NOT = { trait = wildling }
+			ROOT = { trait = wildling }
+			ROOT = { trait = deserter }
+		}	
+		OR = {
+			NOT = { culture = old_andal }
+			higher_tier_than = DUKE
+			ROOT = { culture = old_andal }
+		}
+		OR = {
+			NOT = { culture = rhoynar }
+			higher_tier_than = DUKE
+			ROOT = { culture = rhoynar }
+		}	
+		OR = {
+			NOT = { trait = pirate }
+			ROOT = { trait = pirate }
+		}
+		OR = {
+			NOT = { is_nomadic = yes }
+			ROOT = { is_nomadic = yes }
+		}
+		OR = { #slaves flee to non-slavery location
+			ROOT = { NOT = { trait = slave } }
+			crownlaw_title = { has_law = slavery_0 }			
+		}
+	}	
+}

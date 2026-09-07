@@ -1,0 +1,236 @@
+decisions = {
+	hold_nerge = {
+		is_high_prio = yes
+		only_independent = yes
+		potential = {
+			has_dlc = "The Old Gods"
+			age = 16
+			OR = {
+				is_female = no
+				has_focus = focus_hunting
+			}	
+			prisoner = no
+			culture = dothraki
+			independent = yes
+			NOT = { has_character_modifier = morale_from_nerge }
+			NOT = {	has_character_flag = holding_nerge }
+		}
+		allow = {
+			war = no
+			is_summer_trigger = yes
+			wealth = 150	
+			prisoner = no
+			NOT = { trait = incapable }
+			NOT = { is_inaccessible_trigger = yes }
+			custom_tooltip = {
+				text = is_not_busy_trigger_tooltip
+				hidden_tooltip = { NOT = { has_character_flag = do_not_disturb } }
+			}
+		}
+		effect = {
+			wealth = -150
+			set_character_flag = holding_nerge
+			set_character_flag = do_not_disturb
+			custom_tooltip = {
+				text = prepare_nerge
+				hidden_tooltip = { 
+					character_event = { id = TOG.100 } 
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				NOT = {
+					wealth = 300
+				}
+			}
+		}
+	}
+	
+	send_tribute_to_dosh_kaleen = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			is_ruler = yes
+			culture = dothraki
+			c_dosh_khaleen = {
+				holder_scope = {
+					NOT = { character = ROOT }
+					culture = dothraki
+					trait = dosh_khaleen
+				}
+			}
+		}
+		
+		allow = {
+			wealth = 250
+			NOT = { has_character_modifier = dothraki_dosh_kaleen_tribute }
+		}
+		
+		effect = {
+			wealth = -250
+			c_dosh_khaleen = { holder_scope = { wealth = 250 } }		
+			random_courtier = { #Give a slave as a eunuch if possible
+				limit = {
+					is_female = no
+					NOT = { age = 30 }
+					NOT = { trait = incapable }
+					trait = slave
+					has_opinion_modifier = { who = ROOT modifier = opinion_my_owner }
+				}
+				add_trait = eunuch
+				hidden_tooltip = {
+					reverse_remove_opinion = { who = ROOT modifier = opinion_my_slave }
+					remove_opinion = { who = ROOT modifier = opinion_my_owner }
+				}
+				c_dosh_khaleen = { 
+					holder_scope = { 
+						reverse_banish = PREVPREV 
+						hidden_tooltip = {
+							reverse_opinion = { who = PREVPREV modifier = opinion_my_owner }
+							opinion = { who = PREVPREV modifier = opinion_my_slave }
+						}	
+					} 
+				}
+			}
+			piety = 200
+			prestige = 100
+			add_character_modifier = {
+				name = dothraki_dosh_kaleen_tribute
+				duration = 1095
+			}	
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1000
+			modifier = {
+				factor = 0
+				OR = {
+					piety = 500
+					AND = {
+						NOT = { wealth = 800 }
+						war = yes
+					}	
+					NOT = { wealth = 400 }
+				}
+			}
+			modifier = {
+				factor = 0
+				calc_true_if = {
+					amount = 2
+					trait = arbitrary
+					trait = greedy
+					trait = cynical
+				}
+				NOT = { trait = zealous }
+			}
+		}
+	}
+}
+targetted_decisions = {
+	ask_bloodrider = {
+		ai_target_filter = home_court
+		filter = sub_realm
+		only_playable = yes
+		diplomacy_icon = GFX_ask_bloodrider
+		
+		from_potential = {
+			is_ruler = yes
+			culture = dothraki
+			is_adult = yes
+			OR = {
+				higher_tier_than = DUKE
+				AND = {
+					tier = DUKE
+					independent = yes
+				}
+			}	
+			OR = {
+				ai = no
+				NOT = { has_assigned_minor_title = { title = title_bloodrider count = 5 } }
+			}
+		}
+		potential = {
+			NOT = { character = FROM }
+			liege = { character = FROM }
+			NOT = { trait = dragon }	
+			NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_bloodrider } }
+			NOT = { has_minor_title = title_bloodrider }
+			
+			is_adult = yes
+			is_female = no
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			FROM = { 
+				NOT = { has_character_modifier = in_seclusion }
+				has_regent = no
+			}
+			custom_tooltip = {
+				text = TOOLTIPask_bloodriderFIVE
+				hidden_tooltip = {				
+					FROM = { 
+						NOT = { has_assigned_minor_title = { title = title_bloodrider count = 5 } }					
+					}
+				}	
+			}	
+			OR = {
+				is_ruler = no
+				is_nomadic = no
+				has_blood_oath_with = FROM
+				custom_tooltip = {
+					text = TOOLTIPask_bloodriderBLOODOATH
+					hidden_tooltip = {				
+						FROM = { 
+							NOT = {
+								any_vassal = {
+									has_blood_oath_with = PREV
+								}
+							}					
+						}
+					}	
+				}
+			}
+			NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_rejected_bloodrider } }	
+			culture = dothraki
+			prisoner = no					
+			NOT = { is_close_relative = FROM }
+			NOT = { has_feud_with = FROM }
+			NOT = { has_severe_disability_trigger = yes }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			character_event = { id = dothraki.408 tooltip = TOOLTIPdothraki.408 }
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.15
+			}
+			modifier = {
+				factor = 0
+				NOT = { reverse_opinion = { who = FROM value = -19 } }
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = master_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = trained_warrior }
+			}
+			modifier = {
+				factor = 2.5
+				trait = skilled_warrior
+			}
+			modifier = {
+				factor = 6
+				trait = master_warrior
+			}
+		}
+	}
+}	

@@ -1,0 +1,3194 @@
+################################################
+#
+# Northern Melee
+#
+namespace = northern_melee
+#
+#################################################
+#
+# Written by knuckey
+#
+
+# Invitations have gone out
+character_event = {
+	id = northern_melee.1
+	title = "MELEETITLE3"
+	desc = "EVTDESCnorthern_melee.1"
+	picture = "GFX_evt_courier"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			if = {
+				limit = { higher_tier_than = COUNT }
+				top_liege = {
+					any_realm_character = { #Invite participants
+						limit = {	
+							age = 15
+							NOT = { character = ROOT }
+							OR = {
+								ROOT = { higher_tier_than = DUKE } #All characters in realm invited to king/emperor tourneys
+								
+								is_liege_of = ROOT
+								is_liege_or_above = ROOT
+								any_liege = {
+									tier = KING
+									is_liege_of = ROOT
+								}
+								AND = {
+									NOT = { any_liege = { tier = KING } }
+									NOT = { tier = KING }
+									any_liege = {
+										tier = EMPEROR
+										is_liege_of = ROOT
+									}
+								}
+							}						
+							OR = {	#Must either
+								#All of the following....
+								AND = {
+									OR = { #Is either a Lord or liege is a relative
+										higher_tier_than = BARON
+										liege = { 
+											NOT = { tier = BARON }
+											OR = {
+												is_close_relative = PREV
+												dynasty = PREV
+											}	
+										}
+									}
+									OR = { #Is a trained fighter
+										trait = poor_warrior
+										trait = trained_warrior
+										trait = skilled_warrior
+										trait = master_warrior
+									}										
+								}
+								#Is an awesome fighter
+								trait = master_warrior
+								trait = dragon_rider
+								trait = kingsguard
+								prestige = 300
+								AND = {
+									trait = skilled_warrior
+									ROOT = { lower_tier_than = KING }
+								}
+							}
+							NOT = { trait = dragon }
+							NOT = { trait = white_walker }
+						}
+						letter_event = { id = northern_melee.2 }
+					}
+					any_realm_lord = { #Invite all lords as spectators
+						limit = {
+							NOT = { character = ROOT }
+							NOT = { tier = BARON }
+							OR = {
+								ROOT = { higher_tier_than = DUKE } #All characters in realm invited to king/emperor tourneys
+								
+								is_liege_of = ROOT
+								is_liege_or_above = ROOT
+								any_liege = {
+									tier = KING
+									is_liege_of = ROOT
+								}
+								AND = {
+									NOT = { any_liege = { tier = KING } }
+									NOT = { tier = KING }
+									any_liege = {
+										tier = EMPEROR
+										is_liege_of = ROOT
+									}
+								}
+							}							
+						}
+						clr_character_flag = melee_has_ended
+						letter_event = { id = northern_melee.27 days=7 }
+					}
+				}
+			}	
+			if = {
+				limit = { tier = COUNT }
+				top_liege = {
+					any_realm_character = {
+						limit = {
+							#Invite participants
+							age = 15					
+							NOT = { character = ROOT }
+							
+							OR = { #Local participants only
+								is_liege_of = ROOT
+								is_liege_or_above = ROOT
+								AND = {
+									tier = COUNT
+									any_demesne_province = {
+										OR = {
+											any_neighbor_province = {
+												any_province_lord = {
+													character = ROOT
+												}
+											}
+											duchy = {
+												holder_scope = {
+													tier = DUKE
+													OR = {
+														is_liege_of = ROOT
+														any_vassal = {	
+															any_demesne_province = {
+																any_neighbor_province = {													
+																	any_province_lord = {
+																		character = ROOT
+																	}
+																}
+															}			
+														}
+													}
+												}
+											}
+										}	
+									}	
+								}
+								any_liege = {
+									tier = COUNT
+									any_demesne_province = {
+										OR = {
+											any_neighbor_province = {
+												any_province_lord = {
+													character = ROOT
+												}
+											}
+											duchy = {
+												holder_scope = {
+													tier = DUKE
+													OR = {
+														is_liege_of = ROOT
+														any_vassal = {	
+															any_demesne_province = {
+																any_neighbor_province = {													
+																	any_province_lord = {
+																		character = ROOT
+																	}
+																}
+															}			
+														}
+													}	
+												}
+											}
+										}
+									}	
+								}	
+							}
+							
+							OR = {	#Must either....						
+								#All of the following....
+								AND = {
+									OR = { #Have some fighting skill
+										trait = poor_warrior
+										trait = trained_warrior
+										trait = skilled_warrior
+										trait = master_warrior
+									}
+									OR = { #Is either a Lord or liege is a relative
+										is_ruler = yes
+										liege = { 
+											OR = {
+												is_close_relative = PREV
+												dynasty = PREV
+											}	
+										}
+									}	
+								}
+								#Is master of arms of the old gods religion
+								AND = {
+									is_old_gods_religion_trigger = yes
+									has_job_title = job_marshal
+								}	
+							}
+							NOT = { trait = dragon }
+							NOT = { trait = white_walker }
+						}
+						letter_event = { id = northern_melee.2 }
+					}
+					any_realm_lord = {
+						limit = {
+							NOT = { character = ROOT }	
+							NOT = { tier = BARON }	
+							OR = { #Local lords only
+								is_liege_of = ROOT
+								AND = {
+									tier = COUNT
+									any_demesne_province = {
+										OR = {
+											any_neighbor_province = {
+												any_province_lord = {
+													character = ROOT
+												}
+											}
+											duchy = {
+												holder_scope = {
+													tier = DUKE
+													OR = {
+														is_liege_of = ROOT
+														any_vassal = {	
+															any_demesne_province = {
+																any_neighbor_province = {													
+																	any_province_lord = {
+																		character = ROOT
+																	}
+																}
+															}			
+														}
+													}
+												}
+											}
+										}	
+									}	
+								}	
+							}
+						}
+						letter_event = { id = northern_melee.27 days=7 }
+					}	
+				}
+			}	
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAnorthern_melee.1"
+	}
+}
+# Invitation
+letter_event = {
+	id = northern_melee.2
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.2"
+	picture = "GFX_evt_courier"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = tourny_in_progress }
+		NOT = { has_character_flag = attending_melee }
+		NOT = {
+			AND = {
+				FROM = { tier = COUNT }
+				has_character_flag = no_small_tournies
+			}
+		}
+		NOT = {
+			AND = {
+				FROM = { tier = DUKE }
+				has_character_flag = no_regional_tournies
+			}
+		}
+		NOT = { has_character_flag = no_tournies_ever }
+		OR = {
+			is_ruler = no
+			is_feudal = yes
+			is_patrician = yes
+			is_tribal = yes
+		}	
+		NOT = { has_severe_disability_trigger = yes }
+		NOT = { trait = declared_incapable }
+		
+		OR = { #Certain disabilities require high skill to enter
+			trait = master_warrior
+			trait = skilled_warrior	
+			NOT = {
+				OR = {
+					trait = dwarf
+					trait = clubfooted
+					trait = hunchback
+					trait = imbecile
+					trait = inbred
+				}
+			}
+		}
+		
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { trait = nightswatch }
+		NOT = { has_priest_trait_trigger = yes }
+		NOT = { trait = slave }
+		
+		OR = {
+			is_old_gods_religion_trigger = yes
+			culture_group = first_men
+			AND = {
+				liege = { is_old_gods_religion_trigger = yes }
+				OR = { 
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}	
+		}	
+		OR = {
+			is_female = no
+			AND = {
+				trait = brave
+				is_strong_trigger = yes
+				OR = {
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}
+		}
+		OR = {		
+			trait = master_warrior
+			AND = {
+				NOT = { age = 60 }
+				trait = skilled_warrior
+			}
+			AND = {
+				NOT = { age = 50 }
+				trait = trained_warrior
+			}
+			NOT = { age = 40 }
+		}
+		prisoner = no
+		war = no
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	immediate = {
+		clr_character_flag = king_tourny
+		clr_character_flag = grand_tourny
+		clr_character_flag = normal_tourny
+		clr_character_flag = small_tourny
+	}
+
+	option = {
+		name = "EVTOPTAnorthern_melee.2"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = master_warrior
+			}
+			modifier = {
+				factor = 3
+				trait = skilled_warrior
+			}
+			modifier = {
+				factor = 2
+				trait = trained_warrior
+			}
+			modifier = {
+				factor = 2
+				trait = genius
+			}
+			modifier = {
+				factor = 2
+				is_smart_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = duelist
+			}
+			modifier = {
+				factor = 2
+				trait = tall
+			}
+			modifier = {
+				factor = 2
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value =  20 }
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value =  40 }
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value =  60 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value =  80 }
+			}
+		}
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = 40
+			set_character_flag = king_tourny
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = 20
+			set_character_flag = grand_tourny
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = 10
+			set_character_flag = normal_tourny
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = 5
+			set_character_flag = small_tourny
+		}			
+		set_character_flag = attending_melee
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_attending_melee
+				who = FROM
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_attending_melee
+				who = FROM
+				years = 100
+			}
+			# any_dynasty_member = { 
+				# limit = { is_close_relative = ROOT }
+				# character_event = { id = northern_melee.27 days = 7 } 
+			# }
+		}	
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.2"
+		trigger = {
+			lower_tier_than = FROM
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { is_old_gods_religion_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = content
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+			modifier = {
+				factor = 2
+				trait = dwarf
+			}
+			modifier = {
+				factor = 4
+				is_ill = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = wounded
+			}
+			
+			modifier = {
+				factor = 2
+				is_dumb_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = imbecile
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					is_old_gods_religion_trigger = yes
+					culture_group = first_men
+				}	
+				NOT = { is_ill = yes }
+			}
+			if = { 
+				limit = { FROM = { tier = EMPEROR } }
+				prestige = -50
+			}	
+			if = { 
+				limit = { FROM = { tier = KING } }
+				prestige = -30
+			}
+			if = { 
+				limit = { FROM = { tier = DUKE } }
+				prestige = -20
+			}
+			if = { 
+				limit = { FROM = { tier = COUNT } }
+				prestige = -10
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTCnorthern_melee.2"
+		trigger = {
+			NOT = { lower_tier_than = FROM }
+		}
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { is_old_gods_religion_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.5
+				trait = shy
+			}
+			modifier = {
+				factor = 1.5
+				trait = content
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.3
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+			modifier = {
+				factor = 2
+				trait = dwarf
+			}
+			modifier = {
+				factor = 4
+				is_ill = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = wounded
+			}
+			
+			modifier = {
+				factor = 2
+				is_dumb_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = imbecile
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTEnorthern_melee.2"
+		trigger = { ai = no FROM = { tier = COUNT } }
+		set_character_flag = no_small_tournies
+		prestige = -10
+	}
+	option = {
+		name = "EVTOPTFnorthern_melee.2"
+		trigger = { ai = no FROM = { tier = DUKE } }
+		set_character_flag = no_regional_tournies
+		prestige = -20
+	}
+	option = {
+		name = "EVTOPTDnorthern_melee.2"
+		trigger = { ai = no }
+		set_character_flag = no_tournies_ever
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = -50
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = -30
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = -20
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = -10
+		}	
+	}
+}	
+
+# Start of tournament
+character_event = {
+	id = northern_melee.3
+	title = "MELEETITLE3"
+	desc = "EVTDESCnorthern_melee.3"
+	picture = "GFX_evt_melee"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAnorthern_melee.3"
+		trigger = {
+			war = no
+			is_ruler = yes
+		}
+		hidden_tooltip = {
+			# chronicle = {
+				# entry = CHRONICLE_GRAND_TOURNAMENT
+				# picture = GFX_evt_joust
+			# }
+			set_character_flag = melee_begins
+			set_character_flag = attending_melee
+			character_event = { id = northern_melee.999 days = 400 } #flag safety catch
+			if = { #Only do full tourney if player is involved
+				limit = {
+					OR = {
+						ai = no
+						any_opinion_modifier_target = {
+							ai = no
+							has_character_flag = attending_melee
+							OR = {
+								has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+								has_opinion_modifier = { who = ROOT modifier = opinion_spectating_tournament }
+							}	
+						}
+					}	
+				}
+				set_variable = { which = "tourney_competitors" value = 0 }					
+				character_event = { id = northern_melee.5 days = 1 }
+				break = yes
+			}	
+			character_event = { id = northern_melee.550 days = 40 } #If AI only, just find winner and skip all the duels
+		}		
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.3"
+		trigger = {
+			OR = {
+				is_ruler = no
+				war = yes
+			}	
+		}
+		if = { limit = { tier = EMPEROR }
+			prestige = -90
+			wealth = 175
+		}	
+		if = { limit = { tier = KING }
+			prestige = -60
+			wealth = 125
+		}	
+		if = { limit = { tier = DUKE }
+			prestige = -40
+			wealth = 60
+		}	
+		if = { limit = { tier = COUNT }
+			prestige = -20
+			wealth = 25
+		}	
+		hidden_tooltip = {
+			any_opinion_modifier_target = {
+				limit = {
+					has_character_flag = attending_melee
+					OR = {
+						has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+						has_opinion_modifier = { who = ROOT modifier = opinion_spectating_tournament }
+					}	
+				}
+				character_event = { id = northern_melee.4 }
+			}
+		}
+		clr_character_flag = northern_melee
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+	}
+}
+
+# Tournament has been cancelled
+character_event = {
+	id = northern_melee.4
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.4"
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.4"
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+		if = { 
+			limit = { 
+				FROM = { tier = EMPEROR } 
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			prestige = -50
+		}	
+		if = { 
+			limit = { 
+				FROM = { tier = KING } 
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			prestige = -30
+		}
+		if = { 
+			limit = { 
+				FROM = { tier = DUKE } 
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			prestige = -20
+		}
+		if = { 
+			limit = { 
+				FROM = { tier = COUNT } 
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			prestige = -10
+		}	
+		clr_character_flag = attending_melee
+		clr_character_flag = melee_spectator
+		clr_character_flag = king_tourny
+		clr_character_flag = grand_tourny
+		clr_character_flag = normal_tourny
+		clr_character_flag = small_tourny
+		hidden_tooltip = {	
+			remove_opinion = {
+				modifier = opinion_attending_melee
+				who = FROM
+			}
+			remove_opinion = {
+				modifier = opinion_spectating_tournament
+				who = FROM
+			}
+			reverse_remove_opinion = {
+				modifier = opinion_attending_melee
+				who = FROM
+			}
+			reverse_remove_opinion = {
+				modifier = opinion_spectating_tournament
+				who = FROM
+			}
+		}
+	}
+}
+# Count Competitors (This only happens if player is somehow involved)
+character_event = {
+	id = northern_melee.5	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		set_variable = { which = "count_competitor_iterations" value = 0 } #To make sure it doesn't take too long
+		
+		
+		any_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				NOT = { has_character_flag = lost_melee }
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}	
+			ROOT = { change_variable = { which = "tourney_competitors" value = 1 } }
+		}
+		character_event = { id = northern_melee.6 days = 1 }
+	}
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = northern_melee.6	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {	
+		#If 3 or less create randoms to make 4
+		if = {
+			limit = { NOT = { check_variable = { which = "tourney_competitors" value = 4 } } }
+			capital_scope = {
+				ROOT = {
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						culture = PREV
+						religion = PREV
+					}
+					new_character = {
+						set_character_flag = new_knight
+						random_list = {
+							50 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+				}
+			}	
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "tourney_competitors" value = 3 } } }
+			capital_scope = {
+				ROOT = {
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						culture = PREV
+						religion = PREV
+					}
+					new_character = {
+						set_character_flag = new_knight
+						random_list = {
+							50 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+				}
+			}			
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "tourney_competitors" value = 2 } } }
+			capital_scope = {
+				ROOT = {
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						culture = PREV
+						religion = PREV
+					}
+					new_character = {
+						set_character_flag = new_knight
+						random_list = {
+							50 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+				}
+			}			
+		}	
+		if = {
+			limit = { NOT = { check_variable = { which = "tourney_competitors" value = 1 } } }
+			capital_scope = {
+				ROOT = {
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						culture = PREV
+						religion = PREV
+					}
+					new_character = {
+						set_character_flag = new_knight
+						random_list = {
+							50 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+				}
+			}			
+		}	
+		#If no skilled knights create one
+		if = {
+			limit = { 
+				NOT = {
+					any_courtier = {
+						OR = {
+							trait = skilled_warrior
+							trait = master_warrior
+						}
+						has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					}
+				}	
+			}
+			capital_scope = {
+				ROOT = {
+					create_character = {
+						random_traits = yes
+						dynasty = none
+						culture = PREV
+						religion = PREV
+					}
+					new_character = {
+						set_character_flag = new_knight
+						random_list = {
+							50 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+				}
+			}			
+		}
+		
+		any_courtier = {
+			limit = { has_character_flag = new_knight }
+			clr_character_flag = new_knight
+			remove_trait = weak
+			remove_trait = imbecile
+			remove_trait = clubfooted
+			remove_trait = inbred
+			set_character_flag = attending_melee
+			opinion = {
+				modifier = opinion_attending_melee
+				who = ROOT
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_attending_melee
+				who = ROOT
+				years = 100
+			}
+			if = { 
+				limit = { ROOT = { tier = EMPEROR } }
+				set_character_flag = king_tourny
+			}	
+			if = { 
+				limit = { ROOT = { tier = KING } }
+				set_character_flag = grand_tourny
+			}
+			if = { 
+				limit = { ROOT = { tier = DUKE } }
+				set_character_flag = normal_tourny
+			}
+			if = { 
+				limit = { ROOT = { tier = COUNT } }
+				set_character_flag = small_tourny
+			}	
+		}	
+		#If 32 or less proceed
+		if = {
+			limit = { NOT = { check_variable = { which = "tourney_competitors" value = 32 } } }
+			set_variable = { which = "tourney_competitors" value = 0 }
+			set_character_flag = knights_found
+			character_event = { id = northern_melee.11 days = 1 } 		
+		}
+		#if more than 32 randomly remove competitors
+		if = {
+			limit = { 
+				NOT = { has_character_flag = knights_found }
+				check_variable = { which = "tourney_competitors" value = 32 } 
+			} 
+			any_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					NOT = { has_character_flag = lost_melee }
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				}
+				character_event = { id = northern_melee.7 days = 2 random = 1 }
+			}
+			change_variable = { which = "count_competitor_iterations" value = 1 }
+			#set_variable = { which = "tourney_competitors" value = 0 }
+			character_event = { id = northern_melee.6 days = 4 } #Recount loop
+		}
+	}
+	option = {
+		name = OK
+	}
+}
+#Candidate is randomly removed from tourney
+character_event = {
+	id = northern_melee.7
+	
+	is_triggered_only = yes
+	
+	hide_window = yes
+	
+	trigger = {
+		FROM = {
+			NOT = { has_character_flag = knights_found }
+			check_variable = { which = "tourney_competitors" value = 32 } 
+		}
+	}
+	
+	immediate = {
+		c_the_citadel = {
+			holder_scope = {
+				character_event = { id = northern_melee.8 } 
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = northern_melee.8
+	desc = "AI only tourney.event 7" 
+	
+	is_triggered_only = yes
+	
+	option = { #Survive
+		name = OK
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 6
+				FROM = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 3
+				FROM = { trait = skilled_warrior }
+			}
+			# modifier = {
+				# factor = 1.5
+				# FROM = { trait = knight }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { has_character_modifier = golden_bow }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { has_character_modifier = good_bow }
+			# }
+			modifier = {
+				factor = 3
+				FROM = { is_strong_trigger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { trait = tall }
+			}
+			modifier = {
+				factor = 3
+				FROM = { trait = genius }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_smart_trigger = yes }
+			}
+			
+			modifier = {
+				factor = 1.5
+				FROM = { is_smart_trigger = yes }
+			}
+			
+			modifier = {
+				factor = 1.1
+				FROM = {
+					any_ward = {
+						trait = squire
+						OR = {
+							trait = poor_warrior
+							trait = trained_warrior
+						}	
+					}
+				}	
+			}
+			modifier = {
+				factor = 1.25
+				FROM = {
+					any_ward = {
+						trait = squire
+						OR = {
+							trait = skilled_warrior
+							trait = master_warrior						
+						}
+					}
+				}	
+			}
+		}	
+	}
+	
+	option = { #Remove
+		name = OK
+		ai_chance = { 
+			factor = 15
+			#try to make sure this doesn't loop too much
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 2 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 4 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 6 } } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 7 } } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 8 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { check_variable = { which = "count_competitor_iterations" value = 9 } } }
+			}
+			
+			modifier = {
+				factor = 6
+				FROM = { 
+					NOT = {
+						OR = {
+							trait = master_warrior
+							trait = skilled_warrior
+							trait = trained_warrior
+							trait = poor_warrior
+						}
+					}
+				}	
+			}
+			modifier = {
+				factor = 3
+				FROM = { trait = poor_warrior }
+			}
+			modifier = {
+				factor = 3
+				FROM = { is_weak_trigger = yes }
+			}
+			modifier = {
+				factor = 100
+				FROM = { trait = infirm }
+			}
+			modifier = {
+				factor = 3
+				FROM = { trait = imbecile }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_dumb_trigger = yes }
+			}	
+			modifier = {
+				factor = 1.5
+				FROM = { trait = craven }
+			}
+		}	
+		FROM = {	
+			set_character_flag = lost_melee	
+			prestige = -30
+			hidden_tooltip = {
+				any_dynasty_member = {
+					limit = {
+						ai = no
+						is_close_relative = PREV
+						has_character_flag = melee_spectator
+						has_character_flag = attending_melee
+					}
+					character_event = { id = northern_melee.31 }
+				}
+			}
+			if = {
+				limit = { ai = no }
+				random_opinion_modifier_target = {
+					limit = {
+						has_character_flag = tourny_in_progress
+						reverse_has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+					}
+					random_opinion_modifier_target = {
+						limit = {				
+							has_character_flag = attending_melee
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+							NOT = { has_character_flag = lost_melee }
+							NOT = { character = PREVPREV }
+						}
+						character_event = { id = northern_melee.9 }
+					}			
+				}			 
+			}	
+		}
+		FROM = { FROM = { change_variable = { which = "tourney_competitors" value = -1 } } }			
+	}
+}	
+#Inform lost tourney
+character_event = { #scope to random adversary
+	id = northern_melee.9
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { FROMFROM = { character_event = { id = northern_melee.10 } } }
+	
+	option = {
+		name = "OK"		
+	}
+}	
+character_event = {
+	id = northern_melee.10
+	desc = "EVTDESCnorthern_melee.10" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	immediate = { 
+		prestige = 30 
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.10"
+		prestige = -30	
+	}
+	
+	option = {
+		name = "EVTOPTB70005" #blame squire
+		trigger = {
+			any_ward = { trait = squire }
+		}
+		prestige = -15	
+		random_ward = {
+			limit = { trait = squire }
+			opinion = {
+				modifier = opinion_squire_humiliated
+				who = ROOT
+				years = 2
+			}	
+			prestige = -15	
+		}
+	}
+}	
+###Final fighters found, inform host###
+character_event = {
+	id = northern_melee.11
+	title = "MELEETITLE3"
+	desc = "EVTDESCnorthern_melee.11" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	immediate = { 
+		set_variable = { which = "tourney_competitors" value = 0 } 
+		clr_character_flag = knights_found
+		set_character_flag = melee_final_round
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.11" 	
+		clr_character_flag = inform_of_all_tourney_results	
+		#hidden_tooltip = { character_event = { id = tourney.11 days = 1 } }
+		custom_tooltip = { text = TOOLTIPnorthern_melee.11 }
+		any_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				NOT = { has_character_flag = lost_melee }
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			set_character_flag = northern_melee.12
+			hidden_tooltip = { ROOT = { change_variable = { which = "tourney_competitors" value = 1 } } }
+			character_event = { id = northern_melee.12 tooltip = TOOLTIPnorthern_melee.12 }
+		}
+		if = { #Large tourneys get feast events
+			limit = { higher_tier_than = DUKE }
+			add_character_modifier = {
+				name = holding_large_feast	
+				duration = -1
+			}		
+			set_character_flag = host_feast_started
+			hidden_tooltip = {
+				character_event = { id = feast.2 days = 2 } #Random Events
+				any_opinion_modifier_target = {
+					limit = { 
+						has_character_flag = attending_melee
+						has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					}
+					set_character_flag = guest_feast_started
+					if = {
+						limit = { is_ruler = yes }
+						character_event = { id = feast.3 } #Random Events
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBnorthern_melee.11" #Inform of all tilts
+		trigger = {
+			ai = no
+		}
+		custom_tooltip = { text = TOOLTIPEVTOPTBmelee.2 }
+		set_character_flag = inform_of_all_tourney_results		
+		hidden_tooltip = {
+			any_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					NOT = { has_character_flag = lost_melee }
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				}
+				set_character_flag = northern_melee.12
+				hidden_tooltip = { ROOT = { change_variable = { which = "tourney_competitors" value = 1 } } }
+				character_event = { id = northern_melee.12 tooltip = TOOLTIPnorthern_melee.12 }
+			}
+		}
+		if = { #Large tourneys get feast events
+			limit = { higher_tier_than = DUKE }
+			add_character_modifier = {
+				name = holding_large_feast	
+				duration = -1
+			}		
+			set_character_flag = host_feast_started
+			hidden_tooltip = {
+				character_event = { id = feast.2 days = 2 } #Random Events
+				any_opinion_modifier_target = {
+					limit = { 
+						has_character_flag = attending_melee
+						has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					}
+					set_character_flag = guest_feast_started
+					if = {
+						limit = { is_ruler = yes }
+						character_event = { id = feast.3 } #Random Events
+					}
+				}
+			}
+		}	
+	}
+}
+#Inform fighter they made final rounds
+character_event = {
+	id = northern_melee.12
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.12" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.12" 
+		clr_character_flag = northern_melee.12
+		hidden_tooltip = { character_event = { id = northern_melee.13 days = 2 random = 1 } } 
+	}
+}	
+###New Match Up###
+#Match fighters
+character_event = {
+	id = northern_melee.13	
+	
+	hide_window = yes
+	has_character_flag = attending_melee
+	#is_triggered_only = yes
+	
+	trigger = {		
+		NOT = { has_character_flag = lost_melee }
+		any_opinion_modifier_target = {
+			has_character_flag = melee_final_round
+			reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+		}	
+		OR = {
+			NOT = { has_character_flag = in_melee }
+			had_character_flag = { flag = in_melee days = 7 }
+		}
+	}
+	
+	mean_time_to_happen = { days = 7 }
+	
+	immediate = {
+		random_opinion_modifier_target = {
+			limit = {
+				has_character_flag = melee_final_round
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			random_opinion_modifier_target = {
+				limit = {				
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+					NOT = { has_character_flag = lost_melee }
+					NOT = { character = ROOT }
+					OR = {
+						NOT = { has_character_flag = in_melee }
+						had_character_flag = { flag = in_melee days = 7 }
+					}
+				}
+				set_character_flag = in_melee
+				ROOT = { set_character_flag = in_melee }
+				character_event = { id = northern_melee.14 } 
+			}
+		}	
+	}
+	
+	option = {
+		name = OK	
+	}
+}	
+#Inform 2nd fighter
+character_event = {
+	id = northern_melee.14
+	desc = "EVTDESCnorthern_melee.14" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { character = FROM } }
+	
+	immediate = {
+		set_character_flag = flag_duel_friendly
+		clr_character_flag = melee_killed_opponent
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.14" 
+		ai_chance = {
+			factor = 1
+		}
+		FROM = { 
+			set_character_flag = flag_duel_friendly
+			clr_character_flag = melee_killed_opponent
+			character_event = { id = northern_melee.15 tooltip = TOOLTIPnorthern_melee.15 } 
+		}		
+	}
+}	
+#Inform 1st fighter
+character_event = {
+	id = northern_melee.15
+	desc = "EVTDESCnorthern_melee.14" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { character = FROM } }
+	
+	# immediate = {
+		# set_character_flag = flag_duel_friendly
+		# clr_character_flag = melee_killed_opponent
+	# }
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.14" 
+		custom_tooltip = { text = TOOLTIPnorthern_melee.15 }
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 days = 1 } } } }
+	}
+}
+
+#Inform Won Matchup
+character_event = {
+	id = northern_melee.16
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.16
+		trigger = { FROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.16B
+		trigger = { 
+			FROMFROM = { is_alive = no } 
+			NOT = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.16C
+		trigger = { 
+			FROMFROM = { is_alive = no } 
+			has_character_flag = melee_killed_opponent
+		}
+	}
+	
+	immediate = {
+		clr_character_flag = in_melee
+		FROMFROM = { character_event = { id = northern_melee.17 } }
+		random_opinion_modifier_target = {
+			limit = {
+				has_character_flag = melee_final_round
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			change_variable = { which = "tourney_competitors" value = -1 }
+			#If last competitor inform host of end of tourney
+			if = {
+				limit = { 
+					NOT = {
+						any_opinion_modifier_target  = {
+							has_character_flag = attending_melee
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+							NOT = { has_character_flag = lost_melee }
+							NOT = { character = ROOT }
+						}
+					}	
+				}
+				set_character_flag = melee_winner_found		
+				character_event = { id = northern_melee.19 tooltip = TOOLTIPnorthern_melee.19 days = 1 }
+				hidden_tooltip = { 
+					ROOT = { character_event = { id = northern_melee.22 days = 1 } }
+					FROMFROM = { character_event = { id = northern_melee.23 days = 1 } }
+					any_opinion_modifier_target  = { #Inform rest of tourny
+						limit = {
+							has_character_flag = attending_melee
+							OR = {
+								has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+								has_opinion_modifier = { who = PREV modifier = opinion_spectating_tournament }
+							}
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+							NOT = { character = PREV }
+							OR = {
+								ai = no
+								dynasty = ROOT
+								dynasty = FROMFROM
+							}
+						}	
+						character_event = { id = northern_melee.21 days = 1 } 
+					}
+				}
+			}
+			#If semi-finalist inform host
+			if = {
+				limit = { 
+					NOT = { has_character_flag = melee_winner_found }
+					NOT = {
+						any_opinion_modifier_target  = {
+							has_character_flag = attending_melee
+							has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+							NOT = { has_character_flag = lost_melee }
+							count = 3
+						}
+					}
+				}
+				hidden_tooltip = { 
+					set_character_flag = melee_winner_found
+					character_event = { id = northern_melee.18 } 
+					FROMFROM = { character_event = { id = northern_melee.24 } }
+					any_opinion_modifier_target  = { #Inform rest of tourny
+						limit = {
+							has_character_flag = attending_melee
+							OR = {
+								has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+								has_opinion_modifier = { who = PREV modifier = opinion_spectating_tournament }
+							}	
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+							NOT = { character = PREV }
+							OR = {
+								ai = no
+								dynasty = ROOT
+								dynasty = FROMFROM
+							}
+						}	
+						character_event = { id = northern_melee.20  } 
+					}
+				}
+			}
+			#If killed inform host
+			if = {
+				limit = { 
+					NOT = { has_character_flag = melee_winner_found }
+					FROMFROM = {
+						is_alive = no
+						killer = { character = ROOT }
+					}
+				}
+				hidden_tooltip = { 
+					set_character_flag = melee_winner_found
+					character_event = { id = northern_melee.18 }
+					any_opinion_modifier_target  = { #Inform rest of tourny
+						limit = {
+							has_character_flag = attending_melee
+							OR = {
+								has_opinion_modifier = { who = PREV modifier = opinion_attending_melee }
+								has_opinion_modifier = { who = PREV modifier = opinion_spectating_tournament }
+							}	
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+							NOT = { character = PREV }
+							OR = {
+								ai = no
+								dynasty = ROOT
+								dynasty = FROMFROM
+							}
+						}	
+						character_event = { id = northern_melee.20 } 
+					}
+				}
+			}
+			#If human requests all results inform
+			if = {
+				limit = { 
+					NOT = { has_character_flag = melee_winner_found }
+					has_character_flag = inform_of_all_tourney_results		
+				}
+				hidden_tooltip = { character_event = { id = northern_melee.18 } }
+			}
+			clr_character_flag = melee_winner_found
+		}
+		hidden_tooltip = { 
+			character_event = { id = northern_melee.13 days = 2 random = 1 } #Find New Matchup
+			hidden_tooltip = {  #inform spectator relative
+				any_dynasty_member = { 
+					limit = {
+						ai = no
+						is_close_relative = PREV
+						has_character_flag = melee_spectator
+						has_character_flag = attending_melee
+					}
+					character_event = { id = northern_melee.30 }
+				}
+				FROMFROM = {
+					any_dynasty_member = {
+						limit = {
+							ai = no
+							is_close_relative = PREV
+							has_character_flag = melee_spectator
+							has_character_flag = attending_melee
+						}
+						character_event = { id = northern_melee.32 }
+					}
+				}	
+			}
+		}  
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.16" 
+		if = {
+			limit = {
+				FROMFROM = { 
+					OR = {
+						trait = master_warrior
+						higher_tier_than = DUKE
+					}
+				}
+			}
+			prestige = 20
+		}
+		if = {
+			limit = {
+				FROMFROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { higher_tier_than = DUKE }
+					OR = {
+						trait = skilled_warrior
+						tier = DUKE
+					}
+				}
+			}
+			prestige = 10
+		}	
+		if = {
+			limit = {
+				FROMFROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { higher_tier_than = COUNT }
+					OR = {
+						trait = trained_warrior
+						tier = COUNT
+					}
+				}
+			}
+			prestige = 5
+		}	
+		if = {
+			limit = {
+				FROMFROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { trait = trained_warrior }
+					NOT = { higher_tier_than = BARON }
+				}
+			}
+			prestige = 2
+		}		
+	}
+}
+#Inform Lost Matchup
+character_event = {
+	id = northern_melee.17
+	desc = "EVTDESCnorthern_melee.17" 
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	immediate = {	
+		clr_character_flag = in_melee
+		set_character_flag = lost_melee
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.17" 
+		if = {
+			limit = {
+				FROM = { 
+					OR = {
+						trait = master_warrior
+						higher_tier_than = DUKE
+					}
+				}
+			}		
+			prestige = -2
+		}
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { higher_tier_than = DUKE }
+					OR = {
+						trait = skilled_warrior
+						tier = DUKE
+					}
+				}
+			}
+			prestige = -5
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { higher_tier_than = COUNT }
+					OR = {
+						trait = trained_warrior
+						tier = COUNT
+					}
+				}
+			}
+			prestige = -10
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { trait = trained_warrior }
+					NOT = { higher_tier_than = BARON }
+				}
+			}
+			prestige = -20
+		}
+	}
+	option = {
+		name = "EVTOPTB70005" #blame squire
+		trigger = {
+			any_ward = { trait = squire }
+		}
+		if = {
+			limit = {
+				FROM = { 
+					OR = {
+						trait = master_warrior
+						higher_tier_than = DUKE
+					}
+				}
+			}		
+			prestige = -1
+			random_ward = {
+				limit = { trait = squire }
+				opinion = {
+					modifier = opinion_squire_humiliated
+					who = ROOT
+					years = 2
+				}	
+				prestige = -1
+			}
+		}
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { higher_tier_than = DUKE }
+					OR = {
+						trait = skilled_warrior
+						tier = DUKE
+					}
+				}
+			}
+			prestige = -3
+			random_ward = {
+				limit = { trait = squire }
+				opinion = {
+					modifier = opinion_squire_humiliated
+					who = ROOT
+					years = 2
+				}	
+				prestige = -2
+			}
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { higher_tier_than = COUNT }
+					OR = {
+						trait = trained_warrior
+						tier = COUNT
+					}
+				}
+			}
+			prestige = -5
+			random_ward = {
+				limit = { trait = squire }
+				opinion = {
+					modifier = opinion_squire_humiliated
+					who = ROOT
+					years = 2
+				}	
+				prestige = -5
+			}
+		}	
+		if = {
+			limit = {
+				FROM = { 
+					NOT = { trait = master_warrior }
+					NOT = { trait = skilled_warrior }
+					NOT = { trait = trained_warrior }
+					NOT = { higher_tier_than = BARON }
+				}
+			}
+			prestige = -10
+			random_ward = {
+				limit = { trait = squire }
+				opinion = {
+					modifier = opinion_squire_humiliated
+					who = ROOT
+					years = 2
+				}	
+				prestige = -10	
+			}
+		}		
+	}
+}
+#Inform Host of Semi_final
+character_event = {
+	id = northern_melee.18
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.18
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.18B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.18C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.18" 
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+#Inform Host of Winner
+character_event = {
+	id = northern_melee.19
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.19
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.19B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.19C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	immediate = {
+		clr_character_flag = melee_final_round
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.19" 
+		FROM = {
+			opinion = {
+				modifier = opinion_tournament_winner
+				who = ROOT
+				years = 20
+			}
+		}
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+		character_event = { id = northern_melee.25 days = 20 tooltip = TOOLTIPnorthern_melee.25 }
+	}
+}
+#Inform spectator of Semi_final
+character_event = {
+	id = northern_melee.20
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.18
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.18B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.18C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.20"
+		trigger = { 
+			OR = {
+				NOT = { has_character_flag = melee_spectator }
+				NOT = { dynasty = FROMFROMFROM }
+			}
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.20"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROMFROMFROM
+			NOT = { is_close_relative = FROMFROMFROM }
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.20"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROMFROMFROM
+			is_close_relative = FROMFROMFROM
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			prestige = 15
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			prestige = 10
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			prestige = 3
+		}	
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			prestige = 1
+		}
+	}
+}
+#Inform spectator of winner
+character_event = {
+	id = northern_melee.21
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.19
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.19B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.19C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.21"
+		trigger = { 
+			OR = {
+				NOT = { has_character_flag = melee_spectator }
+				AND = {
+					NOT = { dynasty = FROM }
+					NOT = { dynasty = FROMFROMFROM }
+				}	
+			}
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+	}
+	
+	#Relative is winner
+	option = {
+		name = "EVTOPTCnorthern_melee.21"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROM
+			NOT = { is_close_relative = FROM }
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+	}
+	option = {
+		name = "EVTOPTCnorthern_melee.21"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROM
+			is_close_relative = FROM
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			prestige = 35
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			prestige = 25
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			prestige = 10
+		}	
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			prestige = 5
+		}
+	}
+	
+	#Relative is runner up
+	option = {
+		name = "EVTOPTBnorthern_melee.21"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROMFROMFROM
+			NOT = { is_close_relative = FROMFROMFROM }
+			NOT = { dynasty = FROM }		
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.21"
+		trigger = { 
+			has_character_flag = melee_spectator 
+			dynasty = FROMFROMFROM
+			is_close_relative = FROMFROMFROM
+			OR = {
+				NOT = { dynasty = FROM }
+				NOT = { is_close_relative = FROM }
+			}	
+		}
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			prestige = 25
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			prestige = 15
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			prestige = 5
+		}	
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			prestige = 2
+		}
+	}
+}
+
+# Character wins the tournament
+character_event = {
+	id = northern_melee.22
+	title = "MELEETITLE"
+	desc = "EVTDESCnorthern_melee.22"
+	picture = "GFX_evt_melee"
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_character_flag = attending_tournament_event	
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.22"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 60
+			prestige = 150
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 35
+			prestige = 100
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 25
+			prestige = 50	
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 10
+			prestige = 25
+		}
+	}
+}
+
+# Character wins second place in the tournament
+character_event = {
+	id = northern_melee.23
+	title = "MELEETITLE"
+	desc = "EVTDESCnorthern_melee.23"
+	picture = "GFX_evt_melee"
+
+	is_triggered_only = yes
+
+	immediate = {
+		set_character_flag = attending_tournament_event
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.23"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 35
+			prestige = 100
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 25
+			prestige = 50
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 10
+			prestige = 25
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 5
+			prestige = 15
+		}		
+	}
+}
+
+# Character gets to semi finals in the tournament
+character_event = {
+	id = northern_melee.24
+	title = "MELEETITLE"
+	desc = "EVTDESCnorthern_melee.24"
+	picture = "GFX_evt_melee"
+
+	is_triggered_only = yes	
+
+	immediate = {
+		set_character_flag = attending_tournament_event	
+	}
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.24"
+		if = { 
+			limit = {
+				has_character_flag = king_tourny
+			}
+			wealth = 25
+			prestige = 50
+		}
+		if = { 
+			limit = {
+				has_character_flag = grand_tourny
+			}
+			wealth = 10
+			prestige = 25
+		}
+		if = { 
+			limit = {
+				has_character_flag = normal_tourny
+			}
+			wealth = 5
+			prestige = 15
+		}
+		if = { 
+			limit = {
+				has_character_flag = small_tourny
+			}
+			wealth = 2
+			prestige = 5
+		}		
+	}
+}
+
+# Tournament is over
+character_event = {
+	id = northern_melee.25
+	title = "MELEETITLE3"
+	desc = "EVTDESCnorthern_melee.25"
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAnorthern_melee.25"
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb	
+		
+		clr_character_flag = tourny_in_progress
+		clr_character_flag = melee_begins
+		clr_character_flag = attending_melee
+		clr_character_flag = attending_tournament_event
+	
+		clr_character_flag = lost_melee
+		clr_character_flag = melee_final_round
+		clr_character_flag = in_melee
+		clr_character_flag = melee_killed_opponent
+		clr_character_flag = inform_of_all_tourney_results
+			
+		clr_character_flag = host_feast_started
+		remove_character_modifier = holding_large_feast	
+		
+		any_opinion_modifier_target = {
+			limit = {
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			if = {
+				limit = { higher_tier_than = DUKE }
+				ROOT = { prestige = 10 }
+			}
+			if = {
+				limit = { 
+					lower_tier_than = KING
+					OR = {
+						trait = master_warrior
+						tier = DUKE
+					}
+				}
+				ROOT = { prestige = 5 }
+			}	
+			if = {
+				limit = {
+					NOT = { trait = master_warrior }
+					tier = COUNT
+				}
+				hidden_tooltip = { ROOT = { prestige = 2 } }
+			}	
+			if = {
+				limit = {
+					OR = { 
+						higher_tier_than = COUNT 
+						AND = {
+							ROOT = { lower_tier_than = KING }
+							tier = COUNT
+						}								
+					}
+				}
+				opinion = {
+					modifier = opinion_tournament_participant
+					who = ROOT
+					years = 2
+				}
+			}			
+			clr_character_flag = attending_melee
+			clr_character_flag = attending_tournament_event
+			clr_character_flag = king_tourny
+			clr_character_flag = grand_tourny
+			clr_character_flag = normal_tourny
+			clr_character_flag = small_tourny
+			clr_character_flag = lost_melee
+			clr_character_flag = melee_final_round
+			clr_character_flag = in_melee
+			clr_character_flag = melee_killed_opponent
+			clr_character_flag = guest_feast_started
+			hidden_tooltip = {	
+				if = {
+					limit = { ai = no }
+					character_event = { id = northern_melee.26 }
+				}	
+				remove_opinion = {
+					modifier = opinion_attending_melee
+					who = ROOT
+				}
+				reverse_remove_opinion = {
+					modifier = opinion_attending_melee
+					who = ROOT
+				}
+			}
+		}	
+		any_opinion_modifier_target = {
+			limit = {
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_spectating_tournament  }
+			}
+			if = {
+				limit = { higher_tier_than = DUKE }
+				ROOT = { prestige = 5 }
+			}
+			if = {
+				limit = { tier = DUKE }
+				hidden_tooltip = { ROOT = { prestige = 2 } }
+			}
+			opinion = {
+				modifier = opinion_melee_spectator
+				who = ROOT
+				years = 2
+			}	
+			hidden_tooltip = {
+				if = {
+					limit = { ai = no }
+					character_event = { id = northern_melee.28 }
+				}	
+			}	
+			hidden_tooltip = {	
+				remove_opinion = {
+					modifier = opinion_spectating_tournament
+					who = ROOT
+				}
+				reverse_remove_opinion = {
+					modifier = opinion_spectating_tournament
+					who = ROOT
+				}
+			}
+			clr_character_flag = attending_melee
+			clr_character_flag = melee_spectator
+			clr_character_flag = attending_tournament_event
+			clr_character_flag = king_tourny
+			clr_character_flag = grand_tourny
+			clr_character_flag = normal_tourny
+			clr_character_flag = small_tourny
+			clr_character_flag = guest_feast_started
+		}	
+	}			
+}
+
+# End of tournament , inform participant
+character_event = {
+	id = northern_melee.26
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.26"
+	picture = "GFX_evt_melee"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAnorthern_melee.26"
+	}
+}
+
+# uneligible lords Invited to spectate
+letter_event = {
+	id = northern_melee.27
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.27"
+	picture = "GFX_evt_courier"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = tourny_in_progress }
+		NOT = { has_character_flag = attending_melee }
+		NOT = {
+			AND = {
+				FROM = { tier = COUNT } 
+				has_character_flag = no_small_tournies
+			}
+		}
+		NOT = {
+			AND = {
+				FROM = { tier = DUKE } 
+				has_character_flag = no_regional_tournies
+			}
+		}
+		NOT = { has_character_flag = no_tournies_ever }
+		OR = {
+			is_ruler = no
+			is_feudal = yes
+			is_patrician = yes
+			is_tribal = yes
+		}	
+		NOT = { trait = incapable }
+		NOT = { trait = declared_incapable }
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		NOT = { trait = nightswatch }		
+		prisoner = no
+		war = no
+	}
+	
+	immediate = {
+		clr_character_flag = king_tourny
+		clr_character_flag = grand_tourny
+		clr_character_flag = normal_tourny
+		clr_character_flag = small_tourny
+	}
+
+	option = {
+		name = "EVTOPTAnorthern_melee.27"
+		ai_chance = {
+			factor = 50
+		
+			modifier = {
+				factor = 1.2
+				is_old_gods_religion_trigger = yes
+			}
+			modifier = {
+				factor = 1.2
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.2
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.4
+				trait = proud
+			}
+			modifier = {
+				factor = 1.4
+				trait = gregarious
+			}
+			modifier = {
+				factor = 1.4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.4
+				opinion = { who = FROM value =  20 }
+			}
+			modifier = {
+				factor = 1.4
+				opinion = { who = FROM value =  40 }
+			}
+			modifier = {
+				factor = 1.4
+				opinion = { who = FROM value =  60 }
+			}
+			modifier = {
+				factor = 1.4
+				opinion = { who = FROM value =  80 }
+			}
+		}		
+		set_character_flag = attending_melee
+		set_character_flag = melee_spectator
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_spectating_tournament
+				who = FROM
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_spectating_tournament
+				who = FROM
+				years = 100
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBnorthern_melee.27"
+		trigger = {
+			lower_tier_than = FROM
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 1.2
+				NOT = { is_old_gods_religion_trigger = yes }
+			}
+			modifier = {
+				factor = 1.2
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.4
+				trait = shy
+			}
+			modifier = {
+				factor = 1.2
+				trait = content
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+			modifier = {
+				factor = 2
+				is_ill = yes
+			}
+		}
+		if = { 
+			limit = { FROM = { tier = EMPEROR } }
+			prestige = -50
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } }
+			prestige = -30
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } }
+			prestige = -20
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } }
+			prestige = -10
+		}	
+	}
+	option = {
+		name = "EVTOPTCnorthern_melee.2"
+		trigger = {
+			NOT = { lower_tier_than = FROM }
+		}
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 1.2
+				NOT = { is_old_gods_religion_trigger = yes }
+			}
+			modifier = {
+				factor = 1.2
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.4
+				trait = shy
+			}
+			modifier = {
+				factor = 1.2
+				trait = content
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -20 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -40 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -60 } }
+			}
+			modifier = {
+				factor = 1.4
+				NOT = { opinion = { who = FROM value =  -80 } }
+			}
+			modifier = {
+				factor = 2
+				is_ill = yes
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTEnorthern_melee.2"
+		ai_chance = { factor = 0 }
+		trigger = { FROM = { tier = COUNT } } 
+		set_character_flag = no_small_tournies
+		prestige = -10
+	}
+	option = {
+		name = "EVTOPTFnorthern_melee.2"
+		ai_chance = { factor = 0 }
+		trigger = { FROM = { tier = DUKE } } 
+		set_character_flag = no_regional_tournies
+		prestige = -20
+	}
+	option = {
+		name = "EVTOPTDnorthern_melee.2"
+		ai_chance = { factor = 0 }
+		set_character_flag = no_tournies_ever
+		if = { 
+			limit = { FROM = { tier = EMPEROR } } 
+			prestige = -50
+		}	
+		if = { 
+			limit = { FROM = { tier = KING } } 
+			prestige = -30
+		}
+		if = { 
+			limit = { FROM = { tier = DUKE } } 
+			prestige = -20
+		}
+		if = { 
+			limit = { FROM = { tier = COUNT } } 
+			prestige = -10
+		}	
+	}
+}	
+
+# Inform spectator tourney finished
+character_event = {
+	id = northern_melee.28
+	title = "MELEETITLE2"
+	desc = "EVTDESCnorthern_melee.28"
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAnorthern_melee.28"
+	}
+}
+
+# Inform spectator of relative's win in later round
+character_event = {
+	id = northern_melee.30
+	title = "MELEETITLE4"
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.30
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.30B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.30C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCnorthern_melee.30"
+		FROMFROMFROM = {
+			tooltip = { show_portrait = yes }
+		}
+		prestige = 5
+	}
+}
+# Inform spectator of relative's kncoked out in early round
+character_event = {
+	id = northern_melee.31
+	desc = "EVTDESCnorthern_melee.31"
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTCnorthern_melee.31"
+		prestige = -15	
+	}
+}
+# Inform spectator of relative's knocked out in later round
+character_event = {
+	id = northern_melee.32
+	picture = "GFX_evt_melee"
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	
+	desc = { #Normal
+		text = EVTDESCnorthern_melee.32
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = { #Accidental death
+		text = EVTDESCnorthern_melee.32B
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			NOT = { FROM = { has_character_flag = melee_killed_opponent } }
+		}
+	}
+	desc = { #Dishonorable death
+		text = EVTDESCnorthern_melee.32C
+		trigger = { 
+			FROMFROMFROM = { is_alive = no } 
+			FROM = { has_character_flag = melee_killed_opponent }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCnorthern_melee.32"
+		FROM = {
+			tooltip = { show_portrait = yes }
+		}
+		prestige = -10	
+	}
+}
+
+# AI resolved tourney (If player is involved, optimise)
+#Find Winner
+character_event = {
+	id = northern_melee.550
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		character_event = { id = northern_melee.25 days = 3 } #end melee
+		#Random deaths/injuries
+		random = {
+			chance = 1
+			modifier = {
+				factor = 0.5
+			}
+			modifier = {
+				factor = 1.5
+				has_character_flag = normal_tourny
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					prisoner = no
+					NOT = { trait = incapable }
+				}
+				ROOT = {
+					random_opinion_modifier_target = {
+						limit = { 
+							has_character_flag = attending_melee
+							has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { character = PREVPREV }
+						}
+						if = {
+							limit = {
+								OR = {
+									is_close_relative = PREVPREV
+									AND = {
+										NOT = { dynasty = 0 }
+										dynasty = PREVPREV
+									}
+								}
+								PREVPREV = { 
+									is_any_kinslayer_trigger = no 
+									NOT = { trait = suspected_kinslayer }
+									NOT = { has_cutthroat_religion_trigger = yes }
+								}								
+							}
+							PREVPREV = { add_trait = suspected_kinslayer }
+						}
+						death = {
+							death_reason = death_duel_melee
+							killer = PREVPREV
+						}
+					}	
+				}
+			}
+		}
+		random = {
+			chance = 3
+			modifier = {
+				factor = 1.5
+				has_character_flag = normal_tourny
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { is_maimed_trigger = yes }
+				}
+				add_maimed_trait_effect = yes
+			}
+		}
+		random = {
+			chance = 7
+			modifier = {
+				factor = 1.5
+				has_character_flag = normal_tourny
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+		random = {
+			chance = 5
+			modifier = {
+				factor = 1.5
+				has_character_flag = normal_tourny
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+		random = {
+			chance = 3
+			modifier = {
+				factor = 1.5
+				has_character_flag = normal_tourny
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = king_tourny
+					has_character_flag = grand_tourny
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = { 
+					has_character_flag = attending_melee
+					has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+		
+		
+		#Find Winner
+		random_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				OR = {
+					combat_rating = 80
+					AND = {
+						is_strong_trigger = yes
+						combat_rating = 60
+					}
+				}	
+				prisoner = no
+				NOT = { trait = incapable }
+			}
+			character_event = { id = northern_melee.22 }
+			break = yes
+		}
+		random_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				OR = {
+					combat_rating = 60
+					AND = {
+						is_strong_trigger = yes
+						combat_rating = 10
+					}
+				}	
+				prisoner = no
+				NOT = { trait = incapable }
+			}	
+			character_event = { id = northern_melee.22 }
+			break = yes
+		}
+		random_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				combat_rating = 40
+				prisoner = no
+				NOT = { trait = incapable }
+			}	
+			character_event = { id = northern_melee.22 }
+			break = yes
+		}
+		random_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				combat_rating = 0
+				prisoner = no
+				NOT = { trait = incapable }
+			}	
+			character_event = { id = northern_melee.22 }
+			break = yes
+		}
+		random_opinion_modifier_target = {
+			limit = { 
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+				prisoner = no
+				NOT = { trait = incapable }
+			}
+			character_event = { id = northern_melee.22 }
+			break = yes
+		}
+	}
+	option = {
+		name = OK
+	}
+}	
+
+
+###########################################
+# Flag management                         #
+###########################################
+
+# Safety catch - clears character flags and modifiers
+character_event = {
+	id = northern_melee.999
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_modifier = holding_epic_tournament }
+	
+	immediate = {
+		remove_character_modifier = holding_epic_tournament
+		clr_character_flag = do_not_disturb
+		
+		clr_character_flag = tourny_in_progress
+		clr_character_flag = melee_begins
+		clr_character_flag = attending_melee
+		clr_character_flag = attending_tournament_event
+		
+		clr_character_flag = lost_melee
+		clr_character_flag = melee_final_round
+		clr_character_flag = in_melee
+		clr_character_flag = melee_killed_opponent
+		clr_character_flag = inform_of_all_tourney_results
+		
+		clr_character_flag = host_feast_started
+		remove_character_modifier = holding_large_feast	
+		
+		any_opinion_modifier_target = {
+			limit = {
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_attending_melee }
+			}
+			
+			clr_character_flag = attending_melee
+			clr_character_flag = attending_tournament_event
+			clr_character_flag = king_tourny
+			clr_character_flag = grand_tourny
+			clr_character_flag = normal_tourny
+			clr_character_flag = small_tourny
+			
+			clr_character_flag = lost_melee
+			clr_character_flag = in_melee
+			clr_character_flag = melee_killed_opponent
+	
+			clr_character_flag = guest_feast_started
+			
+			remove_opinion = {
+				modifier = opinion_attending_melee
+				who = ROOT
+			}
+			reverse_remove_opinion = {
+				modifier = opinion_attending_melee
+				who = ROOT
+			}
+		}
+		any_opinion_modifier_target = {
+			limit = {
+				has_character_flag = attending_melee
+				has_opinion_modifier = { who = ROOT modifier = opinion_spectating_tournament  }
+			}
+			
+			clr_character_flag = attending_melee
+			clr_character_flag = melee_spectator
+			clr_character_flag = attending_tournament_event
+			clr_character_flag = king_tourny
+			clr_character_flag = grand_tourny
+			clr_character_flag = normal_tourny
+			clr_character_flag = small_tourny
+			clr_character_flag = guest_feast_started
+			
+			remove_opinion = {
+				modifier = opinion_spectating_tournament
+				who = ROOT
+			}
+			reverse_remove_opinion = {
+				modifier = opinion_spectating_tournament
+				who = ROOT
+			}
+		}
+	}	
+}
+
+		

@@ -1,0 +1,702 @@
+################################################
+#
+# "Life at Court" event's Written by Ogaburan
+# With Knucky technical support
+# These events were written with the harsh environment of westerose in mind.
+# The strong & cunny are picking on the weak & gullible, in a westerose specific theme.
+#
+#
+#				Fake Valerian Sword Saga - Teen Life (Ages 14-22)
+# lifeatcourt.1 - You hatch up a scheme to sell a fake valerian sword. (Only one option)
+# lifeatcourt.2 - You are offered to buy a fake valerian sword. (Hide/Complain)
+# lifeatcourt.3 - One of your courtiers complains he was sold a fake sword. (Justice/Approve Scheme)
+# lifeatcourt.4 - Ruler gave you your money back.
+# lifeatcourt.5 - Ruler made you pay back.
+# lifeatcourt.6 - Ruler just mocked your plea.
+# lifeatcourt.7 - Ruler approved of your scheme.
+#				Bully Saga - Growing up (Ages 8-17)
+# lifeatcourt.8 - Beating on a weaker kid. (Rob\Training Dummy)
+# lifeatcourt.9 - You got Beaten on, and stolen your allowance. (Pay up)
+# lifeatcourt.10 - You were treated as a ragdoll for training. (Suffer)
+#
+################################################
+
+
+namespace = lifeatcourt
+
+# lifeatcourt.1 - Selling a "Vallerian Sword"
+character_event = {
+	id = lifeatcourt.1
+	desc = "EVTDESClifeatcourt.1" #You hatch up a scheme to sell a fake valerian sword.
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	min_age = 14
+	max_age = 22
+	capable_only = yes
+	prisoner = no
+	in_command = no
+	
+	trigger = {
+		#Generic (Should only trigger for mainland westerosians)		
+		OR = {
+			culture_group = andal
+			culture_group = dornish
+			culture_group = first_men
+			culture_group = iron_isles_culture
+			culture_group = free_cities
+			culture = western_valyrian
+		}
+		NOT = { culture = old_andal }
+		NOT = { culture = rhoynar }
+		
+		#Specific
+		NOT = { has_character_flag = tried_to_sell_fake_sword }
+		trait = deceitful
+		OR = {
+			is_smart_incl_genius_trigger = yes
+			trait = ambitious
+		}
+		NOT = { trait = charitable }
+		NOT = { trait = kind }
+		NOT = { trait = honest }
+		NOT = { trait = honorable }
+		NOT = { trait = just }
+		NOT = { is_inaccessible_trigger = yes }
+		
+		#Target/Victim
+		location = {
+			any_province_character = {
+				age = 14
+				NOT = { age = 22 }
+				OR = {
+					trait = trusting
+					is_dumb_trigger = yes
+					trait = imbecile
+					trait = inbred
+				}
+				NOT_mythical_creature_trigger = yes
+				NOT = { is_inaccessible_trigger = yes }
+				prisoner = no
+				is_incapable = no
+				independent = no
+				NOT = { character = ROOT }
+			}
+		}	
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	immediate = { set_character_flag = tried_to_sell_fake_sword }
+	
+	option = {
+		name = "Muwahaha!" #Muwahahaha!
+		wealth = 50
+		location = {
+			random_province_character = {
+				limit = {
+					age = 14
+					NOT = { age = 22 }
+					OR = {
+						trait = trusting
+						is_dumb_trigger = yes
+						trait = imbecile
+						trait = inbred
+					}
+					NOT_mythical_creature_trigger = yes
+					NOT = { is_inaccessible_trigger = yes }
+					prisoner = no
+					is_incapable = no
+					independent = no
+					NOT = { character = ROOT }
+				}
+				opinion = {
+					modifier = opinion_furious
+					who = ROOT
+					years = 10
+				}
+				hidden_tooltip = { character_event = { id = lifeatcourt.2 } }#Victim gets an event.
+			}
+		}
+	}
+}
+
+# lifeatcourt.2 - You are offered to buy a fake valerian sword.
+character_event = {
+	id = lifeatcourt.2
+	desc = "EVTDESClifeatcourt.2" #You are offered to buy a fake valerian sword.
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAEVTDESClifeatcourt.2" #Pay the blacksmith who evaluated it to keep the whole thing a secret! (Lose 60g, 60% to get shy, lose trusting)
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = shy
+					trait = proud
+					trait = lisp
+					trait = stutter
+					trait = craven
+					trait = content
+				}
+			}
+		}
+		wealth = -50			
+		if = {
+			limit = { 
+				trait = trusting
+			}
+			random = {
+				chance = 60
+				remove_trait = trusting
+				hidden_tooltip = { character_event = { id = 38306 } }
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = { personality_traits = 6 } 
+				NOT = { trait = shy }
+				NOT = { trait = gregarious }
+			}
+			random = {
+				chance = 25
+				add_trait = shy 
+				hidden_tooltip = { character_event = { id = 38263 } }
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTBEVTDESClifeatcourt.2" #Outragious! Complain to the authorities!
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = brave
+					trait = greedy
+					trait = wroth
+					trait = just
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				liege = { character = FROM }
+			}
+			FROM = {
+				liege = {
+					character_event = {
+						id = lifeatcourt.3
+						days = 1
+					}
+				}
+			}		
+		}
+		if = {
+			limit = {
+				NOT = { liege = { character = FROM } }
+			}
+			liege = {
+				character_event = {
+					id = lifeatcourt.3
+					days = 1
+				}
+			}
+		}
+		
+		wealth = -50
+		prestige = -100
+		if = {
+			limit = { 
+				trait = trusting
+			}
+			random = {
+				chance = 60
+				remove_trait = trusting
+				hidden_tooltip = { character_event = { id = 38306 } }
+			}
+		}
+	}
+	
+}
+
+# lifeatcourt.3 - One of your courtiers complains he was sold a fake sword.
+character_event = {
+	id = lifeatcourt.3
+	desc = "EVTDESClifeatcourt.3" #One of your courtiers complains he was sold a fake sword.
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAEVTDESClifeatcourt.3" #Make theschemer pay back.
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 15 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 45 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 90 }
+			}
+		}
+			
+		#Victimr of Ruler
+		FROM = {
+			opinion = {
+				modifier = opinion_happy
+				who = ROOT
+				years = 10
+			}
+			character_event = { id = lifeatcourt.4 }
+		}
+		FROM = {
+			FROM = {
+				#Schemer opninon of Ruler
+				opinion = {
+					modifier = opinion_disappointed
+					who = ROOT
+					years = 10
+				}
+				character_event = { id = lifeatcourt.5 }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBEVTDESClifeatcourt.3" #Mock the fool!
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = greedy
+					trait = cruel
+					trait = duelist
+				}
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = -20 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = -30 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = -40 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = -50 }
+			}
+			modifier = {	
+				factor = 1.5
+				opinion = { who = FROM value = -60 }
+			}
+		}
+				
+		#Victimr of Ruler
+		FROM = {
+			opinion = {
+				modifier = opinion_furious
+				who = ROOT
+				years = 10
+			}
+			character_event = { id = lifeatcourt.6 }
+		}
+		FROM = { 
+			FROM = {
+				#Schemer opninon of Ruler
+				opinion = {
+					modifier = opinion_happy
+					who = ROOT
+					years = 10
+				}
+				character_event = { id = lifeatcourt.7 }
+			}
+		}
+	}
+	
+}
+
+#lifeatcourt.4 - Ruler gave you your oney back.
+character_event = {
+	id = lifeatcourt.4
+	desc = "EVTDESClifeatcourt.4"  
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok"
+		prestige = 25
+		wealth = 50
+		reverse_opinion = {
+			modifier = opinion_pitiful
+			who = FROM
+			years = 10
+		}
+	}
+}
+# lifeatcourt.5 - Ruler made you pay back.
+character_event = {
+	id = lifeatcourt.5
+	desc = "EVTDESClifeatcourt.5"  
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok"
+		prestige = 20
+		wealth = -50
+		reverse_opinion = {
+			modifier = opinion_impressed
+			who = FROM
+			years = 10
+		}
+	}
+}
+# lifeatcourt.6 - Ruler just mocked your plee.
+character_event = {
+	id = lifeatcourt.6
+	desc = "EVTDESClifeatcourt.6"  
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok"
+		prestige = -50
+		reverse_opinion = {
+			modifier = opinion_idiot
+			who = FROM
+			years = 10
+		}
+	}
+}
+# lifeatcourt.7 - Ruler approved of your scheme.
+character_event = {
+	id = lifeatcourt.7
+	desc = "EVTDESClifeatcourt.7"  
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok"
+		prestige = 50
+		reverse_opinion = {
+			modifier = opinion_impressed
+			who = FROM
+			years = 10
+		}
+	}
+}
+
+# lifeatcourt.8 - Beating on a weaker kid. (Rob\Training Dummy)
+character_event = {
+	id = lifeatcourt.8
+	desc = "EVTDESClifeatcourt.8" #You beat up another kid on a regular basis.
+	picture = "GFX_evt_child_sword"
+	
+	is_triggered_only = yes
+	min_age = 8
+	max_age = 17
+	capable_only = yes
+	prisoner = no
+	in_command = no
+	
+	trigger = {
+		#Generic (Should only trigger for mainland westerosians)		
+		OR = {
+			culture_group = andal
+			culture_group = dornish
+			culture_group = first_men
+			culture_group = iron_isles_culture
+			culture_group = free_cities
+			culture = western_valyrian
+		}
+		NOT = { culture = old_andal }
+		NOT = { culture = rhoynar }
+		
+		#Specific
+		NOT = { has_character_flag = beaten_on_weaker_kid }
+		combat_rating = 20
+		OR = {
+			trait = ruthless
+			trait = envious
+			trait = greedy
+			trait = cruel
+			trait = wroth
+		}
+		NOT = { trait = charitable }
+		NOT = { trait = kind }
+		NOT = { trait = just }
+		NOT = { trait = humble }
+		NOT = { trait = honorable }
+		NOT = { is_inaccessible_trigger = yes }
+		
+		#Target/Victim
+		location = {
+			any_province_character = {
+				age = 8
+				NOT = { age = 17 }
+				NOT = { combat_rating = 40 }
+				NOT = { trait = brave }
+				OR = {
+					is_weak_trigger = yes
+					is_dumb_trigger = yes
+					trait = imbecile
+					trait = inbred
+					trait = dwarf
+					trait = craven
+				}
+				NOT_mythical_creature_trigger = yes
+				NOT = { is_inaccessible_trigger = yes }
+				NOT = { has_severe_disability_trigger = yes }
+				prisoner = no
+				is_incapable = no
+				independent = no
+				NOT = { character = ROOT }
+				NOT = { trait = wounded }
+				NOT = { is_maimed_trigger = yes }
+			}
+		}	
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	immediate = { 
+		set_character_flag = beaten_on_weaker_kid 
+		location = {
+			random_province_character = {
+				limit = {
+					age = 8
+					NOT = { age = 17 }
+					NOT = { combat_rating = 40 }
+					NOT = { trait = brave }
+					OR = {
+						is_weak_trigger = yes
+						is_dumb_trigger = yes
+						trait = imbecile
+						trait = inbred
+						trait = dwarf
+						trait = craven
+					}
+					NOT_mythical_creature_trigger = yes
+					NOT = { is_inaccessible_trigger = yes }
+					NOT = { has_severe_disability_trigger = yes }
+					prisoner = no
+					is_incapable = no
+					independent = no
+					NOT = { character = ROOT }
+					NOT = { trait = wounded }
+					NOT = { is_maimed_trigger = yes }
+				}
+				save_event_target_as = weaker_kid
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAEVTDESClifeatcourt.8" #Beat him & rob him of allowance.
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = slothful
+					trait = greedy
+				}
+			}
+		}	
+		wealth = 5
+		event_target:weaker_kid = {
+			opinion = {
+				modifier = opinion_furious
+				who = ROOT
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = lifeatcourt.9 } } #You got Beaten on, and stolen your allowance.
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBEVTDESClifeatcourt.8" #Practice on him your martial skills, remorselesly.
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = cruel
+					trait = poor_warrior
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+					trait = ambitious
+					trait = diligent
+				}
+			}
+		}
+		
+		if = {
+			limit = { trait = skilled_warrior }
+			random = {
+				chance = 2
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = master_warrior }
+			}
+		}
+		if = {
+			limit = { trait = trained_warrior }
+			random = {
+				chance = 10
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = skilled_warrior }
+			}
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 35
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = poor_warrior }
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			random = {
+				chance = 70
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+		}
+		
+		event_target:weaker_kid = {
+			opinion = {
+				modifier = opinion_furious
+				who = ROOT
+				years = 10
+			}
+			hidden_tooltip = { character_event = { id = lifeatcourt.10 } }#You were trated as a ragdoll for training.
+		}	
+	}
+}
+
+#lifeatcourt.9 - You got Beaten on, and stolen your allowance. (Pay up)
+character_event = {
+	id = lifeatcourt.9
+	desc = "EVTDESClifeatcourt.9" #You got Beaten on, and stolen your allowance.
+	picture = "GFX_knights"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok"		
+		wealth = -5	
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 33
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		if = {
+			limit = { 
+				trait = trusting
+			}
+			random = {
+				chance = 60
+				remove_trait = trusting
+				hidden_tooltip = { character_event = { id = 38306 } }
+			}
+		}
+	}
+	
+}
+
+#lifeatcourt.10 - You were trated as a ragdoll for training. (Suffer)
+character_event = {
+	id = lifeatcourt.10
+	desc = "EVTDESClifeatcourt.10" # You were trated as a ragdoll for training.
+	picture = "GFX_knights"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok"
+		random_list = {
+			65 = { }
+			30 = { add_trait_silently_wounded_effect = yes }
+			5 = { add_maimed_trait_effect = yes }
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 33
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		if = {
+			limit = { 
+				trait = trusting
+			}
+			random = {
+				chance = 60
+				remove_trait = trusting
+				hidden_tooltip = { character_event = { id = 38306 } }
+			}
+		}	
+	}	
+}

@@ -1,0 +1,5202 @@
+###################################
+#
+# Health Events
+#
+# Id 6000-6499 is reserved
+#
+###################################
+#
+# Written by Sara Wendel-Örtqvist
+# and Chris King
+# and Henrik Eklund
+
+namespace = health
+
+#Syphilitic
+character_event = {
+	id = 6000
+	desc = EVTDESC6000
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		NOT = { trait = syphilitic }
+				
+		OR = {
+			trait = lustful
+			has_focus = focus_seduction
+			trait = hedonist
+			any_spouse = { 
+				is_alive = yes
+				is_abroad = no			
+				trait = syphilitic 
+			}
+			any_lover = { 
+				is_alive = yes
+				is_abroad = no			
+				trait = syphilitic 
+			}
+		}
+		NOT = { trait = celibate }
+		NOT = { trait = infirm }
+		NOT = { trait = eunuch }
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	weight_multiplier = {
+		factor = 1	
+		
+		modifier = {
+			factor = 0.25
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 100
+			any_consort = { 
+				is_alive = yes
+				is_abroad = no			
+				trait = syphilitic 
+			}
+		}	
+		modifier = {
+			factor = 100
+			any_spouse = { 
+				is_alive = yes
+				is_abroad = no			
+				trait = syphilitic 
+			}
+		}
+		modifier = {
+			factor = 100
+			any_lover = { 
+				is_alive = yes
+				is_abroad = no			
+				trait = syphilitic 
+			}
+		}		
+		modifier = {
+			factor = 2
+			in_command = yes
+		}		
+		modifier = {
+			factor = 2
+			trait = lustful
+		}
+		modifier = {
+			factor = 1.66
+			trait = hedonist
+		}
+		
+		modifier = {
+			factor = 1.33
+			has_fair_trait_trigger = yes
+		}
+		modifier = {
+			factor = 0.5
+			has_ugly_trait_trigger = yes
+		}		
+		modifier = {
+			factor = 1.25
+			trait = gregarious
+		}
+		modifier = {
+			factor = 0.8
+			trait = shy
+		}
+		modifier = {
+			factor = 0.2
+			trait = honorable
+		}		
+		modifier = {
+			factor = 0.1
+			trait = chaste
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6000
+		add_trait = syphilitic
+		blessing_removes_disease_effect = yes
+		deaths_gift_removes_disease_effect = yes
+	}
+}
+
+#Remove Syphilitic
+character_event = {
+	id = 6001
+	desc = EVTDESC6001
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 16
+	is_sick = yes
+	only_capable = yes
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		trait = syphilitic
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_treatment_score = yes
+		modifier = {
+			factor = 0.5
+			NOT = { health = 3 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { health = 5 }
+		}
+		modifier = {
+			factor = 1.5
+			health = 6
+		}
+		modifier = {
+			factor = 1.5
+			health = 7
+		}
+		modifier = {
+			factor = 2
+			health = 8
+		}
+		modifier = {
+			factor = 2
+			health = 9
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6001
+		remove_trait = syphilitic
+	}
+}
+
+# #Leper #knuckey: leprocy doesnt really fit westeros
+
+#Lunatic
+character_event = {
+	id = 6020
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	desc = {
+		text = EVTDESC6020
+		trigger = {
+			is_ill = no
+			NOT = { trait = paranoid }
+			NOT = { trait = zealous }
+			NOT = { trait = incapable }
+			prisoner = no
+		}
+	}
+	desc = {
+		text = EVTDESC6020_PARA
+		trigger = {
+			trait = paranoid
+			NOT = { trait = incapable }
+		}
+	}
+	desc = {
+		text = EVTDESC6020_FEVER
+		trigger = {
+			is_ill = yes
+			NOT = { trait = incapable }
+		}
+	}
+	desc = {
+		text = EVTDESC6020_ZEAL
+		trigger = {
+			trait = zealous
+			NOT = { trait = incapable }
+		}
+	}
+	desc = {
+		text = EVTDESC6020_PRISON
+		trigger = {
+			prisoner = yes
+			NOT = { trait = incapable }
+		}
+	}
+	desc = {
+		text = EVTDESC6020_COMA
+		trigger = { trait = incapable }
+	}
+	
+	is_triggered_only = yes
+	min_age = 10
+	
+	trigger = {
+		NOT = {
+			trait = lunatic
+		}
+		OR = {
+			#Senile/comatose due to old age do not gain lunatic, immortals get a pass though
+			NOT = { age = 65 }
+			immortal = yes
+			NOT = { trait = incapable }
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1 # once in 4000 years on average
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 166 #24 years on average
+			OR = {
+				trait = syphilitic
+				trait = has_aztec_disease
+				prisoner = yes
+				has_character_modifier = the_oubliette
+			}
+		}
+		modifier = {
+			factor = 400 # 1 year on average, rabies will also be ill
+			trait = rabies
+		}
+		modifier = {
+			factor = 40 # 100 years on average
+			religion = old_ones
+		}
+		modifier = {
+			factor = 10
+			prisoner = yes
+			NOT = { has_character_modifier = the_oubliette }
+			NOT = { has_character_modifier = house_arrest }
+		}
+		modifier = {
+			factor = 50 # 80 years on average
+			trait = pneumonic
+		}
+		modifier = {
+			factor = 10 # 400 years on average
+			is_ill = yes
+			NOR = {
+				trait = has_typhoid_fever
+				trait = has_grey_plague
+				trait = syphilitic
+				trait = has_aztec_disease
+			}
+		}
+		modifier = {
+			factor = 10
+			trait = incapable # Coma due to brain damage. Wakes up a lunatic.
+		}
+		modifier = {
+			factor = 10
+			AND = {
+				trait = incapable
+				immortal = yes # Incapable immortals more likely to wake up nuts
+			}
+		}
+		modifier = {
+			factor = 4
+			trait = paranoid
+		}
+		modifier = {
+			factor = 4
+			trait = stressed
+		}
+		modifier = {
+			factor = 2
+			trait = depressed
+		}
+		modifier = {
+			factor = 3
+			has_character_modifier = challenged_child
+		}
+		modifier = {
+			factor = 4
+			has_character_flag = potential_targ_lunatic
+		}
+		modifier = {
+			factor = 1.66
+			NOT = { trait = inbred }
+			has_character_modifier = abomination_of_incest
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { trait = inbred }
+			has_character_modifier = grandchild_of_incest
+		}
+		modifier = {
+			factor = 2
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			trait = inbred
+		}
+		modifier = {
+			factor = 2
+			trait = imbecile
+		}
+		modifier = {
+			factor = 2
+			trait = genius
+		}
+		modifier = {
+			factor = 1.33
+			trait = drunkard
+		}	
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTA6020
+			trigger = {
+				is_ill = no
+				NOT = { trait = paranoid }
+				NOT = { trait = zealous }
+				NOT = { trait = incapable }
+				prisoner = no
+			}
+		}
+		name = {
+			text = EVTOPTA6020_PARA
+			trigger = {
+				trait = paranoid
+				NOT = { trait = incapable }
+			}
+		}
+		name = {
+			text = EVTOPTA6020_FEVER
+			trigger = {
+				is_ill = yes
+				NOT = { trait = incapable }
+			}
+		}
+		name = {
+			text = EVTOPTA6020_ZEAL
+			trigger = {
+				trait = zealous
+				NOT = { trait = incapable }
+			}
+		}
+		name = {
+			text = EVTOPTA6020_PRISON
+			trigger = {
+				prisoner = yes
+				NOT = { trait = incapable }
+			}
+		}
+		name = {
+			text = EVTOPTA6020_COMA
+			trigger = { trait = incapable }
+		}
+		
+		add_trait = lunatic
+		
+		if = {
+			limit = { trait = depressed }
+			remove_trait = depressed
+		}
+		if = {
+			limit = { trait = stressed }
+			remove_trait = stressed
+		}
+		if = {
+			limit = { trait = incapable }
+			remove_trait = incapable
+		}
+		clr_character_flag = potential_targ_lunatic
+	}
+}
+
+### Remove Lunatic ###
+character_event = {
+	id = 6021
+	desc = EVTDESC6021
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 16
+	only_capable = yes
+	
+	trigger = {
+		health = 4
+		trait = lunatic
+		NOT = {
+			OR = {
+				trait = syphilitic
+				trait = has_aztec_disease
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_treatment_score = yes
+		modifier = {
+			factor = 2
+			health = 6
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6021
+		remove_trait = lunatic
+	}
+}
+
+### Possessed ###
+character_event = {
+	id = 6030
+	desc = EVTDESC6030
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 10
+	only_capable = yes
+	
+	trigger = {
+		NOT = {
+			trait = possessed
+		}
+		NOT = { trait = dragon }
+		NOT = { trait = white_walker }
+		NOT = { trait = winter_wasteland }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 1.66
+			has_character_flag = potential_targ_lunatic
+		}
+		
+		modifier = {
+			factor = 1.1
+			NOT = {
+				prestige = 20
+			} 
+		}
+		
+		modifier = {
+			factor = 1..1
+			NOT = {
+				piety = 10
+			}
+		}
+		
+		modifier = {
+			factor = 1.1
+			trait = zealous
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6030
+		add_trait = possessed
+	}
+}
+
+#Remove Possessed
+character_event = {
+	id = 6031
+	desc = EVTDESC6031
+	picture = GFX_evt_recovery
+	
+	is_triggered_only = yes
+	min_age = 10
+	only_capable = yes
+	
+	trigger = {
+		health = 4
+		trait = possessed
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_treatment_score = yes
+		modifier = {
+			factor = 1.1
+			prestige = 20
+		}
+		
+		modifier = {
+			factor = 1.1
+			piety = 10
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6031
+		remove_trait = possessed
+		remove_character_modifier = voice_of_satan
+		remove_character_modifier = voice_of_jesus 
+		remove_character_modifier = holy_comet 
+		remove_character_modifier = lycanthropy
+		clr_character_flag = demon_child
+		clr_character_flag = demon_child_fake
+		clr_character_flag = child_exorcism
+	}
+}
+
+#Stressed
+character_event = {
+	id = 6040
+	desc = EVTDESC6040
+	picture = GFX_evt_bad_news
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 16
+	only_capable = yes
+	
+	trigger = {
+		OR = {
+			is_ruler = yes
+			is_councillor = yes
+			is_voter = yes
+			liege = { regent = { character = PREVPREV } }
+			in_command = yes
+			prisoner = yes
+		}
+		NOT = { trait = depressed }
+		NOT = { trait = stressed }
+		NOT = { trait = infirm }
+		NOT = { trait = dragon }
+		NOT = { trait = white_walker }
+		NOT = { trait = winter_wasteland }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 1.66
+			has_character_flag = potential_targ_lunatic
+		}	
+		modifier = {
+			factor = 1.25
+			prisoner = yes	
+		}
+		modifier = {
+			factor = 1.25
+			is_ruler = yes
+		}
+		modifier = {
+			factor = 1.25
+			OR = {
+				is_voter = yes
+				is_councillor = yes
+			}
+		}
+		modifier = {
+			factor = 1.25
+			liege = { regent = { character = PREVPREV } }
+		}
+		modifier = {
+			factor = 1.25
+			in_command = yes
+		}
+		modifier = {
+			factor = 1.25
+			trait = diligent
+		}		
+		modifier = {
+			factor = 0.1
+			trait = slothful
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6040
+		add_trait = stressed
+	}
+}
+
+#Remove Stressed
+character_event = {
+	id = 6041
+	desc = EVTDESC6041
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 5
+	only_capable = yes
+	
+	trigger = {
+		trait = stressed
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_treatment_score = yes
+		modifier = {
+			factor = 100
+			age = 16
+			is_ruler = no
+			is_councillor = no
+			NOT = { is_voter = yes }
+			in_command = no
+			NOT = { liege = { regent = { character = PREVPREV } } }
+			prisoner = no
+		}
+		modifier = {
+			factor = 1.33
+			is_ruler = no
+		}
+		modifier = {
+			factor = 1.33
+			is_councillor = no
+			NOT = { is_voter = yes }
+		}
+		modifier = {
+			factor = 1.33
+			in_command = no
+		}
+		modifier = {
+			factor = 1.33
+			NOT = { trait = diligent }
+		}			
+		modifier = {
+			factor = 1.33
+			NOT = { liege = { regent = { character = PREVPREV } } }
+		}
+		modifier = {
+			factor = 10
+			trait = slothful
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6041
+		remove_trait = stressed
+	}
+}
+
+#Depressed
+character_event = {
+	id = 6050
+	desc = EVTDESC6050
+	picture = GFX_evt_bad_news
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 10
+	only_capable = yes
+	
+	trigger = {
+		NOT = { trait = depressed }
+		NOT = { trait = content }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 3
+			has_character_modifier = challenged_child
+		}
+		modifier = {
+			factor = 1.33
+			has_character_flag = potential_targ_lunatic
+		}		
+		modifier = {
+			factor = 2
+			NOT = { age = 20 }
+			mother_even_if_dead = { is_alive = no } 
+		}
+		modifier = {
+			factor = 1.33
+			NOT = { age = 20 }
+			father_even_if_dead = { is_alive = no } 
+		}
+		
+		modifier = {
+			factor = 1.66
+			prisoner = yes	
+		}
+		modifier = {
+			factor = 4
+			trait = stressed
+		}
+		modifier = {
+			factor = 2
+			is_ill = yes
+		}
+		modifier = {
+			factor = 1.4
+			trait = slothful
+		}
+		modifier = {
+			factor = 1.4
+			has_unattractive_trait_trigger = yes
+		}
+		modifier = {
+			factor = 1.25
+			trait = cynical
+		}		
+		modifier = {
+			factor = 1.25
+			trait = ambitious
+		}
+		modifier = {
+			factor = 1.25
+			in_command = yes
+		}
+		modifier = {
+			factor = 0.5
+			trait = diligent
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6050
+		add_trait = depressed
+	}
+}
+
+#Remove Depressed
+character_event = {
+	id = 6051
+	desc = EVTDESC6051
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 10
+	only_capable = yes
+	
+	trigger = {
+		trait = depressed
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 10
+			trait = content
+		}
+		modifier = {
+			factor = 10
+			trait = ruthless
+		}
+		modifier = {
+			factor = 10
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 0.5
+			trait = cynical
+		}
+		modifier = {
+			factor = 0.5
+			trait = stressed
+		}
+		modifier = {
+			factor = 0.5
+			is_ill = yes
+		}
+		modifier = {
+			factor = 0.66
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.66
+			has_unattractive_trait_trigger = yes
+		}
+		modifier = {
+			factor = 0.75
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.66
+			trait = honorable
+		}
+		modifier = {
+			factor = 0.75
+			in_command = yes
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6051
+		remove_trait = depressed
+	}
+}
+
+#Ill
+character_event = {
+	id = 6060
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	desc = EVTDESC6060
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6060
+		add_trait = ill
+		blessing_removes_disease_effect = yes
+		deaths_gift_removes_disease_effect = yes
+	}
+}
+#Meta ill
+character_event = {
+	id = 6063
+
+	hide_window = yes
+	is_triggered_only = yes
+	is_sick = no
+	
+	trigger = {
+		health = 3.0
+		NOT = {
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = none
+			}
+		}
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.25
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2.5
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 1.33
+			NOT = { age = 1 }
+		}	
+		modifier = {
+			factor = 1.33
+			NOT = { age = 3 }
+		}	
+		modifier = {
+			factor = 1.33
+			NOT = { age = 6 }
+		}		
+		modifier = {
+			factor = 2
+			trait = depressed
+		}
+		modifier = {
+			factor = 2
+			trait = stressed
+		}
+		modifier = {
+			factor = 5
+			prisoner = yes
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.5
+			prisoner = yes
+			has_character_modifier = the_dungeon
+		}
+		modifier = {
+			factor = 0.66
+			base_health = 6
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 8
+		}
+		modifier = {
+			factor = 2
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = more
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = fewer
+			}
+		}
+		modifier = {
+			factor = 0.25
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = rare
+			}
+		}
+	}
+	
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					has_dlc = "Reapers"
+				}
+			}
+			character_event = { id = 6060 }
+		}
+		if = {
+			limit = {
+				has_dlc = "Reapers"
+			}
+			add_symptom_effect = yes
+		}
+	}
+}
+
+#Remove Ill
+character_event = {
+	id = 6061
+	desc = EVTDESC6061
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	
+	trigger = {
+		base_health = 3
+		trait = ill
+	}
+	
+	mean_time_to_happen = {
+		months = 14
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			trait = depressed
+		}
+		modifier = {
+			factor = 2.0
+			trait = stressed
+		}
+		modifier = {
+			factor = 4.0
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.0
+			has_character_modifier = the_dungeon
+		}		
+		modifier = {
+			factor = 0.2
+			base_health = 5
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6061
+		remove_trait = ill
+		clear_duel_poisoner_target_effect = yes
+	}
+}
+
+#Remove Sickly
+character_event = {
+	id = 6062
+	desc = EVTDESC6062
+	picture = GFX_evt_child_play
+	border = GFX_event_normal_frame_religion
+	
+	max_age = 7
+	is_sick = yes
+	
+	trigger = {
+		trait = sickly
+		age = 2
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			age = 3
+		}
+		modifier = {
+			factor = 0.5
+			age = 4
+		}
+		modifier = {
+			factor = 0.01
+			age = 5
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6062
+		remove_trait = sickly
+	}
+}
+
+#Pneumonic
+character_event = {
+	id = 6070
+	desc = EVTDESC6070
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		OR = {
+			trait = ill
+			trait = has_measles
+		}
+		NOT = { trait = pneumonic }
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	mean_time_to_happen = {
+		months = 198
+		
+		physician_illness_treatment_score = yes
+		modifier = {
+			factor = 4
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 0.4
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 1 }
+		}	
+		modifier = {
+			factor = 0.75
+			NOT = { age = 3 }
+		}	
+		modifier = {
+			factor = 0.75
+			NOT = { age = 6 }
+		}		
+		modifier = {
+			factor = 0.5
+			NOT = { base_health = 5 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { base_health = 4 }
+		}
+		modifier = {
+			factor = 0.75
+			trait = depressed
+		}
+		modifier = {
+			factor = 0.75
+			trait = stressed
+		}
+		modifier = {
+			factor = 0.2
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 0.4
+			has_character_modifier = the_dungeon
+		}		
+		modifier = {
+			factor = 2.0
+			base_health = 6
+		}
+		modifier = {
+			factor = 2.0
+			base_health = 7
+		}
+		modifier = {
+			factor = 2.0
+			base_health = 8
+		}
+		modifier = {
+			factor = 0.25
+			NOT = { month = 2 }		#jan and feb
+			in_command = yes
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6070
+		add_trait = pneumonic
+		blessing_removes_disease_effect = yes
+		deaths_gift_removes_disease_effect = yes
+	}
+}
+
+#Remove Pneumonic
+character_event = {
+	id = 6071
+	desc = EVTDESC6071
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+		
+	trigger = {
+		base_health = 4
+		trait = pneumonic
+	}
+	
+	mean_time_to_happen = {
+		months = 5
+		
+		physician_illness_prevention_score = yes	
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 5 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4 }
+		}
+		modifier = {
+			factor = 4.0
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.0
+			has_character_modifier = the_dungeon
+		}		
+		modifier = {
+			factor = 1.5
+			trait = depressed
+		}
+		modifier = {
+			factor = 1.5
+			trait = stressed
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 8
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6071
+		remove_trait = pneumonic
+		clear_duel_poisoner_target_effect = yes
+	}
+}
+
+#Wounded
+character_event = {
+	id = 6080
+	desc = EVTDESC6080
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 16
+	only_capable = yes
+	prisoner = no
+	
+	trigger = {
+		OR = {
+			trait = hunter
+			in_command = yes
+			trait = brave
+		}
+		NOR = {
+			trait = wounded
+			is_maimed_trigger = yes
+			is_crippled_trigger = yes
+		}		
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 1.33
+			in_command = yes
+		}	
+		modifier = {
+			factor = 1.33
+			is_ruler = yes
+		}		
+		modifier = {
+			factor = 1.5
+			trait = duelist
+		}
+		modifier = {
+			factor = 0.5
+			trait = back_seat_leader
+		}
+		modifier = {
+			factor = 2
+			trait = aggressive_leader
+		}
+		
+		
+		modifier = {
+			factor = 1.5
+			trait = brave
+		}
+		modifier = {
+			factor = 0.66
+			trait = craven
+		}
+		modifier = {
+			factor = 1.5
+			trait = wroth
+		}
+		modifier = {
+			factor = 0.66
+			trait = patient
+		}
+		modifier = {
+			factor = 0.5
+			trait = paranoid
+		}
+		modifier = {
+			factor = 1.5
+			trait = trusting
+		}
+		modifier = {
+			factor = 1.66
+			NOT = { learning = 4 }
+		}
+		modifier = {
+			factor = 0.6
+			learning = 12
+		}		
+	}
+	
+	option = {
+		name = EVTOPTA6080
+		add_trait_silently_wounded_effect = yes
+	}
+}
+
+#Remove Wounded
+character_event = {
+	id = 6081
+	desc = EVTDESC6081
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	trigger = {
+		trait = wounded
+		NOT = { trait = infection }
+	}
+	
+	mean_time_to_happen = {
+		months = 20
+		
+		physician_illness_prevention_score = yes
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 3.0
+			in_command = yes
+		}		
+		modifier = {
+			factor = 4.0
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.0
+			has_character_modifier = the_dungeon
+		}	
+		modifier = {
+			factor = 2
+			base_health = 4
+		}		
+		modifier = {
+			factor = 0.5
+			base_health = 6
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6081
+		remove_trait = wounded
+		add_scarred_tiered_effect = yes
+	}
+}
+
+
+#illness from wound..
+character_event = {
+	id = 6082
+	desc = EVTDESC6082
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = wounded
+		NOT = { base_health = 8 }
+		is_ill = no
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.25
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2.5
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 1.1
+			in_command = yes
+		}
+		
+		modifier = {
+			factor = 1.25
+			NOT = { base_health = 5 }
+		}
+		modifier = {
+			factor = 0.25
+			trait = resurrected_by_rhllor
+		}
+		modifier = {
+			factor = 2
+			age = 60
+		}
+		modifier = {
+			factor = 2
+			age = 70
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6082
+		if = {
+			limit = {
+				NOT = {
+					has_dlc = "Reapers"
+				}
+			}
+			add_trait = ill
+			blessing_removes_disease_effect = yes
+			deaths_gift_removes_disease_effect = yes
+		}
+		if = {
+			limit = {
+				has_dlc = "Reapers"
+			}
+			add_trait = infection
+			hidden_tooltip = {
+				character_event = { id = RIP.11001 days = 365 random = 1095 }
+			}
+		}
+	}
+}
+
+
+#Infirm
+character_event = {
+	id = 6100
+	desc = EVTDESC6100
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	min_age = 45
+	only_capable = yes
+	
+	trigger = {
+		NOT = { trait = infirm }
+		NOT = { trait = immortal }
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.1
+			trait = resurrected_by_rhllor
+		}
+		modifier = {
+			factor = 2
+			trait = cancer
+		}
+		
+		modifier = {
+			factor = 1.33
+			is_weak_trigger = yes
+		}
+		modifier = {
+			factor = 1.33
+			trait = greedy
+		}
+		modifier = {
+			factor = 1.33
+			trait = hedonist
+		}
+		modifier = {
+			factor = 1.5
+			trait = is_fat
+		}
+		modifier = {
+			factor = 0.66
+			trait = temperate
+		}
+		modifier = {
+			factor = 0.75
+			trait = charitable
+		}
+		modifier = {
+			factor = 0.75
+			is_strong_trigger = yes
+		}
+		
+		modifier = {
+			factor = 1.2
+			age = 60
+		}
+		modifier = {
+			factor = 1.4
+			age = 70
+		}
+		modifier = {
+			factor = 2
+			age = 80
+		}
+		modifier = {
+			factor = 2
+			age = 90
+		}
+		modifier = {
+			factor = 1.33
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 1.33
+			NOT = { base_health = 4.0 }
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6100
+		add_trait = infirm
+	}
+}
+
+#Incapable
+character_event = {
+	id = 6110
+	desc = EVTDESC6110
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			trait = infirm
+			trait = inbred
+		}
+		NOT = { trait = incapable }
+		NOT_mythical_creature_trigger = yes
+		NOT = { trait = resurrected_by_rhllor }
+		NOT = { trait = immortal }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 2
+			NOT = { health = 3.0 }
+		}
+		modifier = {
+			factor = 2
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { trait = infirm }
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6110
+		add_trait = incapable
+		remove_trait = infirm
+	}
+}
+
+#Recovery from Bloody Flux
+character_event = {
+	id = 6111
+	desc = EVTDESC6111
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+
+	trigger = {
+		trait = has_bloody_flux
+	}
+	
+	mean_time_to_happen = {
+		months = 15
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.001
+			trait = dragon
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 0.66
+			NOT = { age = 20 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 40 }
+		}
+		modifier = {
+			factor = 2.0
+			age = 50
+		}
+		modifier = {
+			factor = 2.0
+			age = 70
+		}
+		modifier = {
+			factor = 0.25
+			trait = resurrected_by_rhllor
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6111
+		remove_trait = has_bloody_flux
+	}
+}
+
+#Recovery from Typhoid Fever (Winter Fever)
+character_event = {
+	id = 6112
+	desc = EVTDESC6112
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		trait = has_typhoid_fever
+	}
+	
+	mean_time_to_happen = {
+		months = 4
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 0.66
+			NOT = { age = 20 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 40 }
+		}
+		modifier = {
+			factor = 2.0
+			age = 50
+		}
+		modifier = {
+			factor = 2.0
+			age = 70
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6112
+		remove_trait = has_typhoid_fever
+	}
+}
+
+#Recovery from Typhus (Grey Plague)
+character_event = {
+	id = 6113
+	desc = EVTDESC6113
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+
+	trigger = {
+		trait = has_grey_plague
+	}
+	
+	mean_time_to_happen = {
+		months = 6
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.001
+			OR = {
+				trait = greyscale_scarred
+				trait = dragon
+			}	
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 0.66
+			NOT = { age = 20 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 40 }
+		}
+		modifier = {
+			factor = 2.0
+			age = 50
+		}
+		modifier = {
+			factor = 2.0
+			age = 70
+		}
+		modifier = {
+			factor = 0.25
+			trait = resurrected_by_rhllor
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6113
+		remove_trait = has_grey_plague
+		add_trait = greyscale_scarred
+		set_character_flag = immune_typhus
+	}
+}
+
+#Recovery from the PLAGUE!
+character_event = {
+	id = 6114
+	desc = EVTDESC6114
+	picture = GFX_evt_plague_doctor
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		trait = has_bubonic_plague
+	}
+	
+	mean_time_to_happen = {
+		months = 4
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.001
+			trait = dragon
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 0.66
+			NOT = { age = 20 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 40 }
+		}
+		modifier = {
+			factor = 2.0
+			age = 50
+		}
+		modifier = {
+			factor = 2.0
+			age = 70
+		}
+		modifier = {
+			factor = 0.25
+			trait = resurrected_by_rhllor
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6114
+		remove_trait = has_bubonic_plague
+	}
+}
+
+#Recovery from Measles (Greyscale)
+character_event = {
+	id = health.400
+
+	is_sick = yes
+	lacks_dlc = "Reapers"
+	hide_window = yes
+	
+	trigger = {
+		trait = has_greyscale
+	}
+	
+	mean_time_to_happen = {
+		months = 18
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = { #Unhealthy locations
+			factor = 2
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 2 #adults take longer to recover
+			age = 12
+		}
+		modifier = {
+			factor = 10 #adults take longer to recover
+			age = 16
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	immediate = { character_event = { id = 6115 } }
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = 6115
+	desc = EVTDESC6115
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6115
+		remove_trait = has_greyscale
+		add_trait = greyscale_scarred
+		set_character_flag = immune_typhus
+		clr_character_flag = no_hack_off_limb	
+		clr_character_flag = hack_off_limb_attempt	
+		clr_character_flag = no_hack_off_limb_child		
+	}
+}
+#Recovery from Smallpox
+character_event = {
+	id = 6116
+	desc = EVTDESC6116
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_sick = yes
+	lacks_dlc = "Reapers"
+	
+	trigger = {
+		trait = has_small_pox
+	}
+	
+	mean_time_to_happen = {
+		months = 5
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.5
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 0.75
+			base_health = 5.1
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 6.0
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7.0
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { base_health = 5.0 }
+		}
+		modifier = {
+			factor = 2.0
+			NOT = { base_health = 4.1 }
+		}
+		modifier = {
+			factor = 0.66
+			NOT = { age = 20 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 30 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { age = 40 }
+		}
+		modifier = {
+			factor = 2.0
+			age = 50
+		}
+		modifier = {
+			factor = 2.0
+			age = 70
+		}
+		modifier = {
+			factor = 2.0
+			is_ill = yes
+		}
+		modifier = {
+			factor = 4.0
+			trait = infirm
+		}
+		modifier = {
+			factor = 5.0
+			trait = incapable
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6116
+		remove_trait = has_small_pox
+	}
+}
+
+#I hear the voice of Jesus #knuckey- the Mother
+character_event = {
+	id = 6200
+	desc = EVTDESC6200
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_religion
+	
+	only_playable = yes
+	is_triggered_only = yes
+	min_age = 10
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		OR = {
+			trait = possessed	
+			trait = lunatic
+		}	
+		NOT = { has_character_modifier = voice_of_jesus }
+		NOT = { has_character_modifier = voice_of_satan }
+		NOT = { has_character_modifier = holy_comet }
+		is_devil_worshiper_trigger = no
+	}
+	
+	weight_multiplier = {
+		factor = 1
+
+		modifier = {
+			factor = 0.5
+			NOT = {
+				piety = 0
+			}
+		}
+		modifier = {
+			factor = 1.5
+			piety = 100
+		}		
+		modifier = {
+			factor = 2
+			piety = 250
+		}	
+		modifier = {
+			factor = 2
+			piety = 500
+		}
+		modifier = {
+			factor = 2
+			piety = 1000
+		}
+		modifier = {
+			factor = 1.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.5
+			trait = cynical
+		}
+		modifier = {
+			factor = 1.5
+			trait = celibate
+		}
+		modifier = {
+			factor = 0.5
+			trait = hedonist 
+		}
+		modifier = {
+			factor = 1.5
+			trait = mystic
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6200
+		add_character_modifier = {
+			name = voice_of_jesus 
+			duration = -1
+		}
+	}
+}
+
+#I give to the poor 
+character_event = {
+	id = 6201
+	desc = EVTDESC6201
+	picture = GFX_evt_stone_church
+	border = GFX_event_normal_frame_religion
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		wealth = 50
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6201
+		wealth = -50
+		piety = 100
+	}
+}
+
+# I will wear a Cilice
+character_event = {
+	id = 6202
+	desc = EVTDESC6202
+	picture = GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6202
+		prestige = -50
+		piety = 100
+	}
+}
+
+# Comet Sighted
+character_event = {
+	id = 6203
+	desc = EVTDESC6203
+	picture = GFX_evt_comet
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		OR = {
+			has_character_modifier = voice_of_jesus
+			has_character_modifier = voice_of_satan
+		}
+		NOT = { has_character_modifier = holy_comet }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6203
+		add_character_modifier = {
+			name = holy_comet
+			duration = -1
+		}
+	}
+}
+
+# I must leave behind my lust
+character_event = {
+	id = 6204
+	desc = EVTDESC6204
+	picture = GFX_evt_brothel
+	border = GFX_event_normal_frame_religion
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		trait = lustful
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6204
+		remove_trait = lustful 
+	}
+}
+
+# I must lead life of the chaste
+character_event = {
+	id = 6205
+	desc = EVTDESC6205
+	picture =  GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		NOR = {	
+			trait = lustful
+			trait = chaste
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6205
+		add_trait = chaste
+	}
+}
+
+# I must leave behind my guttony
+character_event = {
+	id = 6206
+	desc = EVTDESC6206
+	picture = GFX_evt_feast
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier = voice_of_jesus
+		trait = gluttonous
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6206
+		remove_trait = gluttonous
+		lose_weight_medium_effect = yes
+		weight_trait_check_effect = yes
+	}
+}
+
+# I must show temperance
+character_event = {
+	id = 6207
+	desc = EVTDESC6207
+	picture =  GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier = voice_of_jesus
+		NOR = {	
+			trait = gluttonous
+			trait = temperate
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6207
+		add_trait = temperate
+		lose_weight_medium_effect = yes
+		weight_trait_check_effect = yes
+	}
+}
+
+# I must leave behind my greed
+character_event = {
+	id = 6208
+	desc = EVTDESC6208
+	picture = GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier = voice_of_jesus
+		trait = greedy
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6208
+		remove_trait = greedy
+	}
+}
+
+# I must show charity
+character_event = {
+	id = 6209
+	desc = EVTDESC6209
+	picture =  GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		NOR = {	
+			trait = greedy
+			trait = charitable
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6209
+		add_trait = charitable
+	}
+}
+
+# I must leave behind my sloth
+character_event = {
+	id = 6210
+	desc = EVTDESC6210
+	picture = GFX_evt_illness
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier = voice_of_jesus
+		trait = slothful
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6210
+		remove_trait = slothful
+	}
+}
+#I must be more diligent
+character_event = {
+	id = 6211
+	desc = EVTDESC6211
+	picture =  GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier = voice_of_jesus
+		NOR = {	
+			trait = slothful
+			trait = diligent
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6211
+		add_trait = diligent
+	}
+}
+
+# I must stop being envious
+character_event = {
+	id = 6212
+	desc = EVTDESC6212
+	picture = GFX_evt_illness
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		trait = envious
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6212
+		remove_trait = envious
+	}
+}
+#I must be kind
+character_event = {
+	id = 6213
+	desc = EVTDESC6213
+	picture =  GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		NOR = {	
+			trait = envious
+			trait = kind
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6213
+		add_trait = kind
+	}
+}
+
+# My anger is consuming me
+character_event = {
+	id = 6214
+	desc = EVTDESC6214
+	picture = GFX_evt_illness
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		trait = wroth
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6214
+		remove_trait = wroth
+	}
+}
+
+# I must be more patient
+character_event = {
+	id = 6215
+	desc = EVTDESC6215
+	picture = GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		NOR = {
+			trait = wroth
+			trait = patient
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6215
+		add_trait = patient
+	}
+}
+
+# My pride is too great
+character_event = {
+	id = 6216
+	desc = EVTDESC6216
+	picture = GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		trait = proud
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6216
+		remove_trait = proud
+	}
+}
+
+# I must be more patient
+character_event = {
+	id = 6217
+	desc = EVTDESC6217
+	picture = GFX_evt_garden
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+
+	trigger = {
+		has_character_modifier = voice_of_jesus
+		NOR = {
+			trait = proud
+			trait = humble
+		}
+	}
+
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6217
+		add_trait = humble
+	}
+}
+
+# #Jesus admits that the Bible is not 100% accurate
+# character_event = {
+	# id = 6218
+	# desc = EVTDESC6218
+	# picture = GFX_evt_heretic
+	# min_age = 16
+	
+	# trigger = {
+		# has_character_modifier =  holy_comet
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 120
+	# }
+
+	# option = {
+		# name = EVTOPTA6218
+		# become_heretic = yes
+	# }
+# }
+
+#Jesus hands out military advice
+character_event = {
+	id = 6219
+	desc = EVTDESC6219
+	picture = GFX_evt_battle
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {	
+		has_character_modifier =  holy_comet
+		NOT = {
+			has_character_modifier = military_jesus
+			has_character_modifier = speaking_in_tounges
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6219
+		add_character_modifier = {
+			name = military_jesus
+		}
+	}
+}
+
+#Jesus falls silent on military matters
+character_event = {
+	id = 6220
+	desc = EVTDESC6220
+	picture = GFX_evt_battle
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = military_jesus
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6220
+		remove_character_modifier = military_jesus
+	}
+}
+
+#The Holy Spirit Fills me
+character_event = {
+	id = 6221
+	desc = EVTDESC6221
+	picture = GFX_evt_battle
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier =  holy_comet
+		NOR = {
+			has_character_modifier = military_jesus
+			has_character_modifier = speaking_in_tounges
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6221
+		add_character_modifier = {
+			name = speaking_in_tounges
+		}
+	}
+}
+
+#The Holy Spirit leaves me
+character_event = {
+	id = 6222
+	desc = EVTDESC6222
+	picture = GFX_evt_battle
+	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		has_character_modifier = speaking_in_tounges
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+
+	option = {
+		name = EVTOPTA6222
+		remove_character_modifier = speaking_in_tounges
+	}
+}
+
+#I hear the voice, but I don't think it is Jesus
+character_event = {
+	id = 6223
+	desc = EVTDESC6223
+	picture = GFX_evt_whispers
+	
+	min_age = 10	
+	only_playable = yes
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	religion = the_seven
+	
+	trigger = {
+		OR = {
+			trait = lunatic
+			trait = possessed	
+		}	
+		NOT = { has_character_modifier = voice_of_jesus }
+		NOT = { has_character_modifier = voice_of_satan }
+		NOT = { has_character_modifier = holy_comet }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+
+		modifier = {
+			factor = 0.3
+			is_devil_worshiper_trigger = yes
+		}
+		modifier = {
+			factor = 2
+			NOT = {
+				piety = 0
+			}
+		}
+		modifier = {
+			factor = 0.5
+			piety = 100
+		}		
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 1.5
+			trait = cynical
+		}
+		modifier = {
+			factor = 0.5
+			trait = celibate
+		}
+		modifier = {
+			factor = 1.5
+			trait = hedonist 
+		}
+		modifier = {
+			factor = 1.5
+			trait = mystic
+		}		
+	}
+	
+	option = {
+		name = EVTOPTA6223
+		add_character_modifier = {
+			name = voice_of_satan
+			duration = -1
+		}
+	}
+}
+
+#Satan - torture prisoner
+character_event = {
+	id = 6224
+	desc = EVTDESC6224
+	picture = GFX_evt_torture
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {	
+		has_character_modifier = voice_of_satan
+		any_courtier = {
+			prisoner = yes
+			host = { character = ROOT }
+			NOT = { has_character_modifier = house_arrest }
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6224 
+		random_courtier = {
+			limit = {
+				prisoner = yes
+				host = { character = ROOT }
+				NOT = { has_character_modifier = house_arrest }
+			}
+			health = -1
+		}
+	}
+}
+
+#Demon - homosexual
+character_event = {
+	id = 6225
+	desc = EVTDESC6225
+	picture = GFX_evt_scandal
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {	
+		has_character_modifier = voice_of_satan
+		NOT = {
+			trait = homosexual
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6225
+		add_trait = homosexual
+	}
+}
+
+#Fish - intrigue
+character_event = {
+	id = 6226
+	desc = EVTDESC6226
+	picture = GFX_evt_scandal
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOT = {
+			has_character_modifier = intrigue_advice
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6226
+		add_character_modifier = {
+			name = intrigue_advice
+			duration = 365
+		}
+	}
+}	
+
+#Asmodeus - remove chaste
+character_event = {
+	id = 6227
+	desc = EVTDESC6227
+	picture = GFX_evt_brothel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = chaste
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6227
+		remove_trait = chaste
+	}
+}
+
+#Asmodeus - remove chaste
+character_event = {
+	id = 6228
+	desc = EVTDESC6228
+	picture = GFX_evt_brothel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = chaste
+			trait = lustful
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6228
+		add_trait = lustful
+	}
+}
+
+#Satan - patient
+character_event = {
+	id = 6229
+	desc = EVTDESC6229
+	picture = GFX_evt_quarrel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = patient
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6229
+		remove_trait = patient
+	}
+}
+
+#Voice - wroth
+character_event = {
+	id = 6230
+	desc = EVTDESC6230
+	picture = GFX_evt_quarrel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = patient
+			trait = wroth
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6230
+		add_trait = wroth
+	}
+}
+
+#Morning Star - humble
+character_event = {
+	id = 6231
+	desc = EVTDESC6231
+	picture = GFX_evt_shadow
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = humble
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6231
+		remove_trait = humble
+	}
+}
+
+#Lucifer - proud
+character_event = {
+	id = 6232
+	desc = EVTDESC6232
+	picture = GFX_evt_shadow
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = humble
+			trait = proud
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6232
+		add_trait = proud
+	}
+}
+
+#Lord of the Flies - remove temperate
+character_event = {
+	id = 6233
+	desc = EVTDESC6233
+	picture = GFX_evt_quarrel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = temperate
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6233
+		remove_trait = temperate
+		gain_weight_medium_effect = yes
+		weight_trait_check_effect = yes
+	}
+}
+
+#Beelzebub - gluttonous
+character_event = {
+	id = 6234
+	desc = EVTDESC6234
+	picture = GFX_evt_feast
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = temperate
+			trait = gluttonous
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6234
+		add_trait = gluttonous
+		gain_weight_medium_effect = yes
+		weight_trait_check_effect = yes
+	}
+}
+
+#Mammon - remove charitable
+character_event = {
+	id = 6235
+	desc = EVTDESC6235
+	picture = GFX_evt_quarrel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = charitable
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6235
+		remove_trait = charitable
+	}
+}
+
+#Mammon - Greedy
+character_event = {
+	id = 6236
+	desc = EVTDESC6236
+	picture = GFX_evt_feast
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = charitable
+			trait = greedy
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6236
+		add_trait = greedy
+	}
+}
+
+#Leviathan - Remove Kind
+character_event = {
+	id = 6237
+	desc = EVTDESC6237
+	picture = GFX_evt_quarrel
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = kind
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6237
+		remove_trait = kind
+	}
+}
+
+#Leviathan - Envious
+character_event = {
+	id = 6238
+	desc = EVTDESC6238
+	picture = GFX_evt_feast
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = kind
+			trait = envious
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6238
+		add_trait = envious
+	}
+}
+
+#Belphegor - Diligent
+character_event = {
+	id = 6239
+	desc = EVTDESC6239
+	picture = GFX_evt_illness
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		trait = diligent
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6239
+		remove_trait = diligent
+	}
+}
+
+#Belphegor - Slothful
+character_event = {
+	id = 6240
+	desc = EVTDESC6240
+	picture = GFX_evt_illness
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		has_character_modifier = voice_of_satan
+		NOR = {
+			trait = diligent
+			trait = slothful
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	option = {
+		name = EVTOPTA6240
+		add_trait = slothful
+	}
+}
+
+### Lunacy Events
+
+# Ruler Implements New Law
+character_event = {
+	id = 6300
+	desc = EVTDESC6300
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	min_age = 16
+	prisoner = no
+	only_playable = yes
+	only_independent = yes
+	
+	trigger = {
+		trait = lunatic
+	}
+	
+	mean_time_to_happen = {
+		months = 420
+	}
+	
+	option = {
+		name = EVTOPTA6300
+		tooltip_info = lunatic
+		narrative_event= { id = 6305 tooltip = EVTTOOLTIP6305 }
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				narrative_event= { id = 6301 }
+			}
+		}	
+	}
+	option = {
+		name = EVTOPTB6300
+		tooltip_info = lunatic
+		narrative_event= { id = 6306 tooltip = EVTTOOLTIP6306 }
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				narrative_event= { id = 6302 }
+			}
+		}	
+	}
+	option = {
+		name = EVTOPTC6300
+		tooltip_info = lunatic
+		narrative_event= { id = 6307 tooltip = EVTTOOLTIP6307 }
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				narrative_event= { id = 6303 }
+			}
+		}	
+	}
+	option = {
+		name = EVTOPTD6300
+		tooltip_info = lunatic
+		narrative_event= { id = 6308 tooltip = EVTTOOLTIP6308 }
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				narrative_event= { id = 6304 }
+			}
+		}	
+	}
+}
+
+# Turnip Law (Vassals)
+narrative_event = {
+	id = 6301
+	title = EVTNAME6301
+	desc = EVTDESC6301
+	picture = GFX_evt_recieve_letter
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6301
+		custom_tooltip = { text = ignore_law }
+	}
+}
+
+# Pants Law (Vassals)
+narrative_event = {
+	id = 6302
+	title = EVTNAME6302
+	desc = EVTDESC6302
+	picture = GFX_evt_recieve_letter
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6302
+		custom_tooltip = { text = ignore_law }
+	}
+}
+
+# Hole Law (Vassals)
+narrative_event = {
+	id = 6303
+	title = EVTNAME6303
+	desc = EVTDESC6303
+	picture = GFX_evt_recieve_letter
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6303
+		custom_tooltip = { text = ignore_law }
+	}
+}
+
+# Violence Law (Vassals)
+narrative_event = {
+	id = 6304
+	title = EVTNAME6304
+	desc = EVTDESC6304
+	picture = GFX_evt_recieve_letter
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6304
+		custom_tooltip = { text = ignore_law }
+	}
+}
+
+# Turnip Law (Liege)
+narrative_event = {
+	id = 6305
+	title = EVTNAME6301
+	desc = EVTDESC6305
+	picture = GFX_evt_courier
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6305
+		any_vassal = {
+			opinion = {
+				modifier = opinion_insane_law
+				who = ROOT
+			}
+		}
+	}
+}
+
+# Pants Law (Liege)
+narrative_event = {
+	id = 6306
+	title = EVTNAME6302
+	desc = EVTDESC6306
+	picture = GFX_evt_courier
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6305
+		any_vassal = {
+			opinion = {
+				modifier = opinion_insane_law
+				who = ROOT
+			}
+		}
+	}
+}
+
+# Hole Law (Liege)
+narrative_event = {
+	id = 6307
+	title = EVTNAME6303
+	desc = EVTDESC6307
+	picture = GFX_evt_courier
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6305
+		any_vassal = {
+			opinion = {
+				modifier = opinion_insane_law
+				who = ROOT
+			}
+		}
+	}
+}
+
+# Violence Law (Liege)
+narrative_event = {
+	id = 6308
+	title = EVTNAME6304
+	desc = EVTDESC6308
+	picture = GFX_evt_courier
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6305
+		any_vassal = {
+			opinion = {
+				modifier = opinion_insane_law
+				who = ROOT
+			}
+		}
+	}
+}
+
+### Random Madness
+
+# Gopher Maid
+character_event = {
+	id = 6315
+	desc = EVTDESC6315
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	ai = no
+	min_age = 16
+	prisoner = no
+	
+	trigger = {
+		trait = lunatic
+	}
+	
+	mean_time_to_happen = {
+		months = 420
+	}
+	
+	option = {
+		name = EVTOPTA6315
+		tooltip_info = lunatic
+		prestige = -20
+	}
+}
+
+# Howling at the Moon
+character_event = {
+	id = 6316
+	desc = EVTDESC6316
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	ai = no
+	min_age = 16
+	prisoner = no
+	
+	trigger = {
+		trait = lunatic
+	}
+	
+	mean_time_to_happen = {
+		months = 420
+	}
+	
+	option = {
+		name = EVTOPTA6316
+		tooltip_info = lunatic
+		prestige = -20
+	}
+}
+
+### Horse Chancellor
+character_event = {
+	id = 6317
+	desc = EVTDESC6317
+	picture = GFX_evt_courier
+	border = GFX_event_normal_frame_religion
+	
+	only_capable = yes
+	min_age = 16
+	prisoner = no
+	only_playable = yes
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		trait = lunatic
+		any_courtier = {
+			has_job_title = job_chancellor
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 420
+	}
+	
+	option = {
+		name = EVTOPTA6317
+		tooltip_info = lunatic
+		job_chancellor = {
+			opinion = {
+				modifier = opinion_fired_from_council
+				who = ROOT
+				years = 5
+			}
+			hidden_tooltip = {
+				character_event = { id = 6318 }
+			}
+			remove_title = job_chancellor
+		}
+	}
+}
+
+# Chancellor informed
+character_event = {
+	id = 6318
+	desc = EVTDESC6318
+	picture = GFX_evt_courier
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6318
+		prestige = -20
+		custom_tooltip = { text = horse_chancellor }
+	}
+}
+
+
+### Lunatic Pagan series
+character_event = {
+	id = 635099
+	
+	hide_window = yes
+	min_age = 16
+	prisoner = no
+	only_playable = yes
+	
+	trigger = {
+		NOT = { has_character_flag = the_old_ones_are_waking }
+		NOT = { trait = wildling }
+		NOT = { is_drowned_god_religion_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		years = 1500
+		modifier = {
+			factor = 20
+			NOT = { trait = lunatic }
+		}
+	}
+	
+	immediate = {
+		set_character_flag = the_old_ones_are_waking
+		random_list = {
+			1 = { character_event = { id = 6350 } }
+			1 = { character_event = { id = 6351 } }
+			1 = { character_event = { id = 6352 } }
+			1 = { character_event = { id = 6353 } }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+# Rats in the walls
+character_event = {
+	id = 6350
+	desc = EVTDESC6350
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6350
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			add_trait = lunatic
+		}
+		character_event = { id = 6354 days = 14 tooltip = EVTTOOLTIP6354 }
+	}
+	option = {
+		name = EVTOPTB6350
+		trigger = {
+			NOT = { trait = lunatic }
+		}
+	}
+}
+
+# Something in the well
+character_event = {
+	id = 6351
+	desc = EVTDESC6351
+	picture = GFX_evt_garden
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6351
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			add_trait = lunatic
+		}
+		character_event = { id = 6354 days = 14 tooltip = EVTTOOLTIP6354 }
+	}
+	option = {
+		name = EVTOPTB6351
+		trigger = {
+			NOT = { trait = lunatic }
+		}
+	}	
+}
+
+# Tomb raiding
+character_event = {
+	id = 6352
+	desc = EVTDESC6352
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6352
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			add_trait = lunatic
+		}
+		character_event = { id = 6354 days = 14 tooltip = EVTTOOLTIP6354 }
+	}
+	option = {
+		name = EVTOPTB6352
+		trigger = {
+			NOT = { trait = lunatic }
+		}
+	}	
+}
+
+# A law against the killing of cats
+character_event = {
+	id = 6353
+	desc = EVTDESC6353
+	picture = GFX_evt_burning_house
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6353
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			add_trait = lunatic
+		}
+		character_event = { id = 6354 days = 14 tooltip = EVTTOOLTIP6354 }
+	}
+	option = {
+		name = EVTOPTB6353
+		trigger = {
+			NOT = { trait = lunatic }
+		}
+	}	
+}
+
+# Visiting a quaint village
+character_event = {
+	id = 6354
+	desc = EVTDESC6354
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6354
+		character_event = { id = 6355 days = 7 tooltip = EVTTOOLTIP6355 }
+	}
+}
+
+# A seaside ritual
+character_event = {
+	id = 6355
+	desc = EVTDESC6355
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = the_old_ones_are_waking }
+	
+	option = {
+		name = EVTOPTA6355
+		change_learning = 1
+		religion = drowned_god
+		character_event = { id = 6356 days = 1 tooltip = EVTTOOLTIP6356 }
+	}
+}
+
+# Something rises from the sea...
+character_event = {
+	id = 6356
+	desc = EVTDESC6356
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6356
+		piety = 100
+		red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = { death_reason = death_sacrificed }
+	}
+	option = {
+		name = EVTOPTB6356
+		character_event = { id = 6357 days = 1 tooltip = EVTTOOLTIP6357 }
+	}
+}
+
+# Commendeer a longship
+character_event = {
+	id = 6357
+	desc = EVTDESC6357
+	picture = GFX_evt_kraken
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6357
+		character_event = { id = 6358 days = 1 tooltip = EVTTOOLTIP6358 }
+	}
+}
+
+# Waking up
+character_event = {
+	id = 6358
+	desc = EVTDESC6358
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6358
+		prestige = 100
+		if = {
+			limit = { lifestyle_traits = 1 }
+			change_learning = 1
+		}		
+		if = {
+			limit = {
+				NOT = { lifestyle_traits = 1 }
+				NOT = { has_dlc = "Way of Life" }
+			}
+			add_trait = scholar
+		}
+	}
+	option = {
+		name = EVTOPTB6358
+		add_character_modifier = { name = "killed_an_old_one" duration = 3635 }
+	}	
+}
+#Lover's pox adding and notification
+character_event = {
+	id = 6359
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+
+	desc = {
+		text = EVTDESC_WOL_40_NC
+		trigger = {
+			is_female = yes
+			has_dlc = "Sons of Abraham"
+		}
+		picture = GFX_evt_bad_news_female
+	}
+	desc = {
+		text = EVTDESC_WOL_40_NC
+		trigger = {
+			is_female = no
+			has_dlc = "Sons of Abraham"
+		}
+		picture = GFX_evt_bad_news
+	}
+	desc = {
+		trigger = { NOT = { has_dlc = "Sons of Abraham" } }
+		text = EVTDESC_WOL_40_NC
+		picture = GFX_evt_recovery
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOR = {
+			trait = lovers_pox
+			has_character_modifier = minor_disease_herpes
+		}
+	}
+	
+	option = {
+		name = CURSES
+		add_trait = lovers_pox
+	}
+}
+### Mittens the Spymaster ###
+
+# Start
+character_event = {
+	id = 6360
+	picture = GFX_evt_cat
+	border = GFX_event_normal_frame_diplomacy
+
+	desc = {
+		trigger = { has_dlc = Reapers }
+		picture = GFX_evt_cat
+		text = EVTDESC6360
+	}
+	desc = {
+		trigger = { NOT = { has_dlc = Reapers } }
+		picture = GFX_evt_council
+		text = EVTDESC6360
+	}
+	
+	min_age = 16
+	prisoner = no
+	only_capable = yes
+	only_playable = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		magic_returned_trigger = yes
+		NOT = {
+			has_game_rule = {
+				name = silly_events
+				value = off
+			}
+		}
+		trait = lunatic		
+		job_spymaster = {
+			ai = yes
+		}
+		has_character_modifier = pet_cat
+		NOT = { has_character_flag = cat_spymaster_flag }
+		OR = {
+			ai = no
+			has_game_rule = {
+				name = silly_events
+				value = unrestricted
+			}
+		}
+	}
+
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 0.05
+			ai = yes
+		}
+	}
+	
+	immediate = {
+		set_character_flag = cat_spymaster_flag
+		random_courtier = {
+			limit = {
+				has_job_title = job_spymaster
+				ai = yes
+			}
+			save_event_target_as = show
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6360
+		custom_tooltip = { text = cat_start }
+		hidden_tooltip = {
+			character_event = { 
+				id = 6361
+				#days = 30
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB6360
+		job_spymaster = {
+			opinion = {
+				modifier = opinion_no_cat
+				who = ROOT
+				years = 100
+			}
+		}
+	}
+}
+
+# Sleepless Mittens
+character_event = {
+	id = 6361
+	desc = EVTDESC6361
+	picture = GFX_evt_kitten_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	hide_from = yes
+
+	trigger = { has_character_modifier = pet_cat }
+	
+	option = {
+		name = EVTOPTA6361
+		custom_tooltip = { text = cat_corridor }
+		hidden_tooltip = {
+			character_event = { 
+				id = 6362
+				#days = 3
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB6361
+		custom_tooltip = { text = cat_kitchen }
+	}
+}
+
+# Mittens the Spymaster
+character_event = {
+	id = 6362
+	desc = EVTDESC6362
+	picture = GFX_evt_kitten_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+
+	trigger = { has_character_modifier = pet_cat }
+	
+	option = {
+		name = EVTOPTA6362
+		tooltip_info = lunatic
+		job_spymaster = {
+			death = {
+				death_reason = death_murder_unknown
+			}
+		}
+		
+		create_character = {
+			name = "Mittens"
+			age = 16
+			religion = ROOT
+			culture = cat
+			race = cat
+			dynasty = NONE
+			trait = cat
+			trait = imbecile
+			trait = deceitful
+			trait = fair
+			trait = wroth
+			trait = proud
+		}
+		new_character = {
+			give_job_title = job_spymaster
+			opinion = {
+				modifier = opinion_my_servant
+				who = ROOT
+				years = 100
+			}
+			reverse_opinion = {
+				modifier = opinion_my_kitten
+				who = ROOT
+				years = 100
+			}
+			character_event = { 
+				id = 6364
+			}
+		}
+		hidden_tooltip = {
+			remove_character_modifier = pet_cat
+			
+		}
+	}
+}
+
+#Mittens ping
+character_event = {
+    id = 6364
+    hide_window = yes
+    is_triggered_only = yes
+    immediate = { 
+		any_playable_ruler = {
+			limit = {
+				ai = no
+				NOT = { character = FROM }
+				same_realm = FROM
+			}
+			character_event = { 
+				id = 6363
+			}
+		}
+    	FROM = {
+    		any_courtier = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}	
+				}
+				opinion = {
+					modifier = opinion_cat_spymaster
+					who = PREV
+					years = 100
+				}
+			}
+			if = { 
+				limit = { trait = immortal }
+				character_event = { id = 6365 days = 10 }
+			}
+    	}
+    }
+}
+
+# End
+character_event = {
+	id = 6363
+	desc = EVTDESC6363
+	picture = GFX_evt_kitten_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+
+	hide_new = yes
+	
+	option = {
+		name = EVTOPTA6363	
+	}
+}
+# Immortality
+character_event = {
+	id = 6365
+	desc = EVTDESC6365
+	picture = GFX_evt_kitten_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+
+	
+	trigger = {
+		trait = lunatic
+		trait = immortal
+	}
+
+	option = {
+		name = EVTOPTA6365
+		FROM = { add_trait = immortal }
+	}
+
+	option = {
+		name = EVTOPTB6365
+	}
+}
+###AGOT - lunatic administers justice to self###
+character_event = {
+	id = 6460
+	desc = EVTDESC6460
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_religion
+	
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	
+	trigger = {
+		trait = lunatic
+		NOT = { trait = proud }
+		NOT = { trait = wroth }
+	}
+	
+	mean_time_to_happen = {
+		months = 600
+	}
+	
+	option = {
+		name = EVTOPTA6460 #I demand trial by combat!
+		trigger = {
+			NOT = { trait = infirm }
+			OR = {
+				is_female = no
+				trait = skilled_warrior
+				trait = master_warrior
+				culture_group = dornish
+			}
+		}
+		tooltip_info = lunatic
+		set_character_flag = lunatic_trial
+		set_character_flag = trial_by_combat
+		character_event = {
+			id = trial_by_combat.4
+			tooltip = TOOLTIPEVTOPTA6460
+		}	
+	}
+	
+	option = {
+		name = EVTOPTB6460 #It's the dungeon for me
+		tooltip_info = lunatic
+		prestige = -100
+		add_character_modifier = { 
+			name = the_dungeon
+			duration = 365
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				letter_event = { 
+					id = 6462
+				} 
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTC6460 #Prove innocence
+		tooltip_info = lunatic
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = giving_justice
+				duration = 60
+			}
+			add_character_modifier = {
+				name = getting_justice
+				duration = 30
+			}
+		}	
+		set_character_flag = lunatic_trial
+		character_event = { id = trial.0 tooltip = TOOLTIPEVTOPTC6460 }	
+		clr_character_flag = select_champion
+		clr_character_flag = choosing_champion
+		hidden_tooltip = {
+			any_realm_lord = {
+				character_event = { 
+					id = 6463
+				} 
+			}
+		}	
+	}
+}
+#Inform Realm trial by combat
+character_event = {
+	id = 6461
+	desc = EVTDESC6461
+	picture = GFX_evt_lunatic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6461
+	}
+}	
+#Inform Realm imprisoned
+letter_event = {
+	id = 6462
+	desc = EVTDESC6462
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6462
+	}
+}	
+#Inform Realm trial by court
+character_event = {
+	id = 6463
+	desc = EVTDESC6463
+	picture = GFX_evt_lunatic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6463
+	}
+}	
+###Greyscale events###
+#Contract Greyscale
+character_event = {
+	id = 6464
+	desc = EVTDESC6464
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	is_sick = no
+	
+	trigger = {
+		is_ill = no
+		NOT = { trait = dragon }
+		NOT = { trait = white_walker }
+		NOT = { trait = winter_wasteland }
+		NOT = { trait = greyscale_scarred } #immune if had greyscale before
+		NOT = { has_character_flag = immune_typhus }
+		NOT = {
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = none
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		physician_illness_prevention_score = yes
+		modifier = {
+			factor = 0.25
+			resistant_to_illness_trigger = yes
+		}
+		modifier = {
+			factor = 2
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = more
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = fewer
+			}
+		}
+		modifier = {
+			factor = 0.5
+			has_game_rule = {
+				name = non_epidemic_diseases
+				value = rare
+			}
+		}
+		modifier = { #Unhealthy locations
+			factor = 2.5
+			location = {
+				OR = {
+					region = world_sothoryos
+					region = world_basilisk_isles
+				}
+			}
+		}
+		modifier = {
+			factor = 0.25
+			age = 12
+		}	
+		modifier = {
+			factor = 0.25 #Mainly effects children
+			age = 16
+		}
+		modifier = {
+			factor = 5
+			prisoner = yes
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 2.5
+			prisoner = yes
+			has_character_modifier = the_dungeon
+		}
+		modifier = {
+			factor = 0.66
+			base_health = 6
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 7
+		}
+		modifier = {
+			factor = 0.5
+			base_health = 8
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6464
+		add_trait = has_greyscale
+		hidden_tooltip = {
+			liege = { character_event = { id = 6465 } }
+			if = {
+				limit = {
+					has_dlc = "Reapers"
+					ai = no
+				}
+				set_character_flag = new_leper_character
+				seek_treatment_from_physician_effect = yes
+				character_event = { id = RIP.11063 days = 20 }
+			}
+			
+			hidden_tooltip = {
+				random_list ={
+					20 = {
+						character_event = { id = RIP.5041 days = 365 random = 50 }
+					}
+					75 = {
+						character_event = { id = RIP.5041 days = 1500 random = 300 }
+					}
+					30 = {
+						character_event = { id = RIP.5041 days = 3000 random = 600 }
+					}
+				}
+			}
+		}
+	}
+}
+#Inform parents/liege
+character_event = {
+	id = 6465
+	desc = EVTDESC6465
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { character = FROM } }
+	
+	option = {
+		name = EVTOPTA6465
+		FROM = { add_trait = has_greyscale }
+	}
+}	
+##Hack off limb? self
+character_event = {
+	id = 6466
+	desc = EVTDESC6466
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	is_sick = yes
+	
+	trigger = {
+		trait = has_greyscale
+		job_physician = { always = yes }
+		NOT = { has_character_flag = no_hack_off_limb }
+		OR = {
+			NOT = { has_character_flag = hack_off_limb_attempt }
+			had_character_flag = { flag = hack_off_limb_attempt days = 800 }
+		}	
+	}
+	
+	mean_time_to_happen = {
+		months = 6	
+	}
+	
+	immediate = {
+		job_physician = { save_event_target_as = my_physician } #for loc
+	}
+	
+	option = {
+		name = EVTOPTA6466 #Do it!
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 1.75
+				job_physician = { learning = 10 }
+			}
+			modifier = {
+				factor = 1.75
+				job_physician = { learning = 16 }
+			}
+			modifier = {
+				factor = 1.75
+				is_ruler = no
+				liege = { job_physician = { learning = 10 } }
+			}
+			modifier = {
+				factor = 1.75
+				is_ruler = no
+				liege = { job_physician = { learning = 16 } }
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+		}
+		job_physician = { show_portrait = yes }
+		set_character_flag = hack_off_limb_attempt
+		random = {
+			chance = 15
+			modifier = {
+				factor = 1.66
+				job_physician = { learning = 10 }
+			}
+			modifier = {
+				factor = 1.4
+				job_physician = { learning = 16 }
+			}
+			modifier = {
+				factor = 1.66
+				is_ruler = no
+				liege = { job_physician = { learning = 10 } }
+			}
+			modifier = {
+				factor = 1.4
+				is_ruler = no
+				liege = { job_physician = { learning = 16 } }
+			}
+			tooltip = { remove_trait = has_greyscale }
+			hidden_tooltip = { character_event = { id = 6115 } }
+			clr_character_flag = hack_off_limb_attempt
+		}
+		random_list = {
+			4 = { 
+				modifier = {
+					factor = 0.5
+					job_physician = { learning = 10 }
+				}
+				modifier = {
+					factor = 0.5
+					job_physician = { learning = 16 }
+				}
+				modifier = {
+					factor = 0.5
+					is_ruler = no
+					liege = { job_physician = { learning = 10 } }
+				}
+				modifier = {
+					factor = 0.5
+					is_ruler = no
+					liege = { job_physician = { learning = 16 } }
+				}
+				maim_hand_effect = yes
+				red_god_resurrect_effect = yes #check for rhllor resurrection			
+				death = { death_reason = death_trait } 
+			} 
+			15 = { 
+				modifier = {
+					factor = 0.33
+					job_physician = { learning = 10 }
+				}
+				modifier = {
+					factor = 0.5
+					job_physician = { learning = 16 }
+				}
+				modifier = {
+					factor = 0.33
+					is_ruler = no
+					liege = { job_physician = { learning = 10 } }
+				}
+				modifier = {
+					factor = 0.5
+					is_ruler = no
+					liege = { job_physician = { learning = 16 } }
+				}
+				if = {
+					limit = { NOT = { is_maimed_trigger = yes } }
+					hidden_tooltip = {
+						remove_trait = wounded
+					}
+					maim_hand_effect = yes			
+				}	
+			} 
+			35 = { 
+				modifier = {
+					factor = 0.42
+					job_physician = { learning = 10 }
+				}
+				modifier = {
+					factor = 0.6
+					job_physician = { learning = 16 }
+				}
+				modifier = {
+					factor = 0.42
+					is_ruler = no
+					liege = { job_physician = { learning = 10 } }
+				}
+				modifier = {
+					factor = 0.6
+					is_ruler = no
+					liege = { job_physician = { learning = 16 } }
+				}
+				if = {
+					limit = { 
+						NOT = { trait = wounded } 
+						NOT = { is_maimed_trigger = yes } 
+					}
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = {
+						ROOT = {
+							character_event ={
+								id = 38180 #Notify
+							}
+						}	
+					}
+				}	
+			} 
+			46 = { 
+				modifier = {
+					factor = 1.37
+					job_physician = { learning = 10 }
+				}
+				modifier = {
+					factor = 1.25
+					job_physician = { learning = 16 }
+				}
+				modifier = {
+					factor = 1.37
+					is_ruler = no
+					liege = { job_physician = { learning = 10 } }
+				}
+				modifier = {
+					factor = 1.25
+					is_ruler = no
+					liege = { job_physician = { learning = 16 } }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB6466 #No way!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+		}
+		set_character_flag = no_hack_off_limb
+	}	
+}
+##Hack off limb? child
+character_event = {
+	id = 6467
+	desc = EVTDESC6467
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_religion
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		any_child = {
+			trait = has_greyscale
+			ai = yes		
+			NOT = { age = 16 }
+			liege = { character = ROOT }
+			NOT = { has_character_flag = no_hack_off_limb_child }
+			OR = {
+				NOT = { has_character_flag = hack_off_limb_attempt }
+				had_character_flag = { flag = hack_off_limb_attempt days = 800 }
+			}
+		}
+		job_physician = { always = yes }		
+	}
+	
+	mean_time_to_happen = {
+		months = 24	
+	}
+	
+	immediate = {
+		job_physician = { save_event_target_as = my_physician } #for loc
+		random_child = {	
+			limit = {
+				trait = has_greyscale
+				ai = yes		
+				NOT = { age = 16 }
+				liege = { character = ROOT }
+				NOT = { has_character_flag = no_hack_off_limb_child }
+				OR = {
+					NOT = { has_character_flag = hack_off_limb_attempt }
+					had_character_flag = { flag = hack_off_limb_attempt days = 800 }
+				}
+			}
+			save_event_target_as = greyscale_target
+		}	
+	}
+	
+	option = {
+		name = EVTOPTA6467 #Do it!
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 1.75
+				job_physician = { learning = 10 }
+			}
+			modifier = {
+				factor = 1.75
+				job_physician = { learning = 16 }
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+		}
+		job_physician = { show_portrait = yes }
+		event_target:greyscale_target = {
+			set_character_flag = hack_off_limb_attempt
+			random = {
+				chance = 15
+				modifier = {
+					factor = 1.66
+					ROOT = { job_physician = { learning = 10 } }
+				}
+				modifier = {
+					factor = 1.4
+					ROOT = { job_physician = { learning = 16 } }
+				}
+				remove_trait = has_greyscale
+				set_character_flag = immune_typhus
+				clr_character_flag = hack_off_limb_attempt
+			}
+			random_list = {
+				4 = { 
+					modifier = {
+						factor = 0.5
+						ROOT = { job_physician = { learning = 10 } }
+					}
+					modifier = {
+						factor = 0.5
+						ROOT = { job_physician = { learning = 16 } }
+					}
+					maim_hand_effect = yes
+					red_god_resurrect_effect = yes #check for rhllor resurrection			
+					death = { death_reason = death_trait } 
+				} 
+				15 = { 
+					modifier = {
+						factor = 0.33
+						ROOT = { job_physician = { learning = 10 } }
+					}
+					modifier = {
+						factor = 0.5
+						ROOT = { job_physician = { learning = 16 } }
+					}
+					if = {
+						limit = { NOT = { is_maimed_trigger = yes } }
+						hidden_tooltip = {
+							ROOT = {
+								character_event ={
+									id = 38181 #Notify
+								}
+							}	
+							remove_trait = wounded
+						}
+						maim_hand_effect = yes			
+					}	
+				} 
+				35 = { 
+					modifier = {
+						factor = 0.42
+						ROOT = { job_physician = { learning = 10 } }
+					}
+					modifier = {
+						factor = 0.6
+						ROOT = { job_physician = { learning = 16 } }
+					}
+					if = {
+						limit = { 
+							NOT = { trait = wounded } 
+							NOT = { is_maimed_trigger = yes } 
+						}
+						add_trait_silently_wounded_effect = yes
+						hidden_tooltip = {
+							ROOT = {
+								character_event ={
+									id = 38180 #Notify
+								}
+							}	
+						}
+					}	
+				} 
+				46 = { 
+					modifier = {
+						factor = 1.37
+						ROOT = { job_physician = { learning = 10 } }
+					}
+					modifier = {
+						factor = 1.25
+						ROOT = { job_physician = { learning = 16 } }
+					}
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTB6466 #No way!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+		}
+		event_target:greyscale_target = {
+			set_character_flag = no_hack_off_limb_child
+		}	
+	}	
+}
+
+# Maimed to Crippled
+character_event = {
+	id = 6470
+	desc = EVT_DESC_wound_progression_1
+	picture = GFX_evt_recovery
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = maimed
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 0.33
+			in_command = yes
+		}
+		modifier = {
+			factor = 0.25
+			has_character_modifier = the_oubliette
+		}
+		modifier = {
+			factor = 0.5
+			has_character_modifier = the_dungeon
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { base_health = 5 }
+		}	
+		modifier = {
+			factor = 2
+			base_health = 6
+		}			
+		modifier = {
+			factor = 2
+			base_health = 7
+		}
+	}
+	
+	option = {
+		name = EVT_OPTA_wound_progression_1
+		remove_trait = maimed
+		random_list = {
+			75 = { add_trait = disfigured_AGOT }
+			25 = { add_trait = crippled }
+		}
+		hidden_tooltip = {
+			random = {
+				chance = 15
+				set_character_flag = scarred
+			}
+		}
+	}
+}
+
+# Old Age Blindness
+character_event = {
+	id = 6471
+	desc = EVT_DESC_wound_progression_2
+	picture = GFX_evt_bad_news
+	border = GFX_event_normal_frame_religion
+
+	is_triggered_only = yes
+	min_age = 50
+	
+	trigger = {
+		NOT = { base_health = 7 }
+		NOT = { trait = blinded }
+		NOT = { trait = blinded_age }
+		NOT_mythical_creature_trigger = yes
+		NOT = { trait = immortal }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 0.9
+			base_health = 6
+		}			
+		modifier = {
+			factor = 0.9
+			base_health = 5
+		}			
+		modifier = {
+			factor = 1.1
+			NOT = { base_health = 4 }
+		}			
+		modifier = {
+			factor = 1.1
+			NOT = { base_health = 3 }
+		}			
+		modifier = {
+			factor = 1.1
+			NOT = { base_health = 2 }
+		}			
+		modifier = {
+			factor = 1.1
+			NOT = { base_health = 1 }
+		}
+		modifier = {
+			factor = 0.28
+			NOT = { age = 60 }
+		}		
+		modifier = {
+			factor = 1.1
+			age = 70
+		}		
+		modifier = {
+			factor = 1.1
+			age = 80
+		}		
+		modifier = {
+			factor = 1.1
+			age = 90
+		}		
+		modifier = {
+			factor = 1.1
+			age = 100
+		}
+		modifier = {
+			factor = 0.2
+			trait = resurrected_by_rhllor
+		}
+	}
+	
+	option = {
+		name = EVT_OPTA_wound_progression_2
+		add_trait = blinded_age
+		hidden_tooltip = {
+			if = {
+				limit = {
+					is_ruler = yes
+					has_nickname = no
+					is_feudal_monarch_trigger = yes
+					OR = {
+						tier = KING
+						culture_group = andal
+						culture_group = first_men
+						culture_group = free_folk
+						culture_group = iron_isles_culture
+						primary_title = { title = e_iron_throne }
+					}
+					NOT = { culture_group = hyrkoon_group }
+					NOT = { culture_group = dornish }
+				}					
+				random = {
+					chance = 20
+					if = {
+						limit = { is_female = no }
+						give_nickname = nick_the_blind_king
+					}	
+					if = {
+						limit = { is_female = yes }
+						give_nickname = nick_the_blind_queen
+					}	
+				}
+			}
+		}
+	}
+}

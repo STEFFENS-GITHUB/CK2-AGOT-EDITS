@@ -1,0 +1,1076 @@
+plot_decisions = {
+
+	# plot_gain_title_decision = { #Disabled
+		# is_high_prio = yes
+		
+		# potential = {
+			# age = 16
+			# has_plot = plot_gain_title
+			# NOT = { has_character_flag = plot_gain_title_decision_taken }
+		# }
+		# allow = {
+			# plot_power = 0.8
+			# num_of_plot_backers = 1
+			# plot_target_char = {
+				# prisoner = no
+				# NOT = {
+					# any_war = {
+						# defender = {
+							# character = PREVPREV
+						# }
+					# }
+				# }
+			# }
+		# }
+		# effect = {
+			# plot_target_char = {
+				# letter_event = { id = 8000 days = 3 tooltip = "EVTTOOLTIP8000" }
+			# }
+			# hidden_tooltip = {
+				# set_character_flag = plot_gain_title_decision_taken
+				# activate_plot = yes
+			# }
+		# }
+		# ai_will_do = {
+			# factor = 1
+			# modifier = {
+				# factor = 0
+				# NOT = {
+					# had_character_flag = {
+						# flag = plot_check
+						# days = 365
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 0
+				# NOT = { plot_power = 3.0 }
+				# NOT = { num_of_plot_backers = 2 }
+				# NOT = { relative_power_to_liege = 0.25 }
+			# }			
+			# modifier = {
+				# factor = 0
+				# NOT = { plot_power = 2.5 }
+				# NOT = { num_of_plot_backers = 3 }
+				# NOT = { relative_power_to_liege = 0.5 }
+			# }
+			# modifier = {
+				# factor = 0
+				# NOT = { plot_power = 2.0 }
+				# NOT = { num_of_plot_backers = 4 }
+				# NOT = { relative_power_to_liege = 0.75 }				
+			# }			
+		# }
+	# }
+
+	plot_gain_vassal_title_decision = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_gain_vassal_title
+			NOT = { has_character_flag = plot_gain_vassal_title_decision_taken }
+		}
+		allow = {
+			plot_power = 0.8
+			num_of_plot_backers = 1
+			war = no
+			plot_target_char = {
+				prisoner = no
+				in_revolt = no
+				custom_tooltip = {
+					text = not_under_attack
+					hidden_tooltip = {
+						NOT = {
+							any_war = {
+								defender = {
+									character = PREVPREV
+								}
+							}
+						}
+					}
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			plot_target_char = {
+				letter_event = { id = 8030 days = 3 tooltip = "EVTTOOLTIP8030" }
+			}
+			hidden_tooltip = {
+				set_character_flag = plot_gain_vassal_title_decision_taken
+				activate_plot = yes
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	
+	
+	plot_weaken_fellow_vassal_decision_liege = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_weaken_fellow_vassal
+			NOT = { has_character_flag = plot_weaken_fellow_vassal_decision_liege_taken }
+		}
+		allow = {
+			#plot_power = 0.6
+			#num_of_plot_backers = 1
+			NOT = { is_inaccessible_trigger = yes }
+			plot_target_title = { is_contested = no }
+		}
+				
+		effect = {
+			plot_target_char = {
+				liege = {
+					letter_event = { id = 7500 days = 3 tooltip = "EVTTOOLTIP7500" }
+				}
+			}	
+			set_character_flag = plot_weaken_fellow_vassal_decision_liege_taken
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.2
+			}
+			modifier = {
+				factor = 4
+				plot_power = 1
+			}
+			modifier = {
+				factor = 2
+				num_of_plot_backers = 3
+			}
+			modifier = {
+				factor = 2
+				num_of_plot_backers = 5
+			}			
+		}
+	}
+	plot_weaken_fellow_vassal_decision = { #changed to send letters to vassals, adds tyranny
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_weaken_fellow_vassal
+			NOT = { has_character_flag = plot_weaken_fellow_vassal_decision_taken }
+		}
+		allow = {
+			#plot_power = 1
+			#num_of_plot_backers = 3			
+			plot_target_char = {
+				NOT = { has_character_modifier = weaken_fellow_vassal_tyranny }
+			}
+			custom_tooltip = {
+				text = TOOLTIPplot_weaken_fellow_vassal_decisionA
+				has_character_flag = plot_weaken_fellow_vassal_decision_liege_taken
+			}
+			custom_tooltip = {
+				text = TOOLTIPplot_weaken_fellow_vassal_decisionB
+				NOT = { has_character_flag = weakened_fellow_vassal_player_agreed }
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			set_character_flag = plot_weaken_fellow_vassal_decision_taken
+			custom_tooltip = {
+				text = TOOLTIPplot_weaken_fellow_vassal_decisionC
+				hidden_tooltip = {
+					letter_event = { id = 7506 }
+					plot_target_char = {
+						character_event = { id = 7505 }
+						any_player = {
+							limit = {
+								OR = {
+									same_realm = PREV
+									is_close_relative = PREV
+									any_backed_character = { character = ROOT }
+								}
+								NOT = { character = ROOT }
+								NOT = { character = PREV }
+							}
+							letter_event = { id = 7506 }
+						}						
+					}					
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1		
+		}
+	}
+	
+	# plot_buy_loyalty_decision = {
+		# is_high_prio = yes
+		
+		# potential = {
+			# age = 16
+			# has_plot = plot_buy_loyalty
+			# NOT = { has_character_flag = plot_buy_loyalty_decision_taken }
+		# }
+		# allow = {
+			# OR = {
+				# AND = {
+					# plot_target_char = { tier = BARON }
+					# plot_power = 0.3
+				# }	
+				# plot_power = 0.5
+			# }	
+			# #num_of_plot_backers = 1
+		# }
+		# effect = {
+			# plot_target_char = {
+				# letter_event = { id = plot_event.1 days = 7 tooltip = "EVTTOOLTIPplot_event.1" }
+			# }
+			# hidden_tooltip = {
+				# set_character_flag = plot_buy_loyalty_decision_taken
+				# activate_plot = yes
+			# }
+		# }
+		# ai_check_interval = 6
+		# ai_will_do = {
+			# factor = 1
+		# }
+	# }
+	
+	plot_gain_liege_title_decision_100 = {
+		is_high_prio = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_gain_liege_title
+			NOT = { has_character_flag = plot_gain_liege_title_decision_taken }
+		}
+		allow = {
+			OR = {
+				AND = {
+					plot_power = 1
+					num_of_plot_backers = 5
+					plot_target_char = {
+						NOT = {
+							any_war = {
+								defender = {
+									character = PREVPREV
+								}
+							}
+						}
+					}
+				}	
+				trait = nightswatch
+			}	
+		}
+		effect = {
+			ROOT = {
+				random_list = {
+					90 = { 
+						character_event = { id = 7600 tooltip = "EVTTOOLTIP7600" }
+					}
+					10 = {
+						character_event = { id = 7601 tooltip = "EVTTOOLTIP7601" }
+					}
+				}
+				hidden_tooltip = {
+					set_character_flag = plot_gain_liege_title_decision_taken
+					activate_plot = yes
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	plot_gain_liege_title_decision_75 = {
+		is_high_prio = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_gain_liege_title
+			NOT = { has_character_flag = plot_gain_liege_title_decision_taken }
+			NOT = { trait = nightswatch }
+		}
+		allow = {
+			OR = {
+				AND = {
+					plot_power = 0.75
+					num_of_plot_backers = 3
+				}
+				AND = {
+					diplomacy = 12
+					prestige = 400
+					OR = {
+						relative_power_to_liege = 0.25
+						among_most_powerful_vassals = 3
+					}	
+				}
+			}	
+			plot_target_char = {
+				NOT = {
+					any_war = {
+						defender = {
+							character = PREVPREV
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			ROOT = {
+				random_list = {
+					60 = { 
+						character_event = { id = 7600 tooltip = "EVTTOOLTIP7600" }
+					}
+					40 = {
+						character_event = { id = 7601 tooltip = "EVTTOOLTIP7601" }
+					}
+				}
+				hidden_tooltip = {
+					set_character_flag = plot_gain_liege_title_decision_taken
+					activate_plot = yes
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+			}
+			modifier = {
+				factor = 10
+				had_character_flag = { flag = plot_check days = 300 }
+			}
+			modifier = {
+				factor = 100
+				had_character_flag = { flag = plot_check days = 100 }
+				NOT = { num_of_plot_backers = 3 }
+			}		
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+		}
+	}
+	
+	plot_gain_fellow_vassal_title_decision_100 = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_gain_fellow_vassal_title
+			NOT = { has_character_flag = plot_gain_fellow_vassal_title_decision_taken }
+		}
+		allow = {
+			plot_power = 1
+			num_of_plot_backers = 4
+			plot_target_char = {
+				NOT = {
+					any_war = {
+						defender = {
+							character = PREVPREV
+						}
+					}
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			ROOT = {
+				random_list = {
+					90 = { 
+						character_event = { id = 7600 tooltip = "EVTTOOLTIP7600" }
+					}
+					10 = {
+						character_event = { id = 7602 tooltip = "EVTTOOLTIP7601" }
+					}
+				}
+				hidden_tooltip = {
+					set_character_flag = plot_gain_fellow_vassal_title_decision_taken
+					activate_plot = yes
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	plot_gain_fellow_vassal_title_decision_75 = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_gain_fellow_vassal_title
+			NOT = { has_character_flag = plot_gain_fellow_vassal_title_decision_taken }
+		}
+		allow = {
+			plot_power = 0.75
+			num_of_plot_backers = 3
+			plot_target_char = {
+				NOT = {
+					any_war = {
+						defender = {
+							character = PREVPREV
+						}
+					}
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			ROOT = {
+				random_list = {
+					60 = { 
+						character_event = { id = 7600 tooltip = "EVTTOOLTIP7600" }
+					}
+					40 = {
+						character_event = { id = 7602 tooltip = "EVTTOOLTIP7601" }
+					}
+				}
+				hidden_tooltip = {
+					set_character_flag = plot_gain_fellow_vassal_title_decision_taken
+					activate_plot = yes
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.3
+			}
+			modifier = {
+				factor = 10
+				had_character_flag = { flag = plot_check days = 300 }
+			}
+			modifier = {
+				factor = 100
+				had_character_flag = { flag = plot_check days = 100 }
+				NOT = { num_of_plot_backers = 3 }
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+		}
+	}
+
+	plot_weaken_lord_paramount_ultimatum_decision = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			has_plot = plot_weaken_lord_paramount
+			NOT = { has_character_flag = plot_weaken_lp_ultimatum_decision_taken }
+		}
+		
+		allow = {
+			plot_power = 1
+			war = no
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			plot_target_char = { letter_event = { id = plot_event.34 days = 3 tooltip = "EVTTOOLTIPIRONTHRONEPLOT3" } }
+			hidden_tooltip = {
+				set_character_flag = plot_weaken_lp_ultimatum_decision_taken
+				activate_plot = yes
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = {
+					OR = {
+						plot_power = 2.5
+						num_of_plot_backers = 3
+					}
+				}	
+				NOT = { had_character_flag = { flag = plot_check days = 600 } }
+			}	
+		}
+	}
+	
+	plot_seize_trade_post_decision = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_seize_trade_post
+			NOT = { has_character_flag = plot_seize_trade_post_decision_taken }
+		}
+		allow = {
+			plot_power = 0.75
+			num_of_plot_backers = 3
+			plot_target_char = {
+				NOT = {
+					any_war = {
+						defender = {
+							character = PREVPREV
+						}
+					}
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			ROOT = {
+				character_event = { id = REP.300 tooltip = EVTTOOLTIPREP.300 }
+				set_character_flag = plot_seize_trade_post_decision_taken
+				activate_plot = yes
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { plot_power = 0.9 }
+					NOT = { wealth = 300 }
+				}
+				NOT = { had_character_flag = { flag = plot_check days = 600 } }
+			}
+		}
+	}
+	
+	plot_seize_trade_post_decision_elephant = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			age = 16
+			has_plot = plot_seize_trade_post
+			NOT = { has_character_flag = plot_seize_trade_post_decision_taken }
+			trait = elephant
+			plot_target_char = {
+				NOT = { trait = elephant }
+				liege = {
+					government = triarch_merchant_republic_government	
+				}	
+			}
+		}
+		allow = {
+			trait = elephant
+			plot_power = 0.33
+			OR = {
+				has_minor_title = title_triarch
+				has_character_flag = triarch
+				is_merchant_republic = yes
+				any_plot_backer = {
+					trait = elephant 
+					OR = {
+						has_minor_title = title_triarch 
+						has_character_flag = triarch
+						plot_power_contribution = 
+						{
+							plotter = ROOT
+							power = 0.20
+						}
+					}	
+				}			
+			}	
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			ROOT = {
+				character_event = { id = volantis.122 tooltip = EVTTOOLTIPvolantis.122 }
+				set_character_flag = plot_seize_trade_post_decision_taken
+				activate_plot = yes
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	# plot_dynasty_claim_decision = {
+		# is_high_prio = yes
+		# only_playable = yes
+		
+		# potential = {
+			# age = 16
+			# has_plot = plot_dynasty_claim
+			# NOT = { has_character_flag = plot_dynasty_claim_decision_taken }
+		# }
+		# allow = {
+			# plot_power = 1
+			# plot_target_title = {	
+				# holder_scope = {
+					# NOT = {
+						# any_war = {
+							# defender = {
+								# character = PREVPREV
+							# }
+						# }
+					# }
+					# any_vassal = {
+						# dynasty = ROOT
+						# has_claim = PREVPREV
+						# any_backed_character = {
+							# character = ROOT
+							# has_plot = plot_dynasty_claim
+						# }
+					# }
+				# }
+			# }
+			# NOT = { is_inaccessible_trigger = yes }			
+		# }
+		# effect = {
+			# plot_target_char = {
+				# letter_event = { id = plot_event.38 days = 3 tooltip = "EVTTOOLTIP7505" }
+			# }
+			# hidden_tooltip = {
+				# set_character_flag = plot_dynasty_claim_decision_taken
+				# activate_plot = yes
+			# }
+		# }
+		# ai_check_interval = 6
+		# ai_will_do = {
+			# factor = 1
+		# }
+	# }
+	faction_independence_defect = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			leads_faction = faction_independence
+			OR = {
+				NOT = { has_character_flag = faction_independence_ultimatum_taken }
+				had_character_flag = { flag = faction_independence_ultimatum_taken days = 7 }
+			}
+			OR = {			
+				NOT = { has_character_flag = faction_independence_defect_taken }
+				had_character_flag = { flag = faction_independence_defect_taken days = 7 }
+			}
+			liege = {
+				is_primary_war_defender = yes 
+				primary_title = {
+					any_war = {
+						OR = {
+							using_cb = dragon_conquest
+							using_cb = claim
+							using_cb = claim_all
+							using_cb = invasion_ironborn
+							using_cb = invasion
+							using_cb = dejure_kingdom_claim_EMP
+							using_cb = invasion_ambition
+						}
+						attacker = {
+							NOT = { character = ROOT }
+							NOT = { is_liege_of = ROOT }
+							higher_tier_than = ROOT
+						}
+					}
+				}	
+			}
+		}
+		allow = {
+			war = no
+			prisoner = no
+			liege = {
+				NOT = { war_with = ROOT }
+				NOT = { reverse_has_truce = ROOT }
+			}
+		}
+		
+		effect = {
+			liege = {
+				random_playable_ruler = {
+					limit = {
+						NOT = { character = ROOT }	
+						higher_tier_than = ROOT
+						is_primary_war_attacker = yes 
+						any_war = {
+							attacker = { character = PREVPREV }
+							defender = {
+								any_vassal = { character = ROOT }
+							}
+							OR = {
+								using_cb = dragon_conquest
+								using_cb = claim
+								using_cb = claim_all
+								using_cb = invasion_ironborn
+								using_cb = invasion
+								using_cb = dejure_kingdom_claim_EMP
+								using_cb = invasion_ambition
+							}
+						}
+					}
+					custom_tooltip = { text = TOOLTTIPfaction_indep_defect }
+					hidden_tooltip = { 
+						letter_event = { id = faction_event_new.12 }
+					}
+				}
+			}
+			hidden_tooltip = {
+				set_character_flag = faction_independence_defect_taken
+				any_faction_backer = {
+					faction = faction_independence
+					letter_event = { id = faction_event_new.11 days = 2 } 
+				}
+			}
+		}	
+		ai_check_interval = 4
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 0.25
+					}
+				}
+#				NOT = { 
+#					num_of_faction_backers = 
+#					{
+#						faction = faction_independence
+#						value = 2
+#					}
+#				}
+			}
+			#Enemy is undesirable
+			modifier = {
+				factor = 0
+				liege = {
+					primary_title = {	
+						any_war = { 
+							attacker = {
+								higher_tier_than = ROOT
+								NOT = { character = ROOT }
+								NOT = { trait = dragon }
+								OR = {		
+									NOT = { reverse_opinion = { who = ROOT value = -15 } }
+									NOT = { religion_group = ROOT }
+									NOT = { culture_group = ROOT }
+								}	
+							}
+						}
+					}
+				}
+			}
+			#Enemy is desirable
+			modifier = {
+				factor = 3
+				liege = {
+					primary_title = {	
+						any_war = { 
+							attacker = {
+								higher_tier_than = ROOT
+								NOT = { character = ROOT }	
+								OR = {
+									religion = ROOT
+									culture = ROOT
+									reverse_opinion = { who = ROOT value = 40 } 
+									trait = dragon_rider 
+								}	
+							}
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				liege = {
+					religion_group = ROOT
+					any_war = {
+						defender = { character = PREVPREV }
+						NOT = { attacker = { religion_group = ROOT } }
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				liege = {
+					religion = ROOT
+					any_war = {
+						attacker = { character = PREVPREV }
+						NOT = { defender = { religion_group = ROOT } }
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 0.5
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 0.25
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 0.5
+				NOT = { 
+					faction_power = 
+					{
+						faction = faction_independence
+						power = 0.5
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 2.0
+				faction_power = 
+				{
+					faction = faction_independence
+					power = 0.75
+				}
+			}
+		}
+	}
+	plot_kill_faceless_men = {
+		is_high_prio = yes
+		
+		potential = {
+			d_faceless_men = { 
+				has_holder = yes
+			}
+			is_adult = yes
+			OR = {
+				has_plot = plot_kill_character
+				has_plot = plot_kill_spouse
+			}
+			location = {
+				NOR = {
+					region = world_far_east
+					region = world_jade_sea
+					region = world_ghiscar
+					region = world_dothraki
+				}
+			}
+			OR = {
+				NOT = { has_character_flag = finding_faceless_men }
+				had_character_flag = { flag = finding_faceless_men days = 75 }
+			}
+			OR = {
+				NOT = { has_character_flag = faceless_men_declined }
+				had_character_flag = { flag = faceless_men_declined days = 2920 }
+			}
+			NOT = { trait = wildling }
+			NOT = { culture = moon_clansman }
+		}
+		allow = {
+			OR =  {
+				intrigue = 12				
+				job_spymaster = { 
+					custom_tooltip = {
+						text = plot_kill_faceless_men_SPYMASTER
+						hidden_tooltip = { intrigue = 18 }
+					}
+				}	
+				hidden_tooltip = { has_landed_title = d_faceless_men }
+			}	
+			prisoner = no	
+			plot_target_char = { 
+				NOT = {
+					has_landed_title = d_faceless_men
+				}
+			}	
+		}
+		effect = {
+			set_character_flag = finding_faceless_men
+			hidden_tooltip = { character_event = { id = faceless.101 } }
+			if = {
+				limit = { is_naathi_harmony_religion_trigger = yes }
+				piety = -20
+				custom_tooltip = { text = nath_pagan_ahimsa_tooltip }
+			}
+			d_faceless_men = {			
+				holder_scope = {
+					character_event = { id = faceless.1 days = 50 random = 20 tooltip = TOOLTIPfaceless.1 }
+					break = yes
+				}
+				hidden_tooltip = { #if no holder, create one
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = no
+						religion = many_faced_god
+						culture = braavosi
+					}
+					new_character = {
+						change_intrigue = 8
+						set_character_flag = faceless_man
+						remove_trait = honorable
+						remove_trait = honest
+						remove_trait = craven
+						remove_trait = content
+						random_list =	{
+							20 = { }
+							30 = { add_trait = poor_warrior }
+							30 = { add_trait = trained_warrior }
+							20 = { add_trait = skilled_warrior }
+						}
+						random = {
+							chance = 10
+							add_trait = mystic
+						}
+						d_faceless_men = {
+							activate_title = { title = THIS status = yes }
+							grant_title = PREV
+							if = {
+								limit = { k_braavos = { has_holder = yes } }
+								set_defacto_liege = k_braavos
+							}	
+						}	
+						character_event = { id = faceless.1 days = 50 random = 20 tooltip = TOOLTIPfaceless.1 }
+					}
+				}
+			}		
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.45
+			}
+			modifier = {
+				factor = 0
+				plot_power = 1
+			}
+		}
+	}
+	plot_kill_sorrowful_men = {
+		is_high_prio = yes
+		
+		potential = {
+			is_adult = yes
+			OR = {
+				has_plot = plot_kill_character
+				has_plot = plot_kill_spouse
+			}
+			location = {
+				OR = {
+					region = world_far_east
+					region = world_jade_sea
+					region = world_ghiscar
+					region = world_dothraki
+				}
+			}
+			OR = {
+				NOT = { has_character_flag = finding_faceless_men }
+				had_character_flag = { flag = finding_faceless_men days = 75 }
+			}
+			OR = {
+				NOT = { has_character_flag = faceless_men_declined }
+				had_character_flag = { flag = faceless_men_declined days = 2920 }
+			}
+			NOT = { trait = wildling }
+			NOT = { culture = moon_clansman }
+		}
+		allow = {
+			OR =  {
+				intrigue = 12				
+				job_spymaster = { 
+					custom_tooltip = {
+						text = plot_kill_faceless_men_SPYMASTER
+						hidden_tooltip = { intrigue = 18 }
+					}
+				}	
+				hidden_tooltip = { has_landed_title = d_sorrowful_men }
+			}	
+			prisoner = no	
+			plot_target_char = { 
+				NOT = {
+					has_landed_title = d_sorrowful_men
+				}
+			}
+		}
+		effect = {
+			set_character_flag = finding_faceless_men
+			hidden_tooltip = { character_event = { id = faceless.102 } }
+			if = {
+				limit = { is_naathi_harmony_religion_trigger = yes }
+				piety = -20
+				custom_tooltip = { text = nath_pagan_ahimsa_tooltip }
+			}
+			d_sorrowful_men = {
+				holder_scope = {
+					character_event = { id = faceless.1 days = 50 random = 20 tooltip = TOOLTIPfaceless.1 }
+					break = yes
+				}
+				hidden_tooltip = { #if no holder, create one
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = no
+						religion = qarth_warlocks
+						culture = qartheen
+					}
+					new_character = {
+						change_intrigue = 8
+						set_character_flag = faceless_man
+						remove_trait = honorable
+						remove_trait = honest
+						remove_trait = craven
+						remove_trait = content
+						random_list =	{
+							20 = { }
+							30 = { add_trait = poor_warrior }
+							30 = { add_trait = trained_warrior }
+							20 = { add_trait = skilled_warrior }
+						}
+						random = {
+							chance = 10
+							add_trait = mystic
+						}
+						d_sorrowful_men = {
+							activate_title = { title = THIS status = yes }
+							grant_title = PREV
+							if = {
+								limit = { k_qarth = { has_holder = yes } }
+								set_defacto_liege = k_qarth
+							}	
+						}	
+						character_event = { id = faceless.1 days = 50 random = 20 tooltip = TOOLTIPfaceless.1 }
+					}
+				}
+			}		
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.45
+			}
+			modifier = {
+				factor = 0
+				plot_power = 1
+			}
+		}
+	}
+}

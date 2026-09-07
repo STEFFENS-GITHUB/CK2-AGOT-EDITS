@@ -1,0 +1,4562 @@
+namespace = dynastic_rivalry
+
+#Feud begins
+character_event = {
+	id = dynastic_rivalry.199
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	in_command = no
+	
+	trigger = {
+		NOT = { dynasty = 0 }
+		dynasty_head = { character = ROOT }
+	}
+	
+	immediate = {
+		top_liege = {
+			random_realm_lord = {
+				limit = {
+					higher_tier_than = BARON
+					age = 16			
+					NOT = { dynasty = ROOT }
+					NOT = { trait = incapable }
+					in_command = no
+					prisoner = no
+					is_incapable = no
+					NOT = { war_with = ROOT }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud } }
+					OR = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_vengeance } 
+						reverse_has_opinion_modifier = { who = ROOT modifier = declared_war } 
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_usurped_title } 
+						AND = { #Feud recently ended
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud_truce }
+							NOT = { reverse_opinion = { who = ROOT value = 0 } }
+						}
+						NOT = { reverse_opinion = { who = ROOT value = -99 } }
+						is_rival = ROOT
+					}
+					dynasty_head = { character = PREV }
+					NOT = { character = ROOT }
+				}
+				save_event_target_as = blood_feud_target	
+				if = {
+					limit = {
+						at_location = ROOT
+						NOT = { trait = wounded } 
+						NOT = { has_severe_disability_trigger = yes }	
+						NOT = { is_inaccessible_trigger = yes }	
+						has_epidemic = no
+						
+						NOT = { is_liege_or_above = ROOT }
+						NOT = { is_vassal_or_below = ROOT }
+					}
+					random = {
+						chance = 80
+						ROOT = { set_character_flag = street_ambush } #Ned v Jaime
+					}
+				}
+				ROOT = { character_event = { id = dynastic_rivalry.1 } }
+			}
+		}	
+	}
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = dynastic_rivalry.1
+	picture = GFX_evt_emissary
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.1 #Tavern Brawl
+		trigger = {
+			NOT = { has_character_flag = street_ambush }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.1B #Ambush on the streets (Jaime-Ned)
+		picture = GFX_evt_feud_ambush
+		trigger = {
+			has_character_flag = street_ambush
+		}
+	}
+
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.1 #son of a whore
+			trigger = {
+				NOT = { has_character_flag = street_ambush }
+			}
+		}
+		name = {
+			text = EVTOPTAdynastic_rivalry.1B #Ambush on the streets (Jaime-Ned)
+			trigger = {
+				has_character_flag = street_ambush
+			}
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+		}
+		event_target:blood_feud_target = {
+			character_event = { id = dynastic_rivalry.3 tooltip = TOOLTIPdynastic_rivalry.3 } 
+		}
+		set_character_flag = blood_feud_starter	
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.1 #I will not dishonour myself
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		prestige = -30
+		if = {
+			limit = { NOT = { has_character_flag = street_ambush } }
+			liege = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_showed_restraint
+				}
+			}
+			event_target:blood_feud_target = {
+				hidden_tooltip = { character_event = { id = dynastic_rivalry.2 } }
+			}
+		}	
+		clr_character_flag = street_ambush
+	}
+}	
+#Feud target informed bait not taken - no feud occurs
+character_event = {
+	id = dynastic_rivalry.2
+	desc = EVTDESCdynastic_rivalry.2
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.2 #craven
+		clr_character_flag = blood_feud_target	
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+	}
+}	
+#Feud target informed of insult
+character_event = {
+	id = dynastic_rivalry.3
+	picture = GFX_evt_emissary
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.3 #Tavern Brawl
+		trigger = {
+			FROM = { NOT = { has_character_flag = street_ambush } }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.3B #Ambush on the streets (Jaime-Ned)
+		picture = GFX_evt_feud_ambush
+		trigger = {
+			FROM = { has_character_flag = street_ambush }
+		}
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.3 #you will pay! (men at arms fight in hall)
+			trigger = {
+				FROM = { NOT = { has_character_flag = street_ambush } }
+			}
+		}
+		name = {
+			text = EVTOPTAdynastic_rivalry.3B #Fight!
+			trigger = {
+				FROM = { has_character_flag = street_ambush }
+			}
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+		}
+		FROM = {
+			character_event = { id = dynastic_rivalry.4 tooltip = TOOLTIPdynastic_rivalry.4 days = 1 } 		
+		}
+		hidden_tooltip = { character_event = { id = dynastic_rivalry.5 days = 2 } }
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTBdynastic_rivalry.3 #laugh it off
+			trigger = {
+				FROM = { NOT = { has_character_flag = street_ambush } }
+			}
+		}
+		name = {
+			text = EVTOPTBdynastic_rivalry.3B #apologise
+			trigger = {
+				FROM = { has_character_flag = street_ambush }
+			}
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		prestige = -30
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+		FROM = {
+			character_event = { id = dynastic_rivalry.6 tooltip = TOOLTIPdynastic_rivalry.6 days = 2 } 
+		}
+	}
+}
+
+#Feud starter informed of brawl and new rivalry
+character_event = {
+	id = dynastic_rivalry.4
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+
+	desc = {
+		text = EVTDESCdynastic_rivalry.4 #Tavern Brawl
+		trigger = {
+			NOT = { has_character_flag = street_ambush }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.4B #Ambush on the streets (Jaime-Ned)
+		picture = GFX_evt_feud_ambush
+		trigger = {
+			has_character_flag = street_ambush
+		}
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.4 #you will pay! (men at arms fight in hall)
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_START_ALTERCATION
+						portrait = [From.GetID]
+					}
+				}
+			}
+		}	
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_blood_feud
+			}
+			custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+			set_dynasty_flag = in_blood_feud
+			hidden_tooltip = {
+				add_trait = blood_feud #blood feud tracker
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud	 
+					}
+					character_event = { id = dynastic_rivalry.7 days = 2 }
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_character_flag = street_ambush } }
+			random_courtier = {
+				limit = {
+					dynasty = ROOT
+					is_female = no
+					is_ruler = no
+					NOT = { trait = dragon }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			random_courtier = {
+				limit = {
+					NOT = { dynasty = ROOT }
+					is_female = no
+					is_ruler = no
+					NOT = { trait = maester }
+					NOT = { trait = dragon }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			liege = {
+				opinion  = {
+					who = ROOT
+					modifier = opinion_disrepected_hospitality
+				}
+			}
+		}	
+		if = {
+			limit = { has_character_flag = street_ambush }
+			random_courtier = {
+				limit = {
+					has_minor_title = title_bodyguard
+					NOT = { trait = dragon }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			random_courtier = {
+				limit = {
+					has_minor_title = title_bodyguard
+					NOT = { trait = dragon }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+		#hidden_tooltip = { random_playable_ruler = { limit = { ai = no } character_event = { id = dynastic_rivalry.71 } } } #DEBUG
+	}
+}	
+
+#Feud target informed of brawl and new rivalry
+character_event = {
+	id = dynastic_rivalry.5
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.5 #Tavern Brawl
+		trigger = {
+			FROMFROM = { NOT = { has_character_flag = street_ambush } }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.5B #Ambush on the streets (Jaime-Ned)
+		picture = GFX_evt_feud_ambush
+		trigger = {
+			FROMFROM = { has_character_flag = street_ambush }
+		}
+	}
+	
+	show_from_from = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.4 #you will pay! (men at arms fight in hall)
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_START_ALTERCATION_B
+						portrait = [FromFrom.GetID]
+					}
+				}
+			}
+		}	
+		FROM = {
+			FROM = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud
+				}
+				custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					add_trait = blood_feud #blood feud tracker
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}
+				liege = {
+					opinion  = {
+						who = ROOT
+						modifier = opinion_disrepected_hospitality
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { FROMFROM = { NOT = { has_character_flag = street_ambush } } }
+			random_courtier = {
+				limit = {
+					dynasty = ROOT
+					is_female = no
+					is_ruler = no
+					age = 16
+					NOT = { trait = dragon }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			random_courtier = {
+				limit = {
+					NOT = { dynasty = ROOT }
+					is_female = no
+					is_ruler = no
+					age = 16
+					NOT = { trait = maester }
+					NOT = { trait = dragon }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+		if = {
+			limit = { FROMFROM = { has_character_flag = street_ambush } }
+			random_courtier = {
+				limit = {
+					has_minor_title = title_bodyguard
+					NOT = { trait = dragon }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			random_courtier = {
+				limit = {
+					has_minor_title = title_bodyguard
+					NOT = { trait = dragon }
+				}
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_duel
+					killer = FROMFROM
+				}
+			}
+			if = {
+				limit = {
+					NOT = { is_maimed_trigger = yes }
+					NOT = { trait = wounded }
+				}
+				add_trait_silently_wounded_effect = yes
+			}
+			FROMFROM = { clr_character_flag = street_ambush }
+		}		
+	}
+}	
+#Feud starter informed target laughs insult off
+character_event = {
+	id = dynastic_rivalry.6
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.6 #Tavern Brawl
+		trigger = {
+			NOT = { has_character_flag = street_ambush }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCdynastic_rivalry.6B #Ambush on the streets (Jaime-Ned)
+		picture = GFX_evt_feud_ambush
+		trigger = {
+			has_character_flag = street_ambush
+		}
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.6 
+			trigger = {
+				NOT = { has_character_flag = street_ambush }
+			}
+		}
+		name = {
+			text = EVTOPTAdynastic_rivalry.6B
+			trigger = {
+				has_character_flag = street_ambush
+			}
+		}
+		prestige = 30
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+		clr_character_flag = street_ambush
+	}
+}	
+
+#Family informed of feud
+character_event = {
+	id = dynastic_rivalry.7
+	desc = EVTDESCdynastic_rivalry.7
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.4 #you will pay! (men at arms fight in hall)
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_blood_feud
+			}
+			custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+			hidden_tooltip = {
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud
+					}
+				}
+			}
+		}
+	}	
+}	
+
+# #DEBUG TEST INFORM
+# character_event = {
+	# id = dynastic_rivalry.71
+	# desc = EVTDESCdynastic_rivalry.71
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = OK
+		# FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	# }	
+# }
+
+#ON BIRTH: Set blood feud opinions
+character_event = {
+	id = dynastic_rivalry.8
+	desc = EVTDESCdynastic_rivalry.8
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			mother_even_if_dead = {
+				dynasty = ROOT
+				has_dynasty_flag = in_blood_feud
+			}
+			father_even_if_dead = {
+				dynasty = ROOT
+				has_dynasty_flag = in_blood_feud
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.8
+		blood_feud = {
+			limit = { dynasty = ROOT is_alive = yes }				
+			any_opinion_modifier_target = {
+				limit = { 
+					trait = blood_feud
+					NOT = { dynasty = PREV }
+					has_opinion_modifier = { who = PREV modifier = opinion_blood_feud } 
+				}
+				if = {
+					limit = {
+						NOT = { 
+							any_child = {
+								OR = {
+									character = ROOT 
+									is_parent_of = ROOT
+								}	
+							} 
+						}
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud
+					}
+					reverse_opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud
+					}
+				}	
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = { 
+							NOT = { character = PREV }
+							is_alive = yes
+							NOT = { 
+								any_child = {
+									OR = {
+										character = ROOT 
+										is_parent_of = ROOT
+									}	
+								} 
+							}
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud
+						}
+						reverse_opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud
+						}		
+					}
+				}
+			}
+		}
+	}	
+}
+# Feud reconcile
+character_event = {
+	id = dynastic_rivalry.990
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	in_command = no
+	
+	trigger = {
+		has_dynasty_flag = in_blood_feud # Actually in one
+		dynasty_head = { character = ROOT } # Must be senior member
+		OR = { # Not already chosen to not reconcile
+			NOT = { has_character_flag = no_reconcile }
+			had_character_flag = { flag = no_reconcile days = 2000 }
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	immediate = {
+		random_opinion_modifier_target = { # Blood feud target
+			limit = { 
+				has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+				dynasty_head = { character = PREV } # Must be senior member
+				age = 16			
+				NOT = { dynasty = ROOT }
+				NOT = { trait = incapable }
+				in_command = no
+				NOT = { war_with = ROOT }
+			}
+			save_event_target_as = feud_reconcile_target
+			ROOT = { character_event = { id = dynastic_rivalry.9 } }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #Also triggered on marriage
+	id = dynastic_rivalry.9
+	desc = EVTDESCdynastic_rivalry.9
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		save_event_target_as = feud_reconcile_starter
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.9 # Yes, give money
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				is_rival = event_target:feud_reconcile_target
+			}
+			modifier = {
+				factor = 5
+				has_character_flag = dowry_blood_feud_reconcile
+			}
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		set_character_flag = feud_reconcile_money
+		event_target:feud_reconcile_target = {
+			character_event = { id = dynastic_rivalry.10 tooltip = TOOLTIPAdynastic_rivalry.9 } 
+		}
+		if = {
+			limit = {
+				event_target:feud_reconcile_target = {
+					higher_tier_than = DUKE
+				}
+			}
+			tooltip = {
+				wealth = -150
+				event_target:feud_reconcile_target = {
+					wealth = 150
+				}
+			}
+		}
+		if = {
+			limit = {
+				event_target:feud_reconcile_target = {
+					tier = DUKE
+				}
+			}
+			tooltip = {
+				wealth = -80
+				event_target:feud_reconcile_target = {
+					wealth = 80
+				}
+			}
+		}
+		if = {
+			limit = {
+				event_target:feud_reconcile_target = {
+					lower_tier_than = DUKE
+				}
+			}
+			tooltip = {
+				wealth = -20
+				event_target:feud_reconcile_target = {
+					wealth = 20
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.9 # Yes, offer marriage
+		trigger = {
+			NOT = { has_character_flag = dowry_blood_feud_reconcile }
+			any_child = {
+				is_female = no
+				is_ruler = no
+				can_marry_trigger = yes
+				age = 8
+				NOT = { age = 25 }
+			}
+			event_target:feud_reconcile_target = {
+				any_child = {
+					is_female = yes
+					is_ruler = no
+					can_marry_trigger = yes
+					age = 8
+					NOT = { age = 25 }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				is_rival = event_target:feud_reconcile_target
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					is_allied_with = event_target:feud_reconcile_target		
+					has_non_aggression_pact_with = event_target:feud_reconcile_target					
+				}
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = event_target:feud_reconcile_target value = -33 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = event_target:feud_reconcile_target value = 0 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = event_target:feud_reconcile_target value = 33 }
+			}
+			
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		random_child = {
+			limit = {
+				is_female = no
+				is_ruler = no
+				can_marry_trigger = yes
+				age = 8
+				NOT = { age = 25 }
+			}
+			save_event_target_as = feud_reconcile_starter_child
+		}
+		event_target:feud_reconcile_target = {
+			random_child = {
+				limit = {
+					is_female = yes
+					is_ruler = no
+					can_marry_trigger = yes
+					age = 8
+					NOT = { age = 25 }
+				}
+				save_event_target_as = feud_reconcile_target_child
+			}
+		}
+		set_character_flag = feud_reconcile_marriage
+		event_target:feud_reconcile_target = {
+			character_event = { id = dynastic_rivalry.10 tooltip = TOOLTIPBdynastic_rivalry.9 } 
+		}
+	}
+	
+	option = {
+		name = EVTOPTCdynastic_rivalry.9 # No
+		ai_chance = {
+			factor = 100
+			
+			modifier = {
+				factor = 0
+				is_friend = event_target:feud_reconcile_target
+			}
+			modifier = {
+				factor = 2
+				NOT = { culture_group = event_target:feud_reconcile_target }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = event_target:feud_reconcile_target }
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+				NOT = { religion = event_target:feud_reconcile_target }
+			}
+			modifier = {
+				factor = 10
+				event_target:feud_reconcile_target = { just_execution_reason_PREV_trigger = yes }
+			}
+			
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = stubborn
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		set_character_flag = no_reconcile
+		clr_character_flag = dowry_blood_feud_reconcile
+	}
+}	
+
+#Feud reconcile target informed of visit and offer
+character_event = {
+	id = dynastic_rivalry.10
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	desc = { # Offer of money
+		text = EVTDESCAdynastic_rivalry.10
+		trigger = {
+			FROM = { has_character_flag = feud_reconcile_money }
+		}
+	}
+	desc = { # Offer of marriage
+		text = EVTDESCBdynastic_rivalry.10
+		trigger = {
+			FROM = { has_character_flag = feud_reconcile_marriage }
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.10 #Go Away!
+		ai_chance = {
+			factor = 50
+						
+			modifier = {
+				factor = 0.2
+				FROM = { has_character_flag = dowry_blood_feud_reconcile }
+			}
+			modifier = {
+				factor = 0
+				is_friend = FROM
+			}
+			modifier = {
+				factor = 2
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 10
+				FROM = { just_execution_reason_PREV_trigger = yes }
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = stubborn
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		set_character_flag = no_reconcile
+		prestige = 150
+		piety = -20
+		FROM = { character_event = { id = dynastic_rivalry.14 tooltip = TOOLTIPfeud_reconcile_reject } }
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.10 # Kill emissary and take money
+		trigger = { 
+			FROM = { has_character_flag = feud_reconcile_money } 
+			is_ruler = yes
+			NOR = {
+				trait = honorable
+				FROM = { has_character_flag = dowry_blood_feud_reconcile }
+			}
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 2
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 10
+				FROM = { just_execution_reason_PREV_trigger = yes }
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = stubborn
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		set_character_flag = no_reconcile
+		piety = -100
+		if = {
+			limit = { higher_tier_than = DUKE }
+			wealth = 150
+			FROM = {
+				wealth = -150
+			}
+		}
+		if = {
+			limit = { tier = DUKE }
+			wealth = 80
+			FROM = {
+				wealth = -80
+			}
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			wealth = 20
+			FROM = {
+				wealth = -20
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_hate
+				who = ROOT
+				years = 5
+			}
+			character_event = { id = dynastic_rivalry.11 tooltip = TOOLTIPAdynastic_rivalry.10 } 
+		}
+		FROM = { clr_character_flag = feud_reconcile_money }
+	}
+	
+	option = {
+		name = EVTOPTCdynastic_rivalry.10 # Accept the money and end feud
+		trigger = { FROM = { has_character_flag = feud_reconcile_money } }
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				is_rival = FROM
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					is_allied_with = FROM		
+					has_non_aggression_pact_with = FROM					
+				}
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = -33 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 33 }
+			}
+			
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		prestige = -100
+		piety = 100
+		if = {
+			limit = { higher_tier_than = DUKE }
+			wealth = 150
+			FROM = {
+				wealth = -150
+			}
+		}
+		if = {
+			limit = { tier = DUKE }
+			wealth = 80
+			FROM = {
+				wealth = -80
+			}
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			wealth = 20
+			FROM = {
+				wealth = -20
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_grateful
+				who = ROOT
+				years = 5
+			}
+			character_event = { id = dynastic_rivalry.12 } 
+		}
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_END
+						portrait = [From.GetID]
+					}
+				}
+			}
+		}	
+		custom_tooltip = {
+			text = TOOLTIP_blood_feud_end
+			hidden_tooltip = {
+				remove_opinion = {
+					who = FROM
+					modifier = opinion_blood_feud
+				}
+				opinion = {
+					who = FROM
+					modifier = opinion_blood_feud_truce
+				}
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = ROOT }
+					}
+					remove_opinion = {
+						who = FROM
+						modifier = opinion_blood_feud	 
+					}
+					opinion = {
+						who = FROM
+						modifier = opinion_blood_feud_truce
+					}
+					character_event = { id = dynastic_rivalry.13 }
+				}
+				if = { # If no other blood feuds clear flag and trait
+					limit = {
+						NOT = {
+							any_opinion_modifier_target = { # Blood feud target
+								has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+								NOT = { dynasty = FROM } # Not the one we just ended
+							}
+						}	
+					}
+					remove_trait = blood_feud # Blood feud tracker
+					any_dynasty_member = {
+						limit = { trait = blood_feud }
+						remove_trait = blood_feud # Blood feud tracker
+					}
+					clr_dynasty_flag = in_blood_feud
+				}
+			}
+		}
+		FROM = { clr_character_flag = feud_reconcile_money }
+	}
+	
+	option = {
+		name = EVTOPTDdynastic_rivalry.10 # Kill emissary and take child hostage
+		trigger = { 
+			FROM = { has_character_flag = feud_reconcile_marriage } 
+			is_ruler = yes
+			NOR = {
+				trait = honorable
+				FROM = { has_character_flag = dowry_blood_feud_reconcile }
+			}
+		}
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 2
+				NOT = { culture_group = FROM }
+			}
+			modifier = {
+				factor = 2
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+				NOT = { religion = FROM }
+			}
+			modifier = {
+				factor = 10
+				FROM = { just_execution_reason_PREV_trigger = yes }
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = stubborn
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		set_character_flag = no_reconcile
+		prestige = 100
+		piety = -200
+		event_target:feud_reconcile_starter_child = {
+			imprison = ROOT
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_hate
+				who = ROOT
+				years = 5
+			}
+			character_event = { id = dynastic_rivalry.11 tooltip = TOOLTIPAdynastic_rivalry.10 } 
+		}
+		FROM = { clr_character_flag = feud_reconcile_marriage }
+	}
+	
+	option = {
+		name = EVTOPTEdynastic_rivalry.10 # Accept the marriage and end feud
+		trigger = { FROM = { has_character_flag = feud_reconcile_marriage } }
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				is_rival = FROM
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					is_allied_with = FROM		
+					has_non_aggression_pact_with = FROM					
+				}
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = -33 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 33 }
+			}
+			
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		prestige = -100
+		piety = 200
+		# The Marriage
+		event_target:feud_reconcile_starter_child = {		
+			event_target:reconcile_target_child = {
+				if = {
+					limit = {
+						is_married = no
+						NOT = { same_sex = PREV }
+					}
+					add_spouse = PREV
+				}
+			}
+		}
+		# Stop impregnation if too young
+		hidden_tooltip = {
+			event_target:reconcile_target_child = {
+				child_fertility_debuff = yes
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_grateful
+				who = ROOT
+				years = 5
+			}
+			character_event = { id = dynastic_rivalry.12 } 
+		}
+		custom_tooltip = {
+			text = TOOLTIP_blood_feud_end
+			hidden_tooltip = {
+				remove_opinion = {
+					who = FROM
+					modifier = opinion_blood_feud
+				}
+				opinion = {
+					who = FROM
+					modifier = opinion_blood_feud_truce
+				}
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = ROOT }
+					}
+					remove_opinion = {
+						who = FROM
+						modifier = opinion_blood_feud	 
+					}
+					opinion = {
+						who = FROM
+						modifier = opinion_blood_feud_truce
+					}
+					character_event = { id = dynastic_rivalry.13 }
+				}	
+				if = { # If no other blood feuds clear flag and trait
+					limit = {
+						NOT = {
+							any_opinion_modifier_target = { # Blood feud target
+								has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+								NOT = { dynasty = FROM } # Not the one we just ended
+							}
+						}	
+					}
+					remove_trait = blood_feud # Blood feud tracker
+					any_dynasty_member = {
+						limit = { trait = blood_feud }
+						remove_trait = blood_feud # Blood feud tracker
+					}
+					clr_dynasty_flag = in_blood_feud
+				}
+			}
+		}
+		FROM = { clr_character_flag = feud_reconcile_marriage }
+	}
+}
+
+#Feud reconcile starter informed betrayal
+character_event = {
+	id = dynastic_rivalry.11
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	desc = { # Money
+		text = EVTDESCAdynastic_rivalry.11
+		trigger = {
+			NOT = {
+				event_target:feud_reconcile_starter_child = {
+					prisoner = yes
+				}
+			}
+		}
+	}
+	desc = { # Marriage
+		text = EVTDESCBdynastic_rivalry.11
+		trigger = {
+			event_target:feud_reconcile_starter_child = {
+				prisoner = yes
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.11 # Filth!
+		prestige = -50
+		clr_character_flag = dowry_blood_feud_reconcile
+	}
+}
+
+#Feud reconcile starter informed success
+character_event = {
+	id = dynastic_rivalry.12
+	desc = EVTDESCdynastic_rivalry.12
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.12 # Great
+		prestige = -50
+		piety = 100
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_END
+						portrait = [From.GetID]
+					}
+				}
+			}
+		}	
+		custom_tooltip = {
+			text = TOOLTIP_blood_feud_end
+			hidden_tooltip = {
+				remove_opinion = {
+					who = FROM
+					modifier = opinion_blood_feud
+				}
+				opinion = {
+					who = FROM
+					modifier = opinion_blood_feud_truce
+				}
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = ROOT }
+					}
+					remove_opinion = {
+						who = FROM
+						modifier = opinion_blood_feud	 
+					}
+					opinion = {
+						who = FROM
+						modifier = opinion_blood_feud_truce
+					}
+					character_event = { id = dynastic_rivalry.13 }
+				}	
+				if = { # If no other blood feuds clear flag and trait
+					limit = {
+						NOT = {
+							any_opinion_modifier_target = { # Blood feud target
+								has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+								NOT = { dynasty = FROM } # Not the one we just ended
+							}
+						}	
+					}
+					remove_trait = blood_feud # Blood feud tracker
+					any_dynasty_member = {
+						limit = { trait = blood_feud }
+						remove_trait = blood_feud # Blood feud tracker
+					}
+					clr_dynasty_flag = in_blood_feud
+				}
+			}
+		}
+		clr_character_flag = dowry_blood_feud_reconcile
+	}
+}
+
+# Family informed of feud ending
+character_event = {
+	id = dynastic_rivalry.13
+	desc = EVTDESCdynastic_rivalry.13
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.13
+		FROMFROM = {
+			remove_opinion = {
+				who = ROOT
+				modifier = opinion_blood_feud
+			}
+			custom_tooltip = { text = TOOLTIP_blood_feud_end }
+			hidden_tooltip = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud_truce
+				}
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = PREV }
+					}
+					remove_opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud_truce
+					}
+				}
+			}
+		}
+	}
+}
+
+# Feud reconcile starter informed of rejection
+character_event = {
+	id = dynastic_rivalry.14
+	desc = EVTDESCdynastic_rivalry.14
+	
+	is_triggered_only = yes
+	
+	immediate = { clr_character_flag = dowry_blood_feud_reconcile }
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.14
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.14
+	}
+}
+#Feud begins - Independent characters
+character_event = {
+	id = dynastic_rivalry.100
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	only_independent = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		NOT = { dynasty = 0 }
+		dynasty_head = { character = ROOT }
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	immediate = {
+		random_independent_ruler = {
+			limit = {
+				age = 16			
+				NOT = { dynasty = ROOT }
+				NOT = { dynasty = 0 }
+				NOT = { trait = incapable }
+				NOT = { war_with = ROOT }
+				NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud } }
+				OR = {
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_vengeance } 
+					reverse_has_opinion_modifier = { who = ROOT modifier = declared_war } 
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_usurped_title } 
+					AND = { #Feud recently ended
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud_truce }
+						NOT = { reverse_opinion = { who = ROOT value = 0 } }
+					}
+					NOT = { reverse_opinion = { who = ROOT value = -99 } }				
+					is_rival = ROOT
+				}
+				is_within_diplo_range = ROOT
+				dynasty_head = { character = PREV }
+				any_courtier = {
+					age = 12
+					dynasty = PREV
+					is_close_relative = PREV
+					is_ruler = no
+					NOT = { trait = bastard }
+				}
+				OR = {
+					culture_group = ROOT
+					religion_group = ROOT
+					same_realm = ROOT
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud_truce }
+					any_realm_province = {
+						any_neighbor_province = {
+							owner = {
+								OR = {
+									character = ROOT
+									same_realm = ROOT
+								}
+							}
+						}
+					}
+				}
+			}
+			character_event = { id = dynastic_rivalry.106 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+#Scope to feud target
+character_event = {
+	id = dynastic_rivalry.106
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		FROM = { character_event = { id = dynastic_rivalry.107 } }
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = dynastic_rivalry.107
+	desc = EVTDESCdynastic_rivalry.107
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.107 #Kidnap
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		FROM = {
+			random_courtier = {
+				limit = {
+					age = 12
+					dynasty = PREV
+					is_close_relative = PREV
+					is_ruler = no
+					NOT = { trait = bastard }
+				}
+				set_character_flag = captured_in_battle
+				set_character_flag = feud_kidnap
+				imprison = ROOT
+				opinion = {
+					who = ROOT
+					modifier = kidnapped_me
+					months = 120
+				}
+			}
+			character_event = { id = dynastic_rivalry.101 days = 1 tooltip = TOOLTIPdynastic_rivalry.101 } 
+			opinion = {
+				who = ROOT
+				modifier = attempted_kidnapping_of_kin
+				months = 120
+			}
+		}
+		set_character_flag = blood_feud_starter	
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.107 #I will not dishonour myself
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		piety = 50
+	}
+}	
+#Feud target informed of kidnap
+character_event = {
+	id = dynastic_rivalry.101
+	desc = EVTDESCdynastic_rivalry.101
+	picture = GFX_evt_emissary
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.101 #Send a threat
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		random_courtier = {
+			limit = {
+				has_character_flag = feud_kidnap
+			}
+			clr_character_flag = feud_kidnap
+			tooltip = { imprison = FROM }
+		}
+		FROM = {
+			character_event = { id = dynastic_rivalry.102 tooltip = TOOLTIPdynastic_rivalry.102 days = 2 } 		
+		}
+		hidden_tooltip = { character_event = { id = dynastic_rivalry.103 days = 2 } }
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.101 #Send an emissary
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		random_courtier = {
+			limit = {
+				has_character_flag = feud_kidnap
+			}
+			clr_character_flag = feud_kidnap
+			tooltip = { imprison = FROM }
+		}
+		prestige = -30
+		FROM = {
+			letter_event = { id = dynastic_rivalry.104 tooltip = TOOLTIPdynastic_rivalry.104 days = 2 } 
+		}
+		random_courtier = {
+			limit = {
+				dynasty = ROOT
+				is_adult = yes
+				prisoner = no
+				is_ruler = no
+				NOT = { trait = incapable }
+				NOT = { trait = infirm }
+				NOT = { trait = inbred }
+				NOT = { trait = imbecile }
+			}
+			tooltip = { show_portrait = yes }
+			set_character_flag = envoy
+		}
+	}
+}
+
+#Feud starter informed new rivalry
+character_event = {
+	id = dynastic_rivalry.102
+	desc = EVTDESCdynastic_rivalry.102
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.102
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		} 
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_START_KIDNAPPER
+						portrait = [From.GetID]
+					}
+				}
+			}
+		}	
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_blood_feud
+			}
+			custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+			set_dynasty_flag = in_blood_feud
+			hidden_tooltip = {
+				add_trait = blood_feud #blood feud tracker
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud	 
+					}
+					character_event = { id = dynastic_rivalry.105 days = 2 }
+				}
+			}
+			random_courtier = {
+				limit = { has_character_flag = envoy }
+				tooltip = { death = yes }		
+			}
+		}
+		#hidden_tooltip = { random_playable_ruler = { limit = { ai = no } character_event = { id = dynastic_rivalry.71 } } } #DEBUG
+	}
+}	
+
+#Feud target informed of new rivalry
+character_event = {
+	id = dynastic_rivalry.103
+	desc = EVTDESCdynastic_rivalry.103
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.103 #you will pay! 
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		} 
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { dynasty = ROOT }
+					chronicle = {
+						entry = CHRONICLE_FEUD_START_KIDNAPPER_VICTIM
+						portrait = [FromFrom.GetID]
+					}
+				}
+			}
+		}	
+		FROM = {
+			FROM = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud
+				}
+				custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					add_trait = blood_feud #blood feud tracker
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.105 days = 2 } 
+					}
+				}
+			}
+		}	
+		random_courtier = {
+			limit = { has_character_flag = envoy }
+			FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+			death = {
+				death_reason = death_execution
+				killer = FROM
+			}
+		}
+	}
+}	
+#Feud starter informed target sends stern letter
+letter_event = {
+	id = dynastic_rivalry.104
+	desc = EVTDESCdynastic_rivalry.104
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.104
+		prestige = 30
+	}
+}	
+
+#Family informed of feud
+character_event = {
+	id = dynastic_rivalry.105
+	desc = EVTDESCdynastic_rivalry.105
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.105
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		} 
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_blood_feud
+			}
+			custom_tooltip = { text = TOOLTIPNEWBLOODFEUD }
+			hidden_tooltip = {
+				any_dynasty_member = {
+					limit = {
+						is_alive = yes
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud
+					}
+				}
+			}
+		}
+	}	
+}	
+
+###Feud Flavour Events
+# Brawl at tourney/feast/wedding
+character_event = {
+	id = dynastic_rivalry.20
+	desc = EVTDESCdynastic_rivalry.20
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	
+	portrait = event_target:blood_feud_brawl_target
+	
+	trigger = {			
+		NOT = { has_severe_disability_trigger = yes }	
+		
+		#Event targets are set in the trigger events
+		event_target:blood_feud_brawl_host = { is_alive = yes }
+		event_target:blood_feud_brawl_target = { 
+			is_alive = yes 
+			prisoner = no
+			is_incapable = no
+			NOT = { has_severe_disability_trigger = yes }	
+		}	
+	}
+	
+	fail_trigger_effect = {
+		clr_character_flag = event_dynastic_rivalry_20
+	}
+	
+	immediate = {
+		clr_character_flag = event_dynastic_rivalry_20
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.20
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+		}		
+		show_portrait = event_target:blood_feud_brawl_target
+		event_target:blood_feud_brawl_target = {
+			character_event = { id = dynastic_rivalry.22 tooltip = TOOLTIPdynastic_rivalry.22 } 
+		}
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.20
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		show_portrait = event_target:blood_feud_brawl_host
+		event_target:blood_feud_brawl_host = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_showed_restraint
+			}
+		}
+		event_target:blood_feud_brawl_target = {
+			hidden_tooltip = { character_event = { id = dynastic_rivalry.21 } }
+		}
+	}
+}
+#Feud target informed ROOT showed restraint
+character_event = {
+	id = dynastic_rivalry.21
+	desc = EVTDESCdynastic_rivalry.21
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.21 #craven
+		show_portrait = event_target:blood_feud_brawl_host
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+	}
+}	
+#Feud target informed of insult
+character_event = {
+	id = dynastic_rivalry.22
+	desc = EVTDESCdynastic_rivalry.22
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name =  EVTOPTAdynastic_rivalry.22
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = drunkard
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = hedonist
+			}
+		}
+		FROM = {
+			character_event = { id = dynastic_rivalry.23 tooltip = TOOLTIPdynastic_rivalry.23 } 		
+		}
+	}
+	
+	option = {
+		name = EVTOPTBdynastic_rivalry.22
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = temperate
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		show_portrait = event_target:blood_feud_brawl_host
+		tiered_prestige_negative_effect = yes
+		event_target:blood_feud_brawl_host = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_showed_restraint
+			}
+		}	
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+		FROM = {
+			character_event = { id = dynastic_rivalry.25 tooltip = TOOLTIPdynastic_rivalry.25 } 
+		}
+	}
+}
+#Feud starter informed of brawl
+character_event = {
+	id = dynastic_rivalry.23
+	desc = EVTDESCdynastic_rivalry.23 
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.23
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			character_event = { id = dynastic_rivalry.24 } 		
+			hidden_tooltip = {
+				any_dynasty_member = {
+					limit = {
+						ai = no
+						NOT = { character = ROOT }
+						NOT = { character = ROOT_FROM }
+					}
+					character_event = { id = dynastic_rivalry.26 }
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }
+			}
+			random = {
+				chance = 33
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}
+		random_courtier = {
+			limit = {
+				dynasty = ROOT
+				is_female = no
+				is_ruler = no
+				NOT = { trait = dragon }
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }	
+				NOT = { is_inaccessible_trigger = yes }	
+				combat_rating = 20
+			}
+			add_trait_silently_wounded_effect = yes
+		}
+		random_courtier = {
+			limit = {
+				NOT = { dynasty = ROOT }
+				is_female = no
+				is_ruler = no
+				NOT = { trait = maester }
+				NOT = { trait = dragon }
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }
+				NOT = { is_inaccessible_trigger = yes }				
+				combat_rating = 20
+			}
+			add_trait_silently_wounded_effect = yes
+		}
+		event_target:blood_feud_brawl_host = {
+			opinion  = {
+				who = ROOT
+				modifier = opinion_disrepected_hospitality
+			}
+			character_event = { id = dynastic_rivalry.27 }
+		}
+	}
+}	
+
+#Feud target informed of brawl
+character_event = {
+	id = dynastic_rivalry.24
+	desc = EVTDESCdynastic_rivalry.24 
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.24 #you will pay! (men at arms fight in hall)
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }
+			}
+			random = {
+				chance = 33
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			hidden_tooltip = {
+				any_dynasty_member = {
+					limit = {
+						ai = no
+						NOT = { character = ROOT }
+						NOT = { character = ROOT_FROM }
+					}
+					character_event = { id = dynastic_rivalry.26 }
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }
+			}
+			random = {
+				chance = 33
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}
+		random_courtier = {
+			limit = {
+				dynasty = ROOT
+				is_female = no
+				is_ruler = no
+				age = 16
+				NOT = { trait = dragon }
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }	
+				NOT = { is_inaccessible_trigger = yes }		
+				combat_rating = 20
+			}
+			add_trait_silently_wounded_effect = yes
+		}
+		random_courtier = {
+			limit = {
+				NOT = { dynasty = ROOT }
+				is_female = no
+				is_ruler = no
+				age = 16
+				NOT = { trait = maester }
+				NOT = { trait = dragon }
+				NOT = { trait = wounded } 
+				NOT = { has_severe_disability_trigger = yes }	
+				NOT = { is_inaccessible_trigger = yes }	
+				combat_rating = 20
+			}
+			add_trait_silently_wounded_effect = yes
+		}	
+		event_target:blood_feud_brawl_host = {
+			opinion  = {
+				who = ROOT
+				modifier = opinion_disrepected_hospitality
+			}
+		}		
+	}
+}	
+#Feud starter informed target laughs insult off
+character_event = {
+	id = dynastic_rivalry.25
+	desc = EVTDESCdynastic_rivalry.25
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.25
+		prestige = 30
+		reverse_opinion = {
+			who = FROM
+			modifier = insulted
+		}
+	}
+}	
+
+#Family informed of feud
+character_event = {
+	id = dynastic_rivalry.26
+	desc = EVTDESCdynastic_rivalry.26
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = EVTOPTAdynastic_rivalry.26 #you will pay! (men at arms fight in hall)
+			trigger = {
+				NOT = { has_house_words_trigger = yes }
+			}
+		}
+		name = {
+			text = "EVTOPTGETHOUSEWORDS"
+			trigger = {
+				has_house_words_trigger = yes
+			}
+		}
+		show_portrait = FROMFROM
+	}	
+}	
+character_event = { #Inform host
+	id = dynastic_rivalry.27
+	desc = EVTDESCdynastic_rivalry.27
+	picture = GFX_evt_family_feud_republic
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.27
+		show_portrait = FROMFROM
+	}	
+}	
+
+##Men get into fights in army encampment
+character_event = {
+	id = dynastic_rivalry.30
+	desc = EVTDESCdynastic_rivalry.30
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	trigger = {
+		independent = no
+		liege = {
+			OR = {
+				any_courtier_or_vassal = {
+					NOT = { character = ROOT }
+					same_liege = ROOT
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { dynasty = ROOT }
+					has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+				}
+				AND = {
+					NOT = { character = ROOT }
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { dynasty = ROOT }
+					has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+				}
+			}				
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	immediate = {
+		liege = {
+			if = {
+				limit = {
+					NOT = { character = ROOT }
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { dynasty = ROOT }
+					has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+				}
+				random = {
+					chance = 50
+					opinion = { who = ROOT modifier = opinion_army_camp_brawl months = 60 } #cooldown
+					save_event_target_as = enemy_vassal
+					break = yes
+				}
+			}
+			random_courtier_or_vassal = {
+				limit = {
+					NOT = { character = ROOT }
+					same_liege = ROOT
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { dynasty = ROOT }
+					has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_army_camp_brawl } }
+				}
+				opinion = { who = ROOT modifier = opinion_army_camp_brawl months = 60 } #cooldown
+				save_event_target_as = enemy_vassal
+				break = yes
+			}
+			opinion = { who = ROOT modifier = opinion_army_camp_brawl months = 60 } #cooldown
+			save_event_target_as = enemy_vassal
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.30 #encourage
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		event_target:enemy_vassal = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.31 }
+			}
+		}
+		liege = {
+			if = {
+				limit = { NOT = { character = event_target:enemy_vassal } }
+				opinion = {
+					who = ROOT
+					modifier = opinion_undisciplined
+				}
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.30 #order restraint
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_showed_restraint
+			}
+		}
+	}
+}
+character_event = {
+	id = dynastic_rivalry.31
+	desc = EVTDESCdynastic_rivalry.31
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.31 #encourage
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			character_event = { id = dynastic_rivalry.32 }
+		}
+		if = {
+			limit = { NOT = { character = event_target:enemy_vassal } }
+			liege = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_undisciplined
+				}
+				character_event = { id = dynastic_rivalry.33 }
+			}
+		}	
+		morale = -0.1
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.31 #order restraint
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		FROM = {
+			character_event = { id = dynastic_rivalry.34 }
+		}
+		if = {
+			limit = { NOT = { character = event_target:enemy_vassal } }
+			liege = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_showed_restraint
+				}
+				character_event = { id = dynastic_rivalry.35 }
+			}
+		}	
+	}
+}
+character_event = { #Inform ROOT both vassals men fight
+	id = dynastic_rivalry.32
+	desc = EVTDESCdynastic_rivalry.32
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.32
+		morale = -0.1
+	}
+}	
+character_event = { #Inform liege both vassals men fight
+	id = dynastic_rivalry.33
+	desc = EVTDESCdynastic_rivalry.33
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.33
+		show_portrait = FROMFROM
+		morale = -0.1
+	}
+}	
+character_event = { #Inform ROOT enemy shows restraint
+	id = dynastic_rivalry.34
+	desc = EVTDESCdynastic_rivalry.34
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.34
+		tiered_prestige_negative_effect = yes
+	}
+}	
+character_event = { #Inform liege FROM showed restraint
+	id = dynastic_rivalry.35
+	desc = EVTDESCdynastic_rivalry.35
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAdynastic_rivalry.35
+		show_portrait = FROMFROM
+	}
+}	
+##Argument on the council
+character_event = {
+	id = dynastic_rivalry.40
+	desc = EVTDESCdynastic_rivalry.40
+	picture = GFX_evt_council_quarrelling
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	in_command = no
+	
+	trigger = {
+		OR = {
+			is_councillor = yes
+			is_voter = yes
+		}
+		has_any_opinion_modifier = opinion_blood_feud
+		liege = {
+			any_courtier_or_vassal = {
+				OR = {
+					is_councillor = yes
+					is_voter = yes
+				}
+				has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+				NOT = { opinion = { who = ROOT value = 0 } }
+				NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				same_liege = ROOT
+				NOT = { character = ROOT }
+				NOT = { character = PREV }			
+				in_command = no
+				NOT = { war_with = ROOT }
+				NOT = { dynasty = ROOT }	
+				NOT = { dynasty = PREV }
+				NOT = { is_inaccessible_trigger = yes }
+			}			
+		}
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 3
+			trait = wroth
+		}
+		modifier = {
+			factor = 0.33
+			trait = patient
+		}
+		modifier = {
+			factor = 3
+			trait = proud
+		}
+		modifier = {
+			factor = 0.33
+			trait = humble
+		}
+	}
+	
+	immediate = {
+		liege = {
+			random_courtier_or_vassal = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { reverse_opinion = { who = ROOT value = 0 } }
+					same_liege = ROOT
+					NOT = { character = ROOT }
+					NOT = { character = PREV }			
+					in_command = no
+					NOT = { war_with = ROOT }
+					NOT = { dynasty = ROOT }	
+					NOT = { dynasty = PREV }
+					NOT = { is_inaccessible_trigger = yes }
+				}
+				save_event_target_as = enemy_councillor
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.40 #Shout!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		event_target:enemy_councillor = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.41 }
+			}
+		}
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_undisciplined
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.40 #show restraint
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+		event_target:enemy_councillor = {
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.42 }
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}	
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_showed_restraint
+			}
+		}
+	}
+	option = {
+		name = EVTOPTCdynastic_rivalry.40 #Clever argument
+		trigger = { diplomacy = 14 }
+		ai_chance = {
+			factor = 500
+		}	
+		tooltip_info = diplomacy
+		event_target:enemy_councillor = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.43 }
+			}
+		}
+		prestige = 25
+	}
+}
+character_event = { #Target responds to shouting
+	id = dynastic_rivalry.41
+	desc = EVTDESCdynastic_rivalry.41
+	picture = GFX_evt_council_quarrelling
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.41 #Shout Back!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}			
+		}
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_undisciplined
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.44 }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.41 #show restraint
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		FROM = {
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.42 }
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}	
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_showed_restraint
+			}
+		}
+	}
+	option = {
+		name = EVTOPTCdynastic_rivalry.41 #Clever argument
+		trigger = { diplomacy = 14 }
+		ai_chance = {
+			factor = 500
+		}	
+		tooltip_info = diplomacy
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_hate
+				months = 24
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.43 }
+			}
+		}
+		prestige = 25
+	}
+}
+character_event = { #Inform other councillor showed restraint
+	id = dynastic_rivalry.42
+	desc = EVTDESCdynastic_rivalry.42
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.42
+		prestige = 25
+		liege = {
+			character_event = { id = dynastic_rivalry.46 }
+		}
+	}
+}	
+character_event = { #Inform other councillor made clever argument
+	id = dynastic_rivalry.43
+	desc = EVTDESCdynastic_rivalry.43
+	picture = GFX_evt_leaving_table_angrily 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.43
+		tiered_prestige_negative_effect = yes
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		liege = {
+			character_event = { id = dynastic_rivalry.47 }
+		}
+	}
+}	
+character_event = { #Inform liege cuncillors are shouting eachother down
+	id = dynastic_rivalry.44
+	desc = EVTDESCdynastic_rivalry.44
+	picture = GFX_evt_council_quarrelling
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.44 #Let them
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		tiered_prestige_negative_effect = yes
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.44 #Kick them both out
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = authoritative
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_humliated
+				years = 2
+			}
+			character_event = { id = dynastic_rivalry.45 }
+		}
+		FROMFROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_humliated
+				years = 2
+			}
+			character_event = { id = dynastic_rivalry.45 }
+		}
+	}
+	option = {
+		name = EVTOPTCdynastic_rivalry.41 #Reason with them
+		trigger = { diplomacy = 14 }
+		tooltip_info = diplomacy
+		ai_chance = {
+			factor = 500
+		}	
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_satisfied
+				months = 24
+			}
+			character_event = { id = dynastic_rivalry.48 }
+		}
+		FROMFROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_satisfied
+				months = 24
+			}
+			character_event = { id = dynastic_rivalry.48 }
+		}
+	}
+}	
+character_event = { #Inform liege ejected you from council meeting
+	id = dynastic_rivalry.45
+	desc = EVTDESCdynastic_rivalry.45
+	picture = GFX_evt_leaving_table_angrily 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.45
+		prestige = -25
+		show_portrait = FROM
+		show_portrait = FROMFROM
+	}
+}	
+character_event = { #Inform liege from showed restraint
+	id = dynastic_rivalry.46
+	desc = EVTDESCdynastic_rivalry.46
+	picture = GFX_evt_council_quarrelling
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.46
+		show_portrait = FROMFROM
+	}
+}	
+character_event = { #Inform liege from put down by clever argument
+	id = dynastic_rivalry.47
+	desc = EVTDESCdynastic_rivalry.47
+	picture = GFX_evt_leaving_table_angrily 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.47
+		show_portrait = FROMFROM
+	}
+}	
+character_event = { #Inform liege placated argument at council meeting
+	id = dynastic_rivalry.48
+	desc = EVTDESCdynastic_rivalry.48
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.48
+		prestige = -25
+		show_portrait = FROM
+		show_portrait = FROMFROM
+	}
+}	
+##Harass smallfolk in enemy dynasty lands
+character_event = {
+	id = dynastic_rivalry.50
+	desc = EVTDESCdynastic_rivalry.50
+	picture = GFX_evt_peasants
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	war = no
+	
+	trigger = {	
+		demesne_size = 1
+		any_opinion_modifier_target = {
+			is_playable = yes
+			demesne_size = 1
+			reverse_has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+			NOT = { opinion = { who = ROOT value = 0 } }
+			NOT = { reverse_opinion = { who = ROOT value = 0 } }
+			any_demesne_province = { ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 400 } } } } }
+			NOT = { relative_power = { who = ROOT power = 1.01 } }
+		}
+		has_regent = no
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	immediate = {
+		random_opinion_modifier_target = {
+			limit = {
+				is_playable = yes
+				demesne_size = 1
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+				NOT = { opinion = { who = ROOT value = 0 } }
+				NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				any_demesne_province = { ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 400 } } } } }
+				NOT = { relative_power = { who = ROOT power = 1.01 } }
+			}
+			save_event_target_as = enemy_feud_target
+			random_demesne_province = {
+				limit = { ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 400 } } } } }
+				save_event_target_as = enemy_feud_province
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.50 #Do it
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		wealth = -25
+		tooltip = {
+			event_target:enemy_feud_province = {
+				add_province_modifier = {
+					name = harrassed_peasants
+					duration = 730
+				}
+			}
+		}	
+		event_target:enemy_feud_target = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_looted
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.51 }
+			}
+		}
+		tiered_piety_negative_effect = yes
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.50 #No
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+	}
+}
+character_event = { #Inform Target
+	id = dynastic_rivalry.51
+	desc = EVTDESCdynastic_rivalry.51
+	picture = GFX_evt_burning_house
+	
+	is_triggered_only = yes
+	
+	immediate = { #find retaliation target
+		FROM = {
+			random_demesne_province = {
+				limit = { ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 400 } } } } }
+				save_event_target_as = enemy_feud_province_B
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.51 #Retaliate
+		trigger = { event_target:enemy_feud_province_B = { always = yes } }
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0.2
+				NOT = { wealth = 50 }
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		wealth = -50 #Is wekaer, so costs more and is less effective
+		tooltip = {
+			event_target:enemy_feud_province_B = {
+				add_province_modifier = {
+					name = harrassed_peasants
+					duration = 365
+				}
+			}
+		}	
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_looted
+			}
+			hidden_tooltip = {
+				character_event = { id = dynastic_rivalry.52 }
+			}
+		}
+		tiered_piety_negative_effect = yes
+	}
+	option = {
+		name = EVTOPTBdynastic_rivalry.51 #Restraint
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+		}
+	}
+	after = {
+		event_target:enemy_feud_province = {
+			add_province_modifier = {
+				name = harrassed_peasants
+				duration = 730
+			}
+		}
+	}
+}
+character_event = { #Inform Retaliated
+	id = dynastic_rivalry.52
+	desc = EVTDESCdynastic_rivalry.52
+	picture = GFX_evt_burning_house
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAdynastic_rivalry.52 
+		event_target:enemy_feud_province_B = {
+			add_province_modifier = {
+				name = harrassed_peasants
+				duration = 365
+			}
+		}
+	}
+}	
+###Canon feuds
+#Blackwood/Bracken
+character_event = {
+	id = dynastic_rivalry.200
+	desc = "EVTDESCdynastic_rivalry.200"
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+	
+	hide_from = yes
+	
+	option = {
+		name = "EVTOPTAdynastic_rivalry.200"
+		trigger = { dynasty = 150 }	
+		d_southstone = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBdynastic_rivalry.200"
+		trigger = { dynasty = 149 }	
+		d_blackwood = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+}
+# Forrester/Whitehill rivalry
+character_event = {
+	id = dynastic_rivalry.201
+	desc = "EVTDESC_dynastic_rivalry.201"
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	
+	option = { # The Whitehills
+		name = "EVTOPTA_dynastic_rivalry.201"
+		trigger = { dynasty = 70 }	
+		c_blackgrove = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+	
+	option = { # The Forresters
+		name = "EVTOPTB_dynastic_rivalry.201"
+		trigger = { dynasty = 1443 }	
+		c_aylesvale = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+}
+# Yronwood/Fowler rivalry
+character_event = {
+	id = dynastic_rivalry.202
+	desc = "EVTDESC_dynastic_rivalry.202"
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+	hide_from = yes
+	
+	
+	option = { # Yronwood
+		name = "EVTOPTA_dynastic_rivalry.202"
+		trigger = { dynasty = 12 }	
+		c_skyreach = {
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+	
+	option = { # Fowlers
+		name = "EVTOPTB_dynastic_rivalry.202"
+		trigger = { dynasty = 14 }	
+		c_yronwood = {
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+}
+#Manderly/Peake
+character_event = {
+	id = dynastic_rivalry.203
+	desc = "EVTDESCdynastic_rivalry.203"
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+	
+	hide_from = yes
+	
+	option = { # Manderlys
+		name = "EVTOPTAdynastic_rivalry.203"
+		trigger = { 
+			dynasty = 80 
+		}	
+		d_mandervale = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+	
+	option = { # Peakes
+		name = "EVTOPTBdynastic_rivalry.203"
+		trigger = { 
+			dynasty = 298 
+		}	
+		d_cockleswhent = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+}
+#Wyl-Cafferen/Oakheart/Baratheon
+long_character_event = {
+	id = dynastic_rivalry.204
+	desc = "EVTDESCdynastic_rivalry.204"
+	picture = GFX_evt_feud_ambush
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			dynasty = 317
+			dynasty = 19
+			dynasty = 310
+			dynasty = 237
+		}
+	}
+	
+	hide_from = yes
+	
+	option = { 
+		name = "EVTOPTAdynastic_rivalry.204"
+		trigger = { 
+			dynasty = 19
+		}	
+		c_old_oak = { 
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+		c_fawnton = {
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+		c_storms_end = {
+			holder_scope = {
+				if = {
+					limit = { dynasty = 317 }
+					set_dynasty_flag = in_blood_feud
+					hidden_tooltip = {
+						random_dynasty_member = {
+							limit = {
+								is_alive = yes
+								#is_ruler = no
+							}
+							add_trait = blood_feud #blood feud tracker
+						}	
+					}		
+					opinion = {
+						who = ROOT
+						modifier = opinion_blood_feud		
+					}
+					hidden_tooltip = {
+						any_dynasty_member = {
+							limit = {
+								is_alive = yes
+								NOT = { character = PREV }
+							}
+							opinion = {
+								who = ROOT
+								modifier = opinion_blood_feud		
+							}
+							character_event = { id = dynastic_rivalry.7 days = 2 } 
+						}
+					}	
+				}	
+			}
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTBdynastic_rivalry.204"
+		trigger = { 
+			OR = {
+				dynasty = 317
+				dynasty = 310
+				dynasty = 237
+			}
+		}	
+		c_wyl = {
+			holder_scope = {
+				set_dynasty_flag = in_blood_feud
+				hidden_tooltip = {
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							#is_ruler = no
+						}
+						add_trait = blood_feud #blood feud tracker
+					}	
+				}		
+				opinion = {
+					who = ROOT
+					modifier = opinion_blood_feud		
+				}
+				hidden_tooltip = {
+					any_dynasty_member = {
+						limit = {
+							is_alive = yes
+							NOT = { character = PREV }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_blood_feud		
+						}
+						character_event = { id = dynastic_rivalry.7 days = 2 } 
+					}
+				}	
+			}
+		}
+	}
+}
+#############################################
+## Finding blood feuds
+#############################################
+# 
+character_event = {
+	id = dynastic_rivalry.999
+	desc = "EVTDESCynastic_rivalry.999"
+	picture = GFX_evt_council
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			###Find Blood Feuds###
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						is_alive = yes
+						NOT = { dynasty = ROOT }
+						has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+					}
+				}
+				set_character_flag = has_blood_feud
+				break = yes
+			}	
+			#republic feud
+			if = {
+				limit = {
+					liege = {
+						any_realm_lord = {
+							is_patrician = yes
+							NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud } }
+							NOT = { dynasty = ROOT }
+							has_opinion_modifier = { who = ROOT modifier = opinion_feuding_family }
+						}	
+					}
+				}
+				set_character_flag = has_blood_feud
+			}
+		}	
+	}	
+	
+	###Blood Feuds
+	option = {		
+		name = "EVTOPTAdynastic_rivalry.999"
+		trigger = { NOT = { has_character_flag = has_blood_feud } }
+	}
+	option = {
+		name = "EVTOPTBdynastic_rivalry.999"
+		trigger = { has_character_flag = has_blood_feud }
+		any_opinion_modifier_target = {
+			limit = {
+				is_alive = yes
+				trait = blood_feud
+				has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud }
+				NOT = { dynasty = ROOT }
+			}
+			show_scope_change = no
+			show_portrait = THIS
+			custom_tooltip = { text = TOOLTIPLISTBLOODFEUD }
+		}
+		#republic feud
+		liege = {
+			show_scope_change = no
+			any_realm_lord = {
+				limit = {
+					is_patrician = yes
+					has_opinion_modifier = { who = ROOT modifier = opinion_feuding_family }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_blood_feud } }
+				}
+				show_scope_change = no
+				show_portrait = THIS
+				custom_tooltip = { text = TOOLTIPLISTBLOODFEUD }
+			}	
+		}
+	}
+	
+	# #WORLD BLOOD FEUDS
+	# option = {  #BUGGED, PREV no longer works in localisation commands
+		# name = "EVTOPTCdynastic_rivalry.999"
+		# any_playable_ruler = {
+			# limit = { 
+				# trait = blood_feud 
+				# NOT = { dynasty = ROOT }
+			# }
+			# show_scope_change = no		
+			# any_opinion_modifier_target = {
+				# limit = {
+					# trait = blood_feud
+					# has_opinion_modifier = { who = PREV modifier = opinion_blood_feud }
+					# NOT = { dynasty = PREV }
+					# NOT = { dynasty = ROOT }
+					# is_older_than = PREV
+				# }
+				# show_scope_change = no
+				# show_portrait = THIS
+				# show_portrait = PREV
+				# custom_tooltip = { text = TOOLTIPLISTBLOODFEUDWORLD }
+			# }
+		# }
+	# }
+	after = {
+		clr_character_flag = has_blood_feud
+	}
+}

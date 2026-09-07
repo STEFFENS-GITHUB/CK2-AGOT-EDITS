@@ -1,0 +1,493 @@
+####################################
+# CASTELLAN/HAND OF THE KING
+#
+# Job: action_improve_castle_holding
+# 	950: Holding succesfully upgraded
+# 	951: Upgrade failed
+#
+####################################
+
+
+####################################
+# CASTELLAN
+# JOB: action_improve_castle_holding
+####################################
+
+#950: Success!
+character_event = {
+	id = 950
+	title = "EVTNAME950"
+	desc = "EVTDESC950"
+	picture = GFX_evt_castle_construction
+	border = GFX_event_normal_frame_economy
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		has_job_title = job_castellan
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			any_realm_title = {
+				tier = BARON
+				OR = {
+					holder_scope = { is_liege_of = ROOT }
+					holder_scope = { 
+						tier = BARON
+						same_liege = ROOT
+					}
+				}
+				has_holding_modifier = upgrade_bv
+				OR = {
+					ROOT = { liege = { ai = yes } }
+					AND = {
+						location = { ROOT = { location = { province_id = PREVPREV } } }
+						ROOT = { has_job_action = action_improve_castle_holding }
+					}	
+				}						
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 8
+
+		modifier = { #First tier is quick to build
+			factor = 0.1
+			liege = {
+				any_realm_title = {
+					tier = BARON
+					has_holding_modifier = upgrade_bv
+					NOT = { base_value_1_trigger = yes }
+					OR = {
+						holder_scope = { is_liege_of = ROOT }
+						holder_scope = { 
+							tier = BARON
+							same_liege = ROOT
+						}
+					}				
+					OR = {
+						ROOT = { liege = { ai = yes } }
+						AND = {
+							location = { ROOT = { location = { province_id = PREVPREV } } }
+							ROOT = { has_job_action = action_improve_castle_holding }
+						}	
+					}						
+				}
+			}
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 5 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 7 }
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 10
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 11
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 12
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 13
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 14
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 16
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 18
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 20
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 22
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 24
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 26
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 28
+		}
+		modifier = {
+			factor = 1.25
+			liege = { NOT = { stewardship = 2 } }
+		}
+		modifier = {
+			factor = 1.25
+			liege = { NOT = { stewardship = 3 } }
+		}
+		modifier = {
+			factor = 1.25
+			liege = { NOT = { stewardship = 5 } }
+		}
+		modifier = {
+			factor = 1.25
+			liege = { NOT = { stewardship = 7 } }
+		}
+		modifier = {
+			factor = 0.9
+			liege = { stewardship = 10 }
+		}
+		modifier = {
+			factor = 0.9
+			liege = { stewardship = 11 }
+		}
+		modifier = {
+			factor = 0.9
+			liege = { stewardship = 12 }
+		}
+		modifier = {
+			factor = 0.9
+			liege = { stewardship = 13 }
+		}
+		modifier = {
+			factor = 0.95
+			liege = { stewardship = 14 }
+		}
+		modifier = {
+			factor = 0.95
+			liege = { stewardship = 16 }
+		}
+		modifier = {
+			factor = 0.95
+			liege = { stewardship = 18 }
+		}
+		modifier = {
+			factor = 0.95
+			liege = { stewardship = 20 }
+		}
+		modifier = {
+			factor = 1.1
+			has_global_flag = asoiaf_mild_winter
+		}
+		modifier = {
+			factor = 1.25
+			has_global_flag = asoiaf_normal_winter
+		}
+		modifier = {
+			factor = 1.5
+			has_global_flag = asoiaf_harsh_winter
+		}
+		modifier = {
+			factor = 0.8
+			liege = { tier = DUKE }
+		}
+		modifier = {
+			factor = 0.6
+			liege = { tier = COUNT }
+		}
+	}
+
+	option = {
+		name = "EVTOPTA950"	
+		liege = {
+			letter_event = { id = 20950 tooltip = EVTTOOLTIP20950 }
+		}
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 2 } }
+	}
+}
+
+
+# 20950: Informs top liege
+letter_event = {
+	id = 20950
+	desc = "EVTDESC20950"
+	border = GFX_event_letter_frame_economy
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { is_alive = yes } }
+	
+	immediate = {
+		opinion = {
+			modifier = opinion_service_rendered
+			who = FROM
+			years = 3
+		}
+	}	
+
+	option = {
+		name = "EXCELLENT"
+		clr_character_flag = upgrade_bv_notified
+		if = {
+			limit = {
+				NOT = {
+					any_demesne_title = {
+						tier = BARON
+						has_holding_modifier = upgrade_bv
+						OR = {
+							ROOT = { ai = yes }
+							AND = {
+								location = { FROM = { location = { province_id = PREVPREV } } }
+								FROM = { has_job_action = action_improve_castle_holding }
+							}	
+						}						
+					}
+				}
+			}
+			random_vassal = {
+				limit = {
+					tier = BARON
+					any_demesne_title = {
+						has_holding_modifier = upgrade_bv
+						OR = {
+							ROOT = { ai = yes }
+							AND = {
+								location = { FROM = { location = { province_id = PREVPREV } } }
+								FROM = { has_job_action = action_improve_castle_holding }
+							}	
+						}						
+					}
+				}
+				random_demesne_title = {
+					limit = {
+						has_holding_modifier = upgrade_bv
+						OR = {
+							ROOT = { ai = yes }
+							AND = {
+								location = { FROM = { location = { province_id = PREVPREV } } }
+								FROM = { has_job_action = action_improve_castle_holding }
+							}	
+						}
+					}
+					increase_holding_base_value_effect = yes
+				}	
+			}
+		}	
+		else = {
+			random_demesne_title = {
+				limit = {
+					tier = BARON
+					has_holding_modifier = upgrade_bv
+					OR = {
+						ROOT = { ai = yes }
+						AND = {
+							location = { FROM = { location = { province_id = PREVPREV } } }
+							FROM = { has_job_action = action_improve_castle_holding }
+						}	
+					}
+				}
+				increase_holding_base_value_effect = yes
+			}	
+		}	
+	}
+}
+
+# #951: Failure!
+# character_event = {
+	# id = 951
+	# title = "EVTNAME951"
+	# desc = "EVTDESC951"
+	# picture = GFX_evt_castle_construction
+	# border = GFX_event_normal_frame_economy
+
+	# only_rulers = yes
+	
+	# trigger = {
+		# any_realm_title = {
+			# tier = BARON
+			# has_holding_modifier = upgrade_bv
+			# OR = {
+				# holder_scope = { character = ROOT }
+				# holder_scope = { 
+					# tier = BARON
+					# liege = { character = ROOT }
+				# }
+			# }		
+		# }
+		# NOT = { realm_stewardship = 30 } #This will not happen if realm stewardship is good
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 120
+		
+		# modifier = {
+			# factor = 0.75
+			# job_castellan = { NOT = { stewardship = 2 } }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# job_castellan = { NOT = { stewardship = 3 } }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# job_castellan = { NOT = { stewardship = 5 } }
+		# }
+		# modifier = {
+			# factor = 0.75
+			# job_castellan = { NOT = { stewardship = 7 } }
+		# }
+		# modifier = {
+			# factor = 1.25
+			# job_castellan = { stewardship = 10 }
+		# }
+		# modifier = {
+			# factor = 1.25
+			# job_castellan = { stewardship = 11 }
+		# }
+		# modifier = {
+			# factor = 1.25
+			# job_castellan = { stewardship = 12 }
+		# }
+		# modifier = {
+			# factor = 1.25
+			# job_castellan = { stewardship = 13 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 14 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 16 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 18 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 20 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 22 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 24 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 26 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# job_castellan = { stewardship = 28 }
+		# }
+		# modifier = {
+			# factor = 0.9
+			# has_global_flag = asoiaf_mild_winter
+		# }
+		# modifier = {
+			# factor = 0.8
+			# has_global_flag = asoiaf_normal_winter
+		# }
+		# modifier = {
+			# factor = 0.7
+			# has_global_flag = asoiaf_harsh_winter
+		# }
+	# }
+
+	# option = {
+		# name = "EVTOPTA951"
+		# clr_character_flag = upgrade_bv_notified
+		# if = {
+			# limit = {
+				# NOT = {
+					# any_demesne_title = {
+						# tier = BARON
+						# has_holding_modifier = upgrade_bv
+					# }
+				# }	
+			# }
+			# random_vassal = {
+				# limit = {
+					# tier = BARON
+					# any_demesne_title = {
+						# tier = BARON
+						# has_holding_modifier = upgrade_bv	
+					# }
+				# }
+				# random_demesne_title = {
+					# limit = {
+						# tier = BARON
+						# has_holding_modifier = upgrade_bv
+					# }
+					# remove_holding_modifier = upgrade_bv
+					# location = { clr_province_flag = inherited_upgrade }
+				# }
+			# }
+		# }	
+		# else = {
+			# random_demesne_title = {
+				# limit = {
+					# tier = baron
+					# has_holding_modifier = upgrade_bv
+				# }
+				# remove_holding_modifier = upgrade_bv
+				# location = { clr_province_flag = inherited_upgrade }
+			# }
+		# }	
+	# }
+# }
+
+# 20951: Reminder event for you to send your castellan
+character_event = {
+	id = 20951
+	desc = "EVTDESC20951"
+	border = GFX_event_normal_frame_economy
+	
+	is_triggered_only = yes
+	ai = no
+	
+	trigger = {		
+		FROM = {
+			has_holding_modifier = upgrade_bv
+			OR = {
+				holder_scope = { character = ROOT }
+				holder_scope = { 
+					tier = BARON
+					liege = { character = ROOT }
+				}
+			}		
+		}
+		job_castellan = {
+			NOT = { has_job_action = action_improve_castle_holding }
+		}
+		# OR = {
+			# NOT = { has_character_flag = upgrade_bv_notified }
+			# had_character_flag = { flag = upgrade_bv_notified days = 1000 }
+		# }	
+	}
+	
+	immediate = { job_castellan = { save_event_target_as = job_castellan_target } }
+	
+	option = {
+		name = "EVTOPTA20951"
+		#set_character_flag = upgrade_bv_notified
+	}
+}

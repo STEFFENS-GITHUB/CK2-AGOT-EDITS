@@ -1,0 +1,897 @@
+#############################################
+#
+# Hedge Knights Event Series
+#
+# Event ID 71000-71999 is reserved
+#
+#############################################
+#Written by Johan Andersson
+
+#Group of Hedge Knights visiting
+#sunpear: added hedgeknight chance to be faceless men in EVTOPTA71006
+character_event = {
+	id = 71000
+	desc = EVTDESC71000	
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	prisoner = no
+	religion = the_seven
+	min_age = 16
+	war = no
+	in_command = no
+	
+	picture = GFX_evt_emissary
+
+	trigger = {			
+		NOT = { has_character_flag = hedge_knights_visiting }
+		job_chancellor = { always = yes }
+		NOT = { has_character_flag = in_seclusion }
+	}
+
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 1.5
+			trait = gregarious
+		}
+		modifier = {
+			factor = 2.0
+			prestige = 100
+		}
+		modifier = {
+			factor = 2.0
+			tier = count
+		}
+		modifier = {
+			factor = 0.5
+			tier = king
+		}
+		modifier = {
+			factor = 0.2
+			tier = emperor
+		}
+		modifier = {
+			factor = 0.8
+			trait = stressed
+		}
+		modifier = {
+			factor = 0.8
+			trait = depressed
+		}
+		modifier = {
+			factor = 0.75
+			trait = lunatic
+		}
+		modifier = {
+			factor = 0.75
+			trait = possessed
+		}
+		modifier = {
+			factor = 0.4
+			trait = incapable
+		}
+		modifier = {
+			factor = 0.5
+			trait = drunkard
+		}
+		modifier = {
+			factor = 0.5
+			is_ill = yes
+		}			
+	}	
+	
+	option = {
+		name = EVTOPTA71000 #Welcome them with a lavish feast
+		trigger = { 
+			NOT = { trait = greedy } 
+			NOT = { trait = shy } 
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 0
+				trait = greedy
+			}
+			modifier = {
+				factor = 0
+				trait = shy
+			}
+			modifier = {
+				factor = 0
+				trait = paranoid
+			}
+		}
+		set_character_flag = hedge_knights_visiting
+		set_character_flag = hedge_knights_lavish_feast #AGOT
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = 10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = 0.2
+		}		
+		if = {
+			limit = {
+				NOT = { trait = gregarious }
+			}
+			random = {
+				chance = 20
+				add_trait = gregarious
+				hidden_tooltip = { character_event = { id = 38265 } }
+			}	
+		}
+		scaled_wealth = { value = -0.2 min = -30 max = -150 }
+		hidden_tooltip = { 
+			character_event = { id = 71998 days = 10 random = 10 }	
+		}
+	}
+	option = {
+		name = EVTOPTB71000 #Welcome them reluctantly
+		ai_chance = {
+			factor = 10		
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = 5
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = 0.1
+		}
+		scaled_wealth = { value = -0.05 min = -10 max = -50 }
+		set_character_flag = hedge_knights_visiting
+		set_character_flag = hedge_knights_reluctant #AGOT
+		hidden_tooltip = { 
+			character_event = { id = 71998 days = 10 random = 10 }	
+		}
+	}
+	option = {
+		name = EVTOPTC71000 #Refuse them Access
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				NOR = { 
+					trait = greedy 
+					trait = paranoid
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+		}
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -5
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.1
+		}
+		any_courtier = {
+			limit = {
+				is_adult = no
+				NOT = { character = ROOT }
+				prisoner = no
+				NOT = { is_incapable = yes }
+				NOT = { trait = slave }
+				NOT_mythical_creature_trigger = yes
+				NOR = { 
+					trait = greedy 
+					trait = paranoid
+					trait = proud
+				}
+			}
+			opinion = {
+				modifier = tight_ruler
+				who = ROOT
+			}
+		}
+	}
+}
+character_event = { #hedge knights random events
+	id = 71998
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_character_flag = hedge_knights_visiting
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					is_ruler = no
+					prisoner = yes
+					is_incapable = yes
+				}
+			}
+			clr_character_flag = hedge_knights_visiting
+			break = yes
+		}
+		character_event = { id = 71999 days = 40 random = 20 }
+		if = { #One hedge knight distinguishes himself
+			limit = { ai = no }
+			random = { 
+				chance = 20
+				modifier = {
+					factor = 2
+					trait = gregarious
+				}
+				character_event = { id = 71002 }
+			}
+		}
+		if = { #Male courtier insulted by hedge knights
+			limit = { 
+				any_courtier = {
+					age = 16
+					is_female = no
+					NOT = { dynasty = 0 }
+					NOT = { character = ROOT }
+					OR = {
+						trait = cruel
+						trait = proud
+						trait = wroth
+						trait = zealous
+						trait = envious
+						prestige = 100
+					}
+					NOT = { trait = slave }
+					NOT_mythical_creature_trigger = yes
+				}
+			}
+			random = { 
+				chance = 20
+				character_event = { id = 71003 }
+			}
+		}	
+		if = { #A young woman has been seduced by a hedge knight
+			limit = { 
+				any_courtier = {
+					age = 16
+					NOT = { age = 22 }
+					is_ruler = no
+					is_female = yes	
+					is_married = no
+					has_lover = no
+					is_pregnant = no
+					fertility = 0.3
+					prisoner = no
+					is_incapable = no
+					NOT = { trait = slave }
+					NOT = { trait = homosexual }
+					NOT_mythical_creature_trigger = yes
+				}
+			}
+			random = { 
+				chance = 20
+				character_event = { id = 71004 }
+			}
+		}
+		if = { #Marshal has arrested a hedge knight
+			limit = { 
+				job_marshal = { always = yes }
+				war = no
+			}
+			random = { 
+				chance = 20
+				character_event = { id = 71006 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #resolve hedge knights
+	id = 71999
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_character_flag = hedge_knights_visiting
+	}
+	
+	immediate = {
+		clr_character_flag = hedge_knights_visiting
+		if = {
+			limit = {
+				OR = {
+					is_ruler = no
+					prisoner = yes
+					is_incapable = yes
+				}
+			}
+			break = yes
+		}
+		random_list = {
+			25 = { #Minor Tournament Hedge Knight Injured
+				character_event = { id = 71001 }
+			}
+			60 = { #Hedge knights leaving
+				character_event = { id = 71005 }
+			}
+			1 = { #AGOT- Secret Lord (Egg)
+				modifier = {
+					factor = 0
+					NOT = {
+						top_liege = {
+							NOT = { character = ROOT }
+							NOT = { dynasty = ROOT }
+							NOT = { is_close_relative = ROOT }
+							reverse_opinion = { who = ROOT value = 0 }
+						}
+					}
+				}
+				modifier = {
+					factor = 2
+					has_character_flag = hedge_knights_lavish_feast
+				}	
+				modifier = {
+					factor = 1.33
+					trait = gregarious
+				}
+				modifier = {
+					factor = 1.33
+					trait = charitable
+				}
+				modifier = {
+					factor = 0.5
+					trait = greedy
+				}
+				modifier = {
+					factor = 0.5
+					trait = shy
+				}
+				character_event = { id = 71050 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+#Minor Tournament Hedge Knight Injured
+character_event = {
+	id = 71001
+	desc = EVTDESC71001	
+	picture = GFX_evt_joust
+	
+	is_triggered_only = yes	
+	
+	immediate = {
+		clr_character_flag = hedge_knights_reluctant
+		clr_character_flag = hedge_knights_lavish_feast
+	}
+	
+	option = {
+		name = EVTOPTA71001 	# pay for their expenses, and send them on their way
+		scaled_wealth = { value = -0.05 min = -10 max = -50 }
+		piety = 25
+	}
+	option = {
+		name = EVTOPTB71001 #let them stay at the castle while recovering.
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.2
+		}
+		piety = 25
+		if = {
+			limit = { 
+				NOT = { trait = honorable }
+				NOT = { trait = ruthless }
+				NOT = { trait = deceitful }
+				NOT = { personality_traits = 5 } 
+			}
+			add_trait = honorable
+		}
+	}
+}	
+
+#One hedge knight distinguishes himself
+character_event = {
+	id = 71002
+	desc = EVTDESC71002	
+	picture = GFX_evt_joust
+	
+	is_triggered_only = yes	
+
+	immediate = {
+		capital_scope = {
+			ROOT = {
+				create_random_soldier = {
+					random_traits = yes  #AGOT
+					culture = PREV
+					religion = the_seven
+					dynasty = actually_culture
+					female = no
+					trait = brave
+					trait = ambitious
+					trait = humble
+					health = 7	
+					historical = yes					
+				}	
+				new_character = { #AGOT
+					knight_character_effect = yes
+					change_martial = 4
+					random_list = {
+						18 = { add_trait = poor_warrior }
+						60 = { add_trait = trained_warrior }
+						20 = { add_trait = skilled_warrior }
+						2 = { add_trait = master_warrior }
+					}
+					save_event_target_as = hedge_knight
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = EVTOPTA71002  #take him in your service.
+		event_target:hedge_knight = { move_character = ROOT }
+		scaled_wealth = { value = -0.1 min = -20 max = -100 }
+	}
+	option = {
+		name = EVTOPTB71002 #give him lavish praise.
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = 10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = 0.2
+		}
+		event_target:hedge_knight = { 
+			hidden_tooltip = {
+				death = { death_reason = death_missing }
+			}
+		}
+	}
+}	
+
+#Male courtier insulted by hedge knights
+character_event = {
+	id = 71003
+	desc = EVTDESC71003	
+	picture = GFX_evt_joust
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = EVTOPTA71003  #Throw them out.
+		clr_character_flag = hedge_knights_visiting
+		clr_character_flag = hedge_knights_reluctant
+		clr_character_flag = hedge_knights_lavish_feast
+		piety = -25
+	}
+	option = {
+		name = EVTOPTB71003 #Ignore the complaints
+	 	random_courtier = {
+	 		limit = {
+	 			age = 16
+				is_female = no
+				NOT = { dynasty = 0 }
+				NOT = { character = ROOT }
+				OR = {
+					trait = cruel
+					trait = proud
+					trait = wroth
+					trait = zealous
+					trait = envious
+					prestige = 100
+				}
+				NOT = { trait = slave }
+				NOT_mythical_creature_trigger = yes
+		 	}
+			opinion = {
+				modifier = ruler_not_respect_rank
+				who = ROOT
+				months = 60
+			}
+	 	}		
+	}	
+}	
+
+#A young woman has been seduced by a hedge knight
+character_event = {
+	id = 71004
+	desc = EVTDESC71004	
+	picture = "GFX_gentle_kiss"
+	
+	is_triggered_only = yes	
+
+	immediate = {
+		random_courtier = {
+			limit = {
+				age = 16
+				NOT = { age = 22 }
+				is_ruler = no
+				is_female = yes	
+				is_married = no
+				has_lover = no
+				is_pregnant = no
+				fertility = 0.3
+				prisoner = no
+				is_incapable = no
+				NOT = { trait = slave }
+				NOT = { trait = homosexual }
+				NOT_mythical_creature_trigger = yes
+			}
+			save_event_target_as = young_woman
+		}
+		capital_scope = {
+			ROOT = {
+				create_random_soldier = {
+					random_traits = yes
+					culture = PREV
+					religion = the_seven
+					dynasty = actually_culture
+					female = no
+					fertility = 0.6
+					trait = lustful
+				}	
+				new_character = { #AGOT
+					knight_character_effect = yes
+					remove_trait = chaste
+					remove_trait = ugly
+					random_list = {
+						20 = { add_trait = poor_warrior }
+						65 = { add_trait = trained_warrior }
+						15 = { add_trait = skilled_warrior }
+					}
+					save_event_target_as = hedge_knight
+					add_lover = event_target:young_woman
+				}
+			}
+		}	
+	}
+	
+	
+	option = {
+		name = EVTOPTA71004 #stay	
+		event_target:young_woman = {
+			if = {
+				limit = {
+					NOT = { trait = lustful }
+					NOT = { trait = chaste }
+					NOT = { personality_traits = 6 }
+				}	
+				add_trait = lustful
+			}	
+			event_target:hedge_knight = {
+				move_character = ROOT
+	 			hidden_tooltip = { impregnate_cuckoo = PREV }	 						
+	 		}	 		
+	 	}
+	 	if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.2
+		}
+	}
+	option = {
+		name = EVTOPTB71004 #dungeon
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 100
+				OR = {
+					trait = cruel
+					trait = zealous
+				}
+			}
+		}
+		event_target:young_woman = {
+			if = {
+				limit = {
+					NOT = { trait = lustful }
+					NOT = { trait = chaste }
+					NOT = { personality_traits = 6 }
+				}	
+				add_trait = lustful
+			}	
+			event_target:hedge_knight = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_arrest_attempt
+					months = 240
+				}	
+				imprison = ROOT
+	 			hidden_tooltip = { impregnate_cuckoo = PREV }	 						
+	 		}	 		
+	 	}	
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -5
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.1
+		}
+	}
+}
+
+#Hedge knights leaving
+character_event = {
+	id = 71005
+	desc = EVTDESC71005	
+	
+	is_triggered_only = yes	
+	hide_from = yes
+	picture = GFX_evt_feast
+	
+	immediate = {
+		clr_character_flag = hedge_knights_reluctant
+		clr_character_flag = hedge_knights_lavish_feast
+	}
+	
+	option = {
+		name = EVTOPTA71005 #give them a farewell feast
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = 10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = 0.2
+		}
+		scaled_wealth = { value = -0.05 min = -10 max = -50 }
+	}
+	option = {
+		name = EVTOPTB71005 #let them leave quitely
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -5
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.1
+		}
+	}
+}
+
+#Marshal has arrested a hedge knight
+character_event = {
+	id = 71006
+	desc = EVTDESC71006	
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA71006  #order him released
+		job_marshal = {
+			opinion = {
+				modifier = marshal_overruled
+				who = ROOT
+			}
+		}
+		#faceless man chance
+		hidden_tooltip = {
+			random = {
+				chance = 1
+				character_event = {
+					id = faceless.9
+				}
+			}
+		}	
+		piety = 15
+	}
+	option = {
+		name = EVTOPTB71006 #it is not my concern
+		job_marshal = {
+			prestige = 15
+		}
+		if = {
+			limit = { NOT = { monthly_prestige = 4.2 } }
+			prestige = -10
+		}	
+		if = {
+			limit = { monthly_prestige = 4.2 }
+			scaled_prestige = -0.2
+		}
+	}
+}
+#AGOT- Secret Lord (Egg)
+character_event = {
+	id = 71050
+	
+	is_triggered_only = yes
+	hide_window = yes	
+	
+	immediate = {
+		top_liege = {
+			random_courtier = {
+				limit = {
+					is_close_relative = PREV
+					NOT = { character = ROOT }
+					NOT = { dynasty = ROOT }
+					NOT = { liege = { character = ROOT } }
+					is_female = no
+					age = 6
+					NOT = { age = 15 }
+					NOT = { trait = dragon }
+					ai = yes
+					guardian = {
+						is_female = no
+						trait = knight
+						is_ruler = no
+						NOT = { character = ROOT }
+						NOT = { dynasty = ROOT }
+						NOT = { is_close_relative = ROOT }
+						NOT = { liege = { character = ROOT } }
+						NOT = { prestige = 100 }
+						NOT = { trait = kingsguard }
+					}
+				}
+				character_event = { id = 71051 }
+				break = yes
+			}
+		}
+		#if no egg found revert to default event
+		character_event = { id = 71005 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = 71051
+	desc = EVTDESC71051
+	
+	is_triggered_only = yes
+
+	picture = GFX_evt_feast
+	
+	option = {
+		name = EVTOPTA71051 #Reveal self
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 4
+				trait = gregarious
+			}
+			modifier = {
+				factor = 4
+				trait = trusting
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 3
+				opinion = { who = FROM value = 50 }
+			}
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_humbled
+				years = 5
+			}
+			hidden_tooltip = { character_event = { id = 71052 } }
+		}
+	}
+	
+	option = {
+		name = EVTOPTB71051 #Hide
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 4
+				trait = shy
+			}
+			modifier = {
+				factor = 4
+				trait = paranoid
+			}
+			modifier = {
+				factor = 3
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 3
+				NOT = { opinion = { who = FROM value = -50 } }
+			}
+		}
+		FROM = { #revert to default event
+			hidden_tooltip = { character_event = { id = 71005 } }
+		}
+	}
+}
+character_event = {
+	id = 71052
+	desc = EVTDESC71052
+	
+	is_triggered_only = yes
+
+	picture = GFX_evt_feast
+	
+	immediate = {
+		clr_character_flag = hedge_knights_reluctant
+		clr_character_flag = hedge_knights_lavish_feast
+	}
+	
+	option = {
+		name = EVTOPTA71052  #I am humbled
+		prestige = 75
+		top_liege = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_gracious_host
+				years = 5
+			}
+		}		
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_gracious_host
+				years = 5
+			}
+			guardian = {
+				opinion = {
+					who = ROOT
+					modifier = opinion_gracious_host
+					years = 5
+				}
+			}
+		}
+	}
+}

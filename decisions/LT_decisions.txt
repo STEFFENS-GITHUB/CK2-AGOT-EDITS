@@ -1,0 +1,74 @@
+#Written by:
+#Linnéa Thimrén
+
+decisions = {
+
+	court_exodus = {
+		is_high_prio = yes
+		ai_check_interval = 12 #check only once every 12 months.
+		only_playable = yes
+
+		potential = {
+			has_game_rule = {
+	            name = court_limit_rule
+	            value = on
+	        }
+			has_full_court = yes
+	        is_ruler = yes
+			NOT = { trait = nightswatch }
+			NOT = { trait = archmaester }
+			NOT = { trait = white_walker }
+		}
+		allow = {
+			prisoner = no
+			trigger_if = { #optimisation
+				limit = { ai = no }
+				custom_tooltip = {
+					text = exodus_court_allow_tooltip
+					hidden_tooltip = {
+						has_full_court = yes
+						any_courtier = {
+							can_be_expelled_from_court_trigger = yes
+							count = 3
+						}
+					}
+				}
+			}	
+			custom_tooltip = {
+				NOT = { has_character_flag = started_court_exodus }
+				text = already_exodus_tooltip
+			}
+		}
+		effect = {
+			set_character_flag = started_court_exodus
+			character_event = { id = LT.61008 }
+			tooltip = {
+				scaled_wealth = {
+	    		    value = -0.02
+	    		    min = -5
+	    		    max = -45
+	    		}
+			}
+		}
+		ai_will_do = {
+			factor = 0.5
+			
+			modifier = {
+				factor = 2
+				NOT = { wealth = 20 }
+			}
+			modifier = {
+				factor = 1.12
+				court_is_min_crowded_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				court_is_mid_crowded_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				court_is_max_crowded_trigger = yes
+			}
+		}
+	}
+}

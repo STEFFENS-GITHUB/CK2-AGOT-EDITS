@@ -1,0 +1,4684 @@
+namespace = pirate
+
+character_event = {
+	id = pirate.1
+	desc = "EVTDESCPIRATE1"
+	picture = GFX_evt_pirates
+	
+	hide_from = yes
+	religion = pirate
+	
+	trigger = {
+		NOT = { trait = nightswatch }
+		NOT = { trait = pirate }
+	}
+
+	option = {
+		name = "EVTOPTAPIRATE1"
+		add_trait = pirate
+		if = {
+			limit = {
+				is_ruler = yes
+				NOT = { government = pirate_government }
+				OR = {
+					government = feudal_government
+					AND = {
+						higher_tier_than = BARON
+						is_republic = yes
+						is_patrician = no
+					}
+				}
+			}
+			set_government_type = pirate_government
+		}
+		if = {
+			limit = { government = pirate_government }
+			any_demesne_title = {
+				limit = { NOT = { has_law = succ_turkish_succession } }
+				succession = turkish_succession
+				gender_succ = agnatic		
+			}
+		}	
+		recalc_succession = yes
+	}
+}
+character_event = { #seperate event so pre-trigger can be used
+	id = pirate.199
+	desc = "EVTDESCPIRATE1"
+	picture = GFX_evt_pirates
+	
+	hide_from = yes
+	religion = corsair
+	
+	trigger = {
+		NOT = { trait = nightswatch }
+		NOT = { trait = pirate }
+	}
+
+	option = {
+		name = "EVTOPTAPIRATE1"
+		add_trait = pirate
+		if = {
+			limit = {		
+				is_ruler = yes
+				NOT = { government = pirate_government }
+				OR = {
+					government = feudal_government
+					AND = {
+						higher_tier_than = BARON
+						is_republic = yes
+						is_patrician = no
+					}
+				}
+			}
+			set_government_type = pirate_government
+		}
+		if = {
+			limit = { government = pirate_government }
+			any_demesne_title = {
+				limit = { NOT = { has_law = succ_turkish_succession } }
+				succession = turkish_succession
+				gender_succ = agnatic		
+			}
+		}
+		recalc_succession = yes
+	}
+}
+
+character_event = {
+	id = pirate.2
+	desc = "EVTDESCPIRATE2"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	trigger = {
+		trait = pirate
+		NOR = {
+			religion = pirate
+			religion = corsair
+		}
+	}
+
+	option = {
+		name = OK
+		remove_trait = pirate
+		if = {
+			limit = {	
+				is_ruler = yes
+				government = pirate_government
+			}
+			set_government_type = feudal_government
+		}
+	}
+}
+
+# Mutiny!
+province_event = {
+	id = pirate.3
+	desc = "EVTDESCPIRATE3" # The wildlings in PROVINCE have risen up against your rule!
+	picture = GFX_evt_pirates
+	
+	trigger = {
+		owner = { 
+			trait = pirate 
+		}
+		NOT = {
+			has_game_rule = {
+				name = provincial_revolts
+				value = none
+			}
+		}
+		#Must have a reason to revolt
+		OR = {
+			owner = { 
+				OR = {
+					NOT = { martial = 8 }
+					NOT = { diplomacy = 8 }
+					NOT = { prestige = 0 }
+					has_severe_disability_trigger = yes
+					prisoner = yes
+					is_adult = no
+					trait = cruel
+					trait = arbitrary
+				}	
+			}
+			revolt_risk = 0.01
+		}
+		
+		#Not in colonies
+		NOT = { has_province_flag = ruined_province }
+		NOT = { has_province_flag = colony_province }
+		NOT = { has_province_flag = winter_wasteland }
+		
+		NOT = { # Not if there is already an ongoing peasant revolt for this province
+			county = {		
+				any_war = {
+					using_cb = peasant_revolt
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 960
+		
+		modifier = {
+			factor = 20
+			has_province_modifier = recent_revolt
+		}
+		modifier = {
+			factor = 2.5
+			has_game_rule = {
+				name = provincial_revolts
+				value = rare
+			}
+		}
+		
+		modifier = {
+			factor = 3
+			is_capital = yes
+		}
+		
+		modifier = {
+			factor = 2
+			owner = { trait = kind }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { trait = cruel }
+		}
+		modifier = {
+			factor = 2
+			owner = { trait = just }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { trait = arbitrary }
+		}	
+		modifier = {
+			factor = 2
+			owner = { trait = greensight }
+		}
+		
+		modifier = {
+			factor = 0.1
+			owner = { trait = incapable }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { prisoner = yes }
+		}
+		
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.01
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.02
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.03
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.04
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.05
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.06
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.07
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.08
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.09
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.1
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.11
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.12
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.13
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.14
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.15
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.16
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.17
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.18
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.19
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.20
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 1 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 2 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 3 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 4 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 5 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 6 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 7 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 8 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 9 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 10 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 14 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 15 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 16 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 17 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 18 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 19 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 20 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 21 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 22 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 23 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 24 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 1 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 2 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 3 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 4 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 5 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 6 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 7 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 8 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 9 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 10 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 14 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 15 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 16 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 17 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 18 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 19 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 20 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 21 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 22 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 23 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 24 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { prestige = -300 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { prestige = -200 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { prestige = -100 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { prestige = 0 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 100 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 200 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 300 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 400 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 500 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 600 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 700 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 800 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 900 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 1000 }
+		}
+	}
+	
+	immediate = {
+		#Find pirate rebel leader
+		owner = {
+			random = {
+				chance = 66
+				random_courtier = { #try and find existing character first
+					limit = {
+						is_adult = yes
+						is_ill = no
+						prisoner = no
+						is_ruler = no
+						is_incapable = no
+						OR = {
+							trait = ambitious
+							NOT = { opinion = { who = PREV value = 20 } }
+						}	
+						liege = { character = PREVPREV }
+						OR = {
+							is_female = no
+							martial = 15
+						}
+						trait = pirate
+						martial = 8
+						diplomacy = 8
+						prestige = 0	
+
+						NOT = { trait = craven }
+						NOT = { is_weak_trigger = yes }
+						NOT = { trait = dwarf }
+						NOT = { trait = content }
+						NOT = { trait = honorable }
+					}
+					save_event_target_as = pirate_rebel
+					break = yes
+				}
+			}	
+			if = {
+				limit = { religion = pirate }
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = pirate
+					culture = random
+					female = no
+					trait = pirate
+				}
+			}	
+			if = {
+				limit = { religion = corsair }
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = corsair
+					culture = ROOT
+					female = no
+					trait = pirate
+				}
+			}
+			new_character = {
+				change_martial = 3
+				random_list = {
+					15 = { add_trait = skilled_warrior }
+					60 = { add_trait = trained_warrior }
+					25 = { add_trait = poor_warrior }
+				}	
+				
+				check_for_defunct_culture_effect = yes
+				save_event_target_as = pirate_rebel
+			}	
+			#Invalid cultures			
+			if = { 
+				limit = {
+					event_target:pirate_rebel = {
+						NOT = { culture = ROOT }
+						OR = {
+							wildling_culture_trigger = yes
+							culture_group = dothraki_group
+							culture = shadowlander
+							culture_group = jogos_nhai_group
+						}
+					}	
+				}
+				random_realm_character = {
+					limit = {
+						NOT_mythical_creature_trigger = yes
+						same_sex = event_target:pirate_rebel
+					}
+					preferred_limit = {
+						culture = ROOT
+					}
+					event_target:pirate_rebel = {
+						culture = PREV
+						set_graphical_culture = PREV
+						set_name = PREV
+					}	
+				}	
+			}
+		}		
+	}
+	
+	option = { # Fight them!
+		name = "EVTOPTAPIRATE3"
+		event_target:pirate_rebel = { tooltip = { show_portrait = yes } }
+		hidden_tooltip = {
+			event_target:pirate_rebel = {
+				create_title = {
+					tier = DUKE
+					landless = yes
+					temporary = yes
+					rebel = yes
+					culture = ROOT
+					name = "PIRATE_REVOLT"
+					holder = THIS
+				}	
+				spawn_pirate_army_effect = yes
+			
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = powerful
+						}
+					}
+					spawn_pirate_army_effect = yes
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = very_powerful
+						}
+					}
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = extremely_powerful
+						}
+					}
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+					spawn_pirate_army_effect = yes
+				}
+					
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					trait = pirate
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+				}
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					trait = pirate
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+				}
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					trait = pirate
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+				}
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = THIS
+					culture = THIS
+					female = no
+					trait = pirate
+				}
+				new_character = {
+					random_list = {
+						10 = { add_trait = skilled_warrior }
+						30 = { add_trait = trained_warrior }
+						60 = { add_trait = poor_warrior }
+					}
+				}
+				# DoW on the province owner
+				ROOT = {
+					owner = {
+						if = {
+							limit = { independent = no }
+							liege = { event_target:pirate_rebel = { set_defacto_liege = PREV } }
+							liege_before_war = { event_target:pirate_rebel = { set_defacto_liege = PREV } }
+						}
+						reverse_war = {
+							target = event_target:pirate_rebel
+							casus_belli = peasant_revolt
+							thirdparty_title = ROOT # The county
+						}
+						reverse_opinion = {
+							who = event_target:pirate_rebel
+							modifier = opinion_evil_tyrant
+						}
+					}
+				}
+			}
+			owner = {
+				any_liege = { # Inform the lieges
+					character_event = {
+						id = pirate.4
+					}
+				}
+			}
+			# Lower revolt risk
+			remove_province_modifier = recent_revolt
+			add_province_modifier = {
+				name = recent_revolt
+				duration = 3650
+			}
+		}
+	}
+}
+
+character_event = {
+	id = pirate.4
+	desc = "EVTDESCPIRATE4"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAPIRATE3"
+	}
+}
+#Pirate weak succession, destroy titles
+character_event = {
+	id = pirate.7
+	desc = "EVTDESCpirate.7"
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	only_playable = yes
+
+	trigger = {
+		trait = pirate
+		higher_tier_than = COUNT
+		current_heir = {
+			OR = {
+				AND = {
+					is_female = yes
+					ROOT = { #female heirs allowed if cognatic culture AND capital is ROOT's culture
+						NAND = {
+							true_cognatic_culture_trigger = yes
+							capital_scope = { culture_group = ROOT }
+						}
+					}
+				}	
+				NOT = { age = 16 }
+				trait = incapable
+				NOT = {
+					OR = {
+						prestige = 500
+						martial = 10
+						trait = master_warrior
+						diplomacy = 10
+					}
+				}
+				NOT = { trait = pirate }
+			}	
+		}
+	}
+	
+	immediate = {
+		#Mark current liege
+		if = { 
+			limit = { independent = no }
+			hidden_tooltip = { 
+				liege = { save_event_target_as = pirate_liege } 
+				liege_before_war = { save_event_target_as = pirate_liege } 
+			} 
+		}
+		
+		#if spare county held, chance of courtier usurping capital and duchies
+		if = {
+			limit = {
+				is_feudal = yes
+				any_demesne_title = {
+					is_landless_type_title = no
+					tier = DUKE
+				}
+				num_of_count_titles = 2
+			}
+			random_courtier = {
+				limit = {
+					NOT = { character = ROOT }
+					trait = pirate
+					is_ruler = no
+					is_female = no
+					age = 16
+					OR = {
+						prestige = 500
+						martial = 10
+						trait = master_warrior
+						diplomacy = 10
+					}
+					prisoner = no
+					is_incapable = no
+					can_press_claims_trigger = yes
+				}
+				hidden_tooltip = { 
+					random = {
+						chance = 75
+						save_event_target_as = pirate_usurper 
+					}		
+				}
+			}
+		}
+		
+		#inform liege
+		event_target:pirate_liege = {
+			if = { 
+				limit = { ai = no }
+				hidden_tooltip = { character_event = { id = pirate.799 } }
+			}
+		}
+		
+		#If not independent any pirate duke vassals become vassals of ruler's liege
+		if = { 
+			limit = { independent = no } 
+			event_target:pirate_liege = {
+				ROOT = {
+					any_vassal = {
+						limit = {						
+							tier = DUKE
+							trait = pirate	
+							OR = {
+								is_patrician = no
+								ROOT = { is_merchant_republic = no }
+							}							
+						} 
+						set_defacto_liege = PREVPREV
+						if = {
+							limit = { ROOT = { tier = KING} }
+							any_demesne_title = {
+								limit = { 
+									OR = {
+										tier = COUNT
+										tier = DUKE
+									}
+								}								
+								set_variable = { which = "de_facto_kingdom" value = 0 }
+							}
+						}
+					}
+				}
+			}
+		}
+		#If independent any duke/king vassals become independent
+		if = { 
+			limit = { independent = yes }
+			any_vassal = {
+				limit = { 
+					higher_tier_than = COUNT 
+					trait = pirate
+					OR = {
+						is_patrician = no
+						ROOT = { is_merchant_republic = no }
+					}
+				} 
+				set_defacto_liege = THIS
+				if = {
+					limit = { ROOT = { tier = EMPEROR } }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}	
+						set_variable = { which = "de_facto_empire" value = 0 }								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+				if = {
+					limit = { ROOT = { tier = KING} }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+			}
+		}	
+		
+		#Count Vassals become independent if dejure duchy is not held
+		if = { 
+			limit = { independent = no } 
+			event_target:pirate_liege = {
+				ROOT = {
+					any_vassal = {
+						limit = { 
+							tier = COUNT 
+							trait = pirate
+							primary_title = { dejure_liege_title = { NOT = { holder_scope = { character = ROOT } } } }
+							OR = {
+								is_patrician = no
+								ROOT = { is_merchant_republic = no }
+							}
+						} 
+						set_defacto_liege = PREVPREV
+						if = {
+							limit = { ROOT = { tier = KING} }
+							any_demesne_title = {
+								limit = { 
+									OR = {
+										tier = COUNT
+										tier = DUKE
+									}
+								}								
+								set_variable = { which = "de_facto_kingdom" value = 0 }
+							}
+						}
+					}
+				}
+			}
+		}
+		if = { 
+			limit = { independent = yes } 
+			any_vassal = {
+				limit = { 
+					tier = COUNT 
+					trait = pirate
+					primary_title = { dejure_liege_title = { NOT = { holder_scope = { character = ROOT } } } }
+					OR = {
+						is_patrician = no
+						ROOT = { is_merchant_republic = no }
+					}
+				} 
+				set_defacto_liege = THIS
+				if = {
+					limit = { ROOT = { tier = EMPEROR } }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}	
+						set_variable = { which = "de_facto_empire" value = 0 }								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+				if = {
+					limit = { ROOT = { tier = KING} }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+			}
+		}
+		
+		#Destroy all titles higher than duke if no non-pirate duke vassals
+		if = {
+			limit = { is_feudal = yes }
+			if = {
+				limit = {
+					NOT = { 
+						any_vassal = {
+							higher_tier_than = COUNT
+							NOT = { trait = pirate }
+						}
+					}	
+				}
+				any_demesne_title = {
+					limit = {
+						is_landless_type_title = no
+						higher_tier_than = DUKE
+					}
+					destroy_landed_title = THIS
+				}
+			}	
+			
+			#Manage duke tier titles
+			#Usurper takes titles
+			event_target:pirate_usurper = { 
+				ROOT = {
+					random_demesne_title = {
+						limit = {
+							tier = COUNT
+							location = { is_capital = yes }
+						}
+						usurp_title = { target = PREVPREV type = revolt }
+						location = {
+							remove_province_modifier = employed_cityguard 
+							remove_province_modifier = cityguard_busy
+							remove_province_modifier = cityguard_drilling
+							remove_province_modifier = forced_training
+							remove_province_modifier = capital_defense
+							#remove_province_modifier = burned_land
+							remove_province_modifier = tyranny
+						}
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						usurp_title = { target = PREVPREV type = revolt }
+					}
+				}
+			}
+			#If no usurper and no non-pirate vassals
+			if = {
+				limit = {
+					NOT = { event_target:pirate_usurper  = { always = yes } }				
+					NOT = { 
+						any_vassal = {
+							higher_tier_than = BARON
+							NOT = { trait = pirate }
+						}
+					}
+				}
+				if = {
+					limit = {
+						independent = no
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						gain_title = event_target:pirate_liege
+					}
+				}	
+				if = {
+					limit = {
+						independent = yes
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						destroy_landed_title = THIS
+					}
+				}
+			}	
+		}
+		
+		#Double check for patrician game over
+		if = {
+			limit = {
+				is_patrician = yes
+				OR = {
+					AND = {
+						is_merchant_republic = yes
+						lower_tier_than = DUKE
+					}
+					AND = {
+						is_merchant_republic = no
+						NOT = {
+							liege = {
+								is_merchant_republic = yes
+								higher_tier_than = COUNT
+							}
+						}	
+					}
+				}
+			}
+			family_palace = { destroy_settlement = THIS }
+			set_government_type = feudal_government
+		}
+		
+		#If split from liege via error, re-vassalise	
+		event_target:pirate_liege = {
+			ROOT = { 
+				if = {
+					limit = { independent = yes }
+					set_defacto_liege = PREV 
+				}
+			}
+		}
+		
+		if = { #pirate usurper becomes regent if possible
+			limit = {
+				event_target:pirate_usurper = {
+					is_ruler = yes
+					liege = { character = ROOT }
+				}
+			}
+			event_target:pirate_usurper = { character_event = { id = regency.55 days = 1 } }
+		}
+		
+		if = { #If heir is a landed non-pirate, random courtier takes remaining titles
+			limit = {
+				current_heir = {
+					is_playable = yes
+					NOT = { trait = pirate }
+				}
+			}
+			random_courtier = {
+				limit = {
+					NOT = { character = ROOT }
+					trait = pirate
+					is_ruler = no
+					is_female = no
+					age = 16
+					OR = {
+						prestige = 250
+						martial = 10
+						trait = master_warrior
+						diplomacy = 8
+						is_councillor = yes
+					}
+					prisoner = no
+					is_incapable = no
+					can_press_claims_trigger = yes
+				}
+				ROOT = {
+					any_demesne_title = {
+						gain_title = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTApirate.7"	
+	}
+}
+character_event = { #inform liege
+	id = pirate.799
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCPIRATE799
+		trigger = { event_target:pirate_usurper  = { always = no } }
+	}
+	desc = {
+		text = EVTDESCPIRATE799B
+		trigger = { event_target:pirate_usurper  = { always = yes } }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Weak heir warning
+character_event = {
+	id = pirate.8
+	picture = GFX_evt_pirates
+	
+	ai = no
+	
+	desc = {
+		text = "EVTDESCpirate.8"
+		trigger = { current_heir = { trait = pirate } }
+	}	
+	desc = {
+		text = "EVTDESCpirate.8B"
+		trigger = { current_heir = { NOT = { trait = pirate } } }
+	}
+	
+	trigger = {
+		trait = pirate
+		higher_tier_than = COUNT
+		current_heir = {
+			OR = {
+				AND = {
+					is_female = yes
+					ROOT = { #female heirs allowed if cognatic culture AND capital is ROOT's culture
+						NAND = {
+							true_cognatic_culture_trigger = yes
+							capital_scope = { culture_group = ROOT }
+						}
+					}
+				}
+				NOT = { age = 16 }
+				trait = incapable
+				NOT = {
+					OR = {
+						prestige = 500
+						martial = 10
+						trait = master_warrior
+						diplomacy = 10
+					}
+				}
+				NOT = { trait = pirate }
+			}	
+			OR = {
+				NOT = { has_character_flag = weak_heir_warning }	
+				had_character_flag = { flag = weak_heir_warning days = 2190 }
+			}
+		}
+		NOT = { has_character_flag = STOP_weak_heir_warning }		
+	}
+	
+	mean_time_to_happen = {
+		months = 3
+	}
+	
+	option = {
+		name = "EVTOPTApirate.8"
+		current_heir = { set_character_flag = weak_heir_warning	}
+		custom_tooltip = { text = TOOLTIPpirate.8 }
+	}
+	option = {
+		name = "EVTOPTBpirate.8"	
+		set_character_flag = STOP_weak_heir_warning	
+	}
+}
+#Resort to Piracy?
+character_event = {
+	id = pirate.9
+	desc = "EVTDESCPIRATE9"
+	picture = GFX_evt_pirates
+	
+	only_independent = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	war = no
+	
+	trigger = {
+		tier = COUNT
+		is_feudal = yes
+		primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+		NOT = {
+			OR = {
+				religion = pirate
+				religion = corsair
+			}	
+		}
+		capital_scope = { port = yes }
+		NOT = { culture_group = unoccupied_group }
+		NOT = { trait = nightswatch }
+		is_nomadic = no
+		NOT = { trait = wildling }
+		NOT = { trait = just }
+		NOT = { trait = honorable }
+		NOT = { trait = kind }
+		NOT = { trait = proud }
+		NOT = { trait = dragon_rider }
+		NOT = { trait = liberator }
+		NOT = { has_character_flag = no_pirate }
+	}
+	
+	mean_time_to_happen = {
+		years = 50
+		modifier = {
+			factor = 0.05
+			capital_scope = { 
+				OR = {
+					region = world_stepstones
+					region = world_basilisk_isles
+				}	
+			}
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { wealth = 0 }
+		}
+	}
+	
+
+	option = {
+		name = "EVTOPTAPIRATE9" #YES
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				capital_scope = { 
+					OR = {
+						region = world_stepstones
+						region = world_basilisk_isles
+					}	
+				}
+			}
+			modifier = {
+				factor = 3
+				trait = lunatic
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				martial = 14
+			}
+			modifier = {
+				factor = 1.5
+				martial = 17
+			}
+			modifier = {
+				factor = 1.5
+				martial = 20
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes	
+			}	
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes	
+		}
+		if = {
+			limit = {
+				capital_scope = {
+					OR = {
+						region = world_summer_sea
+						region = world_ghiscar
+						region = world_jade_sea
+					}						
+				} 
+			}
+			religion = corsair
+		}
+		if = {
+			limit = {
+				capital_scope = {
+					NOR = {
+						region = world_summer_sea
+						region = world_ghiscar
+						region = world_jade_sea
+					}						
+				}  
+			}
+			religion = pirate
+		}
+		add_trait = pirate
+		prestige = -250
+		piety = -250
+	}
+	
+	option = {
+		name = "EVTOPTBPIRATE9" #NO
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				has_severe_disability_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 8 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 5 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 2 }
+			}
+		}
+		set_character_flag = no_pirate
+	}
+}
+###Sisterman piracy###
+character_event = {
+	id = pirate.10
+	desc = "EVTDESCPIRATE10"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE10" #YES
+		#check for bloodline
+		primary_title = { save_event_target_as = bloodline_title }
+		set_character_flag = sisterman_special_bloodline
+		character_event = { id = traditional_claims.201 }
+	}
+}
+# #child is deformed, sacrifice to the gods?
+# character_event = {
+	# id = pirate.11 #MERGED WITH BIRTH.990
+	
+	# is_triggered_only = yes
+	# hide_window = yes
+	
+	# option = {
+		# name = OK
+	# }
+# }
+
+character_event = {
+	id = pirate.12
+	desc = "EVTDESCPIRATE12"
+	picture = GFX_evt_birth
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = { 
+			is_alive = yes 
+			is_child_of = ROOT
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAPIRATE12" #Sacrifice
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = zealous
+			}		
+		}
+		FROM = {
+			death = {
+				death_reason = death_sacrificed_abandoned
+				killer = ROOT
+			}
+		}	
+		piety = 100
+	}
+	
+	option = {
+		name = "EVTOPTBPIRATE12" #NO
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				trait = honorable
+			}
+			modifier = {
+				factor = 5
+				trait = kind
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 5
+				trait = patient
+			}
+			modifier = {
+				factor = 5
+				trait = cynical
+			}		
+		}
+		prestige = -200
+		piety = -200
+	}
+}
+
+###Tyroshi/Lysene Patrician decides to go pirate###
+character_event = {
+	id = pirate.13
+	desc = "EVTDESCPIRATE13"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	is_patrician = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	war = no
+	
+	trigger = {
+		OR = {
+			culture = tyroshi
+			culture = lysene
+		}
+		trait = ruthless
+		trait = greedy
+		trait = lunatic
+		trait = ambitious
+		NOT = { religion = pirate }
+		NOT = { trait = nightswatch }
+		NOT = { trait = zealous }
+		NOT = { trait = just }
+		NOT = { trait = liberator }
+		NOT = { has_character_flag = no_pirate }
+	}
+	
+	option = {
+		name = "EVTOPTAPIRATE13" #YES
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				trait = cynical
+			}
+			modifier = {
+				factor = 4
+				trait = lunatic
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				martial = 14
+			}
+			modifier = {
+				factor = 1.5
+				martial = 17
+			}
+			modifier = {
+				factor = 1.5
+				martial = 20
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes	
+			}	
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes	
+		}
+		prestige = -250
+		piety = -250
+		religion = pirate
+		add_trait = pirate
+	}
+	
+	option = {
+		name = "EVTOPTBPIRATE13" #NO
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = slothful
+			}
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				has_severe_disability_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 8 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 5 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 2 }
+			}
+		}
+		set_character_flag = no_pirate
+	}
+}
+
+###Anti-Piracy War- leader goes pirate?###
+character_event = {
+	id = pirate.14
+	
+	is_triggered_only = yes
+	hide_window = yes
+	war = yes
+	only_rulers = yes
+	
+	trigger = {
+		any_war = {
+			using_cb = anti_piracy
+			attacker = { character = ROOT }
+		}
+	}
+	
+	immediate = {
+		random_courtier = {
+			limit = {
+				liege = { character = ROOT }
+				is_ruler = no
+				in_command = yes
+				NOT = { family = ROOT }
+				martial = 10
+				diplomacy = 8				
+				location = { #is actually in pirate territory
+					owner = { trait = pirate }
+				}
+				prestige = 0
+				
+				NOT = { trait = content }
+				NOT = { trait = honorable }
+				NOT = { trait = just }
+				NOT = { trait = liberator }
+				NOT = { trait = nightswatch }
+			}
+			character_event = { id = pirate.15 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = pirate.15
+	desc = "EVTDESCPIRATE15"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	
+	immediate = { location = { save_event_target_as = pirate_location } }
+
+	option = {
+		name = "EVTOPTAPIRATE13" #YES
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 10
+				trait = pirate
+			}
+			modifier = {
+				factor = 4
+				trait = cynical
+			}
+			modifier = {
+				factor = 4
+				trait = lunatic
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				martial = 14
+			}
+			modifier = {
+				factor = 1.5
+				martial = 17
+			}
+			modifier = {
+				factor = 1.5
+				martial = 20
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes	
+			}	
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes	
+		}
+		if = {
+			limit = { NOT = { trait = pirate } }
+			if = {
+				limit = {
+					location = {
+						OR = {
+							region = world_summer_sea
+							region = world_ghiscar
+							region = world_jade_sea
+						}						
+					} 
+				}
+				religion = corsair
+			}
+			if = {
+				limit = {
+					location = {
+						NOR = {
+							region = world_summer_sea
+							region = world_ghiscar
+							region = world_jade_sea
+						}						
+					}  
+				}
+				religion = pirate
+			}
+			add_trait = pirate
+			piety = -200
+		}	
+		prestige = 100	
+		clr_global_flag = war_cooldown_period		
+		create_title = {
+			tier = DUKE
+			landless = yes
+			temporary = yes
+			culture = ROOT
+			name = "PIRATE_FLEET"
+			holder = ROOT
+		}
+		set_defacto_liege = ROOT
+		set_government_type = pirate_government
+		event_target:pirate_location = {
+			ROOT = {
+				spawn_unit = {
+					province = PREV
+					home = PREV
+					owner = THIS
+					leader = ROOT
+					match_character = FROM
+					match_mult = 0.12
+					match_min = 100
+					match_max = 5000
+					attrition = 0.75
+				}
+				spawn_unit = {
+					province = PREV
+					home = PREV
+					owner = THIS
+					match_character = FROM
+					match_mult = 0.12
+					match_min = 100
+					match_max = 5000
+					attrition = 0.75
+				}
+				spawn_unit = {
+					province = PREV
+					home = PREV
+					owner = THIS
+					match_character = FROM
+					match_mult = 0.12
+					match_min = 100
+					match_max = 5000
+					attrition = 0.75
+				}
+			}
+			owner = {
+				primary_title = {
+					reverse_war = {
+						target = ROOT
+						casus_belli = pirate_invasion
+					}
+				}
+				if = {
+					limit = { NOT = { character = FROMFROMFROM } }
+					character_event = { id = pirate.1699 } #inform
+				}
+			}
+		}
+		# Create some decent commander characters
+		FROM = {
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = PREV
+						culture = PREV
+						female = no
+						age = 30
+						trait = trained_warrior
+					}
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = PREV
+						culture = PREV
+						female = no
+						age = 25
+						trait = trained_warrior
+					}
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = PREV
+						culture = PREV
+						female = no
+						age = 33
+						trait = trained_warrior
+					}
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = PREV
+						culture = PREV
+						female = no
+						age = 29
+						trait = trained_warrior
+					}
+				}
+			}
+		}	
+			
+		# Create a fleet, just to be sure
+		spawn_fleet = {
+			province = closest # closest sea zone
+			owner = ROOT
+			disband_on_peace = yes
+			troops =
+			{
+				galleys = { 175 175 }
+			}
+		}
+		FROM = { 
+			opinion = {
+				who = ROOT
+				modifier = opinion_traitor
+			}
+			character_event = { id = pirate.16 } 
+		}
+		FROMFROMFROM = { #inform targeted pirate
+			character_event = { id = pirate.1699 } #inform
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBPIRATE13" #NO
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = slothful
+			}
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				has_severe_disability_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 8 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 5 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { martial = 2 }
+			}
+		}
+	}
+}
+character_event = { #inform liege
+	id = pirate.16
+	desc = "EVTDESCPIRATE16"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE16"
+		prestige = -100
+	}
+}	
+character_event = { #inform targeted pirate
+	id = pirate.1699
+	desc = "EVTDESCPIRATE1699"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE1699"
+	}
+}	
+#Pirate captures highborn noble
+character_event = {
+	id = pirate.17
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	hide_window = yes
+
+	trigger = {
+		trait = pirate
+		NOT = {
+			any_liege = {
+				NOT = { trait = pirate }
+			}
+		}
+		capital_scope = { port = yes }
+	}
+	
+	mean_time_to_happen = {
+		years = 100
+		modifier = {
+			factor = 0.5
+			tier = DUKE
+		}
+		modifier = {
+			factor = 0.25
+			higher_tier_than = DUKE
+		}
+		modifier = {
+			factor = 0.75
+			capital_holding = { has_building = ca_asoiaf_pirateshipyard_2 }
+		}
+		modifier = {
+			factor = 0.75
+			capital_holding = { has_building = ca_asoiaf_pirateshipyard_3 }
+		}
+		modifier = {
+			factor = 0.75
+			capital_holding = { has_building = ca_asoiaf_pirateshipyard_4 }
+		}
+		modifier = {
+			factor = 0.75
+			capital_holding = { has_building = ca_asoiaf_pirateshipyard_5 }
+		}
+		modifier = {
+			factor = 0.33
+			in_command = yes
+			is_at_sea = yes
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { martial = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { martial = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { martial = 6 }
+		}
+		modifier = {
+			factor = 0.9
+			martial = 10
+		}
+		modifier = {
+			factor = 0.9
+			martial = 12
+		}
+		modifier = {
+			factor = 0.9
+			martial = 14
+		}
+		modifier = {
+			factor = 0.9
+			martial = 16
+		}
+		modifier = {
+			factor = 0.9
+			martial = 18
+		}
+		modifier = {
+			factor = 0.9
+			martial = 20
+		}
+	}
+	
+	immediate = {
+		random_playable_ruler = {
+			limit = {
+				capital_scope = { port = yes }
+				demesne_size = 1
+				NOT = { same_realm = ROOT }				
+				NOT = { culture_group = unoccupied_group }
+				NOT = { culture_group = winter_group }
+				is_nomadic = no
+				OR = {
+					AND = {
+						ROOT = { NOT = { is_at_sea = yes } }
+						is_within_diplo_range = ROOT
+					}	
+					capital_scope = {
+						any_neighbor_province = {
+							ROOT = { location = { province_id = PREVPREV } }
+						}
+					}
+				}
+			}
+			random_courtier = {
+				limit = {
+					age = 15
+					prisoner = no
+					NOT = { is_inaccessible_trigger = yes }
+					is_incapable = no
+					has_epidemic = no
+					in_command = no
+					location = { port = yes }
+					is_within_diplo_range = ROOT
+					OR = { #is important
+						is_ruler = yes
+						wealth = 100
+						liege = { is_close_relative = PREV }
+						AND = {
+							NOT = { dynasty = 0 }
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}
+						}	
+					}
+				}
+				character_event = { id = pirate.18 }
+				any_ward = {
+					limit = {
+						prisoner = no
+						NOT = { is_inaccessible_trigger = yes }
+						is_incapable = no
+						in_command = no
+						at_location = PREV
+					}
+					character_event = { id = pirate.18 }
+				}
+			}
+			hidden_tooltip = { #anti-piracy war prompt
+				top_liege = {
+					character_event = { id = 45416 days = 100 random = 50 }
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #inform captured!
+	id = pirate.18
+	desc = "EVTDESCPIRATE18"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE18"
+		trigger = {
+			NAND = {
+				trait = dragon_rider
+				any_friend = {
+					trait = dragon
+					NOT = { trait = maimed_dragon }
+				}
+			}
+		}
+		tooltip = { imprison = FROM }
+		set_character_flag = captured_in_battle
+		hidden_tooltip = {
+			FROM = { character_event = { id = pirate.19 } }
+			any_playable_ruler = {
+				limit = { 
+					ai = no 
+					NOT = { character = ROOT }
+					OR = {
+						is_liege_of = ROOT
+						is_close_relative = ROOT
+					}
+				}
+				character_event = { id = pirate.20 }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBPIRATE18" #Dracarys
+		trigger = {
+			trait = dragon_rider
+			any_friend = {
+				trait = dragon
+				NOT = { trait = maimed_dragon }
+			}
+		}
+		tooltip_info = dragon_rider
+		prestige = 30
+		FROM = { 
+			character_event = { id = pirate.1999 tooltip = TOOLTIPpirate.1999 } 
+			tooltip = { prestige = -30 }
+		}
+	}
+}	
+character_event = { #inform pirate
+	id = pirate.19
+	desc = "EVTDESCPIRATE19"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE19"
+		FROM = { imprison = ROOT }
+		wealth = 25
+	}
+}
+character_event = { #inform liege
+	id = pirate.20
+	desc = "EVTDESCPIRATE20"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE20"
+		FROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+character_event = { #inform pirate attacked by dragon rider
+	id = pirate.1999
+	desc = "EVTDESCPIRATE1999"
+	picture = "GFX_valyria_dragon"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAPIRATE1999"
+		prestige = -30
+	}
+}
+#Corsair visits skull island
+long_character_event = {
+	id = pirate.21
+	desc = "EVTDESCPIRATE21"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	religion = corsair
+	
+	trigger = {	
+		capital_scope = { port = yes }
+		prestige = 200
+		NOT = { has_character_flag = skull_island }
+	}
+	
+	weight_multiplier = {
+		years = 1
+		
+		modifier = {
+			factor = 4
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.25
+			trait = cynical
+		}
+		modifier = {
+			factor = 4
+			trait = ruthless
+		}
+		modifier = {
+			factor = 0.25
+			trait = honorable
+		}
+	}
+	
+	immediate = {
+		set_character_flag = skull_island
+	}
+	
+	option = {
+		name = "EVTOPTAPIRATE21"
+		piety = 150
+		scaled_wealth = { value = -0.25 min = -25 max = -300 }
+	}
+	option = {
+		name = "EVTOPTBPIRATE21"
+		ai_chance = { factor = 0 }
+		prestige = -50
+	}
+}	
+# #AI antipiracy war prompt, triggered from other events MERGED INTO 45416
+# character_event = {
+	# id = pirate.22
+
+	# is_triggered_only = yes
+	# hide_window = yes
+	# prisoner = no
+	
+	# trigger = {
+		# ai = yes
+		# NOT = { reverse_has_truce = FROM }
+		
+		# NOT = { trait = pirate }
+		# NOT = { trait = nightswatch }
+		# FROM = {
+			# higher_tier_than = DUKE
+			# any_demesne_title = {
+				# higher_tier_than = DUKE
+				# is_landless_type_title = no
+				# controls_religion = no
+			# }
+			# trait = pirate
+			# independent = yes
+			# NOT = { trait = nightswatch }
+			# NOT = { same_realm = ROOT }
+		# }
+		# OR = { #Cannot attack vassals split by mega war
+			# NOT = { FROM = { has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } } }
+			# NOT = { ROOT = { higher_tier_than = FROM } }
+		# }
+	# }
+		
+	# option = {
+		# name = "Let's do it!"
+		# ai_chance = {
+			# factor = 50
+			
+			# modifier = {
+				# factor = 0.1
+				# war = yes
+			# }
+			# modifier = {
+				# factor = 0
+				# is_primary_war_defender = yes
+			# }
+			# modifier = {
+				# factor = 0.5
+				# has_regent = yes
+			# }
+			
+			# modifier = {
+				# factor = 4
+				# trait = diligent
+			# }
+			# modifier = {
+				# factor = 0.25
+				# trait = slothful
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = ambitious
+			# }
+			# modifier = {
+				# factor = 0.5
+				# trait = content
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = proud
+			# }
+			# modifier = {
+				# factor = 0.5
+				# trait = humble
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = wroth
+			# }
+			# modifier = {
+				# factor = 0.5
+				# trait = patient
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = ruthless
+			# }
+			# modifier = {
+				# factor = 0.5
+				# trait = honorable
+			# }
+			
+			# modifier = {
+				# factor = 0.05
+				# FROM = {
+					# relative_power = {
+						# who = ROOT
+						# power = 2
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# FROM = {
+					# relative_power = {
+						# who = ROOT
+						# power = 1.5
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = {
+					# NOT = {
+						# relative_power = {
+							# who = ROOT
+							# power = 0.75
+						# }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = {
+					# NOT = {
+						# relative_power = {
+							# who = ROOT
+							# power = 0.5
+						# }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = {
+					# NOT = {
+						# relative_power = {
+							# who = ROOT
+							# power = 0.25
+						# }
+					# }	
+				# }
+			# }
+			
+			# modifier = {
+				# factor = 0.25
+				# is_allied_with = FROM
+			# }
+			
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -99 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -79 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -59 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -39 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -19 } }
+			# }
+			
+			# modifier = {
+				# factor = 0.66
+				# opinion = { who = FROM value = 20 }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# opinion = { who = FROM value = 40 }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# opinion = { who = FROM value = 60 }
+			# }
+			# modifier = {
+				# factor = 0
+				# opinion = { who = FROM value = 75 }
+			# }		
+		# }
+		# clr_global_flag = war_cooldown_period
+		# war = {
+			# target = FROM
+			# casus_belli = anti_piracy
+		# }
+	# }
+	
+	# option = {
+		# name = "Let's not do it!"
+		# ai_chance = {
+			# factor = 50
+		# }
+	# }
+# }
+
+# Renounce piracy
+character_event = {
+	id = pirate.25
+	desc = EVTDESCpirate.25
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	
+	option = { # Capital religion if not Pirate or Corsair
+		name = EVTOPTApirate.25
+		trigger = {
+			is_ruler = yes
+			capital_scope = { 
+				NOR = {
+					religion = pirate
+					religion = corsair
+					is_lady_of_the_waves_pirate_religion_trigger = yes
+				}
+			}
+		}
+		ai_chance = { factor = 100 }
+		capital_scope = {
+			reverse_religion = ROOT
+		}
+	}
+	option = { # Capital religion if not Pirate or Corsair
+		name = EVTOPTApirate.25
+		trigger = {
+			is_ruler = no
+			liege = {
+				capital_scope = { 
+					NOR = {
+						religion = pirate
+						religion = corsair
+						is_lady_of_the_waves_pirate_religion_trigger = yes
+					}
+				}
+			}	
+		}
+		ai_chance = { factor = 50 }
+		liege = {
+			capital_scope = {
+				reverse_religion = ROOT
+			}
+		}	
+	}
+	
+	option = { # Spouse religion if not Pirate or Corsair
+		name = EVTOPTApirate.25
+		trigger = {
+			any_spouse = { 
+				NOR = {
+					religion = pirate
+					religion = corsair
+					is_lady_of_the_waves_pirate_religion_trigger = yes
+				}
+			}
+		}
+		ai_chance = { factor = 50 }
+		random_spouse = {
+			limit = {
+				NOR = {
+					religion = pirate
+					religion = corsair
+					is_lady_of_the_waves_pirate_religion_trigger = yes
+				}
+			}
+			reverse_religion = ROOT
+		}
+	}
+	option = { # Father religion if not Pirate or Corsair
+		name = EVTOPTApirate.25
+		trigger = {
+			father_even_if_dead = { 
+				NOR = {
+					religion = pirate
+					religion = corsair
+					is_lady_of_the_waves_pirate_religion_trigger = yes
+				}
+			}
+		}
+		ai_chance = { factor = 50 }
+		father_even_if_dead = { 
+			reverse_religion = ROOT
+		}
+	}
+	option = { # Valyrian
+		name = EVTOPTGpirate.25
+		trigger = { 
+			OR = {
+				trait = sympathy_valyrian_rel_group
+				culture_group = valyrian
+				culture = essarian
+				culture = gogossosi
+			}
+		}
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = sympathy_valyrian_rel_group
+			}
+		}
+		religion = valyrian_rel
+	}
+	option = { # Sarnor
+		name = EVTOPTHpirate.27
+		trigger = { 
+			OR = {
+				trait = sympathy_sarnor_rel
+				culture_group = sarnor_group
+			}
+		}
+		ai_chance = { 
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = sympathy_sarnor_rel
+			}
+		}
+		religion = gods_sarnor
+	}
+	option = { # Westeros religions
+		name = EVTOPTCpirate.25
+		trigger = {
+			OR = {				
+				capital_scope = { region = world_westeros }
+				culture_group = andal
+				culture_group = first_men
+				culture_group = free_folk
+				culture_group = dornish
+				culture_group = iron_isles_culture
+				culture = western_valyrian
+				trait = sympathy_westerosi
+				trait = sympathy_drowned_god
+				trait = sympathy_wildling_religion
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				OR = {
+					trait = sympathy_westerosi
+					trait = sympathy_drowned_god
+					trait = sympathy_wildling_religion
+				}
+			}
+		}
+		character_event = { id = pirate.26 tooltip = TOOLTIPWESTEROSpirate.25 }
+	}
+	option = { # Free Cities religions
+		name = EVTOPTDpirate.25
+		trigger = {
+			OR = {
+				capital_scope = { region = world_free_cities }
+				capital_scope = { region = world_sarnor }
+				culture_group = free_cities
+				trait = sympathy_essos_group
+			}		
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_essos_group
+			}
+		}
+		set_character_flag = page_1
+		character_event = { id = pirate.27 tooltip = TOOLTIPFREECITIESpirate.25 }
+	}
+	option = { # Far East religions
+		name = EVTOPTEpirate.25
+		trigger = {
+			OR = {
+				capital_scope = { region = world_ghiscar }
+				capital_scope = { region = world_jade_sea }
+				capital_scope = { region = world_far_east }
+				culture_group = ghiscari_group
+				culture_group = moraqi_group
+				culture_group = yi_ti_group
+				culture_group = jade_islands_group
+				culture_group = asshai_group
+				culture_group = qarth_group
+				culture_group = hyrkoon_group
+				culture = lhazareen
+				culture_group = ibbenese_group
+				trait = sympathy_ghiscar_rel
+				trait = sympathy_qarth_rel
+				trait = sympathy_far_east_group
+				trait = sympathy_ibben_rel
+				trait = sympathy_lhazar_rel_group
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				OR = {
+					trait = sympathy_ghiscar_rel
+					trait = sympathy_qarth_rel
+					trait = sympathy_far_east_group
+					trait = sympathy_ibben_rel
+					trait = sympathy_lhazar_rel_group
+				}
+			}
+		}
+		set_character_flag = page_1
+		character_event = { id = pirate.28 tooltip = TOOLTIPFAREASTpirate.25 }
+	}
+	option = { # Summer Sea religions
+		name = EVTOPTFpirate.25
+		trigger = {
+			OR = {
+				capital_scope = { region = world_summer_sea }
+				culture_group = summer_islands
+				culture_group = naath_group
+				trait = sympathy_summer_rel_group
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_summer_rel_group
+			}
+		}
+		character_event = { id = pirate.29 tooltip = TOOLTIPSUMMERSEApirate.25 }
+	}
+	
+	after = {
+		if = {
+			limit = {
+				NOR = {
+					religion = pirate
+					religion = corsair
+				}
+			}
+			religion_authority = {
+				modifier = ruler_converted_to
+			}
+			clr_character_flag = reounced_piracy
+			set_government_type = feudal_government
+			if = {
+				limit = { trait = cynical }
+				add_trait = sympathy_pirate_group
+			}
+			if = {
+				limit = { 
+					NOT = { trait = cynical }
+					NOT = { trait = zealous }
+				}
+				random = {
+					chance = 50
+					add_trait = sympathy_pirate_group
+				}	
+			}
+		}
+	}
+}
+# Renounce piracy - Westeros religions
+character_event = {
+	id = pirate.26
+	desc = EVTDESCpirate.26
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = { # The Seven
+		name = EVTOPTApirate.26
+		trigger = {
+			OR = {
+				capital_scope = { 
+					OR = {
+						region = world_westeros_west
+						region = world_westeros_south
+						region = world_westeros_east
+						region = world_riverlands
+					}
+					NOT = { region = world_iron_isles }
+				}
+				culture_group = andal
+				culture_group = dornish
+				culture = western_valyrian
+				culture = half_southron
+				AND = {
+					trait = sympathy_westerosi
+					NOT = { culture_group = first_men }
+					NOT = { culture_group = free_folk }
+				}	
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_westerosi
+			}
+		}
+		religion = the_seven
+	}
+	option = { # Old Gods
+		name = EVTOPTBpirate.26
+		trigger = {
+			OR = {
+				capital_scope = { region = world_north }
+				culture_group = first_men
+				AND = {
+					trait = sympathy_westerosi
+					NOT = { culture_group = andal }
+					NOT = { culture_group = dornish }
+					NOT = { culture = western_valyrian }
+					NOT = { culture = half_southron }
+				}
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_westerosi
+			}
+		}
+		religion = old_gods
+	}
+	option = { # Beyond the Wall Old Gods, Mountain Old Gods for Vale
+		name = EVTOPTCpirate.26
+		trigger = {
+			OR = {
+				capital_scope = { region = world_beyond_the_wall }
+				culture_group = free_folk
+				culture = moon_clansman
+				culture = skagosi
+				trait = sympathy_wildling_religion
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_wildling_religion
+			}
+		}
+		if = {
+			limit = { 
+				OR = {
+					capital_scope = { region = world_vale } 
+					culture = moon_clansman
+				}	
+			}
+			religion = mountain_old_gods
+		}
+		if = {
+			limit = { culture = thenn }
+			religion = thenn_rel
+		}
+		if = {
+			limit = { 
+				NOR = {
+					capital_scope = { region = world_vale } 
+					culture = moon_clansman
+					culture = thenn
+				}
+			}
+			religion = beyond_wall_old_gods
+		}
+	}
+	option = { # Drowned God
+		name = EVTOPTDpirate.26
+		trigger = {
+			OR = {
+				capital_scope = { region = world_iron_isles }
+				culture_group = iron_isles_culture
+				trait = sympathy_drowned_god
+			}	
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_drowned_god
+			}
+		}
+		religion = drowned_god
+	}
+	
+	after = {
+		religion_authority = {
+			modifier = ruler_converted_to
+		}
+		clr_character_flag = reounced_piracy
+		set_government_type = feudal_government
+		if = {
+			limit = { trait = cynical }
+			add_trait = sympathy_pirate_group
+		}
+		if = {
+			limit = { 
+				NOT = { trait = cynical }
+				NOT = { trait = zealous }
+			}
+			random = {
+				chance = 50
+				add_trait = sympathy_pirate_group
+			}	
+		}
+	}
+}
+# Renounce piracy - Free City religions
+character_event = {
+	id = pirate.27
+	desc = EVTDESCpirate.27
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = { # Moonsingers
+		name = EVTOPTGpirate.27
+		trigger = { 
+			has_character_flag = page_1
+			OR = {
+				capital_scope = { region = world_braavos }
+				culture = braavosi
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = moonsingers
+		clr_character_flag = page_1
+	}
+	option = { # Black Goat of Qohor
+		name = EVTOPTBpirate.27
+		trigger = { 
+			has_character_flag = page_1 
+			OR = {
+				capital_scope = { region = world_qohor }
+				culture = qohorik
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = black_goat
+		clr_character_flag = page_1
+	}	
+	option = { # Gods of Lorath
+		name = EVTOPTCpirate.27
+		trigger = { 
+			has_character_flag = page_1 
+			OR = {
+				capital_scope = { region = world_lorath }
+				culture = lorathi
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = gods_lorath
+		clr_character_flag = page_1
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_1
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_1
+		set_character_flag = page_2
+		character_event = { id = pirate.27 }
+	}
+	option = { # Trios
+		name = EVTOPTDpirate.27
+		trigger = { 
+			has_character_flag = page_2 
+			OR = {
+				capital_scope = { region = world_tyrosh }
+				culture = tyroshi
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = trios
+		clr_character_flag = page_2
+	}
+	option = { # Bearded Priests
+		name = EVTOPTEpirate.27
+		trigger = { 
+			has_character_flag = page_2 
+			OR = {
+				capital_scope = { region = world_norvos }
+				culture = norvosi
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = bearded_priests
+		clr_character_flag = page_2
+	}
+	option = { # Mother Rhoyne
+		name = EVTOPTFpirate.27
+		trigger = { 
+			has_character_flag = page_2 
+			OR = {
+				capital_scope = { region = world_rhoynar }
+				culture_group = dornish
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = rhoynar_pagan
+		clr_character_flag = page_2
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_2
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_2
+		set_character_flag = page_3
+		character_event = { id = pirate.27 }
+	}
+	
+	# option = { # Bakkalon
+		# name = EVTOPTHpirate.27
+		# trigger = { 
+			# has_character_flag = page_3
+		# }
+		# ai_chance = { factor = 1 }
+		# religion = bakkalon
+		# clr_character_flag = page_3
+	# }
+	option = { # R'hllor
+		name = EVTOPTApirate.27
+		trigger = { 
+			has_character_flag = page_3 
+		}
+		ai_chance = { factor = 10 }
+		religion = rhllor
+		clr_character_flag = page_3
+	}
+	option = { # Weeping Lady
+		name = EVTOPTIpirate.27
+		trigger = { 
+			has_character_flag = page_3
+			OR = {
+				capital_scope = { region = world_lys }
+				culture = lysene
+			}
+		}
+		ai_chance = { factor = 10 }
+		religion = weeping_lady
+		clr_character_flag = page_3
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_3
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_3
+		set_character_flag = page_1
+		character_event = { id = pirate.27 }
+	}
+	
+	after = {
+		if = {
+			limit = {
+				NOR = {
+					religion = pirate
+					religion = corsair
+				}
+			}
+			religion_authority = {
+				modifier = ruler_converted_to
+			}
+			clr_character_flag = reounced_piracy
+			set_government_type = feudal_government
+			if = {
+				limit = { trait = cynical }
+				add_trait = sympathy_pirate_group
+			}
+			if = {
+				limit = { 
+					NOT = { trait = cynical }
+					NOT = { trait = zealous }
+				}
+				random = {
+					chance = 50
+					add_trait = sympathy_pirate_group
+				}	
+			}
+		}
+	}
+}
+# Renounce piracy - Far East religions
+character_event = {
+	id = pirate.28
+	desc = EVTDESCpirate.28
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = { # Warlocks
+		name = EVTOPTApirate.28
+		trigger = { 
+			has_character_flag = page_1 
+			OR = {
+				capital_scope = { region = world_qarth }
+				culture_group = qarth_group
+				trait = sympathy_qarth_rel
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_qarth_rel
+			}
+		}
+		religion = qarth_warlocks
+		clr_character_flag = page_1
+	}
+	option = { # Ghiscari Harpy
+		name = EVTOPTBpirate.28
+		trigger = { 
+			has_character_flag = page_1 
+			OR = {
+				capital_scope = { region = world_ghiscar }
+				culture_group = ghiscari_group
+				trait = sympathy_ghiscar_rel
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_ghiscar_rel
+			}
+		}
+		religion = harpy
+		clr_character_flag = page_1
+	}
+	option = { # Bone Mountains
+		name = EVTOPTCpirate.28
+		trigger = { 
+			has_character_flag = page_1 
+			OR = {
+				capital_scope = { region = world_bone_mountains }
+				culture_group = hyrkoon_group
+				AND = {
+					trait = sympathy_far_east_group
+					NOT = { culture_group = asshai_group }
+					NOT = { culture_group = jade_islands_group }
+					NOT = { culture_group = nghai_group }
+					NOT = { culture_group = yi_ti_group }
+					NOT = { culture_group = moraqi_group }
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_far_east_group
+			}
+		}
+		religion = gods_bone_mountains
+		clr_character_flag = page_1
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_1
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_1
+		set_character_flag = page_2
+		character_event = { id = pirate.28 }
+	}
+	option = { # Ibben
+		name = EVTOPTDpirate.28
+		trigger = { 
+			has_character_flag = page_2 
+			OR = {
+				capital_scope = { region = world_ibben }
+				culture_group = ibbenese_group
+				trait = sympathy_ibben_rel
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_ibben_rel
+			}
+		}
+		religion = gods_ibben
+		clr_character_flag = page_2
+	}
+	option = { # The Great Shepard
+		name = EVTOPTEpirate.28
+		trigger = { 
+			has_character_flag = page_2 
+			OR = {
+				capital_scope = { region = world_lhazar }
+				culture = lhazareen
+				trait = sympathy_lhazar_rel_group
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_lhazar_rel_group
+			}
+		}
+		religion = great_shepherd
+		clr_character_flag = page_2
+	}
+	option = { # Stone Cow of Faros
+		name = EVTOPTFpirate.28
+		trigger = { 
+			has_character_flag = page_2
+			OR = {
+				capital_scope = { region = world_moraq }
+				culture_group = moraqi_group
+				AND = {
+					trait = sympathy_far_east_group
+					NOT = { culture_group = asshai_group }
+					NOT = { culture_group = jade_islands_group }
+					NOT = { culture_group = nghai_group }
+					NOT = { culture_group = yi_ti_group }
+					NOT = { culture_group = hyrkoon_group }
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_far_east_group
+			}
+		}
+		religion = stone_cow
+		clr_character_flag = page_2
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_2
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_2
+		set_character_flag = page_3
+		character_event = { id = pirate.28 }
+	}
+	option = { # The God of Yi Ti
+		name = EVTOPTGpirate.28
+		trigger = { 
+			has_character_flag = page_3 
+			OR = {
+				capital_scope = { region = world_yi_ti }
+				capital_scope = { region = world_leng }
+				culture_group = yi_ti_group
+				culture_group = jade_islands_group
+				AND = {
+					trait = sympathy_far_east_group
+					NOT = { culture_group = asshai_group }
+					NOT = { culture_group = nghai_group }
+					NOT = { culture_group = moraqi_group }
+					NOT = { culture_group = hyrkoon_group }
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_far_east_group
+			}
+		}
+		religion = yiti_gods
+		clr_character_flag = page_3
+	}
+	option = { # gods_nghai
+		name = EVTOPTHpirate.28
+		trigger = { 
+			has_character_flag = page_3 
+			OR = {
+				capital_scope = { region = world_nghai }
+				culture_group = nghai_group
+				AND = {
+					trait = sympathy_far_east_group
+					NOT = { culture_group = asshai_group }
+					NOT = { culture_group = jade_islands_group }
+					NOT = { culture_group = yi_ti_group }
+					NOT = { culture_group = moraqi_group }
+					NOT = { culture_group = hyrkoon_group }
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_far_east_group
+			}
+		}
+		religion = gods_nghai
+		clr_character_flag = page_3
+	}
+	option = { # Shadowbinders
+		name = EVTOPTIpirate.28
+		trigger = { 
+			has_character_flag = page_3 
+			OR = {
+				capital_scope = { region = world_asshai }
+				culture_group = asshai_group
+				AND = {
+					trait = sympathy_far_east_group
+					NOT = { culture_group = jade_islands_group }
+					NOT = { culture_group = nghai_group }
+					NOT = { culture_group = yi_ti_group }
+					NOT = { culture_group = moraqi_group }
+					NOT = { culture_group = hyrkoon_group }
+				}
+			}
+		}
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 5
+				trait = sympathy_far_east_group
+			}
+		}
+		religion = shadowbinders
+		clr_character_flag = page_3
+	}
+	option = {
+		name = EVTOPTMOREpirate.27
+		trigger = {
+			has_character_flag = page_3
+		}
+		ai_chance = { factor = 3 }
+		clr_character_flag = page_3
+		set_character_flag = page_1
+		character_event = { id = pirate.28 }
+	}
+	
+	after = {
+		if = {
+			limit = {
+				NOR = {
+					religion = pirate
+					religion = corsair
+				}
+			}
+			religion_authority = {
+				modifier = ruler_converted_to
+			}
+			clr_character_flag = reounced_piracy
+			set_government_type = feudal_government
+			if = {
+				limit = { trait = cynical }
+				add_trait = sympathy_pirate_group
+			}
+			if = {
+				limit = { 
+					NOT = { trait = cynical }
+					NOT = { trait = zealous }
+				}
+				random = {
+					chance = 50
+					add_trait = sympathy_pirate_group
+				}	
+			}
+		}
+	}
+}
+# Renounce piracy - Summer Sea religions
+character_event = {
+	id = pirate.29
+	desc = EVTDESCpirate.29
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = { # Summer Gods
+		name = EVTOPTApirate.29
+		trigger = {
+			OR = {
+				capital_scope = { region = world_summer_islands }
+				culture_group = summer_islands
+			}
+		}
+		religion = summer_rel
+	}
+	option = { # Natth
+		name = EVTOPTBpirate.29
+		trigger = {
+			OR = {
+				capital_scope = { duchy = { title = d_naath } }
+				culture_group = naath_group
+			}
+		}
+		religion = nath_pagan
+	}
+	after = {
+		if = {
+			limit = {
+				NOR = {
+					religion = pirate
+					religion = corsair
+				}
+			}
+			religion_authority = {
+				modifier = ruler_converted_to
+			}
+			clr_character_flag = reounced_piracy
+			set_government_type = feudal_government
+			if = {
+				limit = { trait = cynical }
+				add_trait = sympathy_pirate_group
+			}
+			if = {
+				limit = { 
+					NOT = { trait = cynical }
+					NOT = { trait = zealous }
+				}
+				random = {
+					chance = 50
+					add_trait = sympathy_pirate_group
+				}	
+			}
+		}
+	}
+}
+# Realm characters deicde whether to follow religion
+character_event = {
+	id = pirate.30
+	desc = EVTDESCpirate.30
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			NOR = {
+				religion = pirate
+				religion = corsair
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTApirate.30
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.05
+				trait = zealous
+			}
+			modifier = {
+				factor = 3
+				trait = cynical
+			}
+			modifier = {
+				factor = 10
+				is_landed = no
+			}
+			modifier = {
+				factor = 10
+				spouse = { character = FROM }
+			}
+		}
+		religion = FROM
+		remove_trait = pirate
+		hidden_tooltip = {
+			if = {
+				limit = { is_ruler = yes }
+				religion_authority = {
+					modifier = ruler_converted_to
+				}
+			}	
+			if = {
+				limit = { government = pirate_government }
+				set_government_type = feudal_government
+			}
+		}	
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+			piety = -50
+		}
+		if = {
+			limit = { trait = cynical }
+			add_trait = sympathy_pirate_group
+		}
+		if = {
+			limit = { NOT = { trait = cynical } }
+			random = {
+				chance = 50
+				add_trait = sympathy_pirate_group
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTBpirate.30	
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				is_ruler = no
+				OR = {
+					NOT = { age = 12 }
+					opinion = { who = FROM value = -19 }
+				}
+				OR = {
+					dynasty = FROM
+					is_close_relative = FROM
+				}
+			}
+			modifier = {
+				factor = 10
+				is_landed = yes
+			}
+		}
+		piety = 100
+	}
+}
+
+#Pirate Fleet modifiers
+character_event = {
+	id = pirate.40
+
+	only_playable = yes
+	hide_window = yes
+	
+	trigger = {
+		trait = pirate
+		prestige = 100
+		NOT = { has_character_flag = pirate_fleet_modifier }
+	}
+	
+	immediate = {
+		set_character_flag = pirate_fleet_modifier
+		character_event = { id = pirate.41 days = 1 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = pirate.41
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_character_flag = pirate_fleet_modifier
+	}
+	
+	immediate = {
+		remove_character_modifier = pirate_fleet_20
+		remove_character_modifier = pirate_fleet_18
+		remove_character_modifier = pirate_fleet_16
+		remove_character_modifier = pirate_fleet_14
+		remove_character_modifier = pirate_fleet_12
+		remove_character_modifier = pirate_fleet_10
+		remove_character_modifier = pirate_fleet_8
+		remove_character_modifier = pirate_fleet_6
+		remove_character_modifier = pirate_fleet_4
+		remove_character_modifier = pirate_fleet_3
+		remove_character_modifier = pirate_fleet_2
+		remove_character_modifier = pirate_fleet_1
+		if = {
+			limit = {
+				OR = {
+					NOT = { trait = pirate }
+					NOT = { prestige = 100 }
+					is_ruler = no
+				}
+			}
+			clr_character_flag = pirate_fleet_modifier			
+			break = yes
+		}
+		character_event = { id = pirate.41 days = 60 } #check modifier bi-monthly		
+		if = {
+			limit = { prestige = 2000 }
+			add_character_modifier = { name = pirate_fleet_20 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1800 }
+			add_character_modifier = { name = pirate_fleet_18 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1600 }
+			add_character_modifier = { name = pirate_fleet_16 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1400 }
+			add_character_modifier = { name = pirate_fleet_14 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1200 }
+			add_character_modifier = { name = pirate_fleet_12 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1000 }
+			add_character_modifier = { name = pirate_fleet_10 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 800 }
+			add_character_modifier = { name = pirate_fleet_8 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 600 }
+			add_character_modifier = { name = pirate_fleet_6 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 400 }
+			add_character_modifier = { name = pirate_fleet_4 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 300 }
+			add_character_modifier = { name = pirate_fleet_3 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 200 }
+			add_character_modifier = { name = pirate_fleet_2 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 100 }
+			add_character_modifier = { name = pirate_fleet_1 duration = -1 }
+			break = yes
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+# Pirate government check on_new_holder
+character_event = {
+	id = pirate.42
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		OR = {
+			religion = pirate
+			religion = corsair
+		}
+		NOT = { government = pirate_government }
+		NOT = { trait = nightswatch }	
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = { trait = pirate }
+			}
+			add_trait = pirate
+		}
+		if = {
+			limit = {
+				OR = {
+					government = feudal_government
+					AND = {
+						higher_tier_than = BARON
+						is_republic = yes
+						is_patrician = no
+					}
+				}
+			}
+			set_government_type = pirate_government
+		}
+		if = {
+			limit = { government = pirate_government }
+			any_demesne_title = {
+				limit = { NOT = { has_law = succ_turkish_succession } }
+				succession = turkish_succession
+				gender_succ = agnatic		
+			}
+		}
+		recalc_succession = yes
+	}
+	
+	option = {
+		name = OK
+	}
+}
+# Pirate adventurer
+character_event = { #target is found in master event
+	id = pirate.50
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {	
+		if = {
+			limit = { 
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 50
+				add_sympathy_trait_effect = yes			
+			}
+		}
+		if = {
+			limit = { trait = cynical }
+			add_sympathy_trait_effect = yes			
+		}
+		if = {
+			limit = {
+				event_target:pirate_invasion_target = {
+					capital_scope = {
+						OR = {
+							region = world_ghiscar
+							region = world_summer_sea
+							region = world_jade_sea
+						}
+					}
+				}	
+			}
+			religion = corsair
+		}
+		else = {
+			religion = pirate
+		}
+		add_trait = pirate
+		#Build flagship
+		if = {
+			limit = { 
+				wealth = 350
+				NOT = { trait = humble }
+			}
+			wealth = -250
+			add_artifact = enormous_flagship
+			new_artifact = { set_artifact_flag = heirloom_@PREV }
+			prestige = 150
+			character_event = { id = ironborn_events.87 } #name ship
+		}
+		else_if = {
+			limit = { wealth = 280 }
+			wealth = -180
+			add_artifact = regular_flagship
+			prestige = 80
+			character_event = { id = ironborn_events.87 } #name ship
+		}
+		else_if = {
+			limit = { wealth = 200 }
+			wealth = -140
+			add_artifact = small_flagship
+			prestige = 40
+			character_event = { id = ironborn_events.87 } #name ship
+		}
+		else_if = {
+			limit = { wealth = 100 }
+			wealth = -100
+		}
+		else = {
+			wealth = -50
+		}
+		set_defacto_liege = ROOT
+		set_government_type = pirate_government
+		spawn_unit = {
+			province = event_target:current_location
+			home = event_target:current_location
+			owner = ROOT
+			leader = ROOT
+			match_character = event_target:previous_liege
+			match_mult = 10
+			match_min = 334
+			match_max = 334
+			attrition = 1
+		}
+		spawn_unit = {
+			province = event_target:current_location
+			home = event_target:current_location
+			owner = ROOT
+			match_character = event_target:previous_liege
+			match_mult = 10
+			match_min = 333
+			match_max = 333
+			attrition = 1
+		}
+		spawn_unit = {
+			province = event_target:current_location
+			home = event_target:current_location
+			owner = ROOT
+			match_character = event_target:previous_liege
+			match_mult = 10
+			match_min = 333
+			match_max = 333
+			attrition = 1
+		}
+		spawn_fleet = {
+			province = closest # closest sea zone
+			owner = ROOT
+			cannot_inherit = yes
+			troops =
+			{
+				galleys = { 15 15 }
+			}
+			earmark = claimant_adventure
+		}
+		event_target:pirate_invasion_target = {
+			capital_scope = {
+				ROOT = {
+					unsafe_war = {
+						target = event_target:pirate_invasion_target
+						casus_belli = pirate_invasion
+						thirdparty_title = PREV
+						tier = DUKE
+					}
+				}
+			}
+			character_event = { id = pirate.51 }			
+		}	
+		if = {
+			limit = {
+				is_ruler = yes
+				war = yes
+			}
+			# Create some decent commander characters
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = event_target:current_location
+				female = no
+				age = 30
+				trait = trained_warrior
+				trait = pirate
+			}
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = event_target:current_location
+				female = no
+				age = 25
+				trait = trained_warrior
+				trait = pirate
+			}
+			character_event = { id = TOG.1378 } #Acquire companions
+			any_courtier = {
+				limit = { NOT = { religion = ROOT } }
+				if = {
+					limit = { 
+						NOT = { trait = zealous } 
+						NOT = { trait = cynical }
+					}
+					random = {
+						chance = 50
+						add_sympathy_trait_effect = yes			
+					}
+				}
+				if = {
+					limit = { trait = cynical }
+					add_sympathy_trait_effect = yes			
+				}
+				religion = ROOT
+				add_trait = pirate
+			}
+			any_player = {
+				limit = {
+					OR = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+					}
+					NOT = { character = event_target:pirate_invasion_target }
+					NOT = { character = event_target:previous_liege }
+				}
+				character_event = { id = pirate.52 }
+			}
+		}	
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #Inform target
+	id = pirate.51
+	desc = "EVTDESCpirate.51"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTApirate.51
+		show_portrait = event_target:previous_liege
+	}
+}
+character_event = { #Inform old liege/relatives
+	id = pirate.52
+	desc = "EVTDESCpirate.52"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTApirate.52
+		show_portrait = event_target:previous_liege
+	}
+}
+#Smuggle weapons to wildlings
+character_event = {
+	id = pirate.55
+	desc = "EVTDESCpirate.55"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	war = no
+	min_age = 16
+	prisoner = no
+	
+	trigger = {
+		trait = pirate
+		c_eastwatch = { holder_scope = { trait = nightswatch } }
+		in_command = no
+		any_province = {
+			OR = {
+				province_id = 6
+				province_id = 10
+				province_id = 13
+				province_id = 14
+			}
+			owner = { trait = wildling wealth = 50 }
+		}
+		OR = {
+			14 = { owner = { trait = wildling wealth = 50 } }
+		}
+		capital_scope = {
+			port = yes
+			OR = {
+				region = world_westeros_north
+				region = world_westeros_east
+				region = world_stepstones
+				region = world_pentos
+				region = world_shivering_sea
+			}
+		}
+	}
+	
+	immediate = {
+		random_province = {
+			limit = {
+				OR = {
+					province_id = 6
+					province_id = 10
+					province_id = 13
+					province_id = 14
+				}
+				owner = { trait = wildling wealth = 50 }
+			}
+			save_event_target_as = smuggle_target_province
+		}
+	}
+
+	option = {
+		name = EVTOPTApirate.55 #Do it!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				higher_tier_than = DUKE
+				OR = {
+					wealth = 100
+					yearly_income = 100
+				}	
+			}
+			modifier = {
+				factor = 0
+				trait = craven	
+			}
+			modifier = {
+				factor = 4
+				NOT = { wealth = 50 }
+			}
+			modifier = {
+				factor = 4
+				trait = brave	
+			}			
+			modifier = {
+				factor = 4
+				trait = greedy	
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless	
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary	
+			}
+		}
+		wealth = -15
+		random_list = {
+			40 = {	#success
+				modifier = {
+					factor = 0.71
+					NOT = { realm_martial = 13 }
+				}
+				modifier = {
+					factor = 0.71
+					NOT = { realm_martial = 19 }
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 25
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 31
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 37
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 43
+				}
+				character_event = { id = pirate.56 days = 5 tooltip = TOOLTIPpirate.56 }
+			}
+			40 = {	#fail
+				character_event = { id = pirate.58 days = 5 tooltip = TOOLTIPpirate.58 }
+			}
+			20 = {	#captured
+				modifier = {
+					factor = 0.71
+					c_eastwatch = { holder_scope = { NOT = { realm_martial = 13 } } }
+				}
+				modifier = {
+					factor = 0.71
+					c_eastwatch = { holder_scope = { NOT = { realm_martial = 19 } } }
+				}
+				modifier = {
+					factor = 1.4
+					c_eastwatch = { holder_scope = { realm_martial = 25 } }
+				}
+				modifier = {
+					factor = 1.4
+					c_eastwatch = { holder_scope = { realm_martial = 31 } }
+				}
+				modifier = {
+					factor = 1.4
+					c_eastwatch = { holder_scope = { realm_martial = 37 } }
+				}
+				modifier = {
+					factor = 1.4
+					c_eastwatch = { holder_scope = { realm_martial = 43 } }
+				}
+				character_event = { id = pirate.59 days = 5 tooltip = TOOLTIPpirate.59 }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBpirate.55 #No
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				wealth = 300
+			}		
+			modifier = {
+				factor = 4
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				trait = just
+			}
+		}
+		if = {
+			limit = { NOT = { higher_tier_than = DUKE } }
+			prestige = -50
+		}	
+	}
+}
+character_event = { #success
+	id = pirate.56
+	desc = "EVTDESCpirate.56"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.56
+		event_target:smuggle_target_province = {
+			owner = {
+				show_portrait = yes
+				tooltip = {
+					if = {
+						limit = { wealth = 120 }
+						ROOT = { wealth = 120 }
+						spawn_unit = {
+							province = PREV
+							troops = {
+								heavy_infantry = { 750 750 }
+							}
+							attrition = 1
+						}	
+					}
+					else_if = {
+						limit = { wealth = 80 }
+						ROOT = { wealth = 80 }
+						spawn_unit = {
+							province = PREV
+							troops = {
+								heavy_infantry = { 500 500 }
+							}
+							attrition = 1
+						}	
+					}
+					else = {
+						ROOT = { wealth = 40 }
+						spawn_unit = {
+							province = PREV
+							troops = {
+								heavy_infantry = { 250 250 }
+							}
+							attrition = 1
+						}
+					}
+				}	
+				character_event = { id = pirate.57 }
+			}
+		}
+	}
+}	
+character_event = { #inform wildling
+	id = pirate.57
+	desc = "EVTDESCpirate.57"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTApirate.57
+		if = {
+			limit = { wealth = 120 }
+			wealth = -120
+			hidden_tooltip = { FROM = { wealth = 120 } }
+			spawn_unit = {
+				province = event_target:smuggle_target_province
+				troops = {
+					heavy_infantry = { 750 750 }
+				}
+				attrition = 1
+			}
+		}
+		else_if = {
+			limit = { wealth = 80 }
+			wealth = -80
+			hidden_tooltip = { FROM = { wealth = 80 } }
+			spawn_unit = {
+				province = event_target:smuggle_target_province
+				troops = {
+					heavy_infantry = { 500 500 }
+				}
+				attrition = 1
+			}	
+		}
+		else = {
+			wealth = -40
+			hidden_tooltip = { FROM = { wealth = 40 } }
+			spawn_unit = {
+				province = event_target:smuggle_target_province
+				troops = {
+					heavy_infantry = { 250 250 }
+				}
+				attrition = 1
+			}	
+		}
+		prestige = 30
+	}
+	option = { #no
+		name = EVTOPTBpirate.57
+		trigger = { ai = no }
+	}	
+}	
+character_event = { #fail
+	id = pirate.58
+	desc = "EVTDESCpirate.58"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.58
+	}
+}	
+character_event = { #captured
+	id = pirate.59
+	desc = "EVTDESCpirate.59"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.59
+		prestige = -50
+		save_event_target_as = captured_pirate
+		c_eastwatch = { 
+			holder_scope = { 
+				ROOT = { 
+					tooltip = { imprison = PREV }
+					random_courtier = {
+						limit = {
+							ai = yes
+							trait = pirate
+							has_minor_title = title_commander
+							in_command = no
+							prisoner = no
+						}
+						tooltip = { imprison = PREVPREV }
+						set_character_flag = capture_pirate						
+					}
+				} 
+				character_event = { id = pirate.60 }
+				tooltip = { opinion = { who = ROOT modifier = opinion_piracy } }
+			} 
+		}		
+	}
+}	
+character_event = { #inform eastwatch
+	id = pirate.60
+	desc = "EVTDESCpirate.60"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTApirate.60
+		trigger = {
+			NAND = {
+				ai = yes
+				liege = { ai = no }
+			}	
+		}
+		event_target:captured_pirate = {
+			imprison = ROOT 
+			random_courtier = {
+				limit = {
+					has_character_flag = capture_pirate
+				}
+				imprison = ROOT
+				clr_character_flag = capture_pirate
+				hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_piracy } }
+			}
+			reverse_opinion = { who = ROOT modifier = opinion_piracy }
+		}
+		prestige = 30
+	}
+	option = {
+		name = EVTOPTBpirate.60 #let player decide
+		trigger = {
+			ai = yes
+			liege = { ai = no }
+		}
+		liege = { character_event = { id = pirate.60 } }
+	}
+}	
+#Establish smuggling ring in a province
+character_event = {
+	id = pirate.65
+	desc = "EVTDESCpirate.65"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	war = no
+	min_age = 16
+	prisoner = no
+	
+	trigger = {
+		trait = pirate
+		in_command = no
+		capital_scope = { port = yes }
+	}
+	
+	immediate = {
+		random_province = {
+			limit = {
+				port = yes
+				NOT = { has_province_modifier = smugglers_ring }
+				ROOT = { capital_scope = { NOT = { distance = { where = PREVPREV value = 750 } } } }
+				owner = {
+					NOT = { trait = pirate }
+					NOT = { trait = wildling }
+					is_nomadic = no
+					NOT_mythical_creature_trigger = yes
+				}
+			}
+			save_event_target_as = smuggle_target_province
+			trade_post_owner = {
+				capital_scope = { 
+					save_event_target_as = smuggler_culture 
+					break = yes 
+				}
+			}
+			save_event_target_as = smuggler_culture
+		}
+	}
+
+	option = {
+		name = EVTOPTApirate.65 #Do it!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				higher_tier_than = DUKE
+				OR = {
+					wealth = 200
+					yearly_income = 200
+				}	
+			}
+			modifier = {
+				factor = 0
+				trait = craven	
+			}
+			modifier = {
+				factor = 4
+				NOT = { wealth = 50 }
+			}
+			modifier = {
+				factor = 4
+				trait = brave	
+			}			
+			modifier = {
+				factor = 4
+				trait = greedy	
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless	
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary	
+			}
+		}
+		wealth = -30
+		random_list = {
+			40 = {	#success
+				modifier = {
+					factor = 0.71
+					NOT = { realm_martial = 13 }
+				}
+				modifier = {
+					factor = 0.71
+					NOT = { realm_martial = 19 }
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 25
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 31
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 37
+				}
+				modifier = {
+					factor = 1.4
+					realm_martial = 43
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { owner = { war = yes } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { NOT = { wealth = 0 } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { has_regent = yes }
+				}
+				character_event = { id = pirate.66 days = 5 tooltip = TOOLTIPpirate.66 }
+			}
+			40 = {	#fail
+				character_event = { id = pirate.68 days = 5 tooltip = TOOLTIPpirate.68 }
+			}
+			20 = {	#captured
+				modifier = {
+					factor = 0.71
+					event_target:smuggle_target_province = { owner = { NOT = { realm_martial = 13 } } }
+				}
+				modifier = {
+					factor = 0.71
+					event_target:smuggle_target_province = { owner = { NOT = { realm_martial = 19 } } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { owner = { realm_martial = 25 } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { owner = { realm_martial = 31 } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { owner = { realm_martial = 37 } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { owner = { realm_martial = 43 } }
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { 
+						any_province_holding = {
+							holding_type = city
+							is_richer_holding = yes
+						}
+					}
+				}
+				modifier = {
+					factor = 1.4
+					event_target:smuggle_target_province = { 
+						any_province_holding = {
+							holding_type = city
+							is_rich_holding = yes
+						}
+					}
+				}
+				character_event = { id = pirate.69 days = 5 tooltip = TOOLTIPpirate.69 }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBpirate.65 #No
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				wealth = 300
+			}		
+			modifier = {
+				factor = 4
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				trait = just
+			}
+		}
+		if = {
+			limit = { NOT = { higher_tier_than = DUKE } }
+			prestige = -50
+		}	
+	}
+}
+character_event = { #success
+	id = pirate.66
+	desc = "EVTDESCpirate.66"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.66
+		event_target:smuggle_target_province = {
+			tooltip = { add_province_modifier = { name = smugglers_ring duration = -1 } }
+			if = {
+				limit = { 
+					any_province_holding = {
+						holding_type = city
+						is_richer_holding = yes
+					}
+				}
+				ROOT = { wealth = 250 }
+			}
+			else_if = {
+				limit = { 
+					any_province_holding = {
+						holding_type = city
+						is_rich_holding = yes
+					}
+				}
+				ROOT = { wealth = 150 }	
+			}
+			else = {
+				ROOT = { wealth = 80 }
+			}
+			owner = {
+				show_portrait = yes
+				character_event = { id = pirate.67 }
+			}
+		}
+	}
+}	
+character_event = { #inform owner
+	id = pirate.67
+	desc = "EVTDESCpirate.67"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	hide_from = yes
+
+	option = {
+		name = EVTOPTApirate.67
+		event_target:smuggle_target_province = {
+			add_province_modifier = { name = smugglers_ring duration = -1 }
+		}	
+	}
+}	
+character_event = { #fail
+	id = pirate.68
+	desc = "EVTDESCpirate.68"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.68
+	}
+}	
+character_event = { #captured
+	id = pirate.69
+	desc = "EVTDESCpirate.69"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+
+	option = {
+		name = EVTOPTApirate.69
+		prestige = -50
+		event_target:smuggle_target_province = {
+			owner = {
+				ROOT = { 
+					tooltip = { imprison = PREV }
+					random_courtier = {
+						limit = {
+							ai = yes
+							trait = pirate
+							has_minor_title = title_commander
+							in_command = no
+							prisoner = no
+						}
+						tooltip = { imprison = PREVPREV }
+						set_character_flag = capture_pirate
+						hidden_tooltip = { reverse_opinion = { who = PREVPREV modifier = opinion_piracy } }
+					}
+				} 
+				character_event = { id = pirate.70 }
+				opinion = { who = ROOT modifier = opinion_piracy }
+			} 
+		}		
+	}
+}	
+character_event = { #inform owner
+	id = pirate.70
+	desc = "EVTDESCpirate.70"
+	picture = GFX_evt_pirates
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTApirate.70
+		FROM = { 
+			imprison = ROOT 
+			random_courtier = {
+				limit = {
+					has_character_flag = capture_pirate
+				}
+				imprison = ROOT
+				clr_character_flag = capture_pirate
+			}
+		}
+		prestige = 30
+	}
+}	

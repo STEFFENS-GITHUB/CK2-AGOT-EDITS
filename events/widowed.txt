@@ -1,0 +1,1282 @@
+######
+# Widow and Widower Events
+# widowed.1 - divorce widow(er) lords
+# widowed.2 - sends divorced spouse back to the rock she crawled out from
+# widowed.3 - death of spouse triggers trait assignment
+#		DELETE THE ONE IN MOURNING_EVENTS.TXT
+# widowed.4 - assigns trait
+#		DELETE THE ONE IN MOURNING_EVENTS.TXT
+######
+
+namespace = widowed
+
+#Widows and widowers don't get married, motherfucker, defunct because of can_marry = no
+# character_event = {
+	# id = widowed.1
+	# desc = EVTDESCwidowed.1 #My grief is too great to sustain this marriage...
+	# only_rulers = yes
+	
+	# trigger = {
+		# ai = yes
+		# trait = widowed
+		# is_married = yes
+		# spouse = { ai = yes }
+		
+		# #spouse is not lover
+		# NOT = { spouse = { ROOT = { lover = { character = PREVPREV } } } }
+	# }
+	
+	# mean_time_to_happen = {
+		# days = 1
+	# }
+	
+	# #immediate = {
+	# #	spouse = {
+	# #		set_character_flag = widower_spouse
+	# #	}
+	# #}
+	
+	# option = {
+		# name = EVTOPTAwidowed.1 #...I'm afraid it must come to an end
+		# opinion = {
+			# who = spouse
+			# modifier = opinion_confused
+			# years = 5
+		# }
+		# spouse = { character_event = { id = widowed.2 } } #banish them
+		# remove_spouse = spouse #divorce comes last
+	# }
+# }
+
+# #spouse is informed of divorce and is sent back where she came from
+# character_event = {
+	# id = widowed.2
+	# desc = "You been divorced, bitch."
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "If you can see this, screenshot and report pls"
+		# opinion = {
+			# who = FROM
+			# modifier = opinion_angry
+			# years = 5
+		# }
+		
+		# if = {
+			# limit = {
+				# NOT = { demesne_size = 1 }
+			# }
+			# banish = yes
+		# }
+		
+	# }
+# }
+
+#spouse dies, triggers trait assignment
+character_event = {
+	id = widowed.3	
+	desc = "EVTDESCwidowed.3"
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	hide_window = yes
+	is_married = yes
+	
+	trigger = {
+		NOT = { trait = slave }
+		any_spouse = {
+			is_alive = yes
+			OR = {
+				opinion = { who = ROOT value = 40 }
+				AND = {
+					is_female = yes
+					opinion = { who = ROOT value = 15 }
+				}
+			}	
+			NOT = { trait = widowed }
+		}
+	}
+	
+	immediate = {
+		any_spouse = { 
+			limit = {
+				is_alive = yes
+				OR = {
+					opinion = { who = ROOT value = 40 }
+					AND = {
+						is_female = yes
+						opinion = { who = ROOT value = 15 }
+					}
+				}
+				NOT = { trait = widowed }
+			}
+			add_trait = widowed
+			if = {
+				limit = { is_lover = ROOT }
+				set_character_flag = dead_spouse_was_lover
+			}	
+			character_event = { id = widowed.4 days = 14 tooltip = EVTTOOLTIPwidowed.4 }	
+			character_event = { id = widowed.6 days = 400 random = 50 } #liege force end widow?
+		}
+	}
+
+	option = {
+		name = "EVTOPTAwidowed.3"		
+	}
+}
+#lover dies, triggers trait assignment
+character_event = {
+	id = widowed.399
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_lover = yes
+		any_lover = {
+			is_alive = yes
+			opinion = { who = ROOT value = 0 }
+			NOT = { trait = widowed }
+			NOT = { is_married = ROOT }
+			NOT = { num_of_lovers = 2 }
+			NOT = { trait = cruel }
+			NOT = { trait = cynical }
+			NOT = { trait = selfish }
+			NOT = { trait = ruthless }
+			OR = {
+				trait = chaste
+				trait = kind
+				trait = humble
+				trait = honest
+				trait = honorable
+			}
+		}
+	}
+	
+	immediate = {
+		any_lover = {
+			limit = {
+				is_alive = yes
+				opinion = { who = ROOT value = 0 }
+				NOT = { trait = widowed }
+				NOT = { is_married = ROOT }
+				NOT = { num_of_lovers = 2 }
+				NOT = { trait = cruel }
+				NOT = { trait = cynical }
+				NOT = { trait = selfish }
+				NOT = { trait = ruthless }
+				OR = {
+					trait = chaste
+					trait = kind
+					trait = humble
+					trait = honest
+					trait = honorable
+				}
+			}
+			character_event = { id = widowed.4 days = 14 tooltip = EVTTOOLTIPwidowed.4 }			
+		}
+	}
+
+	option = {
+		name = "EVTOPTAwidowed.3"		
+	}
+}
+
+character_event = {
+	id = widowed.4
+	desc = WIDOWDESC #Time passes, yet to me the world seems unreal. It is if a life without [From.GetFirstName] is but a mummer's farce. I am lost in this sea of loneliness and know not where to turn.
+	picture = GFX_evt_death
+
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			trait = lunatic
+			trait = possessed
+			trait = drunkard
+			NOT = { has_character_modifier = killed_spouse }
+		}
+	}	
+	
+	immediate = {
+		
+	}
+	
+	option = { #drown yourself in wine, women, and song
+		name = WIDOWOPTA #Drown yourself in wine
+		trigger = {
+			is_female = no
+			NOT = { has_character_flag = widow_of_culled_HV } 
+			NOT = { trait = chaste }
+			NOT = { trait = celibate }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+				trait = temperate
+			}
+			modifier = {
+				factor = 0.25
+				trait = shy
+			}
+			modifier = {
+				factor = 3
+				trait = lustful
+			}
+			modifier = {
+				factor = 3
+				trait = drunkard
+			}
+			modifier = {
+				factor = 3
+				trait = hedonist
+			}			
+			modifier = {
+				factor = 1.5
+				trait = rude
+			}		
+			modifier = {
+				factor = 1.5
+				trait = selfish
+			}			
+			modifier = {
+				factor = 1.5
+				has_fashionable_groomed_trigger = yes
+			}			
+			modifier = {
+				factor = 1.5
+				trait = gregarious
+			}			
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = hedonist
+					trait = falconer
+					trait = duelist
+					trait = hunter
+				}
+			}
+			modifier = {
+				factor = 1.5
+				trait = gluttonous
+			}		
+		}				
+		random = {
+			chance = 90
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify
+				}
+			}
+		}
+		if = {
+			limit = { trait = widowed }
+			random = {
+				chance = 10
+				remove_trait = widowed
+				clr_character_flag = dead_spouse_was_lover
+			}
+		}		
+		random_list = {
+			50 = {
+			}
+			50 = {
+				trigger = { 
+					NOT = { trait = drunkard }
+				}
+				add_trait = drunkard
+				hidden_tooltip = {
+					character_event = {
+						id = 38286 #Notify
+					}
+				}
+			}
+			10 = {
+				trigger = { 
+					NOT = { trait = lustful }
+				}
+				add_trait = lustful
+				hidden_tooltip = {
+					character_event = {
+						id = 38272 #Notify
+					}
+				}
+			}
+			10 = {
+				trigger = { 
+					NOT = { trait = gluttonous }
+					NOT = { trait = temperate }
+				}
+				add_trait = gluttonous
+				gain_weight_medium_effect = yes
+				weight_trait_check_effect = yes
+				hidden_tooltip = {
+					character_event = {
+						id = 38272 #Notify
+					}
+				}
+			}
+			10 = {
+				trigger = { 
+					NOT = { trait = gregarious }
+					NOT = { trait = shy }
+				}
+				add_trait = gregarious
+				hidden_tooltip = {
+					character_event = {
+						id = 38265 #Notify
+					}
+				}
+			}
+			5 = {
+				trigger = { 
+					NOT = { has_fashionable_groomed_trigger = yes }
+					NOT = { trait = uncouth }
+				}
+				add_fashionable_groomed_effect = yes
+				hidden_tooltip = {
+					character_event = {
+						id = trait_notification.3 #Notify
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = wounded }
+				NOT = { is_maimed_trigger = yes }
+			}
+			random = {
+				chance = 10
+				custom_tooltip = { text = WIDOWTOOLTIPA } #ROOT gets into a drunken quarrel. And loses.
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = {
+					character_event = {
+						id = 38280 #Notify
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { NOT = { lifestyle_traits = 1 } }
+			random = {
+				chance = 10
+				custom_tooltip = { text = WIDOWTOOLTIPX } #[Root.GetTitledFirstName] becomes a hedonist, duelist, falconer, or hunter
+				hidden_tooltip = {
+					random_list = {
+						25 = { add_trait = hedonist }
+						25 = { add_trait = duelist }
+						25 = { add_trait = falconer }
+						25 = { add_trait = hunter }
+					}
+				}	
+			}		
+		}
+	}
+	
+	option = { #Lose yourself in books and songs and the wisdom of others
+		name = WIDOWOPTB
+		trigger = { 
+			NOT = { has_character_flag = widow_of_culled_HV } 
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+				trait = brave
+			}
+			modifier = {
+				factor = 0.1
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.1
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = content
+			}
+			modifier = {
+				factor = 3
+				trait = scholar
+			}		
+			modifier = {
+				factor = 3
+				trait = mystic
+			}		
+			modifier = {
+				factor = 3
+				trait = poet
+			}				
+			modifier = {
+				factor = 1.5
+				learning = 10
+			}		
+			modifier = {
+				factor = 1.5
+				learning = 14
+			}			
+			modifier = {
+				factor = 10
+				learning = 18
+			}
+		}	
+		random = {
+			chance = 90
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify
+				}
+			}
+		}
+		if = {
+			limit = { trait = widowed }
+			random = {
+				chance = 10
+				remove_trait = widowed
+				clr_character_flag = dead_spouse_was_lover
+			}
+		}
+		if = {
+			limit = {
+				is_female = no 
+				maester_culture_trigger = yes 
+				can_press_claims_trigger = yes
+			}
+			random = {
+				chance = 1
+				hidden_tooltip = { 
+					if = {
+						limit = { is_ruler = yes }
+						hidden_tooltip = { #Universal on death/abdication event
+							if = {
+								limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+								set_character_flag = do_not_inherit_sword
+							}
+							set_character_flag = abdication
+							character_event = { id = 45341 } 
+							clr_character_flag = abdication
+							clr_character_flag = do_not_inherit_sword
+							if = {
+								limit = { is_merchant_republic = no }
+								current_heir = { save_event_target_as = wealth_heir }
+							}
+							if = {
+								limit = { is_merchant_republic = yes }
+								family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+							}
+							transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+						}
+						abdicate = yes
+					}
+					c_the_citadel = { holder_scope = { ROOT = { move_character = PREV } } }
+					add_character_modifier = {
+						name = maester_education
+						duration = -1
+					}
+				}
+				custom_tooltip = { text = WIDOWTOOLTIPB } #[Root.GetTitledFirstName] will give up my worldly titles and becomes a Maester
+			}
+		}
+		random_list = {
+			50 = {
+			}
+			10 = {
+				trigger = {
+					NOT = { trait = craven }
+					NOT = { trait = brave }
+					NOT = { trait = berserker }
+				}
+				add_trait = craven
+				hidden_tooltip = {
+					character_event = {
+						id = 38257 #Notify
+					}
+				}
+			}
+			10 = {
+				trigger = {
+					NOT = { trait = patient }
+					NOT = { trait = wroth }
+				}
+				add_trait = patient
+				hidden_tooltip = {
+					character_event = {
+						id = 38264 #Notify
+					}
+				}
+			}
+			10 = {
+				trigger = {
+					NOT = { trait = content }
+					NOT = { trait = ambitious }
+				}
+				add_trait = content
+				hidden_tooltip = {
+					character_event = {
+						id = 38279 #Notify
+					}
+				}
+			}
+		}	
+		if = { #Scholar/Mystic/Poet
+			limit = { NOT = { lifestyle_traits = 1 } }
+			random = {
+				chance = 10
+				custom_tooltip = { text = WIDOWTOOLTIPY } #ROOT becomes scholar, mystic, or poet	
+				hidden_tooltip = {
+					random_list = {
+						50 = { add_trait = scholar }
+						15 = { add_trait = mystic }
+						35 = { add_trait = poet }
+					}
+				}	
+			}
+		}
+	}
+	
+	option = { #Seek solace in the arms of another
+		name = WIDOWOPTC
+		trigger = {
+			is_ruler = yes
+			NOT = { has_character_flag = widow_of_culled_HV } 
+			NOT = { trait = chaste }
+			NOT = { trait = celibate }
+			any_courtier = {
+				age = 16
+				ai = yes
+				OR = {
+					AND = {
+						is_female = no
+						OR = {
+							ROOT = { 
+								trait = homosexual 
+								is_female = no
+							}
+							ROOT = { 
+								NOT = { trait = homosexual } 
+								is_female = yes
+							}
+						}	
+					}
+					AND = {
+						is_female = yes
+						OR = {
+							ROOT = { 
+								trait = homosexual 
+								is_female = yes
+							}
+							ROOT = { 
+								NOT = { trait = homosexual } 
+								is_female = no
+							}
+						}	
+					}
+				}
+				NOT = { trait = celibate }
+				NOT = { trait = chaste }
+				can_press_claims_trigger = yes
+				NOT = { has_lover = yes }
+				NOT = { is_close_relative = ROOT }
+				opinion = { who = ROOT value = 0 }
+				OR = {
+					ROOT = { trait = lustful }
+					ROOT = { trait = hedonist }
+					ROOT = { trait = drunkard }
+					reverse_opinion = { who = ROOT value = 0 }
+					has_fair_trait_trigger = yes
+				}
+			}
+		}	
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+				trait = just
+			}
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = lustful
+			}		
+			modifier = {
+				factor = 3
+				trait = hedonist
+			}			
+			modifier = {
+				factor = 1.5
+				trait = envious
+			}			
+			modifier = {
+				factor = 1.5
+				trait = greedy
+			}					
+			modifier = {
+				factor = 0.66
+				trait = kind
+			}		
+		}		
+		random_courtier = {
+			limit = {
+				age = 16
+				ai = yes
+				OR = {
+					AND = {
+						is_female = no
+						OR = {
+							ROOT = { 
+								trait = homosexual 
+								is_female = no
+							}
+							ROOT = { 
+								NOT = { trait = homosexual } 
+								is_female = yes
+							}
+						}	
+					}
+					AND = {
+						is_female = yes
+						OR = {
+							ROOT = { 
+								trait = homosexual 
+								is_female = yes
+							}
+							ROOT = { 
+								NOT = { trait = homosexual } 
+								is_female = no
+							}
+						}	
+					}
+				}
+				NOT = { trait = celibate }
+				NOT = { trait = chaste }
+				can_press_claims_trigger = yes
+				NOT = { has_lover = yes }
+				NOT = { is_close_relative = ROOT }
+				opinion = { who = ROOT value = 0 }
+				OR = {
+					ROOT = { trait = lustful }
+					ROOT = { trait = hedonist }
+					ROOT = { trait = drunkard }
+					reverse_opinion = { who = ROOT value = 0 }
+					has_fair_trait_trigger = yes
+				}
+			}	
+			add_lover = ROOT
+		}
+		if = {
+			limit = { trait = widowed }
+			if = {
+				limit = { trait = honorable }
+				remove_trait = honorable
+			}
+			any_child = {
+				limit = { is_child_of = FROM }
+				opinion = {
+					who = ROOT
+					modifier = opinion_disgruntled
+					years = 5
+				}
+			}
+		}
+		if = {
+			limit = { trait = widowed }
+			random = {
+				chance = 40
+				remove_trait = widowed
+				clr_character_flag = dead_spouse_was_lover
+			}
+		}		
+	}
+	
+	#callous fucker option
+	option = { #This is nonsense. I am an adult and will move on with my life.
+		name = WIDOWOPTD
+		trigger = { NOT = { has_character_flag = widow_of_culled_HV } }
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				trait = kind
+			}			
+			modifier = {
+				factor = 0.1
+				trait = lustful
+			}
+			modifier = {
+				factor = 0.1
+				trait = humble
+			}
+			modifier = {
+				factor = 0.25
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.25
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = celibate
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = cynical
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+		}
+		if = {
+			limit = { trait = widowed }
+			any_child = {
+				limit = { is_child_of = FROM }
+				opinion = {
+					who = ROOT
+					modifier = opinion_disgruntled
+					years = 5
+				}
+			}
+		}
+		random = {
+			chance = 10
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify
+				}
+			}
+		}
+		if = {
+			limit = { trait = widowed }
+			random = {
+				chance = 90
+				remove_trait = widowed
+				clr_character_flag = dead_spouse_was_lover
+			}
+		}		
+		if = {
+			limit = { trait = kind }
+			remove_trait = kind
+		}	
+		#stressed
+		if = {
+			limit = {
+				NOT = {
+					trait = stressed
+				}
+			}		
+			random = {
+				chance = 5
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = {
+						id = 38282 #Notify
+					}
+				}
+			}
+		}
+		random_list = {
+			50 = {
+			}
+			10 = { 
+				trigger = {
+					NOT = { trait = cynical }
+					NOT = { trait = zealous }
+				}				
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify
+					}
+				}
+			}
+			10 = { 
+				trigger = {
+					NOT = { trait = proud }
+					NOT = { trait = humble }
+				}
+				add_trait = proud
+				hidden_tooltip = {
+					character_event = {
+						id = 38261 #Notify
+					}
+				}
+			}
+			10 = { 
+				trigger = {
+					NOT = { trait = kind }
+					NOT = { trait = cruel }
+				}
+				add_trait = cruel
+				hidden_tooltip = {
+					character_event = {
+						id = 38259 #Notify
+					}
+				}
+			}
+			5 = { 
+				trigger = {
+					NOT = { trait = celibate }
+					NOT = { trait = lustful }
+				}
+				modifier = {
+					factor = 4
+					trait = chaste
+				}
+				add_trait = celibate
+				hidden_tooltip = {
+					character_event = {
+						id = 38285 #Notify
+					}
+				}
+			}
+		}
+	}
+	#Wife was culled
+	option = { 
+		name = WIDOWOPTE
+		trigger = { has_character_flag = widow_of_culled_HV } 
+		remove_trait = depressed
+		remove_trait = widowed
+		clr_character_flag = dead_spouse_was_lover
+	}	
+}
+
+#remove widowed
+character_event = {
+	id = widowed.5
+	desc = EVTDESCwidowed.5 #As time marches on, I feel old wounds healing. I can look back on the cherished memories, and not be absorbed in the painful ones.
+	picture = GFX_summer_2
+	
+	trigger = {
+		trait = widowed
+		NOT = { has_character_flag = dany_no_tame_dragon } #Stop dany losing the trait too quickly
+	}
+	
+	mean_time_to_happen = {
+		years = 10
+		
+		modifier = {
+			factor = 0.66
+			NOT = { age = 24 }
+		}
+		modifier = {
+			factor = 2
+			age = 35
+			is_female = yes
+		}
+		modifier = {
+			factor = 1.5
+			age = 35
+		}		
+		modifier = {
+			factor = 2
+			age = 50
+		}
+		modifier = {
+			factor = 2
+			age = 60
+		}
+		
+		modifier = {
+			factor = 4
+			has_character_flag = dead_spouse_was_lover
+		}
+		modifier = {
+			factor = 10
+			trait = celibate
+		}
+		modifier = {
+			factor = 5
+			trait = chaste
+		}			
+		modifier = {
+			factor = 5
+			trait = content
+		}
+		modifier = {
+			factor = 2
+			trait = depressed
+		}
+		modifier = {
+			factor = 2
+			trait = patient
+		}
+		modifier = {
+			factor = 1.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 1.5
+			trait = stressed
+		}	
+		modifier = {
+			factor = 1.5
+			trait = stubborn
+		}		
+		modifier = {
+			factor = 1.33
+			trait = shy
+		}
+		modifier = {
+			factor = 1.33
+			trait = honorable
+		}
+		
+		modifier = {
+			factor = 0.2
+			has_lover = yes
+		}
+		modifier = {
+			factor = 0.2
+			trait = lustful
+		}
+		modifier = {
+			factor = 0.2
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.2
+			trait = hedonist
+		}	
+		modifier = {
+			factor = 0.5
+			trait = wroth
+		}	
+		modifier = {
+			factor = 0.5
+			OR = {
+				trait = lunatic
+				trait = possessed
+			}
+		}		
+		modifier = {
+			factor = 0.67
+			trait = cynical
+		}
+		modifier = {
+			factor = 0.67
+			trait = selfish
+		}		
+		modifier = {
+			factor = 0.75
+			trait = gregarious
+		}	
+		modifier = {
+			factor = 0.75
+			trait = ruthless
+		}
+		modifier = {
+			factor = 0.75
+			trait = arbitrary
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAwidowed.5 #I am ready to move on.
+		remove_trait = widowed
+		clr_character_flag = dead_spouse_was_lover
+		if = {
+			limit = { trait = depressed }
+			remove_trait = depressed
+		}	
+	}	
+}
+#Still widowed after a year, liege force end?
+character_event = {
+	id = widowed.6
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = widowed
+		is_ruler = no
+		is_married = no
+		can_inherit_titles_trigger = yes
+		liege = { is_close_relative = ROOT }
+	}
+	
+	option = {
+		name = OK	
+		liege = { character_event = { id = widowed.7 } }
+	}	
+}
+character_event = {
+	id = widowed.7			
+	desc = EVTDESCwidowed.7
+
+	picture = { 
+		trigger = { 
+			is_female = yes
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_mother
+	}
+	picture = { 
+		trigger = { 
+			is_female = no
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_father
+	}
+	picture = { 
+		trigger = { 
+			FROM = { is_female = no }
+		} 
+		picture = GFX_evt_son_asking_father
+	}
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	
+	option = { 
+		name = EVTOPTAwidowed.7 #command to marry
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				trait = kind
+			}
+			
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}	
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+		}				
+		FROM = { character_event = { id = widowed.8 tooltip = TOOLTIPwidowed.8 } }
+	}
+	option = { 
+		name = EVTOPTBwidowed.7 #let them wait
+		ai_chance = {
+			factor = 75
+			
+			modifier = {
+				factor = 3
+				NOR = {
+					sibling = FROM
+					is_parent_of = FROM
+				}
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}	
+			modifier = {
+				factor = 4
+				trait = content
+			}
+		}
+	}
+}	
+character_event = { #relative responds
+	id = widowed.8
+			
+	is_triggered_only = yes
+	
+	option = { 
+		name = YES	
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 10 }
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 4
+				trait = familyperson
+			}
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+		}		
+		FROM = { character_event = { id = widowed.9 } }
+	}
+	option = { 
+		name = NO
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				FROM = { NOT = { diplomacy = 5 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 4
+				trait = selfish
+			}
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 4
+				trait = stubborn
+			}
+		}
+		FROM = { character_event = { id = widowed.10 } }
+	}
+}	
+character_event = { #accepts
+	id = widowed.9		
+	desc = EVTDESCwidowed.9
+	
+	picture = { 
+		trigger = { 
+			is_female = yes
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_mother
+	}
+	picture = { 
+		trigger = { 
+			is_female = no
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_father
+	}
+	picture = { 
+		trigger = { 
+			FROM = { is_female = no }
+		} 
+		picture = GFX_evt_son_asking_father
+	}
+
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = EVTOPTAwidowed.9			
+		FROM = {
+			if = {
+				limit = { trait = depressed }
+				random = {
+					chance = 15
+					death = { death_reason = death_suicide }
+					break = yes
+				}
+			}
+			remove_trait = widowed
+			clr_character_flag = dead_spouse_was_lover
+			if = {
+				limit = { NOT = { trait = depressed } }
+				random = {
+					chance = 50
+					add_trait = depressed
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_coerced_into_marriage months = 120 }
+		}
+	}
+}	
+character_event = { #refuses
+	id = widowed.10		
+	desc = EVTDESCwidowed.10
+
+	picture = { 
+		trigger = { 
+			is_female = yes
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_mother
+	}
+	picture = { 
+		trigger = { 
+			is_female = no
+			FROM = { is_female = yes }
+		} 
+		picture = GFX_evt_daughter_asking_father
+	}
+	picture = { 
+		trigger = { 
+			FROM = { is_female = no }
+		} 
+		picture = GFX_evt_son_asking_father
+	}
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = EVTOPTAwidowed.10
+		prestige = -50
+		FROM = {
+			reverse_opinion = { who = ROOT modifier = opinion_refused_to_marry months = 120 }
+			opinion = { who = ROOT modifier = opinion_tried_coerced_into_marriage months = 120 }
+		}
+	}
+}	

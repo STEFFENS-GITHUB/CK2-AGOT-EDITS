@@ -1,0 +1,3956 @@
+###################################
+#
+# - Councillor events
+#
+###################################
+
+# Written by Henrik "Groogy" Hansson
+# Plus AGOT council events
+
+namespace = councillor
+
+# Council member proposes to liege to handle his titles for him
+character_event = {
+	id = 108000
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESC_108000
+		trigger = {
+			FROM = {
+				has_job_title = job_chancellor
+				
+			}
+			NOT = { regent = { character = FROM} }
+		}
+	}	
+	desc = {
+		text = EVTDESC_108001
+		trigger = {
+			FROM = {
+				has_job_title = job_treasurer
+			}
+			NOT = { regent = { character = FROM} }
+		}
+	}	
+	desc = {
+		text = EVTDESC_108002
+		trigger = {
+			FROM = {
+				has_job_title = job_physician
+			}
+			NOT = { regent = { character = FROM} }
+		}
+	}
+	desc = {
+		text = EVTDESC_108000CASTELLAN
+		trigger = {
+			FROM = {
+				has_job_title = job_castellan
+			}
+			NOT = { regent = { character = FROM} }
+		}
+	}
+	desc = {
+		text = EVTDESC_108000REGENT
+		trigger = {
+			regent = { character = FROM }
+			OR = {
+				NOT = { age = 16 }
+				is_incapable = yes
+			}
+		}
+	}
+	desc = {
+		text = EVTDESC_108000REGENTB
+		trigger = {
+			regent = { character = FROM }
+			NOT = {
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTA_108000
+			trigger = { 
+				OR = {
+					NOT = { regent = { character = FROM } } 
+					NOT = {
+						OR = {
+							NOT = { age = 16 }
+							is_incapable = yes
+						}
+					}
+				}	
+			}
+		}
+		name = {
+			text = EVTOPTA_108000REGENT
+			trigger = { 
+				regent = { character = FROM } 
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+				}
+			}
+		}
+		ai_chance = { factor = 10000 }
+		set_character_flag = getting_help_with_titles		
+		FROM = {
+			hidden_tooltip = { character_event = { id = 108010 } }
+			character_event = { id = 108005 tooltip = TOOLTIP108005 }
+		}
+	}
+	option = {
+		trigger = { 
+			OR = {
+				NOT = { regent = { character = FROM } } 
+				NOT = {
+					OR = {
+						NOT = { age = 16 }
+						is_incapable = yes
+					}
+				}
+			}	
+		}
+		name = EVTOPTB_108000
+		ai_chance = { factor = 0 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 108006 }
+			}
+		}
+	}
+	option = { 
+		trigger = { 
+			OR = {
+				NOT = { regent = { character = FROM } } 
+				NOT = {
+					OR = {
+						NOT = { age = 16 }
+						is_incapable = yes
+					}
+				}
+			}	
+		}
+		name = EVTOPTC_108000
+		ai_chance = { factor = 0 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 108006 }
+			}
+		}
+		set_character_flag = refused_any_help_with_titles
+		custom_tooltip = {
+			text = EVTOPTC_108000_TOOLTIP
+		}
+	}
+}
+
+# Council member receives a positive response from his liege
+character_event = {
+	id = 108005
+	
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESC_108005
+		trigger = {
+			NOT = { 
+				FROM = { regent = { character = ROOT } } 
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+				}
+			}
+			has_character_flag = proposed_to_help_liege_with_titles
+		}
+	}	
+	desc = {
+		text = EVTDESC_108005REGENT
+		trigger = {
+			FROM = { 
+				regent = { character = ROOT } 
+				OR = {
+					NOT = { age = 16 }
+					is_incapable = yes
+				}
+			}
+			has_character_flag = proposed_to_help_liege_with_titles
+		}
+	}
+	desc = {
+		text = EVTDESC_108005B #initiated by liege
+		trigger = {
+			NOT = { has_character_flag = proposed_to_help_liege_with_titles }
+		}
+	}	
+	
+	option = {
+		name = OK
+	}
+}
+
+# Council member receives a negative response from his liege
+character_event = {
+	id = 108006
+	desc = EVTDESC_108006
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}
+
+# Chancellor is approved to help liege with titles
+character_event = {
+	id = 108010
+	hide_window = yes
+	is_triggered_only = yes
+
+	immediate = {
+		clear_event_target = liege_title
+		clear_event_target = strong_claimant
+		clear_event_target = weak_claimant
+		clear_event_target = family
+		clear_event_target = nepotism
+		clear_event_target = random_1
+		clear_event_target = random_2
+		clear_event_target = random_3
+		character_event = { id = 108020 }
+		if = {
+			limit = {
+				ai = yes
+			}
+			character_event = { id = 108015 }
+		}
+		if = {
+			limit = {
+				ai = no
+			}
+			character_event = { id = 108015 days = 2 }
+		}
+	}
+}
+
+character_event = {
+	id = 108015
+
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = proposed_to_help_liege_with_titles
+		liege = {
+			clr_character_flag = getting_help_with_titles
+			if = {
+				limit = {
+					has_newly_acquired_titles = yes
+					over_max_demesne_size = 1
+				}
+				set_character_flag = getting_help_with_titles
+				ROOT = { 
+					set_character_flag = proposed_to_help_liege_with_titles
+					character_event = { id = 108010 days = 1 } 					
+				}
+			}	
+		}	
+	}
+}
+
+# Council member gets event to give away title
+character_event = {
+	id = 108020
+	desc = EVTDESC_108020
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		liege = {
+			#find title
+			random_demesne_title = {
+				limit = { 
+					lower_tier_than = DUKE
+					can_be_given_away = yes
+					holder_scope = { 
+						NOT = { capital_holding = { title = PREVPREV } }	
+						NOT = { family_palace = { title = PREVPREV } }							
+					}	
+					OR = {
+						tier = BARON
+						location = { is_capital = no }
+					}		
+					NOT = { #Not traditional heir title
+						holder_scope = {
+							higher_tier_than = DUKE
+							is_feudal_monarch_trigger = yes
+							primary_title = {
+								persistent_event_target:heir_title = {
+									title = PREVPREVPREV
+								}
+							}
+						}
+					}
+					NOT = { #Not a bloodline title
+						holder_scope = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+				}
+				save_event_target_as = liege_title
+			}
+			#find potential holders
+			event_target:liege_title = {
+				holder_scope = {
+					random_realm_character = { #strong claimant
+						limit = {
+							NOT = { character = ROOT }
+							has_strong_claim = PREVPREV
+							OR = { #genders depends on succession law
+								event_target:liege_title = { has_law = true_cognatic_succession }
+								AND = {
+									is_female = no
+									event_target:liege_title = {
+										OR = {
+											has_law = agnatic_succession 
+											has_law = cognatic_succession 
+										}	
+									}
+								}
+								AND = {
+									is_female = yes
+									event_target:liege_title = {
+										OR = {
+											has_law = enatic_succession
+											has_law = enatic_cognatic_succession
+										}
+									}
+								}
+							}
+							OR = {
+								religion = PREV
+								culture_group = PREV
+								event_target:liege_title = { location = { culture_group = PREVPREV } }
+							}
+							age = 12
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+							opinion = { who = PREV value = -25 }
+							reverse_opinion = { who = PREV value = -25 }
+							
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = liege_title }
+						}
+						save_event_target_as = strong_claimant
+						set_character_flag = liege_title
+					}
+					if = {
+						limit = { NOT = { event_target:strong_claimant = { always = yes } } }
+						random_realm_character = { #strong claimant
+							limit = {
+								NOT = { character = ROOT }
+								has_strong_claim = PREVPREV
+								OR = {
+									religion = PREV
+									culture_group = PREV
+									event_target:liege_title = { location = { culture_group = PREVPREV } }
+								}
+								prisoner = no
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+								opinion = { who = PREV value = -50 }
+								reverse_opinion = { who = PREV value = -50 }
+								
+								can_press_claims_trigger = yes
+								NOT = { has_character_flag = liege_title }
+							}
+							save_event_target_as = strong_claimant
+							set_character_flag = liege_title
+						}
+						if = {
+							limit = { NOT = { event_target:strong_claimant = { always = yes } } }
+							random_realm_character = { #strong claimant
+								limit = {
+									NOT = { character = ROOT }
+									has_strong_claim = PREVPREV
+									prisoner = no
+									NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+									NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+									
+									can_press_claims_trigger = yes
+									NOT = { has_character_flag = liege_title }
+								}
+								save_event_target_as = strong_claimant
+								set_character_flag = liege_title
+							}
+						}
+					}
+					random_realm_character = { #weak claimant
+						limit = {
+							NOT = { character = ROOT }
+							has_weak_claim = PREVPREV
+							OR = { #genders depends on succession law
+								event_target:liege_title = { has_law = true_cognatic_succession }
+								AND = {
+									is_female = no
+									event_target:liege_title = {
+										OR = {
+											has_law = agnatic_succession 
+											has_law = cognatic_succession 
+										}	
+									}
+								}
+								AND = {
+									is_female = yes
+									event_target:liege_title = {
+										OR = {
+											has_law = enatic_succession
+											has_law = enatic_cognatic_succession
+										}
+									}
+								}
+							}
+							OR = {
+								religion = PREV
+								culture_group = PREV
+								event_target:liege_title = { location = { culture_group = PREVPREV } }
+							}
+							age = 12
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+							opinion = { who = PREV value = -25 }
+							reverse_opinion = { who = PREV value = -25 }
+							
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = liege_title }
+						}
+						save_event_target_as = weak_claimant
+						set_character_flag = liege_title
+					}
+					if = {
+						limit = { NOT = { event_target:weak_claimant = { always = yes } } }
+						random_realm_character = { #strong claimant
+							limit = {
+								NOT = { character = ROOT }
+								has_weak_claim = PREVPREV
+								OR = {
+									religion = PREV
+									culture_group = PREV
+									event_target:liege_title = { location = { culture_group = PREVPREV } }
+								}
+								prisoner = no
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+								opinion = { who = PREV value = -50 }
+								reverse_opinion = { who = PREV value = -50 }
+								
+							can_press_claims_trigger = yes
+								NOT = { has_character_flag = liege_title }
+							}
+							save_event_target_as = strong_claimant
+							set_character_flag = liege_title
+						}
+						if = {
+							limit = { NOT = { event_target:weak_claimant = { always = yes } } }
+							random_realm_character = { #strong claimant
+								limit = {
+									NOT = { character = ROOT }
+									has_weak_claim = PREVPREV
+									prisoner = no
+									NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+									NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+									
+									can_press_claims_trigger = yes
+									NOT = { has_character_flag = liege_title }
+								}
+								save_event_target_as = strong_claimant
+								set_character_flag = liege_title
+							}
+						}
+					}
+					if = {
+						limit = { 
+							event_target:liege_title = { 
+								OR = {
+									NOT = { tier = BARON }
+									NOT = { holding_type = temple }
+								} 
+							} 
+						}
+						random_realm_character = { #family
+							limit = {
+								NOT = { character = ROOT }
+								is_ruler = no
+								is_close_relative = PREV
+								dynasty = PREV
+								is_primary_heir = no
+								OR = { #genders depends on succession law
+									event_target:liege_title = { has_law = true_cognatic_succession }
+									AND = {
+										is_female = no
+										event_target:liege_title = {
+											OR = {
+												has_law = agnatic_succession 
+												has_law = cognatic_succession 
+											}	
+										}
+									}
+									AND = {
+										is_female = yes
+										event_target:liege_title = {
+											OR = {
+												has_law = enatic_succession
+												has_law = enatic_cognatic_succession
+											}
+										}
+									}
+								}
+								OR = { #must be suitable for military command
+									event_target:liege_title = { NOT = { has_title_flag = military_command } }
+									AND = {
+										martial = 9
+										is_incapable = no
+										NOT = { is_crippled_trigger = yes }
+										NOT = { trait = infirm }
+										NOT = { trait = proud } #wants hereditary title		
+										NOT = { trait = envious }								
+									}
+								}
+								age = 16
+								prisoner = no
+								NOT = { trait = incapable }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+								opinion = { who = PREV value = -25 }
+								reverse_opinion = { who = PREV value = -25 }
+								
+								can_press_claims_trigger = yes
+								NOT = { has_character_flag = liege_title }
+							}
+							save_event_target_as = family
+							set_character_flag = liege_title
+						}
+						random_realm_character = { #nepotism
+							limit = {
+								NOT = { character = ROOT }
+								is_ruler = no
+								is_close_relative = ROOT
+								dynasty = ROOT
+								is_primary_heir = no
+								OR = { #genders depends on succession law
+									event_target:liege_title = { has_law = true_cognatic_succession }
+									AND = {
+										is_female = no
+										event_target:liege_title = {
+											OR = {
+												has_law = agnatic_succession 
+												has_law = cognatic_succession 
+											}	
+										}
+									}
+									AND = {
+										is_female = yes
+										event_target:liege_title = {
+											OR = {
+												has_law = enatic_succession
+												has_law = enatic_cognatic_succession
+											}
+										}
+									}
+								}
+								OR = { #must be suitable for military command
+									event_target:liege_title = { NOT = { has_title_flag = military_command } }
+									AND = {
+										martial = 9
+										is_incapable = no
+										NOT = { is_crippled_trigger = yes }
+										NOT = { trait = infirm }
+										NOT = { trait = proud } #wants hereditary title		
+										NOT = { trait = envious }								
+									}
+								}
+								age = 16
+								prisoner = no
+								NOT = { trait = incapable }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+								NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+								
+								can_press_claims_trigger = yes
+								NOT = { has_character_flag = liege_title }
+							}
+							save_event_target_as = nepotism
+							set_character_flag = liege_title
+						}
+					}	
+					random_courtier = { #random_courtier
+						limit = {
+							NOT = { character = ROOT }
+							is_ruler = no
+							is_primary_heir = no
+							OR = {
+								event_target:liege_title = { 
+									OR = {
+										NOT = { tier = BARON }
+										NOT = { holding_type = temple }
+									} 
+								}
+								AND = {
+									is_councillor = no
+									NOT = { is_voter = yes }
+									is_married = no
+									is_betrothed = no
+									NOT = { is_close_relative = PREV }
+								}
+							}
+							OR = { #genders depends on succession law
+								event_target:liege_title = { has_law = true_cognatic_succession }
+								AND = {
+									is_female = no
+									event_target:liege_title = {
+										OR = {
+											has_law = agnatic_succession 
+											has_law = cognatic_succession 
+										}	
+									}
+								}
+								AND = {
+									is_female = yes
+									event_target:liege_title = {
+										OR = {
+											has_law = enatic_succession
+											has_law = enatic_cognatic_succession
+										}
+									}
+								}
+							}
+							OR = { #must be suitable for military command
+								event_target:liege_title = { NOT = { has_title_flag = military_command } }
+								AND = {
+									martial = 9
+									is_incapable = no
+									NOT = { is_crippled_trigger = yes }
+									NOT = { trait = infirm }
+									NOT = { trait = proud } #wants hereditary title		
+									NOT = { trait = envious }								
+								}
+							}
+							OR = {
+								religion = PREV
+								culture_group = PREV
+								event_target:liege_title = { location = { culture_group = PREVPREV } }
+							}
+							age = 16
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+							opinion = { who = PREV value = -25 }
+							reverse_opinion = { who = PREV value = -25 }
+							
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = liege_title }
+						}
+						save_event_target_as = random_1
+						set_character_flag = liege_title
+					}
+					random_courtier = { #random_courtier
+						limit = {
+							NOT = { character = ROOT }
+							is_ruler = no
+							is_primary_heir = no
+							OR = {
+								event_target:liege_title = { 
+									OR = {
+										NOT = { tier = BARON }
+										NOT = { holding_type = temple }
+									} 
+								}
+								AND = {
+									is_councillor = no
+									NOT = { is_voter = yes }
+									is_married = no
+									is_betrothed = no
+									NOT = { is_close_relative = PREV }
+								}
+							}
+							OR = { #genders depends on succession law
+								event_target:liege_title = { has_law = true_cognatic_succession }
+								AND = {
+									is_female = no
+									event_target:liege_title = {
+										OR = {
+											has_law = agnatic_succession 
+											has_law = cognatic_succession 
+										}	
+									}
+								}
+								AND = {
+									is_female = yes
+									event_target:liege_title = {
+										OR = {
+											has_law = enatic_succession
+											has_law = enatic_cognatic_succession
+										}
+									}
+								}
+							}
+							OR = { #must be suitable for military command
+								event_target:liege_title = { NOT = { has_title_flag = military_command } }
+								AND = {
+									martial = 9
+									is_incapable = no
+									NOT = { is_crippled_trigger = yes }
+									NOT = { trait = infirm }
+									NOT = { trait = proud } #wants hereditary title		
+									NOT = { trait = envious }								
+								}
+							}
+							OR = {
+								religion = PREV
+								culture_group = PREV
+								event_target:liege_title = { location = { culture_group = PREVPREV } }
+							}
+							age = 16
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+							opinion = { who = PREV value = -25 }
+							reverse_opinion = { who = PREV value = -25 }
+							
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = liege_title }
+						}
+						save_event_target_as = random_2
+						set_character_flag = liege_title
+					}
+					random_courtier = { #random_courtier
+						limit = {
+							NOT = { character = ROOT }
+							is_ruler = no
+							is_primary_heir = no
+							OR = {
+								event_target:liege_title = { 
+									OR = {
+										NOT = { tier = BARON }
+										NOT = { holding_type = temple }
+									} 
+								}
+								AND = {
+									is_councillor = no
+									NOT = { is_voter = yes }
+									is_married = no
+									is_betrothed = no
+									NOT = { is_close_relative = PREV }
+								}
+							}
+							OR = { #genders depends on succession law
+								event_target:liege_title = { has_law = true_cognatic_succession }
+								AND = {
+									is_female = no
+									event_target:liege_title = {
+										OR = {
+											has_law = agnatic_succession 
+											has_law = cognatic_succession 
+										}	
+									}
+								}
+								AND = {
+									is_female = yes
+									event_target:liege_title = {
+										OR = {
+											has_law = enatic_succession
+											has_law = enatic_cognatic_succession
+										}
+									}
+								}
+							}
+							OR = { #must be suitable for military command
+								event_target:liege_title = { NOT = { has_title_flag = military_command } }
+								AND = {
+									martial = 9
+									is_incapable = no
+									NOT = { is_crippled_trigger = yes }
+									NOT = { trait = infirm }
+									NOT = { trait = proud } #wants hereditary title		
+									NOT = { trait = envious }								
+								}
+							}
+							OR = {
+								religion = PREV
+								culture_group = PREV
+								event_target:liege_title = { location = { culture_group = PREVPREV } }
+							}
+							age = 16
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_revoked_my_title } }
+							NOT = { has_opinion_modifier = { who = PREV modifier = opinion_usurped_title } }
+							opinion = { who = PREV value = -25 }
+							reverse_opinion = { who = PREV value = -25 }
+							
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = liege_title }
+						}
+						save_event_target_as = random_3
+						set_character_flag = liege_title
+					}
+				}
+			}		
+		}	
+	}
+	
+	option = {
+		name = EVTOPTF_108020 #strong claimant
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 5
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+		}
+		trigger = {
+			event_target:strong_claimant = { always = yes }
+		}
+		event_target:strong_claimant = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTG_108020 #weak claimant
+		ai_chance = {
+			factor = 15
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 1.5
+				trait = honorable
+			}
+		}
+		trigger = {
+			event_target:weak_claimant = { always = yes }
+		}
+		event_target:weak_claimant = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTH_108020 #family
+		ai_chance = {
+			factor = 15
+		}
+		trigger = {
+			event_target:family = { always = yes }
+		}
+		event_target:family = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTE_108020
+		trigger = {
+			OR = {
+				event_target:liege_title = { ROOT = { has_claim = PREV } }
+				AND = {
+					OR = {
+						trait = greedy
+						trait = ambitious
+						trait = envious
+						trait = deceitful
+						trait = arbitrary
+					}
+					NOT = { trait = honorable }
+					NOT = { trait = just }
+					NOT = { over_max_demesne_size = 2 }
+				}
+			}	
+			
+			can_press_claims_trigger = yes
+		}
+		ai_chance = {
+			factor = 1
+			
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		tooltip = {
+			event_target:liege_title = {
+				grant_title = ROOT
+			}
+		}
+		if = { #If not a claimant this is seen as corrupt
+			limit = { event_target:liege_title = { ROOT = { NOT = { has_claim = PREV } } } }
+			liege = {
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CORRUPT_COUNCIL_TITLE_GRANT
+							portrait = [Prev.GetID]
+						}
+					}
+				}
+				if = {
+					limit = { ai = no }
+					chronicle = {
+						entry = CHRONICLE_CORRUPT_COUNCIL_TITLE_GRANT
+						portrait = [Root.GetID]
+					}
+				}
+				any_courtier = {
+					limit = {
+						NOT = { character = PREV }
+						NOT = { character = ROOT }
+						age = 8
+						NOT = { trait = incapable }
+						OR = {
+							trait = just
+							trait = honorable
+							trait = proud
+						}
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+							is_ruler = yes
+							is_married = PREV
+							is_close_relative = PREV
+							character = PREV
+						}
+						NOT = { is_close_relative = ROOT }
+					}
+					opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+				}
+				any_vassal = {
+					limit = {
+						NOT = { character = PREV }
+						NOT = { character = ROOT }
+						NOT = { host = { character = PREVPREV } }
+						OR = {
+							liege = { tier = DUKE }
+							higher_tier_than = COUNT
+							is_patrician = yes
+						}	
+						age = 16
+						NOT = { trait = incapable }
+						OR = {
+							trait = just
+							trait = honorable
+							trait = proud
+						}
+						NOT = { is_close_relative = ROOT }
+					}
+					opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+				}
+			}
+		}	
+		hidden_tooltip = {
+			event_target:liege_title = {
+				grant_title = ROOT
+			}
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTI_108020 #Nepotism
+		trigger = {
+			event_target:nepotism = { always = yes }
+			OR = {
+				event_target:liege_title = { ROOT = { event_target:nepotism = { has_claim = PREVPREV } } }
+				AND = {
+					OR = {
+						trait = familyperson
+						trait = ambitious
+						trait = envious
+						trait = deceitful
+						trait = arbitrary
+					}
+					NOT = { trait = honorable }
+					NOT = { trait = just }
+				}
+			}
+			
+		}
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 10
+				trait = familyperson
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = envious
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		tooltip = {
+			event_target:nepotism = {
+				event_target:liege_title = {
+					grant_title = PREV
+				}
+				opinion = { who = ROOT modifier = opinion_granted_barony }
+			}
+		}
+		if = { #If not a claimant and not a fellow councillor this is seen as corrupt
+			limit = { 
+				event_target:liege_title = {
+					ROOT = {
+						event_target:nepotism = { 
+							NOT = { has_claim = PREVPREV } 
+							OR = {
+								AND = {
+									NOT = { is_voter = yes }
+									is_councillor = no
+								}	
+								NOT = { same_liege = ROOT }
+							}
+						} 
+					}	
+				} 
+			}
+			event_target:nepotism = { 
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_NEPOTISM_COUNCIL_TITLE_GRANT
+							portrait = [Prev.GetID]
+						}
+					}
+					liege = {
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_NEPOTISM_COUNCIL_TITLE_GRANT
+								portrait = [Root.GetID]
+							}
+						}
+					}
+				}					
+			}	
+			liege = {
+				any_courtier = {
+					limit = {
+						NOT = { character = PREV }
+						NOT = { character = ROOT }
+						age = 8
+						NOT = { trait = incapable }
+						OR = {
+							trait = just
+							trait = honorable
+							trait = proud
+						}
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+							is_ruler = yes
+							is_married = PREV
+							is_close_relative = PREV
+							character = PREV
+						}
+						NOT = { is_close_relative = ROOT }
+					}
+					opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+				}
+				any_vassal = {
+					limit = {
+						NOT = { character = PREV }
+						NOT = { character = ROOT }
+						NOT = { host = { character = PREVPREV } }
+						OR = {
+							liege = { tier = DUKE }
+							higher_tier_than = COUNT
+							is_patrician = yes
+						}	
+						age = 16
+						NOT = { trait = incapable }
+						OR = {
+							trait = just
+							trait = honorable
+							trait = proud
+						}
+						NOT = { is_close_relative = ROOT }
+					}
+					opinion = { who = ROOT modifier = opinion_corrupt months = 60 }
+				}
+			}
+		}	
+		hidden_tooltip = {
+			event_target:nepotism = {
+				event_target:liege_title = {
+					grant_title = PREV
+				}
+				opinion = { who = ROOT modifier = opinion_granted_barony }
+			}
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTJ_108020 #temple
+		trigger = { 
+			event_target:liege_title = { 
+				tier = BARON 
+				holding_type = temple 
+			} 
+		}
+		ai_chance = {
+			factor = 20
+		}
+		liege = {
+			capital_scope = {
+				ROOT = {
+					liege = {
+						random_list = {
+							50 = {
+								trigger = { religion_allows_male_temple_holders = yes }
+								create_random_priest = {
+									random_traits = yes
+									dynasty = NONE
+									culture = PREVPREV
+									female = no
+								}
+							}
+							50 = {
+								trigger = { religion_allows_female_temple_holders = yes }
+								create_random_priest = {
+									random_traits = yes
+									dynasty = NONE
+									culture = PREVPREV
+									female = yes
+								}
+							}
+						}
+						new_character = {
+							ROOT = {
+								event_target:liege_title = {
+									grant_title = PREVPREV
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_granted_barony }
+							random_list = {
+								5 = { add_trait = trained_warrior }
+								30 = { add_trait = poor_warrior }
+								65 = { }
+							}
+							character_event = { id = religious.1 } #add trait
+						}
+					}
+				}	
+			}	
+		}
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTK_108020 #military command
+		trigger = { 
+			event_target:liege_title = { 
+				has_title_flag = military_command
+			} 
+		}
+		ai_chance = {
+			factor = 20
+		}
+		liege = {
+			capital_scope = {
+				ROOT = {
+					liege = {
+						create_random_soldier = {
+							random_traits = yes
+							female = no
+							culture = PREVPREV
+							religion = PREVPREV
+							dynasty = none
+						}
+						new_character = {
+							ROOT = {
+								event_target:liege_title = {
+									grant_title = PREVPREV
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_granted_barony }
+							random_list = {
+								20 = { add_trait = poor_warrior }
+								60 = { add_trait = trained_warrior }
+								20 = { add_trait = skilled_warrior }
+							}
+							remove_trait = weak
+							remove_trait = slow
+							remove_trait = imbecile
+							remove_trait = dull
+							
+							remove_lifestyle_trait_effect = yes
+							
+							random_list = { # Flavor Randomization
+								35 = { 
+									# Nothing
+								}
+								15 = {
+									change_martial = 2
+								}
+								10 = {
+									trigger = { NOT = { trait = strong } }
+									add_trait = robust
+								}
+								10 = {
+									add_trait = duelist
+								}
+								10 = {
+									add_trait = hunter
+								}
+								5 = {
+									add_trait = strategist
+								}
+								5 = {
+									change_martial = 4
+								}
+								5 = {
+									if = {
+										limit = {
+											has_dlc = "Reapers"
+										}
+										add_trait = one_eyed
+									}
+								}
+								5 = { 
+									trigger = { 
+										is_smart_incl_genius_trigger = no
+									}
+									add_trait = shrewd
+								}
+							}
+							if = {
+								limit = { has_knighthood_religion_trigger = yes }
+								knight_character_effect = yes
+							}
+							while = {
+								limit = { NOT = { martial = 10 } }
+								change_martial = 1
+							}
+						}
+					}
+				}	
+			}	
+		}
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_108020
+
+		ai_chance = {
+			factor = 5
+		}
+		trigger = {
+			event_target:random_1 = { always = yes }
+		}
+		event_target:random_1 = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB_108020
+
+		ai_chance = {
+			factor = 5
+		}
+
+		trigger = {
+			event_target:random_2 = { always = yes }
+		}
+		event_target:random_2 = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+	option = { 
+		name = EVTOPTC_108020
+
+		ai_chance = {
+			factor = 5
+		}
+		
+		trigger = {
+			event_target:random_3 = { always = yes }
+		}
+		event_target:random_3 = {
+			event_target:liege_title = {
+				grant_title = PREV
+			}
+			opinion = { who = ROOT modifier = opinion_granted_barony }
+		}	
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTD_108020
+		trigger = { 
+			event_target:liege_title = { 
+				NAND = {
+					tier = BARON 
+					holding_type = temple 
+				}
+				NOT = { has_title_flag = military_command }				
+			}
+		}
+		ai_chance = {
+			factor = 0.1
+		}
+		liege = {
+			capital_scope = {
+				ROOT = {
+					liege = {
+						create_random_steward = {
+							random_traits = yes
+							dynasty = random
+							female = no
+							culture = PREVPREV
+						}
+						new_character = {
+							ROOT = {
+								event_target:liege_title = {
+									grant_title = PREVPREV
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_granted_barony }
+							random_list = {
+								30 = { add_trait = trained_warrior }
+								60 = { add_trait = poor_warrior }
+								30 = { }
+							}
+							if = {
+								limit = { has_knighthood_religion_trigger = yes }
+								random = {
+									chance = 50
+									knight_character_effect = yes
+								}
+							}
+						}
+					}
+				}	
+			}	
+		}
+		hidden_tooltip = {
+			liege = {
+				any_realm_character = {
+					limit = { has_character_flag = liege_title }
+					clr_character_flag = liege_title
+				}
+			}
+		}
+	}
+}
+
+#CONCLAVE COUNCIL VOTING
+#Vote on command to end war
+character_event = { #set scopes for vassal request version
+	id = councillor.199
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		FROMFROM = { 
+			set_character_flag = stand_down_vote_for_from_liege
+			save_event_target_as = stand_down_defender 
+		}
+		FROM = {
+			set_character_flag = voting_on_stand_down
+			any_courtier = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					liege = { character = PREVPREV }
+					NOT = { character = PREV }
+				}
+				character_event = { id = councillor.1 } #vote
+				if = {
+					limit = { ai = no }
+					character_event = { id = councillor.2 days = 2 } #result
+				}
+			}
+			character_event = { id = councillor.2 days = 3 } #result
+		}
+	}
+}	
+character_event = {
+	id = councillor.1
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcouncillor.1 #Liege in favour
+		trigger = {
+			FROMFROM = {
+				has_character_flag = stand_down_vote_for				
+			}
+		}
+	}	
+	desc = {
+		text = EVTDESCcouncillor.1B #Liege against
+		trigger = {
+			FROMFROM = {
+				has_character_flag = stand_down_vote_against				
+			}
+		}
+	}	
+	desc = {
+		text = EVTDESCcouncillor.1C #Regency
+		trigger = {
+			FROMFROM = {
+				has_regent = yes			
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAcouncillor.1 #Vote in favor of command to end war
+		trigger = { NOT = { character = FROM } }
+		ai_chance = { 
+			factor = 50 
+			
+			# modifier = {
+				# factor = 0
+				# has_position = loyalist
+				# liege = { 
+					# has_regent = no 
+					# has_character_flag = stand_down_vote_against
+				# }
+			# }
+			# modifier = {
+				# factor = 0
+				# has_position = malcontent
+				# liege = { 
+					# has_regent = no 
+					# has_character_flag = stand_down_vote_for
+				# }
+			# }
+			#Zealot
+			# modifier = { #Like attacking heathens
+				# factor = 0.01
+				# has_position = pragmatist
+				# religion = FROM
+				# NOT = { religion = event_target:stand_down_defender }
+			# }	
+			#Opinions/alliances
+			modifier = { #I like/ally the attacker
+				factor = 0.1
+				OR = {
+					opinion = { who = FROM value = 30 }									
+					AND = {
+						opinion = { who = FROM value = -30 }
+						OR = {
+							is_allied_with = FROM
+							has_non_aggression_pact_with = FROM	
+						}
+					}
+				}
+			}
+			modifier = { #I'm related to the attacker
+				factor = 0.1
+				is_close_relative = FROM
+				OR = {
+					opinion = { who = FROM value = -25 }									
+					trait = familyperson
+				}
+			}
+			#Will lose land from my realm
+			modifier = { 
+				factor = 5
+				FROM = {
+					has_character_flag = external_claimant 
+				}
+			}
+			#Opinions for undecided
+			modifier = { #Defender
+				factor = 1.75
+				opinion = { who = event_target:stand_down_defender value = 25 }									
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = event_target:stand_down_defender value = 50 }									
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = event_target:stand_down_defender value = 75 }									
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = event_target:stand_down_defender value = 100 }									
+			}
+			modifier = { #Attacker
+				factor = 1.75
+				NOT = { opinion = { who = FROM value = -24 } }									
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = FROM value = -49 } }									
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = FROM value = -74 } }									
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = FROM value = -99 } }									
+			}		
+			modifier = { #Liege
+				factor = 1.5
+				opinion = { who = FROMFROM value = 25 }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 50 }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}				
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 75 }		
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}		
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 100 }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}			
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -24 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -49 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}				
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -74 } }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}			
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}				
+			}
+			#Relative Power
+			modifier = {
+				factor = 1.5
+				FROM = { relative_power = { who = event_target:stand_down_defender power = 1.2 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { relative_power = { who = event_target:stand_down_defender power = 1.5 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { relative_power = { who = event_target:stand_down_defender power = 2 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { relative_power = { who = event_target:stand_down_defender power = 3 } }
+			}
+		}
+		set_character_flag = council_vote_approve_end_war
+		FROMFROM = {
+			hidden_tooltip = { change_variable = { which = council_end_war_votes value = 1 } }
+		}
+	}
+	option = {
+		name = EVTOPTBcouncillor.1 #Vote against
+		ai_chance = { 
+			factor = 50 
+			
+			modifier = {
+				factor = 0
+				character = event_target:stand_down_defender
+			}	
+			# modifier = {
+				# factor = 0
+				# has_position = loyalist
+				# liege = { 
+					# has_regent = no 
+					# has_character_flag = stand_down_vote_for
+				# }
+			# }
+			# modifier = {
+				# factor = 0
+				# has_position = malcontent
+				# liege = { 
+					# has_regent = no 
+					# has_character_flag = stand_down_vote_against
+				# }
+			# }
+			# #Pragmatist
+			# modifier = { #dislike large powers bullying smaller powers
+				# factor = 0.01
+				# has_position = pragmatist
+				# FROM = { 
+					# relative_power = { who = event_target:stand_down_defender power = 1.5 } 
+					# NOT = { liege_before_war = { character = event_target:stand_down_defender } }
+				# }
+			# }	
+			# #Zealot
+			# modifier = { #dislike heathens attacking brothers of faith
+				# factor = 0.01
+				# has_position = pragmatist
+				# NOT = { religion = FROM }
+				# religion = event_target:stand_down_defender
+			# }
+			#Opinions/alliances
+			modifier = { #I like/ally the defender
+				factor = 0.1
+				OR = {
+					opinion = { who = event_target:stand_down_defender value = 30 }									
+					AND = {
+						opinion = { who = event_target:stand_down_defender value = -30 }
+						OR = {
+							is_allied_with = event_target:stand_down_defender
+							has_non_aggression_pact_with = event_target:stand_down_defender
+						}
+					}
+				}
+			}
+			modifier = { #I'm related to the defender
+				factor = 0.1
+				is_close_relative = event_target:stand_down_defender
+				OR = {
+					opinion = { who = event_target:stand_down_defender value = -25 }									
+					trait = familyperson
+				}		
+			}
+			
+			#Opinions for undecided
+			modifier = { #Defender
+				factor = 1.75
+				NOT = { opinion = { who = event_target:stand_down_defender value = -24 }	}								
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = event_target:stand_down_defender value = -49 }	}								
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = event_target:stand_down_defender value = -74 }	}								
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { opinion = { who = event_target:stand_down_defender value = -99 } }									
+			}
+			modifier = { #Attacker
+				factor = 1.75
+				opinion = { who = FROM value = 25 }								
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = FROM value = 50 }									
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = FROM value = 75 }								
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = FROM value = 100 }									
+			}		
+			modifier = { #Liege
+				factor = 1.5
+				opinion = { who = FROMFROM value = 25 }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 50 }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}				
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 75 }		
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}		
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 100 }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_against
+				}			
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -24 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -49 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}				
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -74 } }	
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}			
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+				FROMFROM = { 
+					has_regent = no 
+					has_character_flag = stand_down_vote_for
+				}				
+			}
+			#Relative Power
+			modifier = {
+				factor = 1.5
+				event_target:stand_down_defender = { relative_power = { who = FROM power = 1.2 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:stand_down_defender = { relative_power = { who = FROM power = 1.5 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:stand_down_defender = { relative_power = { who = FROM power = 2 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:stand_down_defender = { relative_power = { who = FROM power = 3 } }
+			}
+		}
+		FROMFROM = {
+			hidden_tooltip = { change_variable = { which = council_end_war_votes value = -1 } }
+		}
+	}
+}	
+#Inform voting result
+character_event = {
+	id = councillor.2
+	picture = GFX_evt_council
+	desc = EVTDESCcouncillor.2
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	immediate = { 
+		#If there is a tie in a regency council, give regent deciding vote
+		if = {
+			limit = { 
+				character = FROMFROM 
+				has_regent = yes
+				is_variable_equal = { which = council_end_war_votes value = 0 }
+			}
+			if = {
+				limit = { regent = { has_character_flag = council_vote_approve_end_war } }
+				change_variable = { which = council_end_war_votes value = 1 }
+			}
+			if = {
+				limit = { regent = { NOT = { has_character_flag = council_vote_approve_end_war } } }
+				change_variable = { which = council_end_war_votes value = -1 }
+			}
+		}	
+	}
+	
+	option = { #Command to end
+		trigger = {
+			OR = {
+				FROMFROM = { #Voted passed
+					check_variable = { which = council_end_war_votes value = 0 } 
+					NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+				}
+				AND = { #display tie break result to voter
+					NOT = { character = FROMFROM }
+					FROMFROM = { check_variable = { which = council_end_war_votes value = 0 } }
+				}
+				AND = { #Liege can veto/tie break
+					character = FROMFROM
+					has_regent = no
+					NOT = { has_character_flag = stand_down_vote_against } #Can't change vote
+				}	
+			}
+		}
+		name = {
+			text = EVTOPTAcouncillor.2 #Vote passed
+			trigger = { 
+				FROMFROM = { 
+					check_variable = { which = council_end_war_votes value = 0 } 
+					NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+				} 
+			}
+		}	
+		name = {
+			text = EVTOPTAcouncillor.2B #Veto rejected vote
+			trigger = { 
+				character = FROMFROM
+				has_regent = no
+				FROMFROM = { NOT = { check_variable = { which = council_end_war_votes value = 0 } } } 
+			}
+		}
+		name = {
+			text = EVTOPTAcouncillor.2C #Tie, deciding vote
+			trigger = { 
+				character = FROMFROM
+				FROMFROM = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+			}
+		}
+		name = {
+			text = EVTOPTAcouncillor.2D #Tie, inform voter deciding vote
+			trigger = { 
+				NOT = { character = FROMFROM }
+				FROMFROM = { 
+					has_regent = no
+					is_variable_equal = { which = council_end_war_votes value = 0 } 
+				}
+			}
+		}
+		name = {
+			text = EVTOPTAcouncillor.2E #Tie, inform voter regent deciding vote
+			trigger = { 
+				NOT = { character = FROMFROM }
+				FROMFROM = { 
+					has_regent = yes
+					is_variable_equal = { which = council_end_war_votes value = 0 } 
+				}
+			}
+		}
+		ai_chance = { #Veto AI
+			factor = 50
+			
+			modifier = { 
+				factor = 0.2
+				NOT = { check_variable = { which = council_end_war_votes value = 0 } }
+			}
+			modifier = { 
+				factor = 0
+				NOT = { check_variable = { which = council_end_war_votes value = 0 } }
+				OR = {
+					trait = just
+					NOR = {
+						trait = arbitrary
+						trait = ruthless
+						trait = wroth
+						trait = lunatic
+					}
+				}
+			}
+		}
+		if = { #Display votes
+			limit = { ai = no }
+			FROMFROM = {
+				if = {
+					limit = { 
+						has_regent = no
+						has_character_flag = stand_down_vote_for
+					}
+					custom_tooltip = {
+						text = TOOLTIPcouncil_vote_approve_end_war
+					}
+				}
+				if = {
+					limit = { 
+						has_regent = no
+						has_character_flag = stand_down_vote_against
+					}
+					custom_tooltip = {
+						text = TOOLTIPcouncil_vote_against_end_war
+					}
+				}
+				any_courtier = {
+					limit = {
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+						}
+						liege = { character = PREVPREV }
+						NOT = { character = PREV }
+					}
+					if = {
+						limit = { has_character_flag = council_vote_approve_end_war }
+						custom_tooltip = {
+							text = TOOLTIPcouncil_vote_approve_end_war
+						}
+					}
+					if = {
+						limit = { NOT = { has_character_flag = council_vote_approve_end_war } }
+						custom_tooltip = {
+							text = TOOLTIPcouncil_vote_against_end_war
+						}
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { character = FROMFROM }
+			if = { #Veto tyranny
+				limit = {
+					NOT = { check_variable = { which = council_end_war_votes value = 0 } }
+				}
+				change_variable = { which = "tyrant" value = 10 } 
+				hidden_tooltip = {
+					character_event = { id = maintenance.1 } #tyrant trait
+					any_realm_lord = {
+						limit = { ai = no }
+						character_event = { id = councillor.4 }
+					}
+				} 
+			}
+			FROM = { #The command is issued
+				custom_tooltip = { text = "EVTTOOLTIPinteraction.10" }
+				save_event_target_as = stand_down_aggressor #just in case
+				hidden_tooltip = { ROOT = { character_event = { id = interaction.9 } } }
+				hidden_tooltip = {	
+					opinion = { #Cooldown
+						who = ROOT 
+						modifier = asked_to_stand_down 
+						years = 2
+					} 
+				}
+			}
+			hidden_tooltip = { 
+				set_variable = { which = council_end_war_votes value = 0 } 
+				clear_event_target = stand_down_defender
+				clr_character_flag = stand_down_vote_for
+				clr_character_flag = stand_down_vote_against
+				any_courtier = {
+					limit = {
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+						}
+						liege = { character = PREVPREV }
+						has_character_flag = council_vote_approve_end_war
+					}
+					clr_character_flag = council_vote_approve_end_war
+				}
+			}
+		}
+	}
+	option = { #Command not issued
+		trigger = {
+			OR = {
+				FROMFROM = { NOT = { check_variable = { which = council_end_war_votes value = 0 } } } #Vote did not pass
+				AND = { #Liege can veto/tie break
+					character = FROMFROM
+					has_regent = no
+					NOT = { has_character_flag = stand_down_vote_for } #Can't change vote
+				}
+			}
+		}
+		name = {
+			text = EVTOPTBcouncillor.2 #Vote rejected
+			trigger = { 
+				FROMFROM = { NOT = { check_variable = { which = council_end_war_votes value = 0 } } } 
+			}
+		}	
+		name = {
+			text = EVTOPTBcouncillor.2B #Veto passed vote
+			trigger = { 
+				character = FROMFROM
+				has_regent = no
+				FROMFROM = { 
+					check_variable = { which = council_end_war_votes value = 0 } 
+					NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+				}
+			}
+		}
+		name = {
+			text = EVTOPTBcouncillor.2C #Tie, deciding vote
+			trigger = { FROMFROM = { is_variable_equal = { which = council_end_war_votes value = 0 } } }
+		}
+		ai_chance = { #Veto AI
+			factor = 50
+		
+			modifier = { 
+				factor = 0.2
+				check_variable = { which = council_end_war_votes value = 0 }
+				NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+			}
+			modifier = { 
+				factor = 0
+				check_variable = { which = council_end_war_votes value = 0 }
+				NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+				OR = {
+					trait = just
+					NOR = {
+						trait = arbitrary
+						trait = ruthless
+						trait = wroth
+						trait = lunatic
+					}
+				}
+			}
+		}
+		if = {  #Display votes
+			limit = { ai = no }
+			FROMFROM = {
+				if = {
+					limit = { 
+						has_regent = no
+						has_character_flag = stand_down_vote_for
+					}
+					custom_tooltip = {
+						text = TOOLTIPcouncil_vote_approve_end_war
+					}
+				}
+				if = {
+					limit = { 
+						has_regent = no
+						has_character_flag = stand_down_vote_against
+					}
+					custom_tooltip = {
+						text = TOOLTIPcouncil_vote_against_end_war
+					}
+				}
+				any_courtier = {
+					limit = {
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+						}
+						liege = { character = PREVPREV }
+						NOT = { character = PREV }
+					}
+					if = {
+						limit = { has_character_flag = council_vote_approve_end_war }
+						custom_tooltip = {
+							text = TOOLTIPcouncil_vote_approve_end_war
+						}
+					}
+					if = {
+						limit = { NOT = { has_character_flag = council_vote_approve_end_war } }
+						custom_tooltip = {
+							text = TOOLTIPcouncil_vote_against_end_war
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { character = FROMFROM }
+			if = { #Veto tyranny
+				limit = {
+					check_variable = { which = council_end_war_votes value = 0 }
+					NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+				}
+				change_variable = { which = "tyrant" value = 10 } 
+				hidden_tooltip = {
+					character_event = { id = maintenance.1 } #tyrant trait
+					any_realm_lord = {
+						limit = { ai = no }
+						character_event = { id = councillor.3 }
+					}
+				}			
+			}
+			FROMFROMFROM = { #Original asker for help
+				if = {
+					limit = { 						
+						has_character_flag = stand_down_vote_for_from_liege
+					}	
+					tooltip = { show_portrait = yes }
+					if = { #If liege vetoed or voted against the command
+						limit = { 
+							ROOT = { has_character_flag = stand_down_vote_against } 
+						}
+						opinion = {
+							modifier = opinion_failed_to_protect_me 
+							who = ROOT
+							months = 60
+						}
+						if = { #send veto letter
+							limit = { 
+								ROOT = { 
+									check_variable = { which = council_end_war_votes value = 0 } 
+									NOT = { is_variable_equal = { which = council_end_war_votes value = 0 } }
+								} 
+							}
+							hidden_tooltip = { letter_event = { id = interaction.12 } }					
+						}
+					}
+					if = { #if council voted against command or tied, send letter
+						limit = { 
+							ROOT = { 
+								OR = {
+									NOT = { check_variable = { which = council_end_war_votes value = 0 } } 
+									is_variable_equal = { which = council_end_war_votes value = 0 }
+								}	
+							} 
+						}
+						hidden_tooltip = { letter_event = { id = interaction.2099 } }					
+					}
+					clr_character_flag = stand_down_vote_for_from_liege	
+				}
+			}	
+			
+			hidden_tooltip = { 
+				set_variable = { which = council_end_war_votes value = 0 } 
+				clear_event_target = stand_down_defender
+				clr_character_flag = stand_down_vote_for
+				clr_character_flag = stand_down_vote_against
+				any_courtier = {
+					limit = {
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+						}
+						liege = { character = PREVPREV }
+						has_character_flag = council_vote_approve_end_war
+					}
+					clr_character_flag = council_vote_approve_end_war
+				}
+			}
+		}
+	}
+	after = {
+		clr_character_flag = voting_on_stand_down
+	}
+}	
+character_event = { #Liege vetos vote in favour
+	id = councillor.3
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = EVTDESCcouncillor.3
+
+	option = {
+		name = EVTOPTAcouncillor.3
+	}
+}	
+character_event = { #Liege vetos vote against
+	id = councillor.4
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = EVTDESCcouncillor.4
+
+	option = {
+		name = EVTOPTAcouncillor.4
+	}
+}
+
+##Female councillor events, reserved numbers 77760-77795
+
+
+###RANDOM NEW FEMALE COUNCILLOR CANDIDATE###
+
+#Creates the councillor
+character_event = {
+	id = 77777
+
+	is_triggered_only = yes
+	
+	only_playable = yes
+	capable_only = yes
+	min_age = 16
+	prisoner = no
+
+	trigger = {
+		NOR = {
+			is_inaccessible_trigger = yes 
+			has_religion_feature = religion_matriarchal
+			has_religion_feature = religion_patriarchal
+			has_religion_feature = religion_equal
+			has_religion_feature = religion_feature_rhoynar_pagan
+
+			# has_game_rule = {
+				# name = gender
+				# value = all
+			# }
+		}
+	}
+	
+	hide_window = yes
+
+	immediate = {
+		random_list = {
+			#Chancellor
+			25 = {
+				modifier = {
+					factor = 0
+					job_chancellor = { diplomacy = 12 }
+				}
+				
+				create_character = {
+					female = yes
+					age = 35
+					attributes = { 
+						martial = 2
+						diplomacy = 10
+						stewardship = 2
+						intrigue = 2
+						learning = 2 
+					}
+					dynasty = random
+					religion = ROOT
+					culture = ROOT
+					trait = charismatic_negotiator
+					random_traits = yes
+				}
+				new_character = {
+					set_character_flag = female_councillor_chancellor
+					character_event = { id = 77778 }
+
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					remove_trait = shy
+					remove_trait = deceitful
+					remove_lifestyle_trait_effect = yes
+
+					if = {
+						limit = {
+							female_warrior_culture_trigger = yes
+						}
+						random_list = {
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = trained_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}	
+
+					#Adds some more traits
+					random_list = {
+						#Attractive
+						20 = {
+							add_trait = fair
+						}
+						#Poet
+						20 = {
+							add_trait = poet
+						}
+						#Socializer
+						20 = {
+							add_trait = socializer
+						}
+						#Gamer
+						20 = {
+							add_trait = gamer
+						}
+						#Party
+						20 = {
+							add_trait = hedonist
+						}
+					}
+				}
+			}
+			#Marshal
+			25 = {
+				modifier = {
+					factor = 5
+					OR = {
+						female_warrior_culture_trigger = yes
+						culture = sarnorian
+						trait = wildling
+						culture = moon_clansman							
+					}
+				}
+
+				modifier = {
+					factor = 0
+					job_marshal = { martial = 12 }
+				}
+
+				create_character = {
+					age = 37
+					female = yes
+					attributes = { 
+						martial = 10
+						diplomacy = 2
+						stewardship = 2
+						intrigue = 2
+						learning = 2 
+					}
+					dynasty = random
+					religion = ROOT
+					culture = ROOT
+					trait = skilled_tactician
+					trait = brave
+					random_traits = yes
+				}
+				new_character = {
+					set_character_flag = female_councillor_marshal
+					character_event = { id = 77778 }
+
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					remove_trait = craven
+					remove_trait = feeble
+					remove_trait = weak
+					remove_lifestyle_trait_effect = yes
+
+					if = {
+						limit = {
+							female_warrior_culture_trigger = yes
+						}
+						random_list = {
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = skilled_warrior }
+							10 = { add_trait = master_warrior }
+						}
+					}
+					if = {
+						limit = {
+							NOT = { female_warrior_culture_trigger = yes }	
+						}
+						random_list = {
+							65 = { add_trait = trained_warrior }
+							30 = { add_trait = skilled_warrior }
+							5 = { add_trait = master_warrior }
+						}
+					}
+					
+					#Adds some more traits
+					random_list = {
+						#Brawny but Ugly
+						25 = {
+							add_trait = robust
+							add_trait = uncouth
+							add_trait = aggressive_leader
+						}
+						#Duelist
+						25 = {
+							add_trait = duelist
+							add_trait = inspiring_leader
+						}
+						#Hunter
+						25 = {
+							add_trait = hunter
+							add_trait = flanker
+						}
+						#Strategist
+						25 = {
+							add_trait = strategist
+							add_trait = unyielding_leader
+						}
+					}	
+				}
+			}
+			#Steward
+			25 = {
+				modifier = {
+					factor = 0
+					job_treasurer = { stewardship = 12 }
+				}
+
+				create_character = {
+					age = 38
+					female = yes
+					attributes = { 
+						martial = 2
+						diplomacy = 2
+						stewardship = 10
+						intrigue = 2
+						learning = 2 
+					}
+					dynasty = random
+					religion = ROOT
+					culture = ROOT
+					trait = fortune_builder
+					random_traits = yes
+				}
+				new_character = {
+					set_character_flag = female_councillor_treasurer
+					character_event = { id = 77778 }
+
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					remove_trait = arbitrary
+					remove_lifestyle_trait_effect = yes
+
+					if = {
+						limit = {
+							female_warrior_culture_trigger = yes
+						}
+						random_list = {
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = trained_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}
+
+					#Adds some more traits
+					random_list = {
+						#Administrator
+						25 = {
+							add_trait = administrator
+						}
+						#Architect
+						25 = {
+							add_trait = architect
+						}
+						#Gardener
+						25 = {
+							add_trait = gardener
+						}
+						#Shrewd
+						25 = {
+							add_trait = gardener
+						}
+					}
+				}
+			}
+			#Spymaster
+			25 = {
+				modifier = {
+					factor = 5
+					gender_equality_trigger = no
+				}
+				modifier = {
+					factor = 0
+					job_spymaster = { intrigue = 12 }
+				}
+
+				create_character = {
+					age = 42
+					female = yes
+					attributes = { 
+						martial = 2
+						diplomacy = 2
+						stewardship = 2
+						intrigue = 10
+						learning = 2 
+					}
+					dynasty = random
+					religion = ROOT
+					culture = ROOT
+					trait = intricate_webweaver
+					random_traits = yes
+				}
+				new_character = {	
+					set_character_flag = female_councillor_spymaster
+					character_event = { id = 77778 }
+
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					remove_trait = trusting
+					remove_trait = honest
+					remove_lifestyle_trait_effect = yes
+
+					if = {
+						limit = {
+							female_warrior_culture_trigger = yes
+						}
+						random_list = {
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = trained_warrior }
+							10 = { add_trait = skilled_warrior }
+						}
+					}
+
+					#Adds some more traits
+					random_list = {
+						#Schemer
+						33 = {
+							add_trait = schemer
+						}
+						#Impaler
+						33 = {
+							add_trait = impaler
+						}
+						#Seductress
+						33 = {
+							add_trait = seductress
+							add_trait = lustful
+							add_trait = fair
+							remove_trait = chaste
+						}
+						#Deceitful, paranoid & ugly
+						33 = {
+							add_trait = ugly
+							add_trait = shrewd
+						}
+					}
+				} 
+			}
+		}
+	}
+}
+
+#Ping event for new councillor character
+character_event = {
+	id = 77778
+
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+
+		remove_trait = content
+
+		if = {
+			limit = { has_character_flag = female_councillor_chancellor }
+			FROM = { character_event = { id = 77779 } }
+		}
+		if = {
+			limit = { has_character_flag = female_councillor_marshal }
+			FROM = { character_event = { id = 77780 } }
+		}
+		if = {
+			limit = { has_character_flag = female_councillor_treasurer }
+			FROM = { character_event = { id = 77781 } }
+		}
+		if = {
+			limit = { has_character_flag = female_councillor_spymaster }
+			FROM = { character_event = { id = 77782 } }
+		}
+
+		clr_character_flag = female_councillor_chancellor
+		clr_character_flag = female_councillor_marshal
+		clr_character_flag = female_councillor_treasurer
+		clr_character_flag = female_councillor_spymaster
+	}
+}
+
+
+#Female chancellor appears
+character_event = {
+	id = 77779
+	desc = EVTDESC_77779
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_77779
+		
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+			modifier = {
+				factor = 5
+				trait = trusting
+			}
+		}
+
+		job_chancellor = {
+			opinion = {
+				modifier = opinion_fired_from_council
+				years = 5
+				who = ROOT
+			}
+			liege = {
+				any_realm_character = {
+					limit = { 
+						reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }					
+					}
+					if = {
+						limit = { has_opinion_modifier = { who = PREV modifier = opinion_approved_council_candidate } }
+						remove_opinion = { who = PREV modifier = opinion_approved_council_candidate }
+					}	
+					opinion = { who = PREV modifier = opinion_replaced_council_candidate }
+				}
+			}
+		}
+
+		FROM = { 
+			give_job_title = job_chancellor 
+		}
+		
+		if = {
+			limit = {
+				has_dlc = "Conclave"
+			}
+			add_favor = FROM
+		}
+
+		if = {
+			limit = {
+				gender_equality_trigger = no				
+			}
+			female_councilor_effect_3 = yes
+		}	
+
+		#Gets her married
+		hidden_tooltip = {
+			if = {
+				limit = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } }
+				random_courtier = {
+					limit = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes }
+					add_spouse_matrilineal = FROM
+				}
+				break = yes
+			}
+
+			if = {
+				limit = { NOT = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } } }
+
+				create_random_diplomat = { 
+					random_traits = yes
+					dynasty = NONE
+					female = no
+					age = 37
+				}
+				new_character = { add_spouse_matrilineal = FROM }
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTB_77779
+		hidden_tooltip = {
+			FROM = {
+				leave_court_effect = yes
+				death = { death_reason = death_missing }
+			}
+		}
+		ai_chance = {
+			factor = 98
+		}
+	}
+}
+
+#Female marshal appears
+character_event = {
+	id = 77780
+	desc = EVTDESC_77780
+	picture = GFX_evt_melee
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_77780
+		
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+			modifier = {
+				factor = 5
+				trait = trusting
+			}
+		}
+
+		job_marshal = {
+			opinion = {
+				modifier = opinion_fired_from_council
+				years = 5
+				who = ROOT
+			}
+			liege = {
+				any_realm_character = {
+					limit = { 
+						reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }					
+					}
+					if = {
+						limit = { has_opinion_modifier = { who = PREV modifier = opinion_approved_council_candidate } }
+						remove_opinion = { who = PREV modifier = opinion_approved_council_candidate }
+					}	
+					opinion = { who = PREV modifier = opinion_replaced_council_candidate }
+				}
+			}
+		}
+
+		FROM = { 
+			give_job_title = job_marshal 
+		}
+		
+		if = {
+			limit = {
+				has_dlc = "Conclave"
+			}
+			add_favor = FROM
+		}
+
+		if = {
+			limit = {
+				gender_equality_trigger = no			
+			}
+			female_councilor_effect_3 = yes
+		}
+
+		#Gets her married
+		hidden_tooltip = {
+			if = {
+				limit = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } }
+				random_courtier = {
+					limit = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes }
+					add_spouse_matrilineal = FROM
+				}
+				break = yes
+			}
+
+			if = {
+				limit = { NOT = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } } }
+
+				create_random_soldier = { 
+					random_traits = yes
+					dynasty = NONE
+					female = no
+					age = 37
+				}
+				new_character = { add_spouse_matrilineal = FROM }
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTB_77780
+		hidden_tooltip = {
+			FROM = {
+				leave_court_effect = yes
+				death = { death_reason = death_missing }
+			}
+		}
+		ai_chance = {
+			factor = 98
+		}
+	}
+}
+
+#Female steward appears
+character_event = {
+	id = 77781
+	border = GFX_event_normal_frame_economy
+	picture = GFX_evt_carriage
+
+	is_triggered_only = yes
+
+	desc = {
+		trigger = { NOT = { has_dlc = "Way of Life" } } 
+		text = EVTDESC_77781
+		picture = GFX_evt_carriage
+	}
+	desc = {
+		trigger = { has_dlc = "Way of Life" }
+		text = EVTDESC_77781
+		picture = GFX_evt_merchant_caravan
+	}
+
+	option = {
+		name = EVTOPTA_77781
+		
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+			modifier = {
+				factor = 5
+				trait = trusting
+			}
+		}
+
+		job_treasurer = {
+			opinion = {
+				modifier = opinion_fired_from_council
+				years = 5
+				who = ROOT
+			}
+			liege = {
+				any_realm_character = {
+					limit = { 
+						reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }					
+					}
+					if = {
+						limit = { has_opinion_modifier = { who = PREV modifier = opinion_approved_council_candidate } }
+						remove_opinion = { who = PREV modifier = opinion_approved_council_candidate }
+					}	
+					opinion = { who = PREV modifier = opinion_replaced_council_candidate }
+				}
+			}
+		}
+
+		FROM = { 
+			give_job_title = job_treasurer 
+		}
+		
+		if = {
+			limit = {
+				has_dlc = "Conclave"
+			}
+			add_favor = FROM
+		}
+
+		if = {
+			limit = {
+				gender_equality_trigger = no			
+			}
+			female_councilor_effect_3 = yes
+		}
+
+		#Gets her married
+		hidden_tooltip = {
+			if = {
+				limit = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } }
+				random_courtier = {
+					limit = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes }
+					add_spouse_matrilineal = FROM
+				}
+				break = yes
+			}
+
+			if = {
+				limit = { NOT = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } } }
+
+				create_random_steward = { 
+					random_traits = yes
+					dynasty = NONE
+					female = no
+					age = 42
+				}
+				new_character = { add_spouse_matrilineal = FROM }
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTB_77781
+		hidden_tooltip = {
+			FROM = {
+				leave_court_effect = yes
+				death = { death_reason = death_missing }
+			}
+		}
+		ai_chance = {
+			factor = 98
+		}
+	}
+}
+
+#Female spymaster appears
+character_event = {
+	id = 77782
+	border = GFX_event_normal_frame_intrigue
+	picture = GFX_evt_whispers
+
+	is_triggered_only = yes
+
+	desc = {
+		trigger = { NOT = { has_dlc = "Way of Life" } }
+		text = EVTDESC_77782
+		picture = GFX_evt_whispers
+	}
+	desc = {
+		trigger = { has_dlc = "Way of Life" } 
+		text = EVTDESC_77782
+		picture = GFX_evt_eavesdropping
+	}
+	
+	option = {
+		name = EVTOPTA_77782
+		
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+			modifier = {
+				factor = 5
+				trait = trusting
+			}
+		}
+
+		job_spymaster = {
+			opinion = {
+				modifier = opinion_fired_from_council
+				years = 5
+				who = ROOT
+			}
+			liege = {
+				any_realm_character = {
+					limit = { 
+						reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_council_sponsor }					
+					}
+					if = {
+						limit = { has_opinion_modifier = { who = PREV modifier = opinion_approved_council_candidate } }
+						remove_opinion = { who = PREV modifier = opinion_approved_council_candidate }
+					}	
+					opinion = { who = PREV modifier = opinion_replaced_council_candidate }
+				}
+			}
+		}
+
+		FROM = { 
+			give_job_title = job_spymaster 
+		}
+		
+		if = {
+			limit = {
+				has_dlc = "Conclave"
+			}
+			add_favor = FROM
+		}
+
+		#Gets her married
+		hidden_tooltip = {
+			if = {
+				limit = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } }
+				random_courtier = {
+					limit = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes }
+					add_spouse_matrilineal = FROM
+				}
+				break = yes
+			}
+
+			if = {
+				limit = { NOT = { any_courtier = { NOT = { character = ROOT } is_adult = yes is_married = no is_female = no prisoner = no is_unimportant_trigger = yes } } }
+
+				create_random_intriguer = { 
+					random_traits = yes
+					dynasty = NONE
+					female = no
+					age = 29
+				}
+				new_character = { add_spouse_matrilineal = FROM }
+			}	
+		}
+	}
+	option = {
+		name = EVTOPTB_77782
+		hidden_tooltip = {
+			FROM = {
+				leave_court_effect = yes
+				death = { death_reason = death_missing }
+			}
+		}
+		ai_chance = {
+			factor = 98
+		}
+	}
+}
+### Councillor reassigned ###
+character_event = {
+	id = councillor.50
+	desc =  EVTDESCcouncillor.50
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			#record voter titles to re-add
+			if = { 
+				limit = { has_minor_title = title_regent }
+				set_character_flag = title_regent
+			}
+			if = { 
+				limit = { has_minor_title = title_triarch }
+				set_character_flag = title_triarch
+			}	
+			#record previous opinions
+			if = {
+				limit = { has_opinion_modifier = { who = ROOT modifier = opinion_job_security_concerns } }
+				set_character_flag =  opinion_job_security_concerns
+			}
+			if = {
+				limit = { has_opinion_modifier = { who = ROOT modifier = opinion_fired_from_council } }
+				set_character_flag =  opinion_fired_from_council
+				remove_opinion = { who = ROOT modifier = opinion_fired_from_council }	
+			}
+			hidden_tooltip = {
+				set_character_flag = not_fired_from_council
+				if = {
+					limit = { has_job_title = job_castellan }
+					set_character_flag = had_castellan_job
+					remove_title = job_castellan
+				}	
+				remove_title = job_chancellor
+				remove_title = job_marshal
+				remove_title = job_treasurer
+				remove_title = job_spymaster
+				remove_title = job_physician
+				remove_title = job_spiritual
+				remove_title = title_high_admiral
+				remove_title = title_councilmember_king
+				remove_title = title_councilmember_emperor
+				remove_title = title_regent
+				remove_title = title_triarch	
+				if = {
+					limit = { NOT = { has_character_flag = opinion_fired_from_council } }
+					remove_opinion = { who = ROOT modifier = opinion_fired_from_council }	
+				}	
+			}			
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_castellan } }
+			FROM = { can_be_castellan_trigger = yes }
+		}
+		FROM = { 			
+			give_job_title = job_castellan 
+		}
+	}
+	option = {
+		name = EVTOPTBcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_chancellor } }
+			FROM = { can_be_chancellor_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_chancellor
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTCcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_marshal } }
+			FROM = { can_be_marshal_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_marshal
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTDcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_treasurer } }
+			FROM = { can_be_treasurer_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_treasurer
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTEcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_spymaster } }
+			FROM = { can_be_spymaster_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_spymaster
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTFcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_physician } }
+			FROM = { can_be_physician_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_physician
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTGcouncillor.50
+		trigger = {
+			NOT = { any_courtier_or_vassal = { vassal_of = ROOT has_job_title = job_spiritual } }
+			FROM = { can_be_spiritual_trigger = yes }
+		}
+		FROM = { 				
+			give_job_title = job_spiritual
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTHcouncillor.50
+		trigger = {
+			has_dlc = "Zeus"
+			higher_tier_than = DUKE
+			NOT = { has_assigned_minor_title = title_councilmember_king }
+			FROM = { can_be_advisor_trigger = yes }
+		}
+		FROM = { 				
+			give_minor_title = title_councilmember_king
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTHcouncillor.50
+		trigger = {
+			has_dlc = "Zeus"
+			tier = EMPEROR
+			NOT = { has_assigned_minor_title = title_councilmember_emperor }
+			FROM = { can_be_advisor_trigger = yes }
+		}
+		FROM = { 				
+			give_minor_title = title_councilmember_emperor
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTIcouncillor.50
+		trigger = {
+			has_dlc = "Zeus"
+			can_assign_admiral_trigger = yes
+			NOT = { has_assigned_minor_title = title_high_admiral }
+			FROM = { can_be_advisor_trigger = yes }
+		}
+		FROM = { 				
+			give_minor_title = title_high_admiral
+			if = {
+				limit = { has_character_flag = had_castellan_job }
+				opinion = { who = ROOT modifier = opinion_job_demotion }
+			}
+		}
+	}
+	
+	after = {
+		FROM = {
+			#re-add other voter titles
+			if = { 
+				limit = { has_character_flag = title_regent }				
+				give_minor_title = title_regent
+				clr_character_flag = title_regent
+			}
+			if = { 
+				limit = { has_character_flag = title_triarch }				
+				give_minor_title = title_triarch
+				clr_character_flag = title_triarch
+			}
+			clr_character_flag = not_fired_from_council	
+			clr_character_flag = had_castellan_job
+			clr_character_flag = opinion_fired_from_council
+			if = {
+				limit = { NOT = { has_character_flag = opinion_job_security_concerns } }
+				hidden_tooltip = { remove_opinion = { who = ROOT modifier = opinion_job_security_concerns } }
+			}	
+			clr_character_flag = opinion_job_security_concerns			
+		}	
+	}
+}
+#Councillor issues vote of no confidence against fellow councillor
+character_event = {
+	id = councillor.60
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcouncillor.60
+		trigger = { liege = { has_regent = no } }
+	}	
+	desc = {
+		text = EVTDESCcouncillor.60B
+		trigger = { liege = { has_regent = yes } }
+	}	
+	
+	option = {
+		name = EVTOPTAcouncillor.60 #Vote For
+		ai_chance = {
+			factor = 25
+			
+			modifier = { #Family loyalty
+				factor = 0
+				is_close_relative = FROM
+				NOT = { is_rival = FROM }
+				OR = {
+					opinion = { who = FROM value = -39 }
+					trait = familyperson
+				}
+			}	
+			modifier = {
+				factor = 0
+				has_position = loyalist
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROM value = 25 }
+				NOT = { opinion = { who = FROMFROM value = 50 } }
+			}
+			modifier = {
+				factor = 0
+				reverse_has_opinion_modifier = { who = FROM modifier = opinion_council_sponsor }
+			}
+			modifier = {
+				factor = 0
+				is_friend = FROM
+			}
+			
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -24 } }
+			}			
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 25 }
+			}
+		}
+		show_portrait = FROMFROM
+		set_character_flag = councillor.60_vote_FOR
+		FROM = { change_variable = { which = votes_of_no_confidence value = 1 } }
+	}
+	option = {
+		name = EVTOPTBcouncillor.60 #Vote Against
+		ai_chance = {
+			factor = 75
+			modifier = { #Motives
+				factor = 0.01
+				OR = {
+					NOT = { opinion = { who = FROM value = -35 } } #Dislike target
+					AND = { #Pragmatist dislikes bad councillor
+						has_position = pragmatist
+						NOT = { opinion = { who = FROM value = 0 } }
+						FROM = {
+							NOR = {
+								stewardship = 8
+								diplomacy = 8
+								martial = 8
+								intrigue = 8
+								learning = 8
+							}
+						}	
+					}
+					AND = { #Glory hound dislikes wrong culture
+						has_position = glory_hound
+						NOT = { opinion = { who = FROM value = 25 } }
+						NOT = { culture_group = FROM }
+					}
+					AND = { #Zealot dislikes wrong religion
+						has_position = zealot
+						NOT = { opinion = { who = FROM value = 25 } }
+						NOT = { religion = FROM }
+					}
+					AND = { #Malcontent may cause trouble
+						has_position = malcontent
+						NOT = { opinion = { who = FROM value = 0 } }
+					}
+					AND = { #Elephant oppose tiger
+						trait = elephant
+						NOT = { opinion = { who = FROM value = 0 } }
+						FROM = { trait = tiger }
+					}
+					AND = { #Tiger oppose elephant
+						trait = tiger
+						NOT = { opinion = { who = FROM value = 0 } }
+						FROM = { trait = elephant }
+					}
+				}
+			}
+		}	
+		show_portrait = FROMFROM
+		clr_character_flag = councillor.60_vote_FOR
+		FROM = { change_variable = { which = votes_of_no_confidence value = -1 } }
+	}
+}	
+character_event = { #The result
+	id = councillor.61
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcouncillor.61
+		trigger = { liege = { has_regent = no } }
+	}	
+	desc = {
+		text = EVTDESCcouncillor.61B
+		trigger = { liege = { has_regent = yes } }
+	}	
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			same_liege = ROOT
+			OR = {
+				is_councillor = yes
+				has_minor_title = title_high_admiral
+				has_minor_title = title_councilmember_king
+				has_minor_title = title_councilmember_emperor
+			}
+		}
+		FROMFROM = {
+			is_alive = yes
+			OR = {
+				character = ROOT
+				same_liege = ROOT
+			}	
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTAcouncillor.61 #In favour
+		trigger = {
+			FROM = { check_variable = { which = votes_of_no_confidence value = 1 } }
+		}
+		show_portrait = FROMFROM
+		if = {
+			limit = { liege = { has_regent = no } }
+			custom_tooltip = {
+				text = TOOLTIPcouncillor.61A	
+			}
+		}
+		else = {
+			custom_tooltip = {
+				text = TOOLTIPcouncillor.61B				
+			}
+		}
+		if = {
+			limit = { has_character_flag = councillor.60_vote_FOR }
+			FROM = { opinion = { who = ROOT modifier = opinion_voted_to_remove_from_council months = 60 } }
+		}
+		if = { #The initiater
+			limit = { character = FROMFROM }
+			liege = { character_event = { id = councillor.62 } }
+		}
+	}
+	option = {
+		name = EVTOPTBcouncillor.61 #Against
+		trigger = {
+			FROM = { NOT = { check_variable = { which = votes_of_no_confidence value = 1 } } }
+		}
+		show_portrait = FROMFROM
+		if = { #The initiater
+			limit = { character = FROMFROM }
+			tiered_prestige_negative_effect = yes
+			clr_character_flag = vote_of_no_confidence
+			hidden_tooltip = {
+				liege = {
+					any_courtier_or_vassal = {
+						limit = {
+							OR = {
+								is_councillor = yes
+								is_voter = yes
+							}
+							NOT = { character = PREV }
+						}
+						clr_character_flag = councillor.60_vote_FOR
+					}
+				}
+				FROM = { 
+					add_character_modifier = { name = survived_vote_of_no_confidence duration = 730 hidden = yes } #immune to this for 2 years
+					set_variable = { which = votes_of_no_confidence value = 0 }
+				}
+			}
+		}
+	}
+	after = {
+		tooltip = {
+			liege = {
+				if = {
+					limit = { has_regent = no }
+					custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+				}
+				any_courtier_or_vassal = {
+					limit = {
+						OR = {
+							is_councillor = yes
+							is_voter = yes
+						}
+						NOT = { character = PREV }
+					}
+					if = {
+						limit = { has_character_flag = councillor.60_vote_FOR }
+						custom_tooltip = { text = TOOLTIPcouncillor.61_FOR }
+					}
+					else = {
+						custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+					}
+				}
+			}
+		}
+	}
+}	
+character_event = { #Inform liege
+	id = councillor.62
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	desc = {
+		text = EVTDESCcouncillor.62
+		trigger = { has_regent = no }
+	}	
+	desc = {
+		text = EVTDESCcouncillor.62B
+		trigger = { has_regent = yes }
+	}	
+
+	option = {
+		name = EVTOPTAcouncillor.62 #OK
+		ai_chance = {
+			factor = 100
+		}	
+		show_portrait = FROM
+		FROMFROM = {
+			character_event = { id = councillor.63 tooltip = TOOLTIPcouncillor.63 }
+			tooltip = { opinion = { who = ROOT modifier = opinion_fired_from_council } }
+		}
+	}
+	option = {
+		name = EVTOPTBcouncillor.62 #Veto!
+		trigger = { has_regent = no }
+		ai_chance = {
+			factor = 50
+			
+			modifier = { #Motives
+				factor = 0				
+				FROMFROM = {
+					#Target is competent
+					NAND = {
+						has_job_title = job_castellan
+						stewardship = 10
+						diplomacy = 10
+					}
+					NAND = {
+						has_job_title = job_chancellor
+						diplomacy = 14
+					}
+					NAND = {
+						has_job_title = job_marshal
+						martial = 14
+					}
+					NAND = {
+						has_job_title = job_treasurer 
+						stewardship = 14
+					}
+					NAND = {
+						has_job_title = job_spymaster
+						intrigue = 14
+					}
+					NAND = {
+						has_job_title = job_physician
+						learning = 14
+					}
+					NAND = {
+						has_job_title = job_spiritual
+						religion = ROOT
+						learning = 14
+					}
+					#I like the target
+					NOT = { reverse_opinion = { who = ROOT value = 25 } }
+					#The target is a powerful vassal
+					NOT = { among_most_powerful_vassals = 3 }
+					NOT = { relative_power_to_liege = 0.5 }
+					#Is close relation
+					NOT = { is_married = ROOT }
+					NOT = { is_close_relative = ROOT }
+					NOT = { is_lover = ROOT }
+				}	
+				NOT = { trait = lunatic } #I'm crazy
+				NOT = { trait = proud } #I dont like being told what to do
+			}
+			modifier = {
+				factor = 0
+				NOR = {
+					AND = {
+						trait = arbitrary
+						OR = { #limit excessive tyranny to idiots and lunatics
+							NOT = { check_variable = { which = "tyrant" value = 30 } }
+							trait = wroth
+							NOT = { diplomacy = 5 }
+						}
+					}	
+					trait = lunatic
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = just
+					trait = honorable
+				}
+			}
+			modifier = { #I agree anyway
+				factor = 0
+				OR = {
+					NOT = { opinion = { who = FROMFROM value = -24 } } #Dislike target
+					AND = { #Pragmatist dislikes bad councillor
+						OR = {
+							trait = just
+							trait = diligent
+						}
+						NOT = { opinion = { who = FROMFROM value = 0 } }
+						FROMFROM = {
+							NOR = {
+								stewardship = 8
+								diplomacy = 8
+								martial = 8
+								intrigue = 8
+							}
+						}	
+					}
+					AND = { #Glory hound dislikes wrong culture
+						trait = proud
+						NOT = { opinion = { who = FROMFROM value = 25 } }
+						NOT = { culture_group = FROMFROM }
+					}
+					AND = { #Zealot dislikes wrong religion
+						trait = zealous
+						NOT = { opinion = { who = FROMFROM value = 25 } }
+						NOT = { religion = FROMFROM }
+					}
+					AND = { #Elephant oppose tiger
+						trait = elephant
+						NOT = { opinion = { who = FROMFROM value = 0 } }
+						FROMFROM = { trait = tiger }
+					}
+					AND = { #Tiger oppose elephant
+						trait = tiger
+						NOT = { opinion = { who = FROMFROM value = 0 } }
+						FROMFROM = { trait = elephant }
+					}
+				}
+			}
+			
+			
+			
+		}	
+		show_portrait = FROM
+		if = {
+			limit = { trait = just }
+			remove_trait = just
+		}
+		change_variable = { which = "tyrant" value = 10 } 
+		character_event = { id = maintenance.1 } #tyrant trait	
+		FROMFROM = {
+			character_event = { id = councillor.64 }
+			opinion = { who = ROOT modifier = opinion_backed_council_membership months = 60 }
+			hidden_tooltip = {
+				add_character_modifier = { name = survived_vote_of_no_confidence duration = 730 hidden = yes } #immune to this for 2 years
+			}
+		}
+		hidden_tooltip = {
+			any_courtier_or_vassal = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					NOT = { character = ROOT }
+					NOT = { character = FROMFROM }
+				}
+				character_event = { id = councillor.65 }
+			}
+		}
+	}
+	after = {
+		tooltip = {
+			if = {
+				limit = { has_regent = no }
+				custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+			}
+			any_courtier_or_vassal = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					NOT = { character = ROOT }
+				}
+				if = {
+					limit = { has_character_flag = councillor.60_vote_FOR }
+					custom_tooltip = { text = TOOLTIPcouncillor.61_FOR }
+				}
+				else = {
+					custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+				}
+			}
+		}	
+		FROM = {
+			clr_character_flag = vote_of_no_confidence
+		}
+	}
+}	
+character_event = { #Inform councillor fired
+	id = councillor.63
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCcouncillor.63
+		trigger = { liege = { has_regent = no } }
+	}	
+	desc = {
+		text = EVTDESCcouncillor.63B
+		trigger = { liege = { has_regent = yes } }
+	}	
+
+	option = {
+		name = EVTOPTAcouncillor.63
+		show_portrait = FROMFROM
+		if = {
+			limit = { has_job_title = job_castellan }			
+			remove_title = job_castellan
+		}	
+		else_if = {
+			limit = { has_job_title = job_chancellor }			
+			remove_title = job_chancellor
+		}
+		else_if = {
+			limit = { has_job_title = job_marshal }			
+			remove_title = job_marshal
+		}
+		else_if = {
+			limit = { has_job_title = job_treasurer }			
+			remove_title = job_treasurer
+		}
+		else_if = {
+			limit = { has_job_title = job_spymaster }			
+			remove_title = job_spymaster
+		}
+		else_if = {
+			limit = { has_job_title = job_physician }			
+			remove_title = job_physician
+		}
+		else_if = {
+			limit = { has_job_title = job_spiritual }			
+			remove_title = job_spiritual
+		}
+		else_if = {
+			limit = { has_minor_title = title_councilmember_king }			
+			remove_title = title_councilmember_king
+		}
+		else_if = {
+			limit = { has_minor_title = title_councilmember_emperor }			
+			remove_title = title_councilmember_emperor
+		}
+		else_if = {
+			limit = { has_minor_title = title_high_admiral }			
+			remove_title = title_high_admiral
+		}
+		hidden_tooltip = {
+			add_character_modifier = { #Prevents rehiring
+				name = fired_from_council_by_regent
+				duration = 1095
+				hidden = yes
+			}
+			set_variable = { which = votes_of_no_confidence value = 0 }
+			if = {
+				limit = { NOT = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } } }
+				opinion = { who = FROM modifier = opinion_fired_from_council }
+			}
+		}	
+		liege = {
+			if = {
+				limit = { has_regent = no }
+				custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+			}
+			any_courtier_or_vassal = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					NOT = { character = PREV }
+				}
+				if = {
+					limit = { has_character_flag = councillor.60_vote_FOR }
+					custom_tooltip = { text = TOOLTIPcouncillor.61_FOR }
+					clr_character_flag = councillor.60_vote_FOR
+				}
+				else = {
+					custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+				}
+			}
+		}
+	}
+}	
+character_event = { #Inform target councillor liege overruled
+	id = councillor.64
+	desc = EVTDESCcouncillor.64
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAcouncillor.64 
+		show_portrait = FROMFROM
+		tooltip = { FROM = { change_variable = { which = "tyrant" value = 10 } } }
+		liege = {
+			if = {
+				limit = { has_regent = no }
+				custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+			}
+			any_courtier_or_vassal = {
+				limit = {
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					NOT = { character = PREV }
+				}
+				if = {
+					limit = { has_character_flag = councillor.60_vote_FOR }
+					custom_tooltip = { text = TOOLTIPcouncillor.61_FOR }
+					clr_character_flag = councillor.60_vote_FOR
+				}
+				else = {
+					custom_tooltip = { text = TOOLTIPcouncillor.61_AGAINST }
+				}
+			}
+		}
+		hidden_tooltip = { set_variable = { which = votes_of_no_confidence value = 0 } }
+	}
+}	
+character_event = { #Inform other councillors liege overruled
+	id = councillor.65
+	desc = EVTDESCcouncillor.65
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAcouncillor.65
+		show_portrait = FROMFROMFROM
+		tooltip = { FROM = { change_variable = { which = "tyrant" value = 10 } } }
+	}
+}

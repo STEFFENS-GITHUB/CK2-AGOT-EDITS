@@ -1,0 +1,680 @@
+######################
+###Written by Rodri###
+######################
+
+#Child is captured
+character_event = { 
+	id = 250850
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	only_playable = yes
+	
+	trigger = {
+		any_child = {
+			is_ruler = no
+			liege = { character = ROOT }
+			age = 10
+			NOT = { age = 22 }
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1	
+		modifier = {
+			factor = 2
+			has_character_modifier = curse_of_harrenhal
+		}
+	}
+
+	option = {
+		name = OK	
+		random_child = {
+			limit = {
+				is_abroad = no
+				is_ruler = no
+				liege = { character = ROOT }
+				age = 10
+				NOT = { age = 22 }
+				OR = {
+					is_female = no
+					female_get_masculine_event_trigger = yes
+				}
+				NOT = { trait = incapable }
+				prisoner = no
+				in_command = no
+			}
+			character_event = { id = 250800 }
+		}
+	}
+}
+character_event = { #i am captured
+	id = 250800
+	desc = "EVTDESC250800"
+	picture = GFX_evt_bandits
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		FROM = {
+			character_event = { id = 250801 }
+		}		
+	}	
+}
+	
+	
+character_event = { #son is captured!
+	id = 250801
+	desc = "EVTDESC250801"
+	picture = GFX_evt_bandits
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_character_flag = bandit_fired
+		if = {
+			limit = { martial = 17 }
+			set_character_flag = martial17
+		}
+		if = {
+			limit = { 
+				martial = 10 
+				not = { martial = 17 }
+			}
+			set_character_flag = martial10
+		}
+		if = {
+			limit = { 
+				not = { martial = 10 }
+			}
+			set_character_flag = martial0
+		}
+		if = {
+			limit = {
+				job_marshal = { martial = 17 } 
+			}
+			job_marshal = {
+				set_character_flag = martial17
+			}
+		}
+		if = {
+			limit = {
+				not = { job_marshal = { martial = 17 } }
+				job_marshal = { martial = 10 }
+			}
+			job_marshal = {
+				set_character_flag = martial10
+			}
+		}
+		if = {
+			limit = {
+				not = { job_marshal = { martial = 10 } }
+			}
+			job_marshal = {
+				set_character_flag = martial0
+			}
+		}
+	}
+			
+	option = {
+		name = "EVTOPTA250801"
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 10
+				current_heir = { character = FROM }
+			}			
+			modifier = {
+				factor = 1.1
+				trait = slothful			
+			}
+			modifier = {
+				factor = 1.1
+				is_ill = yes		
+			}
+			modifier = {
+				factor = 1.1
+				trait = shy			
+			}
+			modifier = {
+				factor = 1.25
+				trait = craven			
+			}
+			modifier = {
+				factor = 0.75
+				trait = brave
+			}
+			modifier = {
+				factor = 0.75
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 1.25
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.75
+				trait = selfish
+			}
+			modifier = {
+				factor = 0.75
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.20
+				not = { martial = 10 }
+			}
+			modifier = {
+				factor = 0.8
+				martial = 10
+			}
+			modifier = {
+				factor = 1.20
+				job_marshal = { not = { martial = 10 } }
+			}
+			modifier = {
+				factor = 0.80
+				job_marshal = { martial = 10 }
+			}
+			
+		}
+		scaled_wealth = { value = -1 min = -25 max = -200 }
+		random_list	= {
+			5 = {
+				FROM = {
+					hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+					tooltip = { death = yes }
+				}
+			}
+			95 = {
+				hidden_tooltip = { character_event = { id = 250806 days = 7} }
+			}
+		}
+	}
+	option = { # father hunts them down 
+		name = "EVTOPTB250801"
+		trigger = {
+			is_abroad = no
+			prisoner = no
+			NOT = { trait = incapable }
+			NOT = { trait = imbecile }
+			NOT = { is_crippled_trigger = yes }
+			NOT = { trait = infirm }
+			NOT = { has_severe_disability_trigger = yes }
+		}
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 10
+				trait = familyperson
+			}
+			modifier = {
+				factor = 0.75
+				trait = selfish			
+			}
+			modifier = {
+				factor = 0.75
+				trait = slothful			
+			}
+			modifier = {
+				factor = 0.75
+				trait = craven			
+			}
+			modifier = {
+				factor = 2.5
+				trait = brave
+			}
+			modifier = {
+				factor = 0.75
+				not = { martial = 10 }
+			}
+			modifier = {
+				factor = 1.25
+				martial = 10
+			}
+			modifier = {
+				factor = 1.25
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = depressed
+			}
+			modifier = {
+				factor = 0.75
+				trait = drunkard
+			}
+			modifier = {
+				factor = 0.5
+				is_ill = yes
+			}
+			modifier = {
+				factor = 0.5
+				has_epidemic = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = wounded
+			}
+			modifier = {
+				factor = 0.5
+				is_crippled_trigger = yes
+			}
+			modifier = {
+				factor = 0.5
+				has_severe_disability_trigger = yes
+			}
+			modifier = {
+				factor = 0.5
+				trait = blinded
+			}
+			modifier = {
+				factor = 0.5
+				trait = infirm
+			}
+		}
+		prestige = 25
+		if = {
+			limit = { 
+				NOT = { trait = brave } 
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 } 
+			}
+			random = {
+				chance = 25
+				add_trait = brave
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}
+		if = {
+			limit = { has_character_flag = martial17 }
+			
+			random_list	= {
+				4 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				96 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list = {
+				2 = { 			
+					hidden_tooltip = { character_event = { id = 250804 days = 2 } }
+					tooltip = { death = yes }
+				}
+				2 = { 
+					add_maimed_trait_effect = yes
+				}
+				4 = { 
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 days = 2 } }
+				}	
+				92 = { } 
+			}						
+		}
+		if = {
+			limit = { has_character_flag = martial10 }
+			
+			random_list	= {
+				8 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				92 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list = {
+				4 = { 			
+					hidden_tooltip = { character_event = { id = 250804 days = 2 } }
+					tooltip = { death = yes }
+				}
+				4 = { 
+					add_maimed_trait_effect = yes
+				}
+				8 = { 
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 days = 2 } }
+				}	
+				84 = { } 
+			}						
+		}	
+		if = {
+			limit = { has_character_flag = martial0 }
+			random_list	= {
+				12 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				88 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list = {
+				6 = { 
+					hidden_tooltip = { character_event = { id = 250804 days = 2 } }
+					tooltip = { death = yes }
+				}
+				6 = { 
+					add_maimed_trait_effect = yes
+				}
+				12 = { 
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 days = 2 } }
+				}	
+				76 = { }  
+			}				
+		}
+		clr_character_flag = martial17
+		clr_character_flag = martial10
+		clr_character_flag = martial0
+	}
+	option = { # father send marshall
+		name = "EVTOPTC250801"
+		trigger = {
+			any_courtier = {
+				has_job_title = job_marshal
+			}
+			job_marshal = {
+				ai = yes
+			}
+		}
+		ai_chance = {
+			factor = 34
+			modifier = {
+				factor = 1.20
+				job_marshal = { martial = prev }
+			}
+			modifier = {
+				factor = 1.1
+				trait = slothful			
+			}
+			modifier = {
+				factor = 1.1
+				is_ill = yes		
+			}
+			modifier = {
+				factor = 1.1
+				trait = shy			
+			}
+			modifier = {
+				factor = 1.25
+				trait = craven			
+			}
+			modifier = {
+				factor = 0.75
+				trait = brave
+			}
+			modifier = {
+				factor = 0.75
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 1.25
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				is_ill = yes
+			}
+			modifier = {
+				factor = 3
+				has_epidemic = yes
+			}
+			modifier = {
+				factor = 1.25
+				trait = wounded
+			}
+			modifier = {
+				factor = 1.5
+				is_crippled_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				has_severe_disability_trigger = yes
+			}
+			modifier = {
+				factor = 1.5
+				trait = infirm
+			}
+			modifier = {
+				factor = 1.5
+				trait = blinded
+			}
+			modifier = {
+				factor = 1.5
+				trait = incapable
+			}
+		}
+		if = {
+			limit = { 
+				job_marshal = {
+					has_character_flag = martial17
+				}
+			}
+			random_list	= {
+				4 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				96 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list	= { 
+				2 = {
+					job_marshal = { # death
+						employer = {
+							hidden_tooltip = { character_event = { id = 250805 days = 2 } }
+						}
+						death = { death_reason = death_bandits }
+					}
+				}
+				2 = {
+					job_marshal = {
+						add_maimed_trait_effect = yes
+					}
+				}
+				4 = {
+					job_marshal = {
+						add_trait_silently_wounded_effect = yes
+					}
+				}
+				92 = { }
+			}							
+		}
+		if = {
+			limit = { 
+				job_marshal = {
+					has_character_flag = martial10
+				}
+			}
+			random_list	= {
+				8 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				92 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list	= { # death
+				4 = { 
+					job_marshal = { # death
+						employer = {
+							hidden_tooltip = { character_event = { id = 250805 days = 2 } }
+						}
+						death = { death_reason = death_bandits }
+					}
+				}
+				4 = { 
+					job_marshal = {
+						add_maimed_trait_effect = yes
+					}
+				}
+				8 = { 
+					job_marshal = {
+						add_trait_silently_wounded_effect = yes
+					}
+				}
+				84 = { } 
+			}							
+		}
+		if = {
+			limit = { 
+				job_marshal = {
+					has_character_flag = martial0
+				}
+			}
+			random_list	= {
+				12 = {
+					FROM = {
+						hidden_tooltip = { character_event = { id = 250802 days = 2 } }
+						tooltip = { death = yes }
+					}
+				}
+				88 = {
+					hidden_tooltip = { character_event = { id = 250806 days = 7} }
+				}
+			}
+			random_list	= {
+				6 = { 
+					job_marshal = { # death
+						employer = {
+							hidden_tooltip = { character_event = { id = 250805 days = 2 } }
+						}
+						death = { death_reason = death_bandits }
+					}
+				}
+				6 = { 
+					job_marshal = {
+						add_maimed_trait_effect = yes
+					}
+				}
+				12 = { 
+					job_marshal = {
+						add_trait_silently_wounded_effect = yes
+					}
+				}
+				76 = { } 
+			}
+		}
+		job_marshal = {
+			clr_character_flag = martial17
+			clr_character_flag = martial10
+			clr_character_flag = martial0
+		}
+	}
+}
+
+character_event = { #kill son - let parent know
+	id = 250802
+	picture = GFX_evt_bandits
+	desc = "EVTDESC250802"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Damn."	
+		FROM = { 
+			character_event = {
+				id = 250803
+			}
+		}
+		death = { death_reason = death_bandits }
+	}
+}
+character_event = { #PARENT
+	id = 250803
+	picture = GFX_evt_bandits
+	desc = "EVTDESC250803"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Damn."	
+	}
+}
+character_event = { #kill marshal ai only from prev event/ tell employer
+	id = 250804
+	picture = GFX_evt_bandits
+	desc = "EVTDESC250804"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			character_event = {
+				id = 250805 days = 2
+			}
+		}
+	}
+	
+	option = {
+		name = "What a shame"			
+		death = { death_reason = death_bandits }
+	}
+}
+character_event = { #PARENT
+	id = 250805
+	picture = GFX_evt_bandits
+	desc = "EVTDESC250805"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Damn."
+	}
+}
+character_event = { #PARENT
+	id = 250806
+	picture = GFX_evt_bandits
+	desc = "EVTDESC250806"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "Ok"
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_BANDITS_SAVED_SON
+				portrait = [FromFrom.GetID]
+			}	
+		}
+	}
+}

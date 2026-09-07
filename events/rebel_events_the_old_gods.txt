@@ -1,0 +1,4937 @@
+#########################################################
+#
+# Rebel Events for The Old Gods DLC
+# ( TOG.1000 to TOG.1199)
+#
+# NOTE: The Old Gods DLC disables the old rebel system
+#
+#########################################################
+
+# Written by Henrik Fåhraeus
+
+namespace = TOG
+
+# Triggered from "on_rebel_revolt", choose rebel type
+province_event = {
+	id = TOG.1999
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {					
+		#Not against Nightswatch/Ruins
+		owner = {
+			NOT = { trait = nightswatch }
+			NOT = { culture_group = unoccupied_group }
+			NOT = { culture_group = winter_group }
+		}
+	}
+	
+	immediate = { #Types higher in the list have priority
+		##Try and reinforce ongoing revolts first##
+		#Clan Rebels
+		if = {
+			limit = { 
+				has_dlc = "Horse Lords"
+				any_province_holding = {
+					NOT = { holding_type = nomad }
+				}
+
+				# There is already an ongoing peasant revolt for this province
+				owner = {
+					top_liege = {
+						war = yes
+						any_war = {
+							defender = { character = PREV }
+							using_cb = cb_minor_clan_revolt
+		#					war_title = ROOT # The county
+						}
+					}
+				}
+			}
+			province_event = { id = HL.2010 }
+			break = yes
+		}
+		if = {
+			limit = {
+				any_province_holding = {
+					NOT = { holding_type = nomad }
+				}
+			}
+			#Slave
+			if = {
+				limit = {
+					# There are slaves in the province
+					OR = {
+						has_province_modifier = slave_modifier_1
+						has_province_modifier = slave_modifier_2
+						has_province_modifier = slave_modifier_3
+						has_province_modifier = slave_modifier_4
+						has_province_modifier = slave_modifier_5
+					}
+					NOT = { has_game_rule = { name = slavery value = off } }
+					# There is already an ongoing slave revolt or war of liberation
+					owner = {
+						top_liege = {
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								OR = {
+									using_cb = slave_revolt
+									using_cb = war_of_liberation
+								}
+							}
+						}
+					}
+				}
+				province_event = { id = TOG.10706 }
+				break = yes
+			}
+			#Nationalist
+			if = {
+				limit = {
+					has_dlc = "The Old Gods"
+			
+					# There is already an ongoing nationalist revolt for the same kingdom
+					owner = {
+						top_liege = {
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								using_cb = liberation_revolt
+								thirdparty_title_scope = {
+									ROOT = {
+										OR = {
+											kingdom = { title = PREVPREV }
+											duchy = { title = PREVPREV }
+											county = { title = PREVPREV }
+										}	
+									}
+								}
+							}
+						}
+						NOT = { trait = nightswatch }
+					}
+					NOT = { region = world_the_wall }
+					#Not in pirate home regions
+					NOT = { region = world_stepstones }
+					NOT = { region = world_basilisk_isles }					
+				}
+				province_event = { id = TOG.1050 }
+				break = yes
+			}
+			
+			#Religious (can also join religion head leading depose liege faction)
+			if = {
+				limit = {
+					has_dlc = "The Old Gods"
+			
+					is_heretic = no
+					
+					owner = {
+						OR = {
+							NOT = { religion = ROOT }
+							any_liege = {
+								NOT = { religion = ROOT }
+							}
+						}
+						NOT = { trait = nightswatch }						
+					}			
+					owner = {
+						OR = {
+							AND = {
+								war = yes
+								any_war = {
+									defender = { character = PREV }
+									OR = {
+										AND = {
+											using_cb = religious_revolt
+											attacker = { religion = ROOT }
+										}
+										AND = {
+											using_cb = overthrow_ruler_no_calls
+											attacker = { religion = ROOT controls_religion = yes }
+										}
+									}	
+								}
+							}
+							any_liege = {
+								war = yes
+								any_war = {
+									defender = { character = PREV }
+									OR = {
+										AND = {
+											using_cb = religious_revolt
+											attacker = { religion = ROOT }
+										}
+										AND = {
+											using_cb = overthrow_ruler_no_calls
+											attacker = { religion = ROOT controls_religion = yes }
+										}
+									}
+								}
+							}
+						}	
+					}
+				}
+				# DoW on the closest heathen liege
+				
+				owner = {	
+					liege = {					
+						liege = {					
+							liege = {
+								if = {
+									limit = { 
+										NOT = { religion = ROOT } 
+										war = yes
+										any_war = {
+											defender = { character = PREV }
+											OR = {
+												AND = {
+													using_cb = religious_revolt
+													attacker = { religion = ROOT }
+												}
+												AND = {
+													using_cb = overthrow_ruler_no_calls
+													attacker = { religion = ROOT controls_religion = yes }
+												}
+											}
+										}
+									}
+									save_event_target_as = heathen_liege
+									#break = yes
+								}
+							}
+							if = {
+								limit = { 
+									NOT = { religion = ROOT } 
+									war = yes
+									any_war = {
+										defender = { character = PREV }
+										OR = {
+											AND = {
+												using_cb = religious_revolt
+												attacker = { religion = ROOT }
+											}
+											AND = {
+												using_cb = overthrow_ruler_no_calls
+												attacker = { religion = ROOT controls_religion = yes }
+											}
+										}
+									}
+								}
+								save_event_target_as = heathen_liege
+								#break = yes
+							}
+						}
+						if = {
+							limit = { 
+								NOT = { religion = ROOT } 
+								war = yes
+								any_war = {
+									defender = { character = PREV }
+									OR = {
+										AND = {
+											using_cb = religious_revolt
+											attacker = { religion = ROOT }
+										}
+										AND = {
+											using_cb = overthrow_ruler_no_calls
+											attacker = { religion = ROOT controls_religion = yes }
+										}
+									}
+								}
+							}
+							save_event_target_as = heathen_liege
+							#break = yes
+						}
+					}
+					if = {
+						limit = { 
+							NOT = { religion = ROOT } 
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								OR = {
+									AND = {
+										using_cb = religious_revolt
+										attacker = { religion = ROOT }
+									}
+									AND = {
+										using_cb = overthrow_ruler_no_calls
+										attacker = { religion = ROOT controls_religion = yes }
+									}
+								}
+							}
+						}
+						save_event_target_as = heathen_liege
+						#break = yes
+					}
+				}
+				province_event = { id = TOG.1070 days = 1 }			
+				break = yes
+			}
+			#Heretic
+			if = {
+				limit = {
+					has_dlc = "The Old Gods"
+					
+					is_heretic = yes
+					
+					owner = {
+						top_liege = {
+							is_parent_religion = ROOT
+						}
+						NOT = { trait = nightswatch }
+					}
+					
+					owner = {
+						top_liege = {
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								using_cb = heretic_revolt
+								attacker = { religion = ROOT }
+							}
+						}
+					}
+				}
+				province_event = { id = TOG.1030 }
+				break = yes
+			}
+			#Peasant
+			if = {
+				limit = {
+					has_dlc = "The Old Gods"
+					# There is already an ongoing peasant revolt for this province
+					owner = {
+						top_liege = {
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								using_cb = peasant_revolt
+								thirdparty_title_scope = { #Same Kingdom
+									location = {
+										kingdom = {
+											ROOT = {
+												kingdom = {
+													title = PREVPREV
+												}
+											}
+										}	
+									}	
+								}
+							}
+						}
+					}
+				}
+				province_event = { id = TOG.1010 }
+				break = yes
+			}
+		}	
+		
+		##If no ongoing rebellion, select new rebellion type##
+		#Native
+		if = {
+			limit = { has_province_flag = colony_province }
+			province_event = { id = unoccupied.10 }
+			break = yes
+		}		
+		#Clan Rebels
+		if = {
+			limit = { 
+				has_dlc = "Horse Lords"
+				has_empty_holding = yes # To allow a Clan capital
+		
+				owner = {
+					is_nomadic = yes
+					independent = yes
+					culture = ROOT
+					risks_minor_clan_rising = yes
+					in_revolt = no
+					capital_scope = {
+						NOT = { province = ROOT }
+					}
+				}
+				
+				NOT = { # Not if there is already an ongoing Minor Clan revolt
+					owner = {
+						top_liege = {
+							war = yes
+							any_war = {
+								defender = { character = PREV }
+								using_cb = cb_minor_clan_revolt
+		#						war_title = ROOT # The county
+							}
+						}
+					}
+				}
+			}
+			province_event = { id = HL.2000 }
+			break = yes
+		}	
+		if = {
+			limit = {
+				any_province_holding = {
+					NOT = { holding_type = nomad }
+				}
+			}
+			#Slave
+			if = {
+				limit = { 
+					# Requires there to be slaves in the province
+					OR = {
+						has_province_modifier = slave_modifier_1
+						has_province_modifier = slave_modifier_2
+						has_province_modifier = slave_modifier_3
+						has_province_modifier = slave_modifier_4
+						has_province_modifier = slave_modifier_5
+					}
+					NOT = { has_game_rule = { name = slavery value = off } }
+					kingdom = {
+						OR = {
+							has_holder = no
+							holder_scope = { any_realm_province = { province_id = ROOT } }
+						}
+					}
+				}
+				province_event = { id = TOG.10699 }
+				break = yes
+			}
+			#Brindlemen Native
+			if = {
+				limit = { 
+					region = world_sothoryos
+				}
+				province_event = { id = unoccupied.10 }
+				break = yes
+			}	
+			#Nationalist
+			if = {
+				limit = { 
+					has_dlc = "The Old Gods"
+					owner = {
+						NOT = { culture_group = ROOT }					
+						OR = { #High Valyrians of same religion are OK
+							NOT = { culture = high_valyrian }
+							NOT = { religion = ROOT }
+						}		
+						top_liege = { 
+							NOT = { culture_group = ROOT }
+							OR = { #High Valyrians of same religion are OK
+								NOT = { culture = high_valyrian }
+								NOT = { religion = ROOT }
+							}
+							NOT = { has_character_modifier = crushed_major_revolt } #Cooldown
+						}	
+						NOT = { trait = nightswatch }
+					}
+					OR = { #Volantenes more tolerant of Valyrians, less nationalist
+						revolt_risk = 0.1	
+						NOT = { culture = volantene }
+						owner = { 
+							NOT = { culture_group = valyrian }
+							top_liege = { NOT = { culture_group = valyrian } }
+						}
+					}
+					NOT = { region = world_the_wall }
+					#Not in pirate home regions
+					NOT = { region = world_stepstones }
+					NOT = { region = world_basilisk_isles }
+				}
+				province_event = { id = TOG.1040 }
+				break = yes
+			}
+			
+			#Religious
+			if = {
+				limit = { 
+					has_dlc = "The Old Gods"
+					is_heretic = no		
+					NOT = { religion = old_gods }
+					NOT = { religion = beyond_wall_old_gods }
+					NOT = { religion = great_shepherd }
+					NOT = { pacifist = yes }
+					NOT = { religion = pirate }
+					NOT = { religion = corsair }
+					owner = {
+						OR = {
+							NOT = { religion = ROOT }
+							any_liege = {
+								NOT = { religion = ROOT }
+							}
+						}	
+						NOT = { trait = nightswatch }
+					}					
+					NAND = { #NOT if owner is same religion, and no likely support from nearby provinces
+						owner = { religion = ROOT }
+						NOT = {
+							any_neighbor_province = {
+								religion = ROOT
+								revolt_risk = 0.01
+							}
+						}
+					}
+				}
+				# DoW on the closest heathen liege
+				owner = {			
+					liege = {					
+						liege = {						
+							liege = {
+								if = {
+									limit = { NOT = { religion = ROOT } }
+									save_event_target_as = heathen_liege
+									#break = yes
+								}
+							}
+							if = {
+								limit = { NOT = { religion = ROOT } }
+								save_event_target_as = heathen_liege
+								#break = yes
+							}
+						}
+						if = {
+							limit = { NOT = { religion = ROOT } }
+							save_event_target_as = heathen_liege
+							#break = yes
+						}
+					}
+					if = {
+						limit = { NOT = { religion = ROOT } }
+						save_event_target_as = heathen_liege
+						#break = yes
+					}	
+				}
+				province_event = { id = TOG.1060 days = 1 }
+						
+				break = yes
+			}
+			
+			#Heretics
+			if = {
+				limit = { 
+					has_dlc = "The Old Gods"
+					is_heretic = yes	
+					owner = {
+						top_liege = {
+							is_parent_religion = ROOT
+						}
+						NOT = { trait = nightswatch }
+					}
+				}
+				province_event = { id = TOG.1020 }
+				break = yes
+			}
+			
+			#Peasants
+			if = {
+				limit = {
+					has_dlc = "The Old Gods"
+					any_province_holding = {
+						NOT = { holding_type = nomad }
+					}
+				}
+				province_event = { id = TOG.1000 }
+			}	
+		}	
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+# Peasant Rebels rise up (temporary rebel title created, with a leader and a war)
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1000
+	desc = EVTDESC_TOG_1000
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_dlc = "The Old Gods"
+			has_province_flag = force_peasant_revolt
+		}
+	}
+	
+	immediate = {
+		remove_province_modifier = rumors_of_witchcraft
+	
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		#May spawn the rebellion in neighbor province
+		save_event_target_as = rebel_spawn_location
+		if = {
+			limit = {
+				owner = {
+					lower_tier_than = KING
+					NOT = { num_of_count_titles = 2 }
+				}
+			}
+			random_neighbor_province = {
+				limit = { is_land = yes }
+				save_event_target_as = rebel_spawn_location
+			}
+		}
+		
+		#Colonised areas try to revert to native culture
+		if = { 
+			limit = { region = world_beyond_the_wall }
+			if = {
+				limit = { province_id = 2 }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = thenn
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}	
+			else_if = {
+				limit = { province_id = 10 }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = hornfoot
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { province_id = 1020 }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = nightrunner
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						province_id = 4
+						province_id = 7
+					}	
+				}
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = frozen_shore
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						province_id = 1097
+						province_id = 1031
+					}	
+				}
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = cannibal_clan
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = wildling
+					female = no
+					trait = peasant_leader
+					trait = wildling
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { 
+				region = world_north 
+				NOT = { culture = old_first_man }
+				NOT = { culture = northman_andal }
+			}
+			if = {
+				limit = { duchy = { title = d_skagos } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = skagosi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}	
+			else_if = {
+				limit = { duchy = { title = d_northclans } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = hill_clansman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_theneck } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = crannogman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = northman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { 
+				region = world_iron_isles 
+				NOT = { culture = old_ironborn }
+			}
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = ironborn
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}	
+		else_if = {
+			limit = { 
+				region = world_westeros
+				NOT = { region = world_the_wall }
+				NOT = { culture = old_first_man } 
+			}
+			if = { 
+				limit = { region = world_riverlands }				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = riverlander
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}			
+			else_if = { 
+				limit = { region = world_westerlands }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = westerman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}	
+			else_if = { 
+				limit = { region = world_vale }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = valeman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}	
+			else_if = { 
+				limit = { region = world_reach }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = reachman
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}	
+			else_if = { 
+				limit = { region = world_stormlands }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = stormlander
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = { 
+				limit = { region = world_crackclaw_point }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = crackclawmen
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = { 
+				limit = { 
+					region = world_dorne 
+					NOT = { culture = dornish_andal }
+				}
+				if = {
+					limit = { 
+						region = world_red_mountains
+					}				
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = stone_dornish
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }
+				}	
+				else_if = {
+					limit = { 
+						region = world_dornish_desert	
+					}				
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = sand_dornish
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }
+				}
+				else = {				
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = salt_dornish
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }
+				}
+			}
+			else_if = { 
+				limit = { 
+					region = world_crownlands 
+					NOT = { region = world_crackclaw_point }
+					NOT = { region = world_dragonstone }
+				}
+				if = {
+					limit = {
+						226 = { has_province_flag = kings_landing_established }
+						OR = {
+							province_id = 266
+							any_neighbor_province = { province_id = 266 }
+						}
+						OR = {
+							duchy = { title = d_kings_landing } 
+							province_id = 211
+						}
+					}
+					
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = crownlander
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }
+				}	
+				else_if = {
+					limit = { culture_group = andal }					
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = ROOT
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }	
+				}
+				else_if = {
+					limit = { any_neighbor_province = { culture_group = andal } }
+					random_neighbor_province = {
+						limit = { culture_group = andal }
+						ROOT = {						
+							create_random_soldier = {
+								random_traits = yes
+								dynasty = none
+								religion = ROOT
+								culture = PREV
+								female = no
+								trait = peasant_leader
+							}
+							new_character = { save_event_target_as = peasant_leader }
+						}
+					}	
+				}
+				else = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = riverlander
+						female = no
+						trait = peasant_leader
+					}
+					new_character = { save_event_target_as = peasant_leader }
+				}
+			}
+		}	
+		else_if = { 
+			limit = { region = world_braavos }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = braavosi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_lorath }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = lorathi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_norvos }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = norvosi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_qohor }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = qohorik
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_pentos }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = pentosi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_rhoynar }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = rhoynar_pagan
+				culture = rhoynar
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_myr }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = myrman
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_tyrosh }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = tyroshi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_lys }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = lysene
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_volantis }
+			if = {
+				limit = { province_id = 419 }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = eastern_valyrian
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {	
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = volantene
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_north_valyria }
+			if = {
+				limit = { duchy = { title = d_mantarys } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = mantaryan
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_tolos } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = tolosi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_elyria } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = elyrian
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = eastern_valyrian
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_long_summer }		
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = eastern_valyrian
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_valyria }		
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = high_valyrian
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_ghiscar }
+			if = {
+				limit = { region = world_meereen }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = meereenese
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { region = world_yunkai }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = yunkaii
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { region = world_astapor }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = astapori
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = ghiscari
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_lhazar }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = lhazareen
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_bone_mountains }
+			if = {
+				limit = { duchy = { title = d_kayakayanaya } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = kayakayanayan
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { 
+					save_event_target_as = peasant_leader 
+					random_list = {
+						15 = { add_trait = robust }
+						18 = { add_trait = strong }
+						33 = { add_trait = tall }
+						33 = { add_trait = fair }
+					}
+				}
+			}
+			else_if = {
+				limit = { duchy = { title = d_samyriana } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = samyrianan
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { 
+					save_event_target_as = peasant_leader 
+					random_list = {
+						15 = { add_trait = robust }
+						18 = { add_trait = strong }
+						33 = { add_trait = tall }
+						33 = { add_trait = fair }
+					}
+				}
+			}
+			else_if = {
+				limit = { duchy = { title = d_bayasabhad } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = bayasabhadi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { 
+					save_event_target_as = peasant_leader 
+					random_list = {
+						15 = { add_trait = robust }
+						18 = { add_trait = strong }
+						33 = { add_trait = tall }
+						33 = { add_trait = fair }
+					}
+				}
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = hyrkooni
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { 
+					save_event_target_as = peasant_leader 
+					random_list = {
+						15 = { add_trait = robust }
+						18 = { add_trait = strong }
+						33 = { add_trait = tall }
+						33 = { add_trait = fair }
+					}
+				}
+			}
+		}
+		else_if = { 
+			limit = { region = world_qarth }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = qartheen
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_moraq }
+			if = {
+				limit = { duchy = { title = d_faros } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = farosi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_vahar } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = vahari
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_zabhad } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = zabhadi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {	
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = moraqi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_asshai }
+			if = {
+				limit = { duchy = { title = d_shadowlands } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = shadowlander
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = asshai
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_sarnor }
+			if = {
+				limit = { duchy = { title = d_omber } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = omberi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = sarnorian
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_dothraki }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = dothraki
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_ibben }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = ibbenese
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_yi_ti }
+			if = {
+				limit = { duchy = { title = d_south_leng } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = lengi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else_if = {
+				limit = { duchy = { title = d_asabhad } }
+				
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = asabhadi
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+			else = {	
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = yi_ti
+					female = no
+					trait = peasant_leader
+				}
+				new_character = { save_event_target_as = peasant_leader }
+			}
+		}
+		else_if = { 
+			limit = { region = world_jogo_nhai_plains }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = jogos_nhai
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_nghai }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = nghai
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { duchy = { title = d_naath } }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = naathi
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		else_if = { 
+			limit = { region = world_summer_islands }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = summer_islander
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}	
+		else_if = {
+			limit = { region = world_basilisk_isles }
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = corsair #If a Basilisk Isles revolt make rebels corsair
+				culture = ROOT
+				female = no
+				trait = pirate
+			}
+			new_character = { 
+				check_for_defunct_culture_effect = yes
+				save_event_target_as = peasant_leader 
+			}		
+		}
+		else_if = { 
+			limit = { region = world_sothoryos }
+			
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = brindlemen
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		
+		else_if = {
+			limit = { region = world_stepstones }
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = pirate #If a Stepstones revolt make rebels pirates
+				culture = ROOT
+				female = no
+				trait = pirate
+			}
+			new_character = { 
+				check_for_defunct_culture_effect = yes
+				save_event_target_as = peasant_leader 
+			}		
+		}
+		
+		else = { 	
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = none
+				religion = ROOT
+				culture = ROOT
+				female = no
+				trait = peasant_leader
+			}
+			new_character = { save_event_target_as = peasant_leader }
+		}
+		event_target:peasant_leader = {		
+			cultural_congenital_trait_chance_effect = yes
+			random_list = {
+				10 = { add_trait = skilled_warrior }
+				30 = { add_trait = trained_warrior }
+				60 = { add_trait = poor_warrior }
+			}
+			if = {
+				limit = {
+					ROOT = { 
+						region = world_the_wall
+						owner = { 
+							OR = {
+								has_landed_title = k_nightswatch
+								trait = nightswatch 
+							}
+							NOT = { trait = wildling }
+						}						
+					}				
+				}
+				add_trait = nightswatch
+			}
+			if = {
+				limit = { NOT = { trait = nightswatch } }
+				create_title = {
+					tier = DUKE
+					landless = yes
+					temporary = yes
+					rebel = yes
+					culture = ROOT
+					name = "PEASANT_REVOLT"
+					holder = THIS
+				}
+			}	
+			else = {
+				create_title = {
+					tier = DUKE
+					landless = yes
+					temporary = yes
+					rebel = yes
+					culture = ROOT
+					name = "NW_REVOLT"
+					holder = THIS
+				}
+			}
+			wealth = 100
+			spawn_peasant_army_effect = yes
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = powerful
+					}
+				}
+				spawn_peasant_army_effect = yes
+				wealth = 150
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = very_powerful
+					}
+				}
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				wealth = 250
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = extremely_powerful
+					}
+				}
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				spawn_peasant_army_effect = yes
+				wealth = 350
+			}
+			
+			# DoW on the province top liege
+			ROOT = {
+				owner = {
+					top_liege = {
+#						set_defacto_vassal = PREVPREVPREV
+						reverse_war = {
+							target = PREVPREVPREV
+							casus_belli = peasant_revolt
+							thirdparty_title = ROOT # The county
+						}
+						reverse_opinion = {
+							who = PREVPREVPREV
+							modifier = opinion_evil_tyrant
+						}
+						set_character_flag = TEST
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1001
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1000"
+	}
+}
+
+character_event = {
+	id = TOG.1001
+	desc = EVTDESC_TOG_1001
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	show_portrait = event_target:peasant_leader
+	
+	option = {
+		name = "EVTOPTA_TOG_1000"
+	}
+}
+
+# Peasants seize a holding. Fired from 'on_siege_won_leader'.
+character_event = {
+	id = TOG.1005
+	picture = GFX_evt_siege
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	desc = OK
+	
+	trigger = {
+		trait = peasant_leader
+		rebel = yes
+		FROM = { 
+			is_capital = yes # The capital holding
+		}
+	}
+	
+	immediate = {
+		FROM = {
+			location = {
+				if = {
+					limit = {
+						NOT = { has_province_modifier = peasant_unrest }
+					}
+					add_province_modifier = {
+						name = peasant_unrest
+						duration = 730
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# Peasant Rebels rise up to reinforce an ongoing provincial peasant revolt
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1010
+	desc = EVTDESC_TOG_1010
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		owner = {
+			top_liege = {
+				any_war = {
+					limit = {
+						defender = { character = PREV }
+						using_cb = peasant_revolt
+						thirdparty_title_scope = { #Same Kingdom
+							location = {
+								kingdom = {
+									ROOT = {
+										kingdom = {
+											title = PREVPREV
+										}
+									}
+								}	
+							}	
+						}
+					}
+					attacker = {
+						spawn_peasant_reinforcements_effect = yes
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = powerful
+								}
+							}
+							spawn_peasant_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = very_powerful
+								}
+							}
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = extremely_powerful
+								}
+							}
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+							spawn_peasant_reinforcements_effect = yes
+						}
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1011
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1010"
+	}
+}
+
+character_event = {
+	id = TOG.1011
+	desc = EVTDESC_TOG_1011
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_1010"
+	}
+}
+
+# Heretic Rebels rise up (temporary rebel title created, with a leader and a war)
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1020
+	desc = EVTDESC_TOG_1020
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"	
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		create_random_soldier = {
+			random_traits = yes
+			dynasty = none
+			religion = ROOT
+			culture = ROOT
+			female = no
+			attributes = {
+				martial = 7
+				learning = 7
+			}
+			trait = heresiarch
+			trait = zealous
+		}
+		
+		new_character = {
+			set_character_flag = heretic_revolter
+			random_list = {
+				10 = { add_trait = skilled_warrior }
+				30 = { add_trait = trained_warrior }
+				60 = { add_trait = poor_warrior }
+			}
+			create_title = {
+				tier = DUKE
+				landless = yes
+				temporary = yes
+				rebel = yes
+				culture = ROOT
+				name = "HERETIC_REVOLT"
+				holder = THIS
+			}
+			wealth = 100
+			spawn_heretic_army_effect = yes
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = powerful
+					}
+				}
+				spawn_heretic_army_effect = yes
+				wealth = 150
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = very_powerful
+					}
+				}
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				wealth = 250
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = extremely_powerful
+					}
+				}
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				spawn_heretic_army_effect = yes
+				wealth = 350
+			}
+			
+			# DoW on the province top liege
+			ROOT = {
+				owner = {
+					top_liege = {
+						reverse_war = {
+							target = PREVPREVPREV
+							casus_belli = heretic_revolt
+						}
+						reverse_opinion = {
+							who = PREVPREVPREV
+							modifier = opinion_evil_tyrant
+						}
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1021
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1020"
+	}
+}
+
+character_event = {
+	id = TOG.1021
+	desc = EVTDESC_TOG_1021
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_TOG_1020
+	}
+}
+
+# Heretics seize a holding. Fired from 'on_siege_won_leader'.
+character_event = {
+	id = TOG.1025
+	picture = GFX_evt_siege
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	desc = OK
+	
+	trigger = {
+		trait = heresiarch
+		rebel = yes
+		FROM = { 
+			is_capital = yes # The capital holding
+		}
+	}
+	
+	immediate = {
+		FROM = {
+			location = {
+				if = {
+					limit = {
+						NOT = { religion = ROOT }
+					}
+					random = {
+						chance = 50
+						religion = ROOT
+					}
+				}
+				if = {
+					limit = {
+						NOT = { has_province_modifier = religious_unrest }
+					}
+					add_province_modifier = {
+						name = religious_unrest
+						duration = 730
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# Heretic Rebels rise up to reinforce an ongoing heretic uprising
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1030
+	desc = EVTDESC_TOG_1030
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+		
+		is_heretic = yes
+		
+		owner = {
+			top_liege = {
+				is_parent_religion = ROOT
+			}
+		}
+		
+		owner = {
+			top_liege = {
+				war = yes
+				any_war = {
+					defender = { character = PREV }
+					using_cb = heretic_revolt
+					attacker = { religion = ROOT }
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		owner = {
+			top_liege = {
+				any_war = {
+					limit = {
+						defender = { character = PREV }
+						using_cb = heretic_revolt
+						attacker = { religion = ROOT }
+					}
+					attacker = {
+						spawn_heretic_reinforcements_effect = yes
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = powerful
+								}
+							}
+							spawn_heretic_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = very_powerful
+								}
+							}
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = extremely_powerful
+								}
+							}
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+							spawn_heretic_reinforcements_effect = yes
+						}
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1031
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1030"
+	}
+}
+
+character_event = {
+	id = TOG.1031
+	desc = EVTDESC_TOG_1031
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_1030"
+	}
+}
+
+# Royalist Nationalist Rebels rise up to create a kingdom (temporary rebel title created, with a leader and a war)
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1040
+	desc = EVTDESC_TOG_1040
+	picture = GFX_evt_siege
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		
+		#Find spawn location- try to avoid stacks spawning in top liege's capital
+		if = {
+			limit = { NOT = { owner = { top_liege = { capital_scope = { province_id = ROOT } } } } }
+			save_event_target_as = nationalist_revolt_spawn_province
+		}
+		if = { #If capital, try and find a neighbouring province
+			limit = { owner = { top_liege = { capital_scope = { province_id = ROOT } } } }
+			random_neighbor_province = {
+				limit = { owner = { ROOT = { owner = { same_realm = PREVPREV } } } }
+				save_event_target_as = nationalist_revolt_spawn_province
+			}
+			if = {
+				limit = { NOT = { event_target:nationalist_revolt_spawn_province = { always = yes } } }
+				random_neighbor_province = {
+					limit = { any_neighbor_province = { owner = { ROOT = { owner = { same_realm = PREVPREV } } } } }
+					random_neighbor_province = {
+						limit = { owner = { ROOT = { owner = { same_realm = PREVPREV } } } }
+						save_event_target_as = nationalist_revolt_spawn_province
+					}	
+					if = {
+						limit = { is_land = no }
+						ROOT = { set_province_flag = spawn_nationalist_revolt_ships }
+						save_event_target_as = nationalist_revolt_ships_province
+					}
+				}
+				if = { #If no province found, use root province
+					limit = { NOT = { event_target:nationalist_revolt_spawn_province = { always = yes } } }
+					save_event_target_as = nationalist_revolt_spawn_province
+				}
+			}
+		}
+		##Find revolt leader##
+		owner = {
+			top_liege = {
+				random_realm_character = { #Try to find existing noble
+					limit = {
+						culture = ROOT
+						NOT = { trait = slave }
+						NOT = { dynasty = 0 }
+						is_ruler = no
+						is_adult = yes
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+							diplomacy = 15
+							martial = 15
+						}
+						prisoner = no
+						is_ill = no
+						NOT = { trait = incapable }
+						diplomacy = 12
+						martial = 12
+						OR = {
+							trait = ambitious
+							trait = authoritative
+							trait = proud
+							trait = just
+						}
+						NOT = { trait = craven }
+						NOT = { trait = content }
+						NOT = { trait = shy }
+						NOT = { trait = eunuch }
+						NOT = { trait = blinded }
+						is_priest = no
+						NOT = { trait = maester }
+						NOT = { trait = archmaester }
+						NOT = { trait = kingsguard }
+					}
+					ROOT = { set_province_flag = nationalist_leader_found }
+					set_character_flag = new_nationalist_rebel
+					move_character = PREV
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_province_flag = nationalist_leader_found } } }
+					random_realm_character = { #Try to find existing noble
+						limit = {
+							culture = ROOT
+							NOT = { trait = slave }
+							NOT = { dynasty = 0 }
+							is_ruler = no
+							is_adult = yes
+							OR = {
+								is_female = no
+								female_get_masculine_event_trigger = yes
+								diplomacy = 15
+								martial = 15
+							}
+							prisoner = no
+							is_ill = no
+							NOT = { trait = incapable }
+							diplomacy = 8
+							martial = 8
+							OR = {
+								trait = ambitious
+								trait = authoritative
+								trait = proud
+								trait = just
+							}
+							NOT = { trait = craven }
+							NOT = { trait = content }
+							NOT = { is_weak_trigger = yes }
+							NOT = { trait = shy }
+							NOT = { trait = eunuch }
+							NOT = { trait = blinded }
+							is_priest = no
+							NOT = { trait = maester }
+							NOT = { trait = archmaester }
+							NOT = { trait = kingsguard }
+						}
+						ROOT = { set_province_flag = nationalist_leader_found }
+						set_character_flag = new_nationalist_rebel
+						move_character = PREV
+					}
+				}	
+				if = {
+					limit = { ROOT = { NOT = { has_province_flag = nationalist_leader_found } } }
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = ROOT
+						culture = ROOT
+						female = no
+						health = 7
+						fertility = 0.7
+						trait = skilled_tactician
+					}
+					new_character = {
+						set_character_flag = new_nationalist_rebel
+						random_list = {
+							20 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+						}
+						#Nationalists revert to traditional religion
+						if = {
+							limit = { culture_group = andal }
+							religion = the_seven
+						}
+						else_if = {
+							limit = { 
+								culture_group = dornish
+								NOT = { culture = rhoynar }
+							}
+							religion = the_seven
+						}
+						else_if = {
+							limit = { culture = rhoynar }
+							religion = rhoynar_pagan
+						}
+						else_if = {
+							limit = { culture_group = first_men }
+							religion = old_gods
+						}
+						else_if = {
+							limit = { culture_group = iron_isles_culture }
+							religion = drowned_god
+						}
+						else_if = {
+							limit = { culture_group = valyrian }
+							religion = valyrian_rel
+						}
+						else_if = {
+							limit = { culture_group = hyrkoon_group }
+							religion = gods_bone_mountains
+						}
+						else_if = {
+							limit = { culture_group = moraqi_group }
+							religion = stone_cow
+						}
+						else_if = {
+							limit = { culture = yi_ti }
+							religion = yiti_gods
+						}
+						else_if = {
+							limit = { culture_group = yi_ti_group }
+							religion = lion_night
+						}
+						else_if = {
+							limit = { 
+								OR = {
+									culture = pentosi
+									culture = myrman
+									culture = volantene
+								}
+							}
+							religion = rhllor
+						}
+						else_if = {
+							limit = { culture = lysene }
+							religion = weeping_lady
+						}
+						else_if = {
+							limit = { culture = braavosi }
+							religion = moonsingers
+						}
+						else_if = {
+							limit = { culture = qohorik }
+							religion = black_goat
+						}
+						else_if = {
+							limit = { culture = norvosi }
+							religion = bearded_priests
+						}
+						else_if = {
+							limit = { culture = tyroshi }
+							religion = trios
+						}
+						else_if = {
+							limit = { culture = lorathi }
+							religion = gods_lorath
+						}
+						else_if = {
+							limit = { culture_group = ghiscari_group }
+							religion = harpy
+						}
+						else_if = {
+							limit = { culture_group = summer_islands }
+							religion = summer_rel
+						}
+						else_if = {
+							limit = { culture = dothraki }
+							religion = dothraki_pagan
+						}
+						else_if = {
+							limit = { culture = lhazareen }
+							religion = great_shepherd
+						}
+						else_if = {
+							limit = { culture_group = qarth_group }
+							religion = qarth_warlocks
+						}
+						else_if = {
+							limit = { culture_group = ibbenese_group }
+							religion = gods_ibben
+						}
+						else_if = {
+							limit = { culture_group = asshai_group }
+							religion = shadowbinders
+						}
+						else_if = {
+							limit = { culture_group = naath_group }
+							religion = nath_pagan
+						}
+						else_if = {
+							limit = { culture_group = sarnor_group }
+							religion = gods_sarnor
+						}
+						else_if = {
+							limit = { culture = jogos_nhai }
+							religion = jogos_pagan
+						}
+						else_if = {
+							limit = { culture = nghai }
+							religion = gods_nghai
+						}
+						
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						change_martial = 4
+						change_diplomacy = 5
+						remove_trait = craven
+						remove_trait = content
+						remove_trait = slothful
+						remove_trait = arbitrary
+						remove_trait = selfish
+						remove_trait = rude
+						remove_trait = slow
+						remove_trait = imbecile
+						remove_trait = inbred
+						remove_trait = weak
+						remove_trait = celibate
+						random = {
+							chance = 50
+							add_trait = just
+						}
+						random = {
+							chance = 50
+							add_trait = brave
+						}
+						random = {
+							chance = 50
+							add_trait = gregarious
+							remove_trait = shy
+						}
+						random = {
+							chance = 50
+							add_trait = ambitious			
+						}
+						random = {
+							chance = 50
+							add_trait = inspiring_leader
+						}
+						random = {
+							chance = 50
+							add_trait = honorable
+							remove_trait = ruthless
+						}
+						random = {
+							chance = 50
+							add_trait = diligent			
+						}
+						random = {
+							chance = 50
+							add_trait = authoritative
+						}
+					}
+				}
+			}
+		}
+		clr_province_flag = nationalist_leader_found
+		##
+		
+		owner = {
+			top_liege = {
+				random_courtier = {
+					limit = { has_character_flag = new_nationalist_rebel }
+					clr_character_flag = new_nationalist_rebel
+					set_character_flag = nationalist_rebel
+					save_event_target_as = nationalist_rebel
+					create_title = {
+						tier = DUKE
+						landless = yes
+						temporary = yes
+						rebel = yes
+						culture = ROOT
+						name = "NATIONALIST_REVOLT"
+						holder = THIS
+					}
+					set_defacto_liege = THIS
+					wealth = 100
+					if = { #If a Stepstones revolt make rebels pirates
+						limit = {
+							ROOT = { region = world_stepstones }
+						}
+						religion = pirate
+						add_trait = pirate
+					}
+					if = { #If a Basilisk Isle revolt make rebels pirates
+						limit = {
+							ROOT = { region = world_basilisk_isles }
+						}
+						religion = corsair
+						add_trait = pirate
+					}
+					
+					spawn_nationalist_army_effect = yes
+			
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = powerful
+							}
+						}
+						spawn_nationalist_army_effect = yes
+						wealth = 150
+					}
+					
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = very_powerful
+							}
+						}
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						wealth = 250
+					}
+					
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = extremely_powerful
+							}
+						}
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						spawn_nationalist_army_effect = yes
+						wealth = 350
+					}
+					
+					if = { #spawn ships to ensure access to province
+						limit = { ROOT = { has_province_flag = spawn_nationalist_revolt_ships } }
+						ROOT = { clr_province_flag = spawn_nationalist_revolt_ships }
+						spawn_unit = {
+							province = event_target:nationalist_revolt_ships_province
+							home = ROOT
+							owner = THIS
+							#leader = THIS
+							troops = { galleys = { 210 210 } }
+							disband_on_peace = yes
+						}				
+					}
+					ROOT = { #move in some random friendly nobles
+						owner = {
+							top_liege = {
+								random_realm_character = {
+									limit = {
+										culture = ROOT
+										OR = {
+											is_female = no
+											female_get_masculine_event_trigger = yes
+											martial = 20
+										}
+										opinion = { who = PREVPREVPREVPREV value = 0 }
+										reverse_opinion = { who = PREVPREVPREVPREV value = 0 }
+										NOT = { trait = slave }
+										NOT = { dynasty = 0 }
+										is_ruler = no
+										is_adult = yes
+										prisoner = no
+										is_ill = no
+										NOT = { trait = incapable }
+										martial = 8
+										OR = {
+											trait = ambitious
+											trait = proud
+											trait = brave
+											trait = just
+											trait = greedy
+										}
+										NOT = { trait = craven }
+										NOT = { trait = content }
+										NOT = { is_weak_trigger = yes }
+										NOT = { trait = shy }
+										is_priest = no
+										NOT = { trait = maester }
+										NOT = { trait = archmaester }
+										NOT = { trait = kingsguard }
+									}
+									move_character = PREVPREVPREVPREV
+								}
+								random_realm_character = {
+									limit = {
+										culture = ROOT
+										OR = {
+											is_female = no
+											female_get_masculine_event_trigger = yes
+											martial = 20
+										}
+										opinion = { who = PREVPREVPREVPREV value = 0 }
+										reverse_opinion = { who = PREVPREVPREVPREV value = 0 }
+										NOT = { trait = slave }
+										NOT = { dynasty = 0 }
+										is_ruler = no
+										is_adult = yes
+										prisoner = no
+										is_ill = no
+										NOT = { trait = incapable }
+										martial = 8
+										OR = {
+											trait = ambitious
+											trait = proud
+											trait = brave
+											trait = just
+											trait = greedy
+										}
+										NOT = { trait = craven }
+										NOT = { trait = content }
+										NOT = { is_weak_trigger = yes }
+										NOT = { trait = shy }
+										is_priest = no
+										NOT = { trait = maester }
+										NOT = { trait = archmaester }
+										NOT = { trait = kingsguard }
+									}
+									move_character = PREVPREVPREVPREV
+								}
+								random_realm_character = {
+									limit = {
+										culture = ROOT
+										OR = {
+											is_female = no
+											female_get_masculine_event_trigger = yes
+											martial = 20
+										}
+										opinion = { who = PREVPREVPREVPREV value = 0 }
+										reverse_opinion = { who = PREVPREVPREVPREV value = 0 }
+										NOT = { trait = slave }
+										NOT = { dynasty = 0 }
+										is_ruler = no
+										is_adult = yes
+										prisoner = no
+										is_ill = no
+										NOT = { trait = incapable }
+										martial = 8
+										OR = {
+											trait = ambitious
+											trait = proud
+											trait = brave
+											trait = just
+											trait = greedy
+										}
+										NOT = { trait = craven }
+										NOT = { trait = content }
+										NOT = { is_weak_trigger = yes }
+										NOT = { trait = shy }
+										is_priest = no
+										NOT = { trait = maester }
+										NOT = { trait = archmaester }
+										NOT = { trait = kingsguard }
+									}
+									move_character = PREVPREVPREVPREV
+								}
+							}
+						}
+					}
+								
+					# DoW on the province top liege
+					ROOT = {
+						owner = {
+							top_liege = {
+								reverse_opinion = {
+									who = PREVPREVPREV
+									modifier = opinion_evil_tyrant
+								}
+								if = {
+									limit = { #Conditions to target dejure kingdom
+										ROOT = {
+											kingdom = {
+												OR = {
+													has_holder = no
+													holder_scope = { any_realm_province = { province_id = ROOT } }
+												}
+												culture = ROOT
+												any_previous_holder = {
+													always = yes # Must have had a holder in the past
+												}
+												NAND = { #These titles must have a current holder
+													has_holder = no
+													OR = {
+														title = k_andalos
+														title = k_rhoynar
+														title = k_sarnor
+														title = k_crownlands
+														is_alternate_start = yes #vacant kingdoms also cannot appear in shatter realms
+														has_game_rule = { name = shattered_realms value = duchies }
+														has_game_rule = { name = shattered_realms value = counties }
+													}
+												}
+												NOT = { title = k_nightswatch }
+												OR = { #cannot use a title if equivalent kingdom exists
+													NOT = { title = k_north }
+													NOT = { e_north = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_riverlands }
+													NOT = { e_riverlands = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_vale }
+													NOT = { e_vale = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_westerlands }
+													NOT = { e_westerlands = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_reach }
+													NOT = { e_reach = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_dorne }
+													NOT = { e_dorne = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_stormlands }
+													NOT = { e_stormlands = { has_holder = yes } }
+												}
+												OR = { 
+													NOT = { title = k_iron_isles }
+													NOT = { e_iron_isles = { has_holder = yes } }
+												}
+											}
+										}	
+									}
+									reverse_war = {
+										target = PREVPREVPREV
+										casus_belli = liberation_revolt
+										thirdparty_title = ROOT # The county...
+										tier = KING # ... but really the de jure kingdom
+									}
+									break = yes
+								}
+								if = { #else target duchy
+									limit = { 
+										ROOT = { 
+											duchy = { 
+												OR = {
+													has_holder = no
+													holder_scope = { any_realm_province = { province_id = ROOT } }
+												}
+												NAND = { #vacant duchies also cannot appear in shattered counties
+													has_holder = no
+													has_game_rule = { name = shattered_realms value = counties }
+												}
+											} 
+										} 
+									}
+									reverse_war = { 
+										target = PREVPREVPREV
+										casus_belli = liberation_revolt
+										thirdparty_title = ROOT # The county...
+										tier = DUKE
+									}
+									break = yes
+								}	
+								reverse_war = { #finally try the county
+									target = PREVPREVPREV
+									casus_belli = liberation_revolt
+									thirdparty_title = ROOT # The county...
+								}
+							}
+						}
+					}
+				}	
+			}
+		}	
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1041
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1040"
+	}
+}
+
+character_event = {
+	id = TOG.1041
+	desc = EVTDESC_TOG_1041
+	picture = GFX_evt_siege
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_TOG_1040
+	}
+}
+
+# Nationalists seize a holding. Fired from 'on_siege_won_leader'.
+character_event = {
+	id = TOG.1045
+	picture = GFX_evt_siege
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	desc = OK
+	
+	trigger = {
+		rebel = yes
+		FROM = { 
+			is_capital = yes # The capital holding
+		}
+		any_war = {
+			attacker = { character = ROOT }
+			using_cb = liberation_revolt
+		}
+	}
+	
+	immediate = {
+		FROM = {
+			location = {
+				# if = {
+					# limit = {
+						# NOT = { culture = ROOT }
+						# kingdom = { culture = ROOT }
+					# }
+					# random = {
+						# chance = 20
+						# culture = ROOT
+					# }
+				# }
+				if = {
+					limit = {
+						culture = ROOT
+						NOT = { has_province_modifier = cultural_unrest }
+					}
+					add_province_modifier = {
+						name = cultural_unrest
+						duration = 730
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# Nationalist Rebels rise up to reinforce an ongoing revolt
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1050
+	desc = EVTDESC_TOG_1050
+	picture = GFX_evt_siege
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		
+		##Find revolt leader##
+		owner = {
+			top_liege = {
+				random_realm_character = { #Try to find existing noble
+					limit = {
+						culture = ROOT
+						NOT = { trait = slave }
+						NOT = { dynasty = 0 }
+						is_ruler = no
+						is_adult = yes
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+							diplomacy = 15
+							martial = 15
+						}
+						prisoner = no
+						is_ill = no
+						NOT = { trait = incapable }
+						diplomacy = 12
+						martial = 12
+						OR = {
+							trait = ambitious
+							trait = authoritative
+							trait = proud
+							trait = just
+						}
+						NOT = { trait = craven }
+						NOT = { trait = content }
+						NOT = { trait = shy }
+						NOT = { trait = eunuch }
+						NOT = { trait = blinded }
+						is_priest = no
+						NOT = { trait = maester }
+						NOT = { trait = archmaester }
+						NOT = { trait = kingsguard }
+					}
+					ROOT = { set_province_flag = nationalist_leader_found }
+					save_event_target_as = nationalist_rebel
+					move_character = PREV
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_province_flag = nationalist_leader_found } } }
+					random_realm_character = { #Try to find existing noble
+						limit = {
+							culture = ROOT
+							NOT = { trait = slave }
+							NOT = { dynasty = 0 }
+							is_ruler = no
+							is_adult = yes
+							OR = {
+								is_female = no
+								female_get_masculine_event_trigger = yes
+								diplomacy = 15
+								martial = 15
+							}
+							prisoner = no
+							is_ill = no
+							NOT = { trait = incapable }
+							diplomacy = 8
+							martial = 8
+							OR = {
+								trait = ambitious
+								trait = authoritative
+								trait = proud
+								trait = just
+							}
+							NOT = { trait = craven }
+							NOT = { trait = content }
+							NOT = { is_weak_trigger = yes }
+							NOT = { trait = shy }
+							NOT = { trait = eunuch }
+							NOT = { trait = blinded }
+							is_priest = no
+							NOT = { trait = maester }
+							NOT = { trait = archmaester }
+							NOT = { trait = kingsguard }
+						}
+						ROOT = { set_province_flag = nationalist_leader_found }
+						save_event_target_as = nationalist_rebel
+						move_character = PREV
+					}
+				}	
+				if = {
+					limit = { ROOT = { NOT = { has_province_flag = nationalist_leader_found } } }
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = ROOT
+						culture = ROOT
+						female = no
+					}
+					new_character = {
+						save_event_target_as = nationalist_rebel
+						random_list = {
+							20 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							40 = { add_trait = poor_warrior }
+						}
+						#Nationalists revert to traditional religion
+						if = {
+							limit = { culture_group = andal }
+							religion = the_seven
+						}
+						if = {
+							limit = { 
+								culture_group = dornish
+								NOT = { culture = rhoynar }
+							}
+							religion = the_seven
+						}
+						if = {
+							limit = { culture = rhoynar }
+							religion = rhoynar_pagan
+						}
+						if = {
+							limit = { culture_group = first_men }
+							religion = old_gods
+						}
+						if = {
+							limit = { culture = ironborn }
+							religion = drowned_god
+						}
+						if = {
+							limit = { culture_group = valyrian }
+							religion = valyrian_rel
+						}
+						if = {
+							limit = { culture_group = hyrkoon_group }
+							religion = gods_bone_mountains
+						}
+						if = {
+							limit = { culture_group = moraqi_group }
+							religion = stone_cow
+						}
+						if = {
+							limit = { culture_group = yi_ti_group }
+							religion = lion_night
+						}
+						if = {
+							limit = { 
+								OR = {
+									culture = pentosi
+									culture = lysene
+									culture = myrman
+									culture = volantene
+								}
+							}
+							religion = rhllor
+						}
+						if = {
+							limit = { culture = braavosi }
+							religion = moonsingers
+						}
+						if = {
+							limit = { culture = qohorik }
+							religion = black_goat
+						}
+						if = {
+							limit = { culture = norvosi }
+							religion = bearded_priests
+						}
+						if = {
+							limit = { culture = tyroshi }
+							religion = trios
+						}
+						if = {
+							limit = { culture = lorathi }
+							religion = gods_lorath
+						}
+						if = {
+							limit = { culture_group = ghiscari_group }
+							religion = harpy
+						}
+						if = {
+							limit = { culture_group = summer_islands }
+							religion = summer_rel
+						}
+						if = {
+							limit = { culture = dothraki }
+							religion = dothraki_pagan
+						}
+						if = {
+							limit = { culture = lhazareen }
+							religion = great_shepherd
+						}
+						if = {
+							limit = { culture_group = qarth_group }
+							religion = qarth_warlocks
+						}
+						if = {
+							limit = { culture_group = ibbenese_group }
+							religion = gods_ibben
+						}
+						if = {
+							limit = { culture_group = asshai_group }
+							religion = shadowbinders
+						}
+						if = {
+							limit = { culture_group = naath_group }
+							religion = nath_pagan
+						}
+						if = {
+							limit = { culture_group = sarnor_group }
+							religion = gods_sarnor
+						}
+						if = {
+							limit = { culture = jogos_nhai }
+							religion = jogos_pagan
+						}
+						if = {
+							limit = { culture = nghai }
+							religion = gods_nghai
+						}
+						
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						change_martial = 3
+						change_diplomacy = 4
+						remove_trait = craven
+						remove_trait = content
+						remove_trait = slothful
+						remove_trait = arbitrary
+						remove_trait = selfish
+						remove_trait = rude
+						remove_trait = slow
+						remove_trait = imbecile
+						remove_trait = inbred
+						remove_trait = weak
+						remove_trait = celibate
+					}
+				}
+			}
+		}
+		clr_province_flag = nationalist_leader_found
+		##
+		
+		owner = {
+			top_liege = {
+				any_war = {
+					limit = {
+						defender = { character = PREV }
+						using_cb = liberation_revolt
+						thirdparty_title_scope = {
+							ROOT = {
+								OR = {
+									kingdom = { title = PREVPREV }
+									duchy = { title = PREVPREV }
+									county = { title = PREVPREV }
+								}	
+							}
+						}
+					}
+					attacker = {
+						event_target:nationalist_rebel = {
+							move_character = PREV
+							if = { #If a Stepstones revolt make rebels pirates
+								limit = {
+									ROOT = { region = world_stepstones }
+								}
+								religion = pirate
+								add_trait = pirate
+							}
+							if = { #If a Basilisk Isle revolt make rebels pirates
+								limit = {
+									ROOT = { region = world_basilisk_isles }
+								}
+								religion = corsair
+								add_trait = pirate
+							}
+						}
+						spawn_nationalist_reinforcements_effect = yes
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = powerful
+								}
+							}
+							spawn_nationalist_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = very_powerful
+								}
+							}
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = extremely_powerful
+								}
+							}
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+							spawn_nationalist_reinforcements_effect = yes
+						}
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1051
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1000"
+	}
+}
+character_event = {
+	id = TOG.1051
+	desc = EVTDESC_TOG_1051
+	picture = GFX_evt_siege
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_TOG_1000
+	}
+}
+
+# Religious Rebels rise up (temporary rebel title created, with a leader and a war)
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1060
+	desc = EVTDESC_TOG_1060
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+	}
+	
+	immediate = {	
+		event_target:heathen_liege = {
+			#Count levies in all rebel provinces
+			# Strength of revolt is total 4X rebel levies * revolt risk% in each province
+			set_variable = { which = rebel_levies value = 0 }
+			any_realm_province = {
+				limit = {
+					religion = ROOT
+					revolt_risk = 0.01
+					NOT = { has_province_modifier = recent_county_uprising }
+				}			
+				export_to_variable = { which = revolt_risk value = revolt_risk who = THIS }
+				any_province_holding = {
+					limit = { has_holder = yes }
+					export_to_variable = { which = rebel_levies value = holding_total_levy who = THIS }
+					set_variable = { which = revolt_risk which = PREV }
+					multiply_variable = { which = rebel_levies which = revolt_risk }
+					event_target:heathen_liege = { change_variable = { which = rebel_levies which = PREV } }
+					set_variable = { which = rebel_levies value = 0 }
+					set_variable = { which = revolt_risk value = 0 }
+				}	
+				set_variable = { which = revolt_risk value = 0 }
+				add_province_modifier = {
+					name = recent_county_uprising
+					duration = 3650 # Ten years of -100% revolt risk in this county
+				}				
+			}
+			multiply_variable = { which = rebel_levies value = 4 }
+			
+			#Min 7.5% of target's strength
+			export_to_variable = { which = max_realm_levies value = max_realm_levies who = THIS }
+			multiply_variable = { which = max_realm_levies value = 0.075 }
+			if = { 
+				limit = { NOT = { check_variable = { which = rebel_levies which = max_realm_levies } } }
+				set_variable = { which = rebel_levies which = max_realm_levies }
+			}
+			set_variable = { which = max_realm_levies value = 0 }
+			##
+			
+			
+			liege = {
+				ROOT = {
+					create_random_priest = {
+						random_traits = yes
+						dynasty = none
+						religion = ROOT
+						culture = ROOT
+						female = no
+						trait = zealous
+					}
+					
+					new_character = {
+						set_character_flag = religious_revolter
+						change_martial = 5
+						change_learning = 5
+						remove_trait = craven
+						remove_trait = content
+						remove_trait = slothful
+						remove_trait = slow
+						remove_trait = imbecile
+						remove_trait = inbred
+						remove_trait = weak
+						add_priest_trait_effect = yes
+						random_list = {
+							25 = { add_trait = scholar }
+							25 = { add_trait = theologian }
+							50 = { }
+						}
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							25 = { add_trait = trained_warrior }
+							50 = { add_trait = poor_warrior }
+							20 = { }
+						}
+						create_title = {
+							tier = DUKE
+							landless = yes
+							temporary = yes
+							rebel = yes
+							culture = ROOT
+							name = "HERETIC_REVOLT"
+							holder = THIS
+						}
+						wealth = 100
+						
+						while = {
+							limit = { event_target:heathen_liege = { check_variable = { which = rebel_levies value = 500 } } }
+							
+							spawn_unit = {
+								province = ROOT
+								home = ROOT
+								owner = THIS
+								troops = {
+									archers = { 150 150 }
+									light_cavalry = { 100 100 }
+									light_infantry = { 250 250 }
+								}
+								merge = yes
+								attrition = 1.0
+							}
+							if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 150 150 }
+										light_cavalry = { 100 100 }
+										light_infantry = { 250 250 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							
+							else_if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = very_powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 450 450 }
+										light_cavalry = { 300 300 }
+										light_infantry = { 750 750 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							
+							else_if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = extremely_powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 750 750 }
+										light_cavalry = { 500 500 }
+										light_infantry = { 1250 1250 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							event_target:heathen_liege = { change_variable = { which = rebel_levies value = -500 } }
+						}
+						while = {
+							limit = { event_target:heathen_liege = { check_variable = { which = rebel_levies value = 100 } } }
+							
+							spawn_unit = {
+								province = ROOT
+								home = ROOT
+								owner = THIS
+								troops = {
+									archers = { 30 30 }
+									light_cavalry = { 20 20 }
+									light_infantry = { 50 50 }
+								}
+								merge = yes
+								attrition = 1.0
+							}
+							if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 30 30 }
+										light_cavalry = { 20 20 }
+										light_infantry = { 50 50 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							
+							else_if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = very_powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 90 90 }
+										light_cavalry = { 60 60 }
+										light_infantry = { 150 150 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							
+							else_if = {
+								limit = { has_game_rule = { name = provincial_revolt_strength value = extremely_powerful } }
+								spawn_unit = {
+									province = ROOT
+									home = ROOT
+									owner = THIS
+									troops = {
+										archers = { 150 150 }
+										light_cavalry = { 100 100 }
+										light_infantry = { 250 250 }
+									}
+									merge = yes
+									attrition = 1.0
+								}
+							}
+							event_target:heathen_liege = { change_variable = { which = rebel_levies value = -100 } }
+						}
+				
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = powerful
+								}
+							}
+							wealth = 150
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = very_powerful
+								}
+							}
+							wealth = 250
+						}
+						
+						if = {
+							limit = {
+								has_game_rule = {
+									name = provincial_revolt_strength
+									value = extremely_powerful
+								}
+							}
+							wealth = 350
+						}
+						
+						random_list = {
+							10 = {
+								create_random_soldier = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = peasant_leader
+								}
+							}
+							10 = {
+								create_random_priest = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = zealous
+								}
+							}	
+						}
+						new_character = {
+							remove_trait = craven
+							remove_trait = content
+							remove_trait = slothful
+							remove_trait = slow
+							remove_trait = imbecile
+							remove_trait = inbred
+							remove_trait = weak
+							random_list = {
+								10 = { add_trait = skilled_warrior }
+								30 = { add_trait = trained_warrior }
+								60 = { add_trait = poor_warrior }
+							}
+							if = {
+								limit = { has_education_learning_trigger = yes }
+								change_martial = 4
+								add_priest_trait_effect = yes
+							}
+						}
+						random_list = {
+							10 = {
+								create_random_soldier = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = peasant_leader
+								}
+							}
+							10 = {
+								create_random_priest = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = zealous
+								}
+							}	
+						}
+						new_character = {
+							remove_trait = craven
+							remove_trait = content
+							remove_trait = slothful
+							remove_trait = slow
+							remove_trait = imbecile
+							remove_trait = inbred
+							remove_trait = weak
+							random_list = {
+								10 = { add_trait = skilled_warrior }
+								30 = { add_trait = trained_warrior }
+								60 = { add_trait = poor_warrior }
+							}
+							if = {
+								limit = { has_education_learning_trigger = yes }
+								change_martial = 4
+								add_priest_trait_effect = yes
+							}
+						}
+						random_list = {
+							10 = {
+								create_random_soldier = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = peasant_leader
+								}
+							}
+							10 = {
+								create_random_priest = {
+									random_traits = yes
+									dynasty = none
+									religion = THIS
+									culture = THIS
+									female = no
+									trait = zealous
+								}
+							}	
+						}
+						new_character = {
+							remove_trait = craven
+							remove_trait = content
+							remove_trait = slothful
+							remove_trait = slow
+							remove_trait = imbecile
+							remove_trait = inbred
+							remove_trait = weak
+							random_list = {
+								10 = { add_trait = skilled_warrior }
+								30 = { add_trait = trained_warrior }
+								60 = { add_trait = poor_warrior }
+							}
+							if = {
+								limit = { has_education_learning_trigger = yes }
+								change_martial = 4
+								add_priest_trait_effect = yes
+							}
+						}
+						if = {
+							limit = { event_target:heathen_liege = { independent = no } }
+							set_defacto_liege = PREVPREV
+						}
+						else = {
+							set_defacto_liege = THIS
+						}
+						# DoW on the closest heathen liege
+						event_target:heathen_liege = {
+							set_variable = { which = rebel_levies value = 0 }
+							reverse_war = {
+								target = PREV
+								casus_belli = religious_revolt
+							}
+							reverse_opinion = {
+								who = PREV
+								modifier = opinion_evil_tyrant
+							}
+						}	
+					}	
+				}	
+			}
+		}	
+	}
+	
+	option = {
+		name = {
+			text = EVTOPTA_TOG_1060
+			trigger = {
+				owner = { religion_group = ROOT }
+			}
+		}	
+		name = {
+			text = EVTOPTB_TOG_1060
+			trigger = {
+				owner = { NOT = { religion_group = ROOT	} }
+			}
+		}
+		hidden_tooltip = {
+			owner = {
+				any_liege = { # Inform the lieges
+					character_event = {
+						id = TOG.1061
+					}
+				}
+			}
+		}	
+	}
+}
+
+character_event = {
+	id = TOG.1061
+	desc = EVTDESC_TOG_1061
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_TOG_1060
+		trigger = {
+			religion_group = FROM 
+		}
+	}
+	option = {
+		name = EVTOPTB_TOG_1060
+		trigger = {
+			NOT = { religion_group = FROM }
+		}
+	}
+}
+
+#religious revolt successful, abdicate to leader's preferred heir
+character_event = {
+	id = TOG.1062
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		hidden_tooltip = { #Universal on death/abdication event
+			if = {
+				limit = { 
+					is_merchant_republic = no #always retains family palace
+					is_patrician = no
+				} 
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+			}	
+		}
+		if = { #Current Heir
+			limit = {
+				current_heir = {
+					religion = FROM
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+						}
+					}
+				}
+			}
+			current_heir = { 
+				letter_event = { id = religious.23 days = 1 } 
+				FROM = { move_character = PREV }
+			}
+			if = {
+				limit = { is_merchant_republic = no }
+				current_heir = { save_event_target_as = wealth_heir }
+			}
+			if = {
+				limit = { is_merchant_republic = yes }
+				family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+			}
+			transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+			if = {
+				limit = { is_merchant_republic = no }
+				abdicate = yes
+			}
+			if = {
+				limit = { is_merchant_republic = yes }
+				character_event = { id = REP.903 tooltip = TOOLTIPREP.903B } #Hold Election
+			}				
+			break = yes
+		}
+		if = { #Merchant republic is usurped
+			limit = { is_merchant_republic = yes }
+			random_vassal = { #Another Lord 
+				limit = {
+					religion = FROM
+					NOT = { character = FROM }
+					is_patrician = no
+					
+					is_female = no
+					is_adult = yes
+					reverse_opinion = { who = FROM value = -24 }
+					can_press_claims_trigger = yes
+					NOT = {
+						OR = {
+							is_any_kinslayer_trigger = yes
+							trait = excommunicated
+							NOT = { piety = -50 }
+							has_character_modifier = abomination_of_incest
+							has_character_modifier = grandchild_of_incest
+							trait = bastard
+							trait = legit_bastard
+						}
+					}	
+				}	
+				ROOT = { 
+					any_demesne_title = {
+						limit = { 
+							tier = PREV 
+							NOT = { holding_type = family_palace }
+						}
+						usurp_title = { target = PREVPREV type = invasion }
+					}
+				}
+				letter_event = { id = religious.23 days = 1 }
+				FROM = { move_character = PREV }
+				break = yes
+			}
+			ROOT = { 
+				any_demesne_title = {
+					limit = { 
+						tier = PREV 
+						NOT = { holding_type = family_palace }
+					}
+					usurp_title_plus_barony_if_unlanded = { target = FROM type = invasion }
+				}							
+			}
+			FROM = {
+				if = {
+					limit = { has_priest_trait_trigger = yes }
+					set_government_type = theocracy_government
+				}
+				else = {
+					set_government_type = feudal_government
+				}
+			}
+			break = yes
+		}	
+		random_dynasty_member = { #Another Relative	
+			limit = {
+				religion = FROM
+				reverse_opinion = { who = FROM value = 0 }
+				is_close_relative = ROOT
+				can_press_claims_trigger = yes
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}	
+			}	
+			ROOT = { abdicate_to = PREV }
+			letter_event = { id = religious.23 days = 1 }
+			FROM = { move_character = PREV }
+			break = yes
+		}
+		random_independent_ruler = { #Another Claimant
+			limit = {
+				religion = FROM
+				any_claim = {
+					is_primary_holder_title = yes
+					holder_scope = { character = ROOT }
+				}
+				reverse_opinion = { who = FROM value = -24 }
+				OR = {
+					NOT = { dynasty = ROOT }
+					NOT = { is_close_relative = ROOT }
+				}
+				can_press_claims_trigger = yes
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}	
+			}	
+			if = {
+				limit = { ROOT = { is_patrician = yes } }
+				ROOT = { 
+					any_demesne_title = {
+						limit = { NOT = { holding_type = family_palace } }
+						usurp_title_plus_barony_if_unlanded = { target = PREVPREV type = claim }
+					}				
+				}
+			}
+			else = {
+				ROOT = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }
+				FROM = { move_character = PREV }
+			}
+			break = yes	
+		}
+		random_character = { #Another Claimant
+			limit = {
+				religion = FROM
+				any_claim = {
+					is_primary_holder_title = yes
+					holder_scope = { character = ROOT }
+				}
+				is_female = no
+				is_adult = yes
+				reverse_opinion = { who = FROM value = -24 }
+				OR = {
+					NOT = { dynasty = ROOT }
+					NOT = { is_close_relative = ROOT }
+				}
+				can_press_claims_trigger = yes
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}	
+			}	
+			if = {
+				limit = { ROOT = { is_patrician = yes } }
+				ROOT = { 
+					any_demesne_title = {
+						limit = { NOT = { holding_type = family_palace } }
+						usurp_title_plus_barony_if_unlanded = { target = PREVPREV type = claim }
+					}				
+				}
+			}
+			else = {
+				ROOT = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }
+				FROM = { move_character = PREV }
+			}
+			break = yes
+		}
+		random_vassal = { #Another Lord (High Rank)
+			limit = {
+				religion = FROM
+				NOT = { character = FROM }
+				OR = {
+					tier = KING
+					AND = {
+						ROOT = { tier = KING }
+						tier = DUKE
+					}
+				}	
+				is_feudal = yes
+				
+				OR = {
+					has_character_flag = deposed_liege
+					has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					reverse_opinion = { who = FROM value = 25 }
+				}	
+				is_female = no
+				is_adult = yes
+				reverse_opinion = { who = FROM value = -24 }
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}	
+			}	
+			if = {
+				limit = { ROOT = { is_patrician = yes } }
+				ROOT = { 
+					any_demesne_title = {
+						limit = { NOT = { holding_type = family_palace } }
+						usurp_title_plus_barony_if_unlanded = { target = PREVPREV type = claim }
+					}				
+				}
+			}
+			else = {
+				ROOT = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }
+				FROM = { move_character = PREV }
+			}
+			break = yes
+		}
+		random_vassal = { #Another Lord 
+			limit = {
+				religion = FROM
+				NOT = { character = FROM }
+				is_feudal = yes
+			
+				OR = {
+					has_character_flag = deposed_liege
+					has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					reverse_opinion = { who = FROM value = 25 }
+				}	
+				is_female = no
+				is_adult = yes
+				reverse_opinion = { who = FROM value = -24 }
+				NOT = {
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = excommunicated
+						NOT = { piety = -50 }
+						has_character_modifier = abomination_of_incest
+						has_character_modifier = grandchild_of_incest
+						trait = bastard
+						trait = legit_bastard
+					}
+				}	
+			}	
+			if = {
+				limit = { ROOT = { is_patrician = yes } }
+				ROOT = { 
+					any_demesne_title = {
+						limit = { NOT = { holding_type = family_palace } }
+						usurp_title_plus_barony_if_unlanded = { target = PREVPREV type = claim }
+					}				
+				}
+			}
+			else = {
+				ROOT = { abdicate_to = PREV }
+				letter_event = { id = religious.23 days = 1 }
+				FROM = { move_character = PREV }
+			}
+			break = yes
+		}
+		#rebel leader	
+		if = {
+			limit = { ROOT = { is_patrician = yes } }
+			ROOT = { 
+				any_demesne_title = {
+					limit = { NOT = { holding_type = family_palace } }
+					usurp_title_plus_barony_if_unlanded = { target = FROM type = invasion }
+				}				
+			}
+		}
+		else = {
+			ROOT = { 	
+				abdicate_to = FROM
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_priest_trait_trigger = yes }
+				set_government_type = theocracy_government
+			}
+			else = {
+				set_government_type = feudal_government
+			}
+		}		
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# Religious Rebels seize a holding. Fired from 'on_siege_over_winner'. Owner of the winning unit is ROOT. The taken Holding title is in FROM.
+character_event = {
+	id = TOG.1065
+	picture = GFX_evt_siege
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	desc = OK
+	
+	trigger = {
+		has_character_flag = religious_revolter
+		rebel = yes
+		FROM = { 
+			is_capital = yes # The capital holding
+		}
+	}
+	
+	immediate = {
+		FROM = {
+			location = {
+				if = {
+					limit = {
+						NOT = { religion = ROOT }
+					}
+					random = {
+						chance = 5
+						religion = ROOT
+					}
+				}
+				if = {
+					limit = {
+						NOT = { has_province_modifier = religious_unrest }
+						religion = ROOT
+					}
+					add_province_modifier = {
+						name = religious_unrest
+						duration = 730
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+# Religious Rebels rise up to reinforce an ongoing heretic uprising
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.1070
+	desc = EVTDESC_TOG_1070
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_dlc = "The Old Gods"
+		event_target:heathen_liege = {
+			any_war = {
+				defender = { character = PREV }
+				OR = {
+					AND = {
+						using_cb = religious_revolt
+						attacker = { religion = ROOT }
+					}
+					AND = {
+						using_cb = overthrow_ruler_no_calls
+						attacker = { religion = ROOT controls_religion = yes }
+					}
+				}
+			}
+		}	
+	}
+	
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		save_event_target_as = reinforcements_location
+		event_target:heathen_liege = {
+			any_war = {
+				limit = {
+					defender = { character = PREV }
+					OR = {
+						AND = {
+							using_cb = religious_revolt
+							attacker = { religion = ROOT }
+						}
+						AND = {
+							using_cb = overthrow_ruler_no_calls
+							attacker = { religion = ROOT controls_religion = yes }
+						}
+					}
+				}
+				attacker = {
+					spawn_religious_reinforcements_effect = yes
+						
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = powerful
+							}
+						}
+						spawn_religious_reinforcements_effect = yes
+					}
+					
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = very_powerful
+							}
+						}
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+					}
+					
+					if = {
+						limit = {
+							has_game_rule = {
+								name = provincial_revolt_strength
+								value = extremely_powerful
+							}
+						}
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+						spawn_religious_reinforcements_effect = yes
+					}
+				}
+			}
+		}
+		
+		owner = {
+			any_liege = { # Inform the lieges
+				character_event = {
+					id = TOG.1071
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_1070"
+	}
+}
+
+character_event = {
+	id = TOG.1071
+	desc = EVTDESC_TOG_1071
+	picture = GFX_evt_heretic
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_1070"
+	}
+}
+
+# Rebels kill a local character. Fired from 'on_siege_over_loc_chars'.
+# Siege winner unit owner in the 'new_character' scope, lost holding title in FROM, local character in ROOT.
+character_event = {
+	id = TOG.1190
+	desc = EVTDESC_TOG_1190
+	picture = GFX_evt_beheading
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		new_character = {
+			rebel = yes
+			
+			OR = {
+				NOT = { religion = ROOT }
+				AND = {
+					NOT = { has_character_flag = heretic_revolter }
+					NOT = { has_character_flag = religious_revolter }
+					NOT = { has_character_flag = shepherds_crusade_leader }
+				}
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 0.5
+			is_female = yes
+		}
+		modifier = {
+			factor = 0.5
+			is_adult = no
+		}
+	}
+	
+	immediate = {
+		any_liege = { # Inform the victim's lieges
+			character_event = {
+				id = TOG.1191
+			}
+		}
+		new_character = {
+			ROOT = {
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_rabble
+					killer = PREV
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_TOG_1190
+	}
+}
+
+
+# Lieges informed
+character_event = {
+	id = TOG.1191
+	picture = GFX_evt_beheading
+	desc = EVTDESC_TOG_1191
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	notification = yes
+	
+	ai = no
+	
+	option = {
+		name = EVTOPTA_TOG_1191
+	}
+}
+#Slaves rise up (temporary rebel title created, with a leader and a war)
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.10699
+	desc = EVTDESC_TOG_10699
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		set_province_flag = slave_revolt
+		#Find leader of revolt		
+		owner = {
+			dragon_rider = { #try and find dragon rider first
+				limit = {
+					is_alive = yes
+					trait = slave
+					ROOT = { owner = { same_realm = PREVPREV } }			
+					is_adult = yes
+					prisoner = no
+					is_ill = no
+					NOT = { trait = incapable }
+					OR = {
+						trait = ambitious
+						trait = authoritative
+						trait = brave
+						trait = liberator
+						is_strong_trigger = yes
+						diplomacy = 8
+						martial = 8
+					}
+					NOT = { trait = craven }
+					NOT = { trait = content }
+					NOT = { is_weak_trigger = yes }
+				}
+				ROOT = { set_province_flag = slave_leader_found }
+				character_event = { id = slavery.0 } #remove slave trait
+				add_trait = liberator
+				set_character_flag = escaped_slave
+				set_character_flag = slave_rebel
+				move_character = PREV
+			}	
+		}	
+		if = { #try and find existing slave
+			limit = { ROOT = { NOT = { has_province_flag = slave_leader_found } } }		
+			owner = {
+				random_realm_character = {
+					limit = {
+						trait = slave
+						is_adult = yes
+						prisoner = no
+						is_ill = no
+						NOT = { trait = incapable }
+						diplomacy = 8
+						martial = 8
+						OR = {
+							trait = ambitious
+							trait = authoritative
+							trait = brave
+							trait = liberator
+							is_strong_trigger = yes
+						}
+						NOT = { trait = craven }
+						NOT = { trait = content }
+						NOT = { is_weak_trigger = yes }
+						NOT = { trait = shy }
+					}
+					ROOT = { set_province_flag = slave_leader_found }
+					character_event = { id = slavery.0 } #remove slave trait
+					add_trait = liberator
+					set_character_flag = escaped_slave
+					set_character_flag = slave_rebel
+					move_character = PREV
+				}	
+			}
+		}	
+		if = { #Else create random slave leader
+			limit = { ROOT = { NOT = { has_province_flag = slave_leader_found } } }
+			owner = {
+				create_character = {
+					random_traits = yes
+					dynasty = none
+					religion = ROOT
+					culture = random
+					female = no
+					age = 25
+					attributes = {
+						martial = 5
+					}
+					trait = liberator
+					trait = former_slave
+					trait = tough_soldier			
+				}		
+				new_character = {
+					set_character_flag = slave_rebel
+					set_character_flag = escaped_slave
+					check_for_defunct_culture_effect = yes
+					random_list = {
+						20 = { add_trait = skilled_warrior }
+						40 = { add_trait = trained_warrior }
+						40 = { add_trait = poor_warrior }
+					}					
+				}
+			}
+		}	
+		clr_province_flag = slave_leader_found
+		owner = {
+			random_courtier = {
+				limit = { has_character_flag = slave_rebel }
+				create_title = {
+					tier = DUKE
+					landless = yes
+					temporary = yes
+					rebel = yes
+					culture = PREV
+					name = "SLAVE_REVOLT"
+					holder = THIS
+				}
+				wealth = 100
+				if = { #If a Stepstones revolt make rebels pirates
+					limit = {
+						ROOT = { region = world_stepstones }
+					}
+					religion = pirate
+					add_trait = pirate
+				}
+				if = { #If a Basilisk Isle revolt make rebels pirates
+					limit = {
+						ROOT = { region = world_basilisk_isles }
+					}
+					religion = corsair
+					add_trait = pirate
+				}
+				spawn_slave_army_effect = yes
+			
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = powerful
+						}
+					}
+					spawn_slave_army_effect = yes
+					wealth = 150
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = very_powerful
+						}
+					}
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					wealth = 250
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = extremely_powerful
+						}
+					}
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					spawn_slave_army_effect = yes
+					wealth = 350
+				}
+				
+				# DoW on the province top liege
+				ROOT = {
+					owner = {
+						top_liege = {
+							reverse_war = {
+								target = PREVPREVPREV
+								casus_belli = slave_revolt
+								thirdparty_title = ROOT # The county...
+								tier = KING # ... but really the de jure kingdom
+							}
+							reverse_opinion = {
+								who = PREVPREVPREV
+								modifier = opinion_evil_tyrant
+							}
+							any_realm_province = {
+								limit = {
+									OR = {
+										has_province_modifier = slave_modifier_1
+										has_province_modifier = slave_modifier_2
+										has_province_modifier = slave_modifier_3
+										has_province_modifier = slave_modifier_4
+										has_province_modifier = slave_modifier_5
+									}
+								}
+								add_province_modifier = {
+									name = slave_revolt_modifier
+									duration = 3650
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
+		
+		any_province_lord = { # Inform the lieges
+			character_event = {
+				id = TOG.10700
+			}
+			if = {
+				limit = {
+					capital_scope = { province_id = ROOT }
+					is_merchant_republic = yes
+				}
+				any_vassal = {
+					limit = { 
+						is_patrician = yes
+						family_palace = { has_building = fp_asoiaf_slavepit_1 } 	
+					}
+					character_event = { id = TOG.10701 tooltip = "EVTTOOLTIPSLAVERY1001" }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_10699"
+	}
+}
+
+character_event = {
+	id = TOG.10700
+	desc = EVTDESC_TOG_10700
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_10699"
+		# If relevant, remove a slave camp level
+		if = {
+			limit = {
+				capital_scope = { province_id = FROM }
+				any_demesne_title = {
+					OR = {
+						has_building = ca_asoiaf_slavepit_1
+						has_building = ct_asoiaf_slavepit_1
+						has_building = tp_asoiaf_slavepit_1
+						has_building = fp_asoiaf_slavepit_1
+						has_building = no_asoiaf_slavepit_1
+					}
+				}
+			}
+			character_event = { id = slavery.1001 tooltip = "EVTTOOLTIPSLAVERY1001" }
+		}
+	}
+}
+
+character_event = {
+	id = TOG.10701
+	desc = EVTDESC_TOG_10700
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_10699"
+		character_event = { id = slavery.1001 tooltip = "EVTTOOLTIPSLAVERY1001" }
+	}
+}
+
+# A liberator seizes a holding containing a slave camp. Fired from 'on_siege_won_leader'.
+character_event = {
+	id = TOG.10702
+	desc = "EVTDESCTOG10702"
+	picture = GFX_evt_siege
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = liberator
+		FROM = {
+			location = {
+				OR = {
+					has_province_modifier = slave_modifier_1
+					has_province_modifier = slave_modifier_2
+					has_province_modifier = slave_modifier_3
+					has_province_modifier = slave_modifier_4
+					has_province_modifier = slave_modifier_5
+				}
+			}
+			OR = {
+				has_building = ca_asoiaf_slavepit_1
+				has_building = ct_asoiaf_slavepit_1
+				has_building = tp_asoiaf_slavepit_1
+				has_building = no_asoiaf_slavepit_1
+				holder_scope = {
+					is_merchant_republic = yes
+					capital_holding = { title = FROM }
+					OR = {
+						family_palace = { has_building = fp_asoiaf_slavepit_1 }
+						any_vassal = { family_palace = { has_building = fp_asoiaf_slavepit_1 } }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+		# Free as many slaves as you can!
+		FROM = { 
+			location = { set_province_flag = slave_revolt }
+			holder_scope = { 
+				character_event = { id = TOG.10703 tooltip = "EVTTOOLTIPTOG10703" } 
+				if = {
+					limit = {
+						capital_holding = { title = FROM }
+						is_merchant_republic = yes
+					}
+					any_vassal = {
+						limit = { 
+							is_patrician = yes
+							family_palace = { has_building = fp_asoiaf_slavepit_1 } 						
+						}
+						hidden_tooltip = { character_event = { id = TOG.10704 } }
+					}
+				}
+			} 
+		}
+		random = {
+			chance = 30
+			FROM = { location = { province_event = { id = TOG.10705 tooltip = "EVTTOOLTIPTOG10705" } } }
+		}
+	}
+}
+
+character_event = {
+	id = TOG.10703
+	desc = "EVTDESC_TOG_10703"
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTATOG10703
+		if = {
+			limit = {
+				capital_holding = {
+					title = FROMFROM
+					OR = {
+						has_building = ca_asoiaf_slavepit_1
+						has_building = ct_asoiaf_slavepit_1
+						has_building = tp_asoiaf_slavepit_1
+						has_building = no_asoiaf_slavepit_1
+					}
+				}
+			}
+			custom_tooltip = { text = LOSEALLSLAVES }
+			hidden_tooltip = {
+				FROM = {
+					FROM = {
+						remove_building = ca_asoiaf_slavepit_5
+						remove_building = ca_asoiaf_slavepit_4
+						remove_building = ca_asoiaf_slavepit_3
+						remove_building = ca_asoiaf_slavepit_2
+						remove_building = ca_asoiaf_slavepit_1
+						remove_building = ct_asoiaf_slavepit_5
+						remove_building = ct_asoiaf_slavepit_4
+						remove_building = ct_asoiaf_slavepit_3
+						remove_building = ct_asoiaf_slavepit_2
+						remove_building = ct_asoiaf_slavepit_1
+						remove_building = tp_asoiaf_slavepit_5
+						remove_building = tp_asoiaf_slavepit_4
+						remove_building = tp_asoiaf_slavepit_3
+						remove_building = tp_asoiaf_slavepit_2
+						remove_building = tp_asoiaf_slavepit_1
+						remove_building = no_asoiaf_slavepit_1
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				capital_holding = { title = FROMFROM }
+				is_merchant_republic = yes
+				family_palace = { has_building = fp_asoiaf_slavepit_1 }
+			}
+			custom_tooltip = { text = LOSEALLSLAVES }
+			hidden_tooltip = {
+				family_palace = {
+					remove_building = fp_asoiaf_slavepit_1
+					remove_building = fp_asoiaf_slavepit_2
+					remove_building = fp_asoiaf_slavepit_3
+					remove_building = fp_asoiaf_slavepit_4
+					remove_building = fp_asoiaf_slavepit_5
+				}
+			}
+		}
+	}
+}
+
+character_event = {
+	id = TOG.10704
+	desc = "EVTDESC_TOG_10703"
+	picture = GFX_evt_peasants
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTATOG10703"
+		custom_tooltip = { text = LOSEALLSLAVES }
+		hidden_tooltip = {
+			family_palace = {
+				remove_building = fp_asoiaf_slavepit_1
+				remove_building = fp_asoiaf_slavepit_2
+				remove_building = fp_asoiaf_slavepit_3
+				remove_building = fp_asoiaf_slavepit_4
+				remove_building = fp_asoiaf_slavepit_5
+			}
+		}
+	}
+}
+
+# Liberated slaves rally to join their liberator
+province_event = {
+	id = TOG.10705
+	hide_window = yes
+	is_triggered_only = yes
+	
+	immediate = { FROM = { character_event = { id = TOG.10707 } } }
+	
+	option = { name = OK }
+}
+
+# Slave rebels rise up to reinforce an ongoing provincial peasant revolt
+# Triggered from TOG.1999
+province_event = {
+	id = TOG.10706
+	desc = EVTDESC_TOG_10706
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+		set_province_flag = slave_revolt
+		add_province_modifier = {
+			name = recent_county_uprising
+			duration = 1825 # Five years of -100% revolt risk in this county
+		}
+		owner = {
+			top_liege = {
+				any_war = {
+					limit = {
+						defender = { character = PREV }
+						OR = {
+							using_cb = slave_revolt
+							using_cb = war_of_liberation
+						}
+					}
+					attacker = { character_event = { id = TOG.10707 } }
+				}
+				any_realm_province = {
+					limit = {					
+						OR = {
+							has_province_modifier = slave_modifier_1
+							has_province_modifier = slave_modifier_2
+							has_province_modifier = slave_modifier_3
+							has_province_modifier = slave_modifier_4
+							has_province_modifier = slave_modifier_5
+						}
+						NOT = { has_province_modifier = slave_revolt_modifier }
+					}
+					add_province_modifier = {
+						name = slave_revolt_modifier
+						duration = 3650
+					}
+				}
+			}
+		}
+		
+		any_province_lord = { # Inform the lieges
+			character_event = {
+				id = TOG.10708
+			}
+			if = {
+				limit = {
+					capital_scope = { province_id = ROOT }
+					is_merchant_republic = yes
+				}
+				any_vassal = {
+					limit = { family_palace = { has_building = fp_asoiaf_slavepit_1 } }
+					character_event = { id = TOG.10709 tooltip = "EVTTOOLTIPSLAVERY1001" }
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA_TOG_10706"
+	}
+}
+
+character_event = {
+	id = TOG.10707
+	desc = "EVTDESCTOG10707"
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		spawn_slave_reinforcements_effect = yes
+				
+		if = {
+			limit = { NOT = { demesne_size = 1 } }
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = powerful
+					}
+				}
+				spawn_slave_reinforcements_effect = yes
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = very_powerful
+					}
+				}
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = {
+						name = provincial_revolt_strength
+						value = extremely_powerful
+					}
+				}
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+				spawn_slave_reinforcements_effect = yes
+			}
+		}	
+	}
+}
+
+character_event = {
+	id = TOG.10708
+	desc = EVTDESC_TOG_10708
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_10706"
+		# If relevant, remove a slave camp level
+		if = {
+			limit = {
+				capital_scope = { province_id = FROM }
+				any_demesne_title = {
+					OR = {
+						has_building = ca_asoiaf_slavepit_1
+						has_building = ct_asoiaf_slavepit_1
+						has_building = tp_asoiaf_slavepit_1
+						has_building = fp_asoiaf_slavepit_1
+						has_building = no_asoiaf_slavepit_1
+					}
+				}
+			}
+			character_event = { id = slavery.1001 tooltip = "EVTTOOLTIPSLAVERY1001" }
+		}				
+	}
+}
+
+character_event = {
+	id = TOG.10709
+	desc = EVTDESC_TOG_10708
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA_TOG_10706"
+		character_event = { id = slavery.1001 tooltip = "EVTTOOLTIPSLAVERY1001" }
+	}
+}

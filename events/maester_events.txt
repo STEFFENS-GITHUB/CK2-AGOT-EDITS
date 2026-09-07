@@ -1,0 +1,7951 @@
+## Events for Maesters/Archmaesters- by knuckey
+namespace = maester
+
+#maester.1- Archmaester maintenance
+#maester.2- Maester mainetance
+#maester.3- I want to go to The Citadel (character decides to go)
+#maester.4- Someone wants to go to The Citadel (liege responds)
+#maester.5- Novice advances to rank of Maester 
+#maester.6- New maesters parent s informed
+#maester.7- New maester decides about staying at he Citadel
+#maester.8- New maester assigned a court
+#maester.9- New maester moved to court
+#maester.10- Number of Archmaesters counted yearly [REDUNDANT]
+#maester.11- Archmaester counter checked (must be 21) 
+#maester.12- new Archmaester found 
+#maester.13- Character loses Archmaester trait
+#maester.14- 'Mayor' of Citadel gains Archmaester trait
+#maester.27- The Maester informs his liege of child's progress
+#maester.20- The Maester informs his liege of child's regress
+#maester.21 Citadel looking for new home
+#maester.22 new home transferred
+#maester.23 new maester arrives #changed to letter event see how it goes
+#maester.24 Inform liege of maesters promotion to archmaester
+#maester.25 New Grand Maester needed
+#maester.26 King informed of Grand Maester's arrival
+#maester.33 Maester improves troop's morale
+#maester.34 liege informed 
+#maester.35 Maester worsens troop's morale
+#maester.36 liege informed 
+
+##Maintenance events by Wolfgang
+#maester.28-4
+
+# maester.1 -Archmaester maintenance
+character_event = {
+	id = maester.1
+	desc = "EVTDESCmaester.1"
+	
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		trait = archmaester
+		OR = {	
+			is_married = yes	
+			is_in_society = no
+			AND = {
+				is_ruler = no
+				NOT = { has_minor_title = title_archmaester }
+			}	
+			NOR = {	
+				has_landed_title = c_the_citadel 
+				has_character_flag = grandmaester
+				has_character_flag = special_archmaester_courtier
+				host = { has_landed_title = c_the_citadel }
+			}	
+		}	
+	}
+	
+	immediate = {
+		if = { #make sure citadel title has holder
+			limit = { c_the_citadel  = { has_holder = no } }
+			c_the_citadel = { gain_title = ROOT }
+		}
+		if = {
+			limit = { is_married = yes	}
+			remove_spouse = spouse	
+			if = {
+				limit = { NOT = { has_job_title = job_physician } }
+				liege = { letter_event = { id = maester.29 } } #inform liege that I gots to go
+				set_character_flag = new_maester
+				c_the_citadel = { 
+					holder_scope = { ROOT = { move_character = PREV } }
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOR = {	
+					has_landed_title = c_the_citadel 
+					has_character_flag = grandmaester
+					has_character_flag = special_archmaester_courtier
+					host = { has_landed_title = c_the_citadel }
+				}
+			}
+			remove_trait = archmaester
+			add_trait = maester
+			set_character_flag = no_court_invites
+			set_special_character_title = title_maester
+			hidden_tooltip = { remove_trait = knight }
+			prestige = -50
+			if = {
+				limit = { 
+					society_member_of = hermetics 
+					society_rank = 4
+				}
+				society_rank_down = 1
+			}
+		}
+		if = {
+			limit = {
+				trait = archmaester
+				is_ruler = no
+				NOT = { has_minor_title = title_archmaester }
+			}
+			give_minor_title = title_archmaester
+		}
+		if = {
+			limit = { is_in_society = no }
+			join_society = hermetics
+			if = {
+				limit = { has_landed_title = c_the_citadel }
+				society_rank_up = 3
+				set_society_grandmaster = yes
+			}
+			else_if = {
+				limit = { trait = archmaester }
+				society_rank_up = 3
+			}
+			else_if = {
+				limit = { trait = maester }
+				society_rank_up = 2
+			}
+		}
+	}
+	
+
+	option = { 
+		name = OK
+	}
+}
+# maester.2 -Maester mainetance
+character_event = {
+	id = maester.2
+	desc = "EVTDESCmaester.2"
+	
+	is_triggered_only = yes
+	is_married = yes
+	
+	trigger = {
+		trait = maester
+		is_ruler = no
+	}
+	
+	option = { 
+		name = "Now go back to the Citadel, asshole"
+		remove_spouse = spouse	
+		if = {
+			limit = { NOT = { has_job_title = job_physician } }
+			liege = { letter_event = { id = maester.29 } } #inform liege that I gots to go
+			#set_character_flag = new_maester
+			c_the_citadel = { 
+				holder_scope = { ROOT = { move_character = PREV } }
+			}
+		}	
+	}
+}
+
+# maester.3 -I want to go to the Citadel!
+character_event = {
+	id = maester.3
+	desc = "EVTDESCmaester.3"
+	
+	min_age = 14
+	max_age = 25
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	ai = yes
+	
+	trigger = {
+		has_maester_society_prerequisites = yes
+		NOT = { culture = brindlemen }
+
+		#is_betrothed = no
+		NOT = { trait = maester }
+		NOT = { trait = archmaester }
+		is_in_society = no
+		is_ill = no
+		NOT = { has_minor_title = title_triarch }
+		NOT = { has_character_flag = wikid_companion }
+		NOT = { liege = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_refused_citadel } } }
+	}
+	
+	mean_time_to_happen = {
+		months = 280
+		
+		modifier = {
+			factor = 8
+			is_ruler = yes
+		}
+		modifier = {
+			factor = 3
+			NOT = { maester_culture_trigger = yes	}
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				culture = dothraki
+				culture = jogos_nhai
+			}
+		}
+		modifier = {
+			factor = 1.5
+			culture_group = first_men
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				culture_group = iron_isles_culture
+				culture = skagosi
+			}	
+		}
+		modifier = {
+			factor = 0.5
+			host = { has_landed_title = c_the_citadel }	
+		}
+	
+		modifier = {
+			factor = 0.9
+			learning = 10
+		}
+		modifier = {
+			factor = 0.9
+			learning = 12
+		}
+		modifier = {
+			factor = 0.9
+			learning = 14
+		}
+		modifier = {
+			factor = 0.9
+			learning = 16
+		}
+		modifier = {
+			factor = 0.9
+			learning = 18
+		}
+		modifier = {
+			factor = 2
+			OR = { 	
+				trait = misguided_warrior
+				trait = tough_soldier
+				trait = skilled_tactician
+				trait = brilliant_strategist
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = { 	
+				trait = skilled_warrior
+				trait = master_warrior
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = { 	
+				trait = stressed
+				trait = depressed
+			}
+		}
+		modifier = {
+			factor = 0.9
+			trait = eunuch
+		}
+		modifier = {
+			factor = 0.9
+			trait = disinherited
+		}
+		modifier = {
+			factor = 0.9
+			trait = bastard
+		}
+		modifier = {
+			factor = 0.8
+			trait = celibate
+		}
+		modifier = {
+			factor = 3
+			trait = hedonist
+		}
+		modifier = {
+			factor = 0.5
+			trait = scholar
+		}
+		modifier = {
+			factor = 1.5
+			trait = duelist
+		}
+		modifier = {
+			factor = 1.5
+			trait = hunter
+		}
+		modifier = {
+			factor = 1.5
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.8
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.25
+			trait = proud
+		}
+		modifier = {
+			factor = 0.8
+			trait = humble
+		}
+		modifier = {
+			factor = 0.8
+			trait = craven
+		}
+		modifier = {
+			factor = 2
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.75
+			trait = content
+		}
+		modifier = {
+			factor = 3
+			is_primary_heir = yes
+		}
+		modifier = {
+			factor = 1.5
+			is_pretender = yes 
+		}
+	}
+	immediate = {
+		if = {
+			limit = { is_ruler = yes }
+			join_society = hermetics
+		}	
+		else = {
+			liege = { letter_event = { id = maester.4 tooltip = EVTTOOLTIP73241 } } 
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAmaester.3"		
+	}
+}
+#Someone wants to go to The Citadel
+letter_event = {
+	id = maester.4
+	desc = "EVTDESCmaester.4"
+	picture = GFX_evt_library
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmaester.4" #Yes
+		ai_chance = {
+			factor = 80
+			
+			modifier = {
+				factor = 0.25
+				FROM = { is_betrothed = yes }
+			}
+			modifier = {
+				factor = 0
+				current_heir = { character = FROM }
+				NOT = { num_of_children = 2 }
+			}
+			modifier = {
+				factor = 0.5
+				current_heir = { character = FROM }
+				NOT = { num_of_children = 3 }
+			}
+			modifier = {
+				factor = 0.5
+				current_heir = { character = FROM }
+				NOT = { num_of_children = 4 }
+			}
+			modifier = {
+				factor = 0.04
+				current_heir = { character = FROM }
+			}
+			modifier = {
+				factor = 2
+				current_heir = { character = FROM }
+				FROM = { 	
+					OR = { 	
+						NOT = { martial = 8 } 
+						trait = craven
+						is_weak_trigger = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0.75
+				is_parent_of = FROM
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { dynasty = ROOT }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { martial = 12 }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { martial = 16 }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { stewardship = 16 }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { diplomacy = 16 }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { intrigue = 16 }
+			}
+			modifier = {
+				factor = 1.2
+				trait = kind
+			}
+			modifier = {
+				factor = 0.8
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.8
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.2
+				trait = scholar
+			}
+			modifier = {
+				factor = 1.2
+				learning = 10
+			}
+			modifier = {
+				factor = 1.5
+				has_landed_title = c_the_citadel
+			}
+		}
+		if = {
+			limit = {
+				is_parent_of = FROM
+				NOT = { current_heir = { character = FROM } }
+			}
+			prestige = 25
+		}
+		if = {
+			limit = {
+				current_heir = { character = FROM } 
+			}
+			prestige = 50
+		}
+		FROM = {
+			prestige = 20
+			join_society = hermetics
+			# add_character_modifier = {
+				# name = maester_education
+				# duration = -1
+			# }
+			set_character_flag = no_court_invites
+			set_character_flag = maester_education
+			if = {
+				limit = { is_betrothed = yes }
+				betrothed = {
+					if = {
+						limit = { 
+							is_ruler = yes 
+							NOT = { character = ROOT }
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						opinion = {
+							who = PREV
+							modifier = opinion_betrothal_broken
+						}
+					}
+					if = {
+						limit = { 
+							is_ruler = no 
+							liege = { 
+								is_close_relative = PREV 
+								NOT = { character = ROOT }
+							}
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_betrothal_broken
+						}
+						liege = {
+							opinion = {
+								who = ROOT
+								modifier = opinion_betrothal_broken
+							}
+							opinion = {
+								who = PREVPREV
+								modifier = opinion_betrothal_broken
+							}
+						}	
+					}
+					break_betrothal = PREV
+				}	
+			}
+			hidden_tooltip = { 	
+				clr_character_flag = asked_citadel 
+				clr_character_flag = serving_varangian	#Merc company
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					remove_character_modifier = court_education
+					remove_character_modifier = martial_education
+					remove_character_modifier = steward_education
+					remove_character_modifier = no_education
+				}			
+				any_spouse = { remove_spouse = PREV }
+				any_consort = { remove_consort = PREV }
+				remove_guardian = yes
+				end_inaccessibility_effect = yes
+				clr_character_flag = hidden_from_siege
+			}
+		}
+		c_the_citadel = {
+			holder_scope = {
+				FROM = { move_character = PREV }
+			}
+		}	
+	}
+	option = {
+		name = {
+			text = "EVTOPTBmaester.4" #No
+			trigger = { 
+				NAND = { 	
+					current_heir = { character = FROM } 
+					is_parent_of = FROM
+				}
+			}
+		}	
+		name = {
+			text = "EVTOPTDmaester.4" #No son of mine
+			trigger = { 
+				NOT = { current_heir = { character = FROM } }
+				is_parent_of = FROM
+			}
+		}
+		name = {
+			text = "EVTOPTCmaester.4" #You're my heir!
+			trigger = { 
+				current_heir = { character = FROM } 
+			}
+		}
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				is_parent_of = FROM
+			}
+			modifier = {
+				factor = 2
+				current_heir = { character = FROM } 
+			}
+		}
+		FROM = {
+			prestige = -10
+			opinion = { who = ROOT modifier = opinion_refused_citadel }
+		}
+	}
+}
+#Acolyte advances to rank of Maester
+character_event = {
+	id = maester.5
+	desc = "EVTDESCmaester.5"
+	picture = GFX_evt_library
+	
+	is_triggered_only = yes
+	is_in_society = yes
+
+	trigger = {
+		society_member_of = hermetics
+		society_rank == 2
+		host = { has_landed_title = c_the_citadel }	
+		is_ruler = no
+		has_links_for_maester_rank_trigger = yes	
+		can_press_claims_trigger = yes
+		NOT_mythical_creature_trigger = yes
+	}
+
+	option = {
+		name = "EVTOPTAmaester.5" #Yes
+		prestige = 20
+		add_trait = maester
+		society_rank_up = 1
+		set_character_flag = no_court_invites
+		set_special_character_title = title_maester
+		remove_trait = knight
+		remove_trait = squire
+		remove_trait = disinherited
+		remove_trait = forbid_marriage
+		any_spouse = { 
+			limit = { is_alive = yes }
+			remove_spouse = PREV 
+		}
+		clr_character_flag = maester_education
+		#Elects to stay at Citadel?
+		if = {
+			limit = { trait = nightswatch }
+			d_nightswatch = {
+				holder_scope = {
+					ROOT = { move_character = PREV }
+				}
+			}
+		}
+		else = {
+			random_list = {
+				20 = { #Eligible to be assigned
+					modifier = {
+						factor = 0.5
+						NOT = { age = 25 }
+					}
+					modifier = {
+						factor = 2
+						age = 35
+					}
+					modifier = {
+						factor = 2
+						age = 45
+					}
+					modifier = {
+						factor = 2
+						age = 55
+					}
+					
+					modifier = {
+						factor = 1.5
+						trait = brave
+					}
+					modifier = {
+						factor = 0.66
+						trait = craven
+					}
+					modifier = {
+						factor = 0.75
+						trait = ambitious
+					}
+					modifier = {
+						factor = 1.25
+						trait = content
+					}
+				}
+				50 = { #6 years
+					modifier = {
+						factor = 3
+						NOT = { age = 25 }
+					}
+					add_character_modifier = {
+						name = maester_at_citadel
+						duration = 2190
+						hidden = yes
+					}
+				}
+				20 = { #12 years
+					modifier = {
+						factor = 2
+						NOT = { age = 25 }
+					}
+					add_character_modifier = {
+						name = maester_at_citadel
+						duration = 4380
+						hidden = yes
+					}
+				}
+				5 = { #18 years
+					add_character_modifier = {
+						name = maester_at_citadel
+						duration = 6570
+						hidden = yes
+					}
+				}
+				5 = { #life
+					add_character_modifier = {
+						name = maester_at_citadel
+						duration = -1
+						hidden = yes
+					}
+				}
+			}
+		}
+		recalc_succession = yes
+		# Inform relatives
+		any_player = {
+			limit = { 
+				OR = {
+					is_close_relative = ROOT
+					is_friend = ROOT
+				}
+			}
+			character_event = { id = maester.6 }
+		}
+	}
+}
+# The character's parents informed
+character_event = {
+	id = maester.6
+	desc = "EVTDESCmaester.6"
+	picture = GFX_evt_library
+
+	is_triggered_only = yes
+	
+	option = {	
+		name = {
+			text = "EVTOPTAmaester.6"
+			trigger = { opinion = { who = FROM value = -24 } }
+		}	
+		name = {
+			text = "EVTOPTBmaester.6"
+			trigger = { NOT = { opinion = { who = FROM value = -24 } } }
+		}	
+		prestige = 15
+		recalc_succession = yes
+	}
+}
+# # Stay at the Citadel?
+# character_event = {
+	# id = maester.7
+	# desc = "EVTDESCmaester.7"
+	# picture = GFX_evt_library
+	
+	# is_triggered_only = yes
+
+	# # option = {
+		# # trigger = { NOT = { trait = nightswatch } }
+		# # ai_chance = {
+			# # factor = 95
+		# # }
+		# # name = "EVTOPTAmaester.7" #Assigned to Lord
+		# # #first try high ranking lord with no maester
+		# # random_playable_ruler = {
+			# # limit = {
+				# # demesne_size = 1
+				# # maester_culture_trigger = yes
+				# # higher_tier_than = COUNT
+				# # NOT = { any_courtier = { trait = maester } }
+			# # }
+			# # character_event = { id = maester.8 }
+			# # break = yes
+		# # }
+		# # #then try high ranking lord
+		# # if = {
+			# # limit = { learning = 18 }
+			# # random_playable_ruler = {
+				# # limit = {
+					# # demesne_size = 1
+					# # maester_culture_trigger = yes
+					# # OR = {
+						# # prestige = 1000
+						# # higher_tier_than = DUKE
+					# # }	
+				# # }
+				# # character_event = { id = maester.8 }
+				# # break = yes
+			# # }
+		# # }	
+		# # if = {
+			# # limit = { learning = 14 }
+			# # random_playable_ruler = {
+				# # limit = {
+					# # demesne_size = 1
+					# # maester_culture_trigger = yes
+					# # OR = {
+						# # prestige = 500
+						# # higher_tier_than = COUNT
+					# # }	
+				# # }
+				# # character_event = { id = maester.8 }
+				# # break = yes
+			# # }
+		# # }
+		# # #then any lord who needs maester
+		# # random_playable_ruler = {
+			# # limit = {
+				# # demesne_size = 1
+				# # maester_culture_trigger = yes
+				# # NOT = { any_courtier = { trait = maester } }
+			# # }
+			# # character_event = { id = maester.8 }
+			# # break = yes
+		# # }
+		# # #random
+		# # random_playable_ruler = {
+			# # limit = {
+				# # demesne_size = 1
+				# # maester_culture_trigger = yes
+			# # }
+			# # character_event = { id = maester.8 }
+			# # break = yes
+		# # }
+	# # }
+	# option = {
+		# trigger = { NOT = { trait = nightswatch } }
+		# ai_chance = {
+			# factor = 5
+			# modifier = {
+				# factor = 0
+				# trait = nightswatch
+			# }
+		# }
+		# name = "EVTOPTBmaester.7" #stay at citadel
+		# #set_character_flag = maester_at_citadel	
+	# }
+	# option = {
+		# trigger = { trait = nightswatch }
+		# name = "EVTOPTCmaester.7" 
+		# d_nightswatch = {
+			# holder_scope = {
+				# character_event = { id = maester.8 }
+			# }
+		# }
+	# }
+# }
+# # maester.8 -Maester of Citadel assigned
+# character_event = {
+	# id = maester.8
+	# desc = "EVTDESCmaester.8"
+	# picture = GFX_evt_library
+
+	# only_playable = yes
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAmaester.8"		 
+		# FROM = {
+			# move_character = ROOT
+			# set_character_flag = serving_with_lord
+			# set_character_flag = no_court_invites
+		# }
+	# }
+# }
+
+# # Move Maester
+# character_event = {
+	# id = maester.9
+	# desc = "EVTDESCmaester.9"
+	# picture = GFX_evt_library
+
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAmaester.9"	
+	# }
+# }
+
+#Archmaester counter
+# character_event = {
+	# id = maester.10
+	# desc = "EVTDESCmaester.10"
+	# picture = GFX_evt_library
+
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# has_landed_title = c_the_citadel
+		# #primary_title = { tier = BARON }
+	# }
+	
+	# mean_time_to_happen = {
+		# days = 1
+		# # modifier = {
+			# # factor = 0.001
+			# # NOT = { has_character_flag = archmaester_counter_initialised }
+		# # }
+	# }
+
+	# immediate = {
+		# set_variable = { which = "archmaester_count" value = 0 }
+	# }
+	
+	# option = { 
+		# name = "EVTOPTAmaester.10"
+		# #set_variable = { which = "archmaester_count" value = 0 }
+		# any_courtier = {
+			# limit = {
+				# trait=archmaester
+			# }
+			# ROOT = { change_variable = { which = "archmaester_count" value = 1 } }
+		# }
+		# set_character_flag = archmaester_counter_initialised
+	# }
+# }
+#New Archmaester needed
+character_event = {
+	id = maester.11
+	desc = "EVTDESCmaester.11"
+	picture = GFX_evt_library
+
+	is_triggered_only = yes
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = c_the_citadel
+		NOT = { 
+			is_society_rank_full = { 				
+				society = hermetics
+				rank = 4						
+			}
+		}
+	}
+	
+	immediate = { #find the maester
+		hermetics = {
+			random_society_member = {
+				limit = {
+					trait = maester
+					society_rank == 3
+					is_ruler = no
+					NOT = { trait = archmaester }
+					NOT = { trait = nightswatch }
+					NOT = { trait = kingsguard }
+					prisoner = no
+					is_incapable = no
+					OR = {
+						NOT = { has_character_flag = serving_with_lord }
+						had_character_flag = { flag = serving_with_lord days = 3650 }
+					}
+					
+					has_character_flag = choosing_hermetic_art #Has specialisation
+					#Max one from each specialisation
+					NAND = {
+						has_character_flag = specialisation_ravenry
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_ravenry
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_history
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_history
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_astronomy
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_astronomy
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_seasons
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_seasons
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_geography
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_geography
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_math
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_math
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_warcraft
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_warcraft
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_castles
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_castles
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_culture
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_culture
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_languages
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_languages
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_law
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_law
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_medicine
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_medicine
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_metallurgy
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_metallurgy
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_herblore
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_herblore
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+					NAND = {
+						has_character_flag = specialisation_mysteries
+						hermetics = {
+							any_society_member = {
+								#count = 2
+								society_rank == 4
+								has_character_flag = specialisation_mysteries
+								NOT = { has_character_flag = grandmaester }
+								is_incapable = no
+							}
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						learning = 20
+						AND = {
+							learning = 16
+							OR = {
+								age = 50
+								trait = ambitious
+								trait = scholar
+								host = { has_landed_title = c_the_citadel }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+						AND = {
+							learning = 10
+							OR = {
+								prestige = 250
+								any_claim = { higher_tier_than = COUNT }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						learning = 17
+						AND = {
+							learning = 13
+							OR = {
+								age = 50
+								trait = ambitious
+								trait = scholar
+								host = { has_landed_title = c_the_citadel }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+						AND = {
+							learning = 8
+							OR = {
+								prestige = 250
+								any_claim = { higher_tier_than = COUNT }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+					}
+				}
+				preferred_limit = {
+					OR = {
+						learning = 14
+						AND = {
+							learning = 10
+							OR = {
+								age = 50
+								trait = ambitious
+								trait = scholar
+								host = { has_landed_title = c_the_citadel }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+						AND = {
+							OR = {
+								prestige = 250
+								any_claim = { higher_tier_than = COUNT }
+							}
+							NOR = { 
+								trait = content
+								trait = stressed
+								trait = depressed
+							}
+						}
+					}	
+				}
+				preferred_limit = {
+					OR = {
+						learning = 12				
+						AND = {
+							learning = 10
+							OR = {
+								age = 50
+								trait = ambitious
+								trait = scholar
+								host = { has_landed_title = c_the_citadel }
+							}
+						}
+						prestige = 150
+						any_claim = { higher_tier_than = BARON }
+					}
+				}
+				preferred_limit = {
+					OR = {
+						learning = 10				
+						AND = {
+							learning = 8
+							OR = {
+								age = 50
+								trait = ambitious
+								trait = scholar
+								host = { has_landed_title = c_the_citadel }
+							}
+						}
+						prestige = 100
+						num_of_claims = 1
+					}
+				}
+				character_event = { id = maester.12 }
+			}
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTAmaester.11"
+	}
+}
+#Maester selected
+character_event = {
+	id = maester.12
+	desc = "EVTDESCmaester.12"
+	picture = GFX_evt_library
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAmaester.12"
+		add_trait = archmaester
+		remove_trait = maester
+		remove_special_character_title = title_maester
+		give_minor_title = title_archmaester		
+		society_rank_up = 1
+		clr_character_flag = serving_with_lord
+		prestige = 50
+		remove_title = job_physician
+		if = {
+			limit = { has_character_flag = specialisation_mysteries }
+			c_the_citadel = {
+				holder_scope = {
+					random_artifact = {
+						limit = { 
+							artifact_type = glass_candle
+							has_artifact_flag = citadel_owned
+						}
+						ROOT = { set_character_flag = given_citadel_glass_candle }
+						transfer_artifact = { from = PREV to = ROOT }
+					}
+				}
+			}
+		}	
+		liege = {
+			letter_event = { id = maester.24 }
+		}	
+		c_the_citadel = {
+			holder_scope = {
+				ROOT = { move_character = PREV }
+				if = { 	
+					limit = { 
+						NOT = { 
+							is_society_rank_full = { 				
+								society = hermetics
+								rank = 4						
+							}
+						}
+					}
+					character_event = { id = maester.11 days = 3 }
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { father_even_if_dead = { always = yes } } 
+				NOT = { mother_even_if_dead = { always = yes } }
+			}
+			set_immune_to_pruning = yes
+		}
+	}
+}
+# #Archmaester title gained
+# character_event = {
+	# id = maester.14
+	# desc = "EVTDESCmaester.14"
+	# picture = GFX_evt_library
+	
+	# is_triggered_only = yes
+	
+	# trigger = {
+		# has_landed_title = c_the_citadel 
+		# NOT = { trait = archmaester }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 1
+	# }
+	
+	# option = { 
+		# name = "EVTOPTAmaester.14"
+		# add_trait = archmaester
+		# remove_trait = maester
+		# hidden_tooltip = { remove_trait = knight }
+		# prestige = 25
+	# }
+# }
+
+# maester.15: Maester improves childs knowledge
+character_event = {
+	id = maester.15
+	title = "EVTNAMEmaester.15"
+	desc = "EVTDESCmaester.15"
+	picture = "GFX_evt_child_reading"
+
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	has_job_title = yes
+	
+	trigger = {
+		#has_job_action = action_improve_rel_relations	#Tutor Children
+		OR = {
+			has_job_title = job_physician
+			AND = {
+				is_playable = yes
+				is_councillor = yes
+				society_member_of = hermetics
+				has_links_for_maester_rank_trigger = yes
+			}
+		}	
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			any_courtier = {
+				age = 6
+				NOT = { age = 16 }
+				OR = {
+					character = PREV
+					AND = {
+						same_liege = ROOT	
+						is_close_relative = PREV
+					}	
+				}	
+				NOT = { trait = incapable }
+				NOT = { trait = dragon }
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 175
+		
+		modifier = {
+			factor = 2
+			NOT = { has_job_title = job_physician }
+		}
+		modifier = {
+			factor = 1.3
+			NOT = { learning = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { learning = 4 }
+		}
+		modifier = {
+			factor = 1.2
+			NOT = { learning = 6 }
+		}
+		modifier = {
+			factor = 1.15
+			NOT = { learning = 8 }
+		}
+		modifier = {
+			factor = 0.8
+			learning = 10
+		}
+		modifier = {
+			factor = 0.9
+			learning = 12
+		}
+		modifier = {
+			factor = 0.9
+			learning = 14
+		}
+		modifier = {
+			factor = 0.9
+			learning = 16
+		}
+		modifier = {
+			factor = 0.9
+			learning = 18
+		}
+		modifier = {
+			factor = 0.9
+			learning = 20
+		}
+		modifier = {
+			factor = 0.9
+			learning = 22
+		}
+		modifier = {
+			factor = 0.9
+			learning = 24
+		}
+		modifier = {
+			factor = 0.9
+			learning = 26
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = job_action_sabotage
+			NOT = {
+				had_character_flag = {
+					flag = job_action_sabotage
+					days = 1825
+				}
+			}	
+		}
+		# modifier = { #removed to avoid confusion
+			# factor = 9999
+			# NOT = {
+				# liege = {
+					# OR = {
+						# any_child = {
+							# age = 6
+							# NOT = { age = 16 }	
+							# NOT = { trait = incapable }
+							# same_liege = ROOT
+						# }
+						# any_child = {
+							# any_child = {
+								# age = 6
+								# NOT = { age = 16 }	
+								# NOT = { trait = incapable }
+								# same_liege = ROOT
+							# }
+						# }	
+					# }		
+				# }
+			# }	
+		# }
+	}
+	
+	immediate = {
+		liege = {
+			random_courtier = {
+				limit = {
+					age = 6
+					NOT = { age = 16 }
+					OR = {
+						character = PREV
+						AND = {
+							same_liege = ROOT	
+							is_close_relative = PREV
+						}	
+					}			
+					NOT = { trait = incapable }	
+					NOT = { trait = dragon }
+				}
+				save_event_target_as = child_edu_target
+			}
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAmaester.15"
+		prestige = 5
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		liege = {
+			event_target:child_edu_target = {
+				show_portrait = THIS
+				opinion = { who = ROOT modifier = opinion_teacher months = 120 }
+				hidden_tooltip = {
+					random_list = {
+						25 = { set_character_flag = maester_intrigue }
+						25 = { set_character_flag = maester_stewardship }
+						25 = { set_character_flag = maester_diplomacy  }
+						25 = { set_character_flag = maester_learning  }
+					}
+					if = { 
+						limit = { NOT = { personality_traits = 5 } }
+						random_list = {
+							75 = { }
+							5 = { 
+								trigger = {						
+									NOT = { trait = diligent }
+									NOT = { trait = slothful }
+									NOT = { trait = indolent }
+								}
+								set_character_flag = maester_diligent 
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = patient }
+									NOT = { trait = wroth }
+									NOT = { trait = brooding }
+								}
+								set_character_flag = maester_patient  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = humble }
+									NOT = { trait = proud }
+									NOT = { trait = haughty }
+								}
+								set_character_flag = maester_humble  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = just }
+									NOT = { trait = arbitrary }
+								}
+								set_character_flag = maester_just  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = temperate }
+									NOT = { trait = gluttonous }
+									NOT = { trait = indolent }
+								}
+								set_character_flag = maester_temperate  
+							}
+						}
+					}
+					character_event = { id = maester.16 }
+				}	
+			}	
+			opinion = {
+				modifier = opinion_service_rendered
+				who = ROOT
+				years = 3
+			}
+		}
+	}
+}
+#Inform child
+character_event = {
+	id = maester.16
+	desc = "EVTDESCmaester.16"
+	picture = "GFX_evt_child_reading"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.16"
+		if = {
+			limit = {
+				has_character_flag = maester_intrigue
+			}
+			change_intrigue = 2
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_stewardship
+			}
+			change_stewardship = 2
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_diplomacy
+			}
+			change_diplomacy = 2
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_learning
+			}
+			change_learning = 2
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_diligent
+			}
+			add_trait = diligent
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_patient
+			}
+			add_trait = patient
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_humble
+			}
+			add_trait = humble
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_just
+			}
+			add_trait = just
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_temperate
+			}
+			add_trait = temperate
+			lose_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+		}	
+		FROM = { 
+			opinion = { who = ROOT modifier = opinion_pupil months = 120 }
+			liege = { 
+				if = {
+					limit = { NOT = { character = ROOT } }
+					letter_event = { id = maester.27 } 
+				}
+				if = {
+					limit = { character = ROOT }
+					clr_character_flag = maester_intrigue 
+					clr_character_flag = maester_stewardship
+					clr_character_flag = maester_diplomacy
+					clr_character_flag = maester_learning
+					clr_character_flag = maester_diligent
+					clr_character_flag = maester_patient
+					clr_character_flag = maester_humble
+					clr_character_flag = maester_just
+					clr_character_flag = maester_temperate
+				}				
+			} 
+		}
+	}	
+}	
+# maester.27: The Maester informs his liege of progress
+letter_event = {
+	id = maester.27
+	desc = "EVTDESCmaester.27"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmaester.27"
+		FROM = {
+			if = {
+				limit = {
+					has_character_flag = maester_intrigue
+				}
+				change_intrigue = 2
+				clr_character_flag = maester_intrigue
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_stewardship
+				}
+				change_stewardship = 2
+				clr_character_flag = maester_stewardship
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_diplomacy
+				}
+				change_diplomacy = 2
+				clr_character_flag = maester_diplomacy
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_learning
+				}
+				change_learning = 2
+				clr_character_flag = maester_learning
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_diligent
+				}
+				add_trait = diligent
+				clr_character_flag = maester_diligent
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_patient
+				}
+				add_trait = patient
+				clr_character_flag = maester_patient
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_humble
+				}
+				add_trait = humble
+				clr_character_flag = maester_humble
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_just
+				}
+				add_trait = just
+				clr_character_flag = maester_just
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_temperate
+				}
+				add_trait = temperate
+				clr_character_flag = maester_temperate
+			}	
+		}			
+	}
+}
+
+# 9001: Child not responding to maester
+character_event = {
+	id = maester.18
+	title = "EVTNAMEmaester.18"
+	desc = "EVTDESCmaester.18"
+	picture = "GFX_evt_child_reading"
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		#has_job_action = action_improve_rel_relations	#Tutor Children
+		OR = {
+			has_job_title = job_physician
+			AND = {
+				is_playable = yes
+				is_councillor = yes
+				society_member_of = hermetics
+				has_links_for_maester_rank_trigger = yes
+			}
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			any_courtier = {
+				age = 6
+				NOT = { age = 16 }
+				OR = {
+					character = PREV
+					AND = {
+						same_liege = ROOT	
+						is_close_relative = PREV
+					}	
+				}		
+				NOT = { trait = incapable }
+				NOT = { trait = dragon }	
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 200
+		
+		modifier = {
+			factor = 2
+			NOT = { has_job_title = job_physician }
+		}
+		modifier = {
+			factor = 0.7
+			NOT = { learning = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { learning = 4 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { learning = 6 }
+		}
+		modifier = {
+			factor = 0.85
+			NOT = { learning = 8 }
+		}
+		modifier = {
+			factor = 1.2
+			learning = 10
+		}
+		modifier = {
+			factor = 1.1
+			learning = 12
+		}
+		modifier = {
+			factor = 1.1
+			learning = 14
+		}
+		modifier = {
+			factor = 1.1
+			learning = 16
+		}
+		modifier = {
+			factor = 1.1
+			learning = 18
+		}
+		modifier = {
+			factor = 1.1
+			learning = 20
+		}
+		modifier = {
+			factor = 1.1
+			learning = 22
+		}
+		modifier = {
+			factor = 1.1
+			learning = 24
+		}
+		modifier = {
+			factor = 1.1
+			learning = 26
+		}
+		# modifier = {
+			# factor = 9999
+			# NOT = {
+				# liege = {
+					# any_courtier = {
+						# age = 6
+						# NOT = { age = 16 }
+						# same_liege = ROOT	
+						# is_close_relative = PREV		
+						# NOT = { trait = incapable }		
+					# }	
+				# }
+			# }	
+		# }
+	}
+	
+	immediate = {
+		liege = {
+			random_courtier = {
+				limit = {
+					age = 6
+					NOT = { age = 16 }
+					OR = {
+						character = PREV
+						AND = {
+							same_liege = ROOT	
+							is_close_relative = PREV
+						}	
+					}			
+					NOT = { trait = incapable }	
+					NOT = { trait = dragon }
+				}
+				save_event_target_as = child_edu_target
+			}
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAmaester.18"
+		prestige = -5
+		liege = {
+			event_target:child_edu_target = {
+				show_portrait = THIS
+				opinion = { who = ROOT modifier = opinion_teacher_bad months = 120 }
+				hidden_tooltip = {
+					random_list = {
+						25 = { set_character_flag = maester_intrigue }
+						25 = { set_character_flag = maester_stewardship }
+						25 = { set_character_flag = maester_diplomacy  }
+						25 = { set_character_flag = maester_learning  }
+					}
+					if = { 
+						limit = { NOT = { personality_traits = 5 } }
+						random_list = {
+							75 = { }
+							5 = { 
+								trigger = {						
+									NOT = { trait = diligent }
+									NOT = { trait = slothful }
+									NOT = { trait = conscientious }
+								}
+								set_character_flag = maester_slothful 
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = patient }
+									NOT = { trait = wroth }
+								}
+								set_character_flag = maester_wroth  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = humble }
+									NOT = { trait = proud }
+								}
+								set_character_flag = maester_proud  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = just }
+									NOT = { trait = arbitrary }
+								}
+								set_character_flag = maester_arbitrary  
+							}
+							5 = { 
+								trigger = {
+									NOT = { trait = temperate }
+									NOT = { trait = gluttonous }
+								}
+								set_character_flag = maester_gluttonous  
+							}
+						}
+					}
+					character_event = { id = maester.19 }
+				}	
+			}			
+		}
+	}
+}
+#Inform child
+character_event = {
+	id = maester.19
+	desc = "EVTDESCmaester.19"
+	picture = GFX_evt_child_play
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.19"
+		if = {
+			limit = {
+				has_character_flag = maester_intrigue
+			}
+			change_intrigue = -1
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_stewardship
+			}
+			change_stewardship = -1
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_diplomacy
+			}
+			change_diplomacy = -1
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_learning
+			}
+			change_learning = -1
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_slothful
+			}
+			add_trait = slothful
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_wroth
+			}
+			add_trait = wroth
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_proud
+			}
+			add_trait = proud
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_arbitrary
+			}
+			add_trait = arbitrary
+		}	
+		if = {
+			limit = {
+				has_character_flag = maester_gluttonous
+			}
+			add_trait = gluttonous
+			gain_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+		}	
+		FROM = { 
+			opinion = { who = ROOT modifier = opinion_pupil_bad months = 120 }
+			liege = { 
+				if = {
+					limit = { NOT = { character = ROOT } }
+					letter_event = { id = maester.20 } 
+				}	
+				if = {
+					limit = { character = ROOT }
+					clr_character_flag = maester_intrigue 
+					clr_character_flag = maester_stewardship
+					clr_character_flag = maester_diplomacy
+					clr_character_flag = maester_learning
+					clr_character_flag = maester_slothful
+					clr_character_flag = maester_wroth
+					clr_character_flag = maester_proud
+					clr_character_flag = maester_arbitrary
+					clr_character_flag = maester_gluttonous
+				}
+			} 
+		}
+	}	
+}	
+# maester.20: The Maester informs his liege of progress
+letter_event = {
+	id = maester.20
+	desc = "EVTDESCmaester.20"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAmaester.20"
+		FROM = {
+			if = {
+				limit = {
+					has_character_flag = maester_intrigue
+				}
+				tooltip = { change_intrigue = -1 }
+				clr_character_flag = maester_intrigue
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_stewardship
+				}
+				tooltip = { change_stewardship = -1 }
+				clr_character_flag = maester_stewardship
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_diplomacy
+				}
+				tooltip = { change_diplomacy = -1 }
+				clr_character_flag = maester_diplomacy
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_learning
+				}
+				tooltip = { change_learning = -1 }
+				clr_character_flag = maester_learning
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_slothful
+				}
+				tooltip = { add_trait = slothful }
+				clr_character_flag = maester_slothful
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_wroth
+				}
+				tooltip = { add_trait = wroth }
+				clr_character_flag = maester_wroth
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_proud
+				}
+				tooltip = { add_trait = proud }
+				clr_character_flag = maester_proud
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_arbitrary
+				}
+				tooltip = { add_trait = arbitrary }
+				clr_character_flag = maester_arbitrary
+			}	
+			if = {
+				limit = {
+					has_character_flag = maester_gluttonous
+				}
+				tooltip = { add_trait = gluttonous }
+				clr_character_flag = maester_gluttonous
+			}
+		}	
+	}
+}
+# maester.21 Citadel looking for new home
+character_event = {
+	id = maester.2199
+	
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = { 
+		if = {
+			limit = {
+				b_the_citadel = {
+					holder_scope = {
+						liege = { can_host_citadel_trigger = yes }
+					}
+				}
+			}
+			liege = { character_event = { id = maester.21 } }
+			break = yes
+		}
+		random_playable_ruler = {
+			limit = {
+				can_host_citadel_trigger = yes
+				capital_scope = { region = world_westeros }	
+				society_member_of = hermetics
+			}
+			character_event = { id = maester.21 }
+			break = yes
+		}
+		random = {
+			chance = 50
+			random_playable_ruler = {
+				limit = {
+					can_host_citadel_trigger = yes
+					capital_scope = {
+						region = world_westeros
+						OR = {
+							has_province_modifier = prosperity_modifier_2
+							has_province_modifier = prosperity_modifier_3
+						}
+						OR = {
+							has_province_modifier = scholar_foundation_province
+							has_province_modifier = great_library_province
+						}
+					}	
+				}
+				character_event = { id = maester.21 }
+				break = yes
+			}
+		}
+		random = {
+			chance = 50
+			random_playable_ruler = {
+				limit = {
+					can_host_citadel_trigger = yes
+					capital_scope = {
+						OR = {
+							region = world_reach
+							region = world_crownlands
+						}
+					}	
+				}
+				character_event = { id = maester.21 }
+				break = yes
+			}
+		}	
+		random = {
+			chance = 50
+			random_playable_ruler = {
+				limit = {
+					can_host_citadel_trigger = yes
+					capital_scope = {
+						region = world_westeros
+						NOR = {
+							region = world_vale
+							region = world_iron_isles
+							region = world_westeros_north
+						}
+					}
+				}
+				character_event = { id = maester.21 }
+				break = yes
+			}
+		}
+		random = {
+			chance = 80
+			random_playable_ruler = {
+				limit = {
+					can_host_citadel_trigger = yes
+					capital_scope = { region = world_westeros }
+				}
+				character_event = { id = maester.21 }
+				break = yes
+			}
+		}	
+		random_playable_ruler = {
+			limit = {
+				can_host_citadel_trigger = yes
+			}
+			preferred_limit = {
+				society_member_of = hermetics
+			}
+			character_event = { id = maester.21 }
+			break = yes
+		}	
+		random_playable_ruler = { #This is very unlikely
+			limit = {
+				higher_tier_than = DUKE
+				demesne_size = 1
+				NOT = { has_character_flag =  rejected_citadel }
+				NOT = { culture_group = winter_group }
+				any_vassal = {
+					primary_title = { NOT = { holding_type = temple } }
+					tier = BARON
+					is_patrician = no
+				}
+			}
+			preferred_limit = {
+				society_member_of = hermetics
+			}
+			character_event = { id = maester.21 }
+			break = yes
+		}
+	}
+
+	option = {
+		name = OK 
+	}
+}	
+character_event = {
+	id = maester.21
+	desc = "EVTDESCmaester.21"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmaester.21" 
+		c_the_citadel = {
+			holder_scope = {		
+				opinion = {
+					modifier = opinion_granted_barony
+					who = ROOT
+				}
+				set_defacto_liege = ROOT
+			}	
+		}	
+		prestige = 100
+		piety = 100
+		if = { 
+			limit = { NOT = { any_vassal = { primary_title = { title = b_the_citadel } } } }
+			random_vassal = {
+				limit = { 
+					primary_title = { 
+						NOT = { holding_type = temple } 
+						NOT = { base_value_5_trigger = yes }
+						NOT = { base_value_6_trigger = yes }
+					}
+					tier = BARON
+					is_patrician = no
+				}
+				preferred_limit = { primary_title = { holding_type = city } }
+				character_event = { id = maester.22 tooltip = EVTTOOLTIPmaester.22 }		
+			}		
+		}		
+		if = { 
+			limit = { any_vassal = { primary_title = { title = b_the_citadel } } }
+			random_vassal = {
+				limit = { primary_title = { title = b_the_citadel } }
+				character_event = { id = maester.22 tooltip = EVTTOOLTIPmaester.22 }		
+			}		
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBmaester.21" 
+		set_character_flag = rejected_citadel	
+		prestige = -10		
+		c_the_citadel = { 
+			hidden_tooltip = { holder_scope = { character_event = { id = maester.2199 days = 5 } } } #try again
+		}
+	}
+}	
+# maester.22 new home transferred
+character_event = {
+	id = maester.22
+	desc = "EVTDESCmaester.22"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.22" 
+		c_the_citadel = {
+			holder_scope = {
+				ROOT = {
+					primary_title = {
+						grant_title = PREVPREV
+					}
+				}
+				clr_character_flag =  new_home_found	
+			}
+			
+		}	
+		opinion = {
+			modifier = opinion_revoked_my_title
+			who = FROM
+		}
+	}
+}	
+# maester.23 new maester arrives
+character_event = {
+	id = maester.23
+	desc = "EVTDESCmaester.23"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#Try to find existing maester
+		c_the_citadel = {
+			holder_scope = {
+				random_courtier = {
+					limit = {
+						is_ruler = no
+						trait = maester
+						prisoner = no
+						is_incapable = no
+						NOT = { age = 50 }
+						learning = 8
+						NOT = { has_character_flag = serving_with_lord }
+						NOT = { has_character_modifier = maester_at_citadel }
+						
+						#High learning requires money/status
+						trigger_if = {
+							limit = { learning = 20 }
+							ROOT = {
+								OR = {
+									tier = EMPEROR
+									yearly_income = 350
+								}
+							}
+						}
+						trigger_else_if = {
+							limit = { learning = 17 }
+							ROOT = {
+								OR = {
+									higher_tier_than = DUKE
+									yearly_income = 275
+								}
+							}
+						}
+						trigger_else_if = {
+							limit = { learning = 14 }
+							ROOT = {
+								OR = {
+									higher_tier_than = COUNT
+									yearly_income = 200
+								}
+							}
+						}
+					}
+					preferred_limit = {
+						OR = {
+							AND = {
+								NOT = { dynasty = 0 }
+								dynasty = ROOT
+							}
+							is_close_relative = ROOT
+						}
+						opinion = { who = ROOT value = -10 }
+						reverse_opinion = { who = ROOT value = -10 }
+					}
+					preferred_limit = {
+						learning = 20
+						c_the_citadel = { holder_scope = { opinion = { who = ROOT value = -25 } } }
+					}	
+					preferred_limit = {
+						learning = 17
+						c_the_citadel = { holder_scope = { opinion = { who = ROOT value = -25 } } }
+					}
+					preferred_limit = {
+						learning = 14
+						c_the_citadel = { holder_scope = { opinion = { who = ROOT value = -25 } } }
+					}
+					preferred_limit = {
+						learning = 11
+						c_the_citadel = { holder_scope = { opinion = { who = ROOT value = -25 } } }
+					}
+					if = { 	
+						limit = { ROOT = { trait = nightswatch } }
+						add_trait = nightswatch
+						set_character_flag = no_court_invites
+						remove_trait = wildling
+					}
+					save_event_target_as = new_maester
+					set_character_flag = no_court_invites
+					set_character_flag = serving_with_lord
+					break = yes
+				}
+			}
+		}
+		random_province = { #This picks a random westerosi culture
+			limit = {
+				OR = {
+					culture_group = andal
+					#culture_group = iron_isles_culture
+					culture_group = dornish
+					#culture = high_valyrian
+					culture = western_valyrian
+					culture_group = first_men
+					#culture = skagosi
+				}
+				NOT = { culture = rhoynar }
+				NOT = { culture = old_andal }
+			}
+			ROOT = {
+				create_random_priest = {
+					random_traits = yes
+					trait = maester
+					dynasty = none
+					female = no
+					culture = PREV
+					religion = PREV
+					historical = yes
+				}
+				new_character = {
+					join_society = hermetics
+					society_rank_up = 2
+					remove_trait = martial_cleric
+					remove_trait = scholarly_theologian
+					remove_trait = mastermind_theologian
+					remove_trait = detached_priest
+					random_list = {
+						20 = {
+							modifier = {
+								factor = 0.5
+								ROOT = { higher_tier_than = DUKE }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { NOT = { opinion = { who = ROOT value = -35 } } } }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { NOT = { opinion = { who = ROOT value = -70 } } } }
+							}
+							add_trait = detached_priest
+							while = {
+								limit = { NOT = { has_links_for_maester_rank_trigger = yes } }
+								add_random_maester_link_effect = yes
+							}
+						}
+						50 = {
+							modifier = {
+								factor = 0.75
+								ROOT = { higher_tier_than = DUKE }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { NOT = { opinion = { who = ROOT value = -35 } } } }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { NOT = { opinion = { who = ROOT value = -70 } } } }
+							}
+							add_trait = martial_cleric
+							while = {
+								limit = { NOT = { has_links_level_2_trigger = yes } }
+								add_random_maester_link_effect = yes
+							}
+						}
+						20 = {
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { opinion = { who = ROOT value = 35 } } }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { opinion = { who = ROOT value = 70 } } }
+							}
+							add_trait = scholarly_theologian
+							add_random_maester_specialisation_effect = yes
+							while = {
+								limit = { NOT = { has_links_level_3_trigger = yes } }
+								add_random_maester_link_effect = yes
+							}
+						}
+						10 = {
+							modifier = {
+								factor = 0.33
+								ROOT = {
+									NOR = {
+										higher_tier_than = DUKE
+										yearly_income = 275
+									}
+								}
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { opinion = { who = ROOT value = 35 } } }
+							}
+							modifier = {
+								factor = 1.5
+								c_the_citadel = { holder_scope = { opinion = { who = ROOT value = 70 } } }
+							}
+							add_trait = mastermind_theologian
+							add_random_maester_specialisation_effect = yes
+							while = {
+								limit = { NOT = { has_links_level_4_trigger = yes } }
+								add_random_maester_link_effect = yes
+							}
+						}
+					}
+					random_list = { # Is the Physician a Quack?
+						95 = {
+						}
+						5 = {
+							set_character_flag = physician_is_quack
+						}
+					}
+					if = { 	
+						limit = { ROOT = { trait = nightswatch } }
+						add_trait = nightswatch
+						set_character_flag = no_court_invites
+						remove_trait = wildling
+					}
+					save_event_target_as = new_maester
+					set_character_flag = no_court_invites
+					set_character_flag = serving_with_lord
+					remove_trait = imbecile
+					remove_trait = inbred
+					remove_trait = slow
+					remove_trait = infirm
+					remove_trait = incapable
+					remove_trait = leper
+					remove_trait = possessed
+					remove_trait = ill
+					remove_trait = pneumonic
+					remove_trait = maimed
+					set_special_character_title = title_maester
+					change_stewardship = 3
+					change_diplomacy = 3
+					change_intrigue = 3
+					#cannot be pirate 
+					if = { 	
+						limit = { 
+							OR = {
+								religion = pirate
+								religion = corsair
+							}
+							NOT = { religion = ROOT }
+						}
+						if = {
+							limit = { 
+								OR = {
+									culture_group = andal
+									culture_group = dornish
+									culture = western_valyrian
+								}
+							}
+							religion = the_seven
+						}
+						if = {
+							limit = { 
+								culture_group = first_men
+							}
+							religion = old_gods
+						}
+						if = {
+							limit = { 
+								OR = {
+									religion = pirate
+									religion = corsair
+								}
+							}
+							religion = ROOT
+						}
+						if = {
+							limit = { NOT = { trait = zealous } }
+							add_trait = sympathy_pirate_group
+						}
+					}
+					while = {
+						limit = { NOT = { learning = 10 } }
+						change_learning = 1
+					}	
+					set_immune_to_pruning = yes
+				}	
+			}
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAmaester.23" 
+		ai_chance = {
+			factor = 1
+		}
+		job_physician = {
+			remove_title = job_physician
+			opinion = { who = ROOT modifier = opinion_fired_from_council }
+		}
+		event_target:new_maester = {
+			give_job_title = job_physician
+		}
+		if = {
+			limit = { 
+				has_dlc = "Zeus"
+				NOT = { has_assigned_minor_title = title_teacher } 
+			}
+			event_target:new_maester = {
+				give_minor_title = title_teacher
+			}
+		}		
+		clr_character_flag = employed_maester
+	}
+	option = {
+		name = "EVTOPTBmaester.23" 
+		trigger = { 
+			job_physician = { always = yes }	
+			NOT = { maester_culture_trigger = yes }			
+		}
+		ai_chance = {
+			factor = 99
+			modifier = {
+				factor = 0
+				job_physician = { NOT = { learning = event_target:new_maester } }
+			}
+		}
+		clr_character_flag = employed_maester
+	}
+	
+	after = {
+		hidden_tooltip = {
+			if = {
+				limit = { yearly_income = 350 }
+				c_the_citadel = { holder_scope = { wealth = 50 } }
+			}
+			else_if = {
+				limit = { yearly_income = 280 }
+				c_the_citadel = { holder_scope = { wealth = 40 } }
+			}
+			else_if = {
+				limit = { yearly_income = 210 }
+				c_the_citadel = { holder_scope = { wealth = 30 } }
+			}
+			else_if = {
+				limit = { yearly_income = 150 }
+				c_the_citadel = { holder_scope = { wealth = 20 } }
+			}
+			else = {
+				c_the_citadel = { holder_scope = { wealth = 10 } }
+			}
+		}
+	}
+}
+#Inform liege of maesters promotion to archmaester
+letter_event = {
+	id = maester.24
+	desc = "EVTDESCmaester.24"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmaester.24" #Yes	
+		ai_chance = { factor = 0.1 }		
+	}
+	option = {
+		name = "EVTOPTBmaester.24" #Employ new maester	
+		trigger = {
+			is_decision_potential = employ_maester
+			is_decision_allowed = employ_maester
+		}
+		ai_chance = { factor = 1000 }
+		set_character_flag = employed_maester
+		scaled_wealth = { value = -0.1 min = -10 max = -40 }
+		character_event = { id = maester.23 days = 10 tooltip = EVTTOOLTIPmaester.23 }
+	}
+	option = {
+		name = "EVTOPTCmaester.24" #Promote new maester	
+		trigger = {
+			NOT = { job_physician = { always = yes } }
+			any_courtier = { 
+				trait = maester 
+				is_incapable = no
+				prisoner = no
+				liege = { character = ROOT }
+				can_be_physician_trigger = yes
+				NOT = { character = FROM }
+			}
+		}
+		ai_chance = { factor = 1000 }
+		random_courtier = { 
+			limit = {
+				trait = maester 
+				is_incapable = no
+				prisoner = no
+				liege = { character = ROOT }
+				can_be_physician_trigger = yes
+				NOT = { character = FROM }
+			}	
+			give_job_title = job_physician
+			if = {
+				limit = { 
+					has_dlc = "Zeus"
+					ROOT = { NOT = { has_assigned_minor_title = title_teacher } } 
+				}
+				give_minor_title = title_teacher
+			}
+		}
+	}
+}	
+
+#New Grand Maester needed
+character_event = {
+	id = maester.2599
+
+	only_independent = yes
+	hide_window = yes
+
+	trigger = {
+		has_landed_title = e_iron_throne
+		maester_culture_trigger = yes 
+		NOT = { has_global_flag = aegons_conquest }
+		NOT = {
+			archmaester = {
+				is_alive = yes
+				has_character_flag = grandmaester
+				is_incapable = no
+				is_ruler = no
+			}
+		}
+		NOT = { has_character_flag = grand_maester_selected }
+	}
+	
+	immediate = {
+		#clear incapable grand maester
+		archmaester = {
+			limit = {
+				is_alive = yes
+				has_character_flag = grandmaester
+				OR = {
+					is_incapable = yes
+					is_ruler = yes
+				}
+			}	
+			clr_character_flag = grandmaester
+			remove_title = title_grandmaester
+			if = {
+				limit = { is_ruler = no }
+				c_the_citadel = { holder_scope = { reverse_banish = PREVPREV } }
+				give_minor_title = title_archmaester 
+			}	
+		}
+		#Find new grandmaester
+		c_the_citadel = {
+			holder_scope = {
+				random_courtier = {
+					limit = {
+						society_member_of = hermetics
+						OR = {	
+							trait = maester
+							trait = archmaester
+						}
+						liege = { character = PREVPREV }
+						is_ruler = no
+						prisoner = no
+						is_incapable = no
+					}
+					preferred_limit = {
+						OR = {
+							learning = 24
+							AND = {
+								learning = 20
+								OR = {
+									age = 50
+									trait = ambitious
+									trait = archmaester
+									liege = { opinion = { who = PREV value = 30 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+							AND = {
+								learning = 16
+								OR = {
+									prestige = 300
+									any_claim = { higher_tier_than = COUNT }
+									liege = { opinion = { who = PREV value = 45 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+						}
+					}
+					preferred_limit = {
+						OR = {
+							learning = 20
+							AND = {
+								learning = 16
+								OR = {
+									age = 50
+									trait = ambitious
+									trait = archmaester
+									liege = { opinion = { who = PREV value = 30 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+							AND = {
+								learning = 12
+								OR = {
+									prestige = 300
+									any_claim = { higher_tier_than = COUNT }
+									liege = { opinion = { who = PREV value = 45 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+						}
+					}
+					preferred_limit = {
+						OR = {
+							learning = 16
+							AND = {
+								learning = 13
+								OR = {
+									age = 50
+									trait = ambitious
+									trait = archmaester
+									liege = { opinion = { who = PREV value = 30 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+							AND = {
+								learning = 10
+								OR = {
+									prestige = 300
+									any_claim = { higher_tier_than = COUNT }
+									liege = { opinion = { who = PREV value = 45 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+						}
+					}
+					preferred_limit = {
+						OR = {
+							learning = 13
+							AND = {
+								learning = 10
+								OR = {
+									age = 50
+									trait = ambitious
+									trait = archmaester
+									liege = { opinion = { who = PREV value = 15 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+							AND = {
+								learning = 8
+								OR = {
+									prestige = 300
+									any_claim = { higher_tier_than = BARON }
+									liege = { opinion = { who = PREV value = 30 } }
+								}
+								NOR = { 
+									trait = content
+									trait = stressed
+									trait = depressed
+								}
+							}
+						}
+					}
+					preferred_limit = {
+						OR = {
+							learning = 10
+							AND = {
+								learning = 8
+								OR = {
+									age = 50
+									trait = ambitious
+									trait = archmaester
+									liege = { opinion = { who = PREV value = 10 } }
+								}
+							}
+							prestige = 200
+							num_of_claims = 1
+							liege = { opinion = { who = PREV value = 20 } }
+						}
+					}
+					character_event = { id = maester.25 }
+					break = yes
+				}
+			}
+		}
+		#failsafe, create random
+		random_playable_ruler = { #This picks a random westerosi culture
+			limit = {
+				OR = {
+					culture_group = andal
+					#culture_group = iron_isles_culture
+					culture_group = dornish
+					#culture = high_valyrian
+					culture = western_valyrian
+					culture_group = first_men
+					#culture = skagosi
+				}
+				NOT = { culture = rhoynar }
+				NOT = { culture = old_andal }
+			}
+			ROOT = {
+				create_random_priest = {
+					random_traits = yes
+					trait = archmaester
+					trait = scholarly_theologian
+					dynasty = none
+					female = no
+					culture = PREV
+					religion = PREV
+					historical = yes
+				}
+				new_character = {
+					join_society = hermetics
+					society_rank_up = 3
+					add_random_maester_specialisation_effect = yes
+					while = {
+						limit = { NOT = { has_links_level_3_trigger = yes } }
+						add_random_maester_link_effect = yes
+					}
+					character_event = { id = maester.25 }
+					remove_trait = imbecile
+					remove_trait = inbred
+					remove_trait = slow
+					remove_trait = infirm
+					remove_trait = incapable
+					remove_trait = leper
+					remove_trait = possessed
+					remove_trait = ill
+					remove_trait = pneumonic
+					remove_trait = maimed
+					change_stewardship = 3
+					change_diplomacy = 3
+					change_intrigue = 3
+					change_learning = 3
+				}
+			}
+		}
+	}
+	
+	option = { 
+		name = OK
+	}
+}
+character_event = {
+	id = maester.25
+	desc = "EVTDESCmaester.25"
+	picture = GFX_evt_library
+	
+	is_triggered_only = yes
+
+	immediate = {
+		FROM = {
+			set_character_flag = grand_maester_selected
+		}	
+	}
+	
+	option = { 
+		name = "EVTOPTAmaester.25"
+		while = {
+			limit = { NOT = { society_rank == 4 } }
+			society_rank_up = 1
+		}
+		add_trait = archmaester
+		remove_trait = maester
+		remove_special_character_title = title_maester
+		set_character_flag = grandmaester
+		set_character_flag = new_grandmaester
+		FROM = {
+			character_event = { id = maester.26 days = 1 }
+		}
+		#any_claim = { remove_claim = ROOT }
+	}
+}
+#king informed of grand maester's arrival
+character_event = {
+	id = maester.26
+	desc = "EVTDESCmaester.26"
+	
+	only_independent = yes
+
+	trigger = {
+		has_landed_title = e_iron_throne
+		archmaester = {
+			is_alive = yes
+			has_character_flag = grandmaester
+			is_incapable = no
+			is_ruler = no
+			OR = {
+				NOT = { liege = { character = ROOT } }
+				AND = {
+					liege = { character = ROOT }
+					has_minor_title = title_regent
+					NOT = { has_job_title = job_physician }
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = "EVTOPTAmaester.26" #Yes	
+		archmaester = {
+			limit = {
+				is_alive = yes
+				has_character_flag = grandmaester
+				is_incapable = no
+				is_ruler = no
+				OR = {
+					NOT = { liege = { character = ROOT } }
+					AND = {
+						liege = { character = ROOT }
+						has_minor_title = title_regent
+						NOT = { has_job_title = job_physician }
+					}
+				}
+			}
+			if = {
+				limit = { has_character_flag = new_grandmaester }
+				prestige = 100
+				clr_character_flag = new_grandmaester
+			}
+			if = {
+				limit = { NOT = { liege = { character = ROOT } } }
+				move_character = ROOT
+			}
+			if = {
+				limit = { has_minor_title = title_regent }
+				hidden_tooltip = {
+					remove_title = title_regent
+					set_character_flag = readd_regency
+				}
+			}
+			give_job_title = job_physician
+			if = {
+				limit = { has_character_flag = readd_regency }
+				hidden_tooltip = {
+					give_minor_title = title_regent
+					clr_character_flag = readd_regency
+				}
+			}
+			if = {
+				limit = { NOT = { has_minor_title = title_grandmaester } }
+				give_minor_title = title_grandmaester
+			}	
+			if = {
+				limit = { 
+					has_dlc = "Zeus"
+					ROOT = { NOT = { has_assigned_minor_title = title_teacher } } 
+				}
+				give_minor_title = title_teacher
+			}
+		}	
+		clr_character_flag = grand_maester_selected
+	}
+
+}	
+
+letter_event = {
+	id = maester.29
+	desc = EVTDESCmaester.29 #My lord, I have been recalled to The Citadel and must leave your service.
+	is_triggered_only = yes
+	option = { name = "OK" }
+}
+
+#CITADEL ARCHMAESTER MAINTENANCE
+character_event = {
+	id = maester.30
+	desc = "Only Archmaesters may lead The Citadel"
+	
+	only_playable = yes
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_landed_title = c_the_citadel		
+	}
+	
+	option = {
+		name = "OK"
+		if = { #must be archmaester
+			limit = { NOT = { trait = archmaester } }
+			#Abdicate to random archmaester
+			random_courtier = {
+				limit = { 
+					trait = archmaester 
+					society_member_of = hermetics
+				}
+				ROOT = { 
+					any_artifact = {
+						transfer_artifact = { from = PREV to = PREVPREV }
+					}
+					if = {
+						limit = { NOT = { primary_title = { title = c_the_citadel } } }
+						c_the_citadel = { gain_title = PREVPREV }
+					}
+					if = {
+						limit = { primary_title = { title = c_the_citadel } }
+						abdicate_to = PREV 
+					}	
+				}
+				character_event = { id = maester.30 days = 1 } #maintenance
+			}
+			#Create random archmaester if neccesary
+			if = {
+				limit = { has_landed_title = c_the_citadel }
+				random_playable_ruler = { #This picks a random westerosi culture
+					limit = {
+						OR = {
+							culture_group = andal
+							#culture_group = iron_isles_culture
+							culture_group = dornish
+							#culture = high_valyrian
+							culture = western_valyrian
+							culture_group = first_men
+							#culture = skagosi
+						}
+						NOT = { culture = rhoynar }
+						NOT = { culture = old_andal }
+					}
+					ROOT = {
+						create_random_priest = {
+							random_traits = yes
+							trait = archmaester
+							trait = scholarly_theologian
+							dynasty = none
+							female = no
+							culture = PREV
+							religion = PREV
+							historical = yes
+						}
+						new_character = {
+							join_society = hermetics
+							society_rank_up = 3
+							add_random_maester_specialisation_effect = yes
+							while = {
+								limit = { NOT = { has_links_level_3_trigger = yes } }
+								add_random_maester_link_effect = yes
+							}
+							ROOT = { 
+								any_artifact = {
+									transfer_artifact = { from = PREV to = PREVPREV }
+								}
+								if = {
+									limit = { NOT = { primary_title = { title = c_the_citadel } } }
+									c_the_citadel = { gain_title = PREVPREV }
+								}
+								if = {
+									limit = { primary_title = { title = c_the_citadel } }
+									abdicate_to = PREV 
+								}	
+							}
+							remove_trait = imbecile
+							remove_trait = inbred
+							remove_trait = slow
+							remove_trait = infirm
+							remove_trait = incapable
+							remove_trait = leper
+							remove_trait = possessed
+							remove_trait = ill
+							remove_trait = pneumonic
+							remove_trait = maimed
+							change_stewardship = 3
+							change_diplomacy = 3
+							change_intrigue = 3
+							change_learning = 3
+							character_event = { id = maester.30 days = 1 } #maintenance
+						}
+					}
+				}
+			}			
+			banish = yes
+			if = { #if maester send back to citadel
+				limit = {
+					OR = {
+						trait = maester
+						has_character_modifier = maester_education
+					}	
+				}
+				character_event = { id = maester.31 days = 1 } #event to recall
+			}	
+			break = yes
+		}	
+		#No non-maesters in the citadel
+		any_courtier = {
+			limit = {
+				liege = { character = ROOT }
+				is_ruler = no
+				NOT = { trait = maester }
+				NOT = { trait = archmaester }
+				NOT = { has_character_modifier = maester_education }
+				NOT = { society_member_of = hermetics }
+				NOT = { has_character_flag = citadel_courtier }
+			}
+			character_event = { id = maester.32 }
+		}
+		#Looking for a new home
+		if = {
+			limit = { NOT = { demesne_size = 1 } }
+			character_event = { id = maester.2199 days = 1 }
+		}
+		
+		#Society
+		if = {
+			limit = { NOT = { society_member_of = hermetics } }
+			leave_society = yes
+			join_society = hermetics		
+		}	
+		while = {
+			limit = { NOT = { society_rank == 4 } }
+			society_rank_up = 1
+		}	
+		if = {
+			limit = { is_society_grandmaster = no }
+			set_society_grandmaster = yes
+		}		
+	}
+}
+
+character_event = {
+	id = maester.31
+	desc = "Recall the former Archmaester"
+	is_triggered_only = yes
+	
+	option = {
+		name = "Cool"
+		c_the_citadel = { holder_scope = { ROOT = { move_character = PREV } } }
+	}
+}
+##No non-maesters in the citadel
+character_event = {
+	id = maester.32
+	desc = "Move from the Citadel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Cool"
+		random_spouse = {
+			limit = {
+				is_alive = yes
+				can_press_claims_trigger = yes
+				NOT = { same_liege = ROOT }
+				NOT = { is_liege_of = ROOT }
+			}
+			if = { 	
+				limit = { is_ruler = yes }
+				ROOT = { move_character = PREV }
+			}
+			if = { 
+				limit = { is_ruler = no }
+				liege = { ROOT = { move_character = PREV } }
+			}
+			break = yes
+		}
+		father = {
+			if = {
+				limit = {
+					is_alive = yes
+					can_press_claims_trigger = yes
+					NOT = { same_liege = ROOT }
+					NOT = { is_liege_of = ROOT }
+				}
+				if = { 	
+					limit = { is_ruler = yes }
+					ROOT = { move_character = PREV }
+				}
+				if = { 
+					limit = { is_ruler = no }
+					liege = { ROOT = { move_character = PREV } }
+				}
+				break = yes
+			}	
+		}
+		mother = {
+			if = {
+				limit = {
+					is_alive = yes
+					can_press_claims_trigger = yes
+					NOT = { same_liege = ROOT }
+					NOT = { is_liege_of = ROOT }
+				}
+				if = { 	
+					limit = { is_ruler = yes }
+					ROOT = { move_character = PREV }
+				}
+				if = { 
+					limit = { is_ruler = no }
+					liege = { ROOT = { move_character = PREV } }
+				}
+				break = yes
+			}	
+		}
+		if = {
+			limit = { NOT = { dynasty = 0 } }
+			if = {
+				limit = {
+					dynasty_head = {
+						NOT = { character = ROOT }
+						can_press_claims_trigger = yes
+						NOT = { same_liege = ROOT }
+						NOT = { is_liege_of = ROOT }
+					}
+				}
+				dynasty_head = {
+					if = {
+						limit = { is_ruler = yes }
+						ROOT = { move_character = PREV }
+					}
+					if = {
+						limit = { NOT = { is_ruler = yes } }
+						liege = { ROOT = { move_character = PREV } }
+					}
+				}
+				break = yes
+			}
+			random_dynasty_member = {
+				limit = {
+					is_alive = yes
+					is_ruler = yes
+					can_press_claims_trigger = yes
+					NOT = { same_liege = ROOT }
+					NOT = { is_liege_of = ROOT }
+				}
+				ROOT = { move_character = PREV }
+				break = yes
+			}
+			random_spouse = {
+				random_dynasty_member = {
+					limit = {
+						is_alive = yes
+						is_ruler = yes
+						can_press_claims_trigger = yes
+						NOT = { same_liege = ROOT }
+						NOT = { is_liege_of = ROOT }
+					}
+					ROOT = { move_character = PREV }
+					break = yes
+				}	
+			}
+			random_dynasty_member = {
+				limit = {
+					is_alive = yes
+					can_press_claims_trigger = yes
+					NOT = { same_liege = ROOT }
+					NOT = { is_liege_of = ROOT }
+				}
+				if = { 	
+					limit = { is_ruler = yes }
+					ROOT = { move_character = PREV }
+				}
+				if = { 
+					limit = { is_ruler = no }
+					liege = { ROOT = { move_character = PREV } }
+				}
+				break = yes
+			}	
+		}	
+		random_friend = {
+			limit = {
+				is_alive = yes
+				can_press_claims_trigger = yes
+				NOT = { same_liege = ROOT }
+				NOT = { is_liege_of = ROOT }
+			}
+			if = { 	
+				limit = { is_ruler = yes }
+				ROOT = { move_character = PREV }
+			}
+			if = { 
+				limit = { is_ruler = no }
+				liege = { ROOT = { move_character = PREV } }
+			}
+			break = yes
+		}
+		if = {
+			limit = {
+				OR = {
+					num_of_claims = 1
+					father_even_if_dead = { always = yes }					
+					mother_even_if_dead = { always = yes }
+					real_father_even_if_dead = { always = yes }
+					NOT = { age = 14 }
+				}
+			}
+			random_playable_ruler = {
+				limit = {
+					demesne_size = 1
+					OR = {
+						higher_tier_than = DUKE
+						culture_group = ROOT
+					}
+					is_within_diplo_range = ROOT		
+					NOT = { same_liege = ROOT }
+					NOT = { is_liege_of = ROOT }					
+					can_press_claims_trigger = yes
+					NOT = { culture_group = unoccupied_group }
+					OR = {
+						NOT = { trait = wildling }
+						ROOT = { trait = wildling }
+					}	
+					OR = {
+						NOT = { culture = old_andal }
+						higher_tier_than = DUKE
+						ROOT = { culture = old_andal }
+					}
+					OR = {
+						NOT = { culture = rhoynar }
+						higher_tier_than = DUKE
+						ROOT = { culture = rhoynar }
+					}	
+					OR = {
+						NOT = { trait = pirate }
+						ROOT = { trait = pirate }
+					}			
+				}
+				ROOT = { move_character = PREV }
+				break = yes
+			}
+		}
+		if = {
+			limit = { is_female = no }
+			join_society = hermetics
+			# add_character_modifier = {
+				# name = maester_education
+				# duration = -1
+			# }
+		}
+		if = {
+			limit = { is_female = yes }
+			set_character_flag = citadel_courtier
+		}
+	}
+}
+
+# maester.33: Maester improves troop's morale
+character_event = {
+	id = maester.33
+	title = "EVTNAMEmaester.33"
+	desc = "EVTDESCmaester.33"
+	picture = GFX_evt_large_army
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		#has_job_action = action_tend_to_wounded
+		OR = {
+			has_job_title = job_physician
+			AND = {
+				is_playable = yes
+				is_councillor = yes
+				society_member_of = hermetics
+				has_links_for_maester_rank_trigger = yes
+			}
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			OR = {
+				war = yes
+				any_liege = { war = yes }
+			}	
+			any_vassal = {
+				liege = { 
+					OR = {
+						has_raised_levies = PREV 
+						has_raised_levies = PREVPREV 
+					}	
+				}
+			}
+			NOT = { has_character_modifier = troops_likes_maester } 
+			NOT = { has_character_modifier = troops_unnerve_maester } 
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 200
+		
+		modifier = {
+			factor = 2
+			NOT = { has_job_title = job_physician }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { any_artifact = { artifact_type = silver_link } }
+		}
+		modifier = {
+			factor = 0.9
+			any_artifact = { artifact_type = silver_link count = 2 }
+		}
+		modifier = {
+			factor = 0.9
+			any_artifact = { artifact_type = silver_link count = 3 }
+		}
+		modifier = {
+			factor = 0.9
+			trait = physician
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { any_artifact = { artifact_type = tin_link } }
+		}
+		modifier = {
+			factor = 0.9
+			any_artifact = { artifact_type = tin_link count = 2 }
+		}
+		modifier = {
+			factor = 0.9
+			any_artifact = { artifact_type = tin_link count = 3 }
+		}
+		modifier = {
+			factor = 0.9
+			trait = herbologist
+		}
+		
+		modifier = {
+			factor = 1.3
+			NOT = { learning = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { learning = 4 }
+		}
+		modifier = {
+			factor = 1.2
+			NOT = { learning = 6 }
+		}
+		modifier = {
+			factor = 1.15
+			NOT = { learning = 8 }
+		}
+		modifier = {
+			factor = 0.8
+			learning = 10
+		}
+		modifier = {
+			factor = 0.9
+			learning = 12
+		}
+		modifier = {
+			factor = 0.9
+			learning = 14
+		}
+		modifier = {
+			factor = 0.9
+			learning = 16
+		}
+		modifier = {
+			factor = 0.9
+			learning = 18
+		}
+		modifier = {
+			factor = 0.9
+			learning = 20
+		}
+		modifier = {
+			factor = 0.9
+			learning = 22
+		}
+		modifier = {
+			factor = 0.9
+			learning = 24
+		}
+		modifier = {
+			factor = 0.9
+			learning = 26
+		}
+		modifier = {
+			factor = 0.75
+			trait = brave
+		}
+		modifier = {
+			factor = 1.25
+			trait = craven
+		}
+		# modifier = {
+			# factor = 9999
+			# NOT = {
+				# liege = {
+					# OR = {
+						# war = yes
+						# any_liege = { war = yes }
+					# }	
+					# any_vassal = {
+						# liege = { 
+							# OR = {
+								# has_raised_levies = PREV 
+								# has_raised_levies = PREVPREV 
+							# }	
+						# }
+					# }				
+				# }
+			# }	
+		# }
+		modifier = {
+			factor = 2
+			has_character_flag = job_action_sabotage
+			NOT = {
+				had_character_flag = {
+					flag = job_action_sabotage
+					days = 1825
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = "EVTOPTAmaester.33"
+		prestige = 5
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		if = {
+			limit = { trait = craven } 
+			remove_trait = craven
+		}
+		if = {
+			limit = { NOT = { trait = brave } }
+			random = {
+				chance = 5	
+				add_trait = brave
+				hidden_tooltip = {
+					character_event = {
+						id = 38270 #Notify brave
+					}
+				}
+			}
+		}	
+		liege = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = ROOT
+				years = 3
+			}
+			letter_event = { id = maester.34 }
+		}
+	}
+}
+# maester.34: The Maester informs his liege of troop's morale
+letter_event = {
+	id = maester.34
+	desc = "EVTDESCmaester.34"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmaester.34"
+		add_character_modifier = {
+			name = troops_likes_maester
+			duration = 365
+		}
+	}
+}
+# maester.35: Maester is stressed from war
+character_event = {
+	id = maester.35
+	title = "EVTNAMEmaester.35"
+	desc = "EVTDESCmaester.35"
+	picture = GFX_evt_drunk
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		#has_job_action = action_tend_to_wounded
+		OR = {
+			has_job_title = job_physician
+			AND = {
+				is_playable = yes
+				is_councillor = yes
+				society_member_of = hermetics
+				has_links_for_maester_rank_trigger = yes
+			}
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		liege = {
+			OR = {
+				war = yes
+				any_liege = { war = yes }
+			}	
+			any_vassal = {
+				liege = { 
+					OR = {
+						has_raised_levies = PREV 
+						has_raised_levies = PREVPREV 
+					}	
+				}
+			}		
+			NOT = { has_character_modifier = troops_unnerve_maester } 
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 200
+		
+		modifier = {
+			factor = 2
+			NOT = { has_job_title = job_physician }
+		}
+		
+		modifier = {
+			factor = 0.66
+			NOT = { any_artifact = { artifact_type = silver_link } }
+		}
+		modifier = {
+			factor = 1.2
+			any_artifact = { artifact_type = silver_link count = 2 }
+		}
+		modifier = {
+			factor = 1.2
+			any_artifact = { artifact_type = silver_link count = 3 }
+		}
+		modifier = {
+			factor = 1.2
+			trait = physician
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { any_artifact = { artifact_type = tin_link } }
+		}
+		modifier = {
+			factor = 1.2
+			any_artifact = { artifact_type = tin_link count = 2 }
+		}
+		modifier = {
+			factor = 1.2
+			any_artifact = { artifact_type = tin_link count = 3 }
+		}
+		modifier = {
+			factor = 1.2
+			trait = herbologist
+		}
+		
+		modifier = {
+			factor = 0.7
+			NOT = { learning = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { learning = 4 }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { learning = 6 }
+		}
+		modifier = {
+			factor = 0.85
+			NOT = { learning = 8 }
+		}
+		modifier = {
+			factor = 1.2
+			learning = 10
+		}
+		modifier = {
+			factor = 1.1
+			learning = 12
+		}
+		modifier = {
+			factor = 1.1
+			learning = 14
+		}
+		modifier = {
+			factor = 1.1
+			learning = 16
+		}
+		modifier = {
+			factor = 1.1
+			learning = 18
+		}
+		modifier = {
+			factor = 1.1
+			learning = 20
+		}
+		modifier = {
+			factor = 1.1
+			learning = 22
+		}
+		modifier = {
+			factor = 1.1
+			learning = 24
+		}
+		modifier = {
+			factor = 1.1
+			learning = 26
+		}
+		modifier = {
+			factor = 1.25
+			trait = brave
+		}
+		modifier = {
+			factor = 0.75
+			trait = craven
+		}
+		# modifier = {
+			# factor = 9999
+			# NOT = {
+				# liege = {
+					# OR = {
+						# war = yes
+						# any_liege = { war = yes }
+					# }	
+					# any_vassal = {
+						# liege = { 
+							# OR = {
+								# has_raised_levies = PREV 
+								# has_raised_levies = PREVPREV 
+							# }	
+						# }
+					# }	
+				# }
+			# }	
+		# }
+	}
+
+	option = {
+		name = "EVTOPTAmaester.35"
+		prestige = -5
+		add_trait = stressed
+		if = {
+			limit = { trait = brave } 
+			remove_trait = brave
+		}
+		if = {
+			limit = { NOT = { trait = craven } NOT = { trait = berserker } }
+			random = {
+				chance = 5	
+				add_trait = craven
+				hidden_tooltip = {
+					character_event = {
+						id = 38257 #Notify Craven
+					}
+				}
+			}
+		}	
+		liege = {
+			remove_character_modifier = troops_likes_maester 
+			letter_event = { id = maester.36  }
+		}
+	}
+}
+# maester.36: Tliege informed of maester's stress
+letter_event = {
+	id = maester.36
+	desc = "EVTDESCmaester.36"
+	picture = GFX_evt_drunk
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAmaester.36"
+		FROM = { add_trait = stressed }
+		hidden_tooltip = {
+			if = {
+				limit = { 
+					FROM = { 
+						has_character_flag = job_action_sabotage 
+						NOT = {
+							had_character_flag = {
+								flag = job_action_sabotage
+								days = 1825
+							}
+						}	
+					} 
+				}
+				FROM = { remove_trait = stressed }
+			}
+		}
+		add_character_modifier = {
+			name = troops_unnerve_maester
+			duration = 365
+		}
+	}
+}
+# # archmaester dies
+# character_event = {
+	# id = maester.37
+	# desc = "EVTDESCmaester.37"
+	# picture = GFX_evt_drunk
+
+	# trigger = {
+		# trait = archmaester
+		# age = 35
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 40
+		# modifier = {
+			# factor = 1.5
+			# NOT = { age = 45 }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# age = 70
+		# }
+		# modifier = {
+			# factor = 0.4
+			# age = 80
+		# }
+		# modifier = {
+			# factor = 0.2
+			# age = 90
+		# }
+		# modifier = {
+			# factor = 0.9
+			# NOT = { health = 1 }
+		# }
+		# modifier = {
+			# factor = 0.9
+			# NOT = { health = 2 }
+		# }
+		# modifier = {
+			# factor = 1.1
+			# health = 4
+		# }
+		# modifier = {
+			# factor = 1.1
+			# health = 5
+		# }
+		# modifier = {
+			# factor = 1.1
+			# health = 6
+		# }
+		# modifier = {
+			# factor = 1.1
+			# health = 7
+		# }
+		# modifier = {
+			# factor = 1.1
+			# health = 8
+		# }
+		# modifier = {
+			# factor = 0.8
+			# is_weak_trigger = yes
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = infirm
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = drunkard
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = inbred
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = incapable
+		# }
+		# modifier = {
+			# factor = 1.2
+			# is_strong_trigger = yes
+		# }
+		# modifier = {
+			# factor = 0.9
+			# trait = hedonist
+		# }
+		
+	# }
+
+	# option = {
+		# name = "EVTOPTAmaester.35"
+		# death = yes
+	# }
+# }
+# Assign cour physician to serve court action
+character_event = {
+	id = maester.40
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		liege = {
+			capital_scope = {
+				ROOT = {
+					set_job_action = {
+						action = action_serve_court
+						where = PREV
+					}
+				}	
+			}
+		}	
+	}
+
+	option = {
+		name = OK
+	}
+}
+#Novice advances to rank of Acolyte
+character_event = {
+	id = maester.41
+	
+	is_triggered_only = yes
+	is_in_society = yes
+	ai = yes
+	hide_window = yes
+
+	trigger = {
+		society_member_of = hermetics
+		society_rank == 1
+		host = { has_landed_title = c_the_citadel }	
+		is_ruler = no
+		any_artifact = { has_artifact_flag = maester_link }
+		NOT_mythical_creature_trigger = yes
+	}
+
+	option = {
+		name = OK
+		society_rank_up = 1
+	}
+}
+#Increase learning education level
+character_event = {
+	id = maester.42
+	desc = "EVTDESCmaester.42"
+	picture = GFX_evt_library
+	
+	is_triggered_only = yes
+	is_in_society = yes
+
+	trigger = {
+		society_member_of = hermetics
+		OR = {
+			AND = {
+				has_education_learning_trigger = no
+				has_links_level_1_trigger = yes
+			}
+			AND = {
+				trait = detached_priest
+				has_links_level_2_trigger = yes
+			}
+			AND = {
+				trait = martial_cleric
+				has_links_level_3_trigger = yes
+			}
+			AND = {
+				trait = scholarly_theologian
+				has_links_level_4_trigger = yes
+			}
+		}
+		NOT = { has_character_flag = is_liege_maester_quest }#for maester mission, this makes any education trait promotion happen in liege's event
+	}
+
+	option = {
+		name = "EVTOPTAmaester.42" #Yes
+		if = { 	
+			limit = { trait = flamboyant_schemer }
+			change_intrigue = 2
+		}
+		else_if = { 	
+			limit = { trait = intricate_webweaver }
+			change_intrigue = 3
+			change_diplomacy = 1			
+		}
+		else_if = { 	
+			limit = { trait = elusive_shadow }
+			change_intrigue = 5
+			change_diplomacy = 1		
+		}	
+		else_if = { 	
+			limit = { trait = underhanded_rogue }
+			change_diplomacy = 2
+		}
+		else_if = { 	
+			limit = { trait = charismatic_negotiator }
+			change_diplomacy = 3
+			change_intrigue = 1
+		}
+		else_if = { 	
+			limit = { trait = grey_eminence }
+			change_diplomacy = 5
+			change_intrigue = 1
+		}
+		else_if = { 	
+			limit = { trait = thrifty_clerk }
+			change_stewardship = 2
+		}
+		else_if = { 	
+			limit = { trait = fortune_builder }
+			change_stewardship = 4
+		}
+		else_if = { 	
+			limit = { trait = midas_touched }
+			change_stewardship = 4
+		}
+		else_if = { 	
+			limit = { trait = misguided_warrior }
+			change_martial = 1		
+		}
+		else_if = { 	
+			limit = { trait = tough_soldier }
+			change_martial = 3	
+		}
+		else_if = { 	
+			limit = { trait = skilled_tactician }
+			change_martial = 5	
+		}
+		else_if = { 	
+			limit = { trait = brilliant_strategist }
+			change_martial = 7	
+		}
+		if = {
+			limit = { has_education_learning_trigger = no }
+			clear_education_trait = yes
+			add_trait = detached_priest
+		}
+		else_if = {
+			limit = { trait = detached_priest }
+			hidden_tooltip = { remove_trait = detached_priest }
+			add_trait = martial_cleric
+		}
+		else_if = {
+			limit = { trait = martial_cleric }
+			hidden_tooltip = { remove_trait = martial_cleric }
+			add_trait = scholarly_theologian
+		}
+		else_if = {
+			limit = { trait = scholarly_theologian }
+			hidden_tooltip = { remove_trait = scholarly_theologian }
+			add_trait = mastermind_theologian
+		}
+	}
+}
+
+# Choose specialisation
+character_event = {
+	id = maester.43
+	desc = EVTDESCmaester.43
+	picture = GFX_evt_experiment
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #find two other options for the player
+			limit = { ai = no }
+			any_artifact = {
+				limit = { 
+					has_artifact_flag = maester_link 
+					NOT = { has_artifact_flag = maester_link_checked }
+					NOT = { is_artifact_same_type_as = event_target:maester_link }
+				}
+				set_artifact_flag = maester_link_checked
+				ROOT = {
+					random_artifact = {
+						limit = { 
+							is_artifact_same_type_as = PREVPREV
+							NOT = { has_artifact_flag = maester_link_checked }
+						}
+						if = {
+							limit = { event_target:maester_link_alt_1 = { always = yes } }
+							save_event_target_as = maester_link_alt_2
+							break = yes
+						}	
+						else = {
+							save_event_target_as = maester_link_alt_1
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	option = { # Yes
+		name = EVTOPTAmaester.43
+		if = {
+			limit = { event_target:maester_link = { artifact_type = black_iron_link } }
+			add_trait = raven
+			set_character_flag = specialisation_ravenry
+		}	
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = copper_link } }
+			add_trait = scholar
+			set_character_flag = specialisation_history
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = bronze_link } }
+			add_trait = astronomer
+			set_character_flag = specialisation_astronomy
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = brass_link } }
+			add_trait = time_keeper
+			set_character_flag = specialisation_seasons
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = electrum_link } }
+			add_trait = cartographer
+			set_character_flag = specialisation_geography
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = yellow_gold_link } }
+			add_trait = administrator
+			set_character_flag = specialisation_math
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = iron_link } }
+			add_trait = strategist
+			set_character_flag = specialisation_warcraft
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = lead_link } }
+			add_trait = architect
+			set_character_flag = specialisation_castles
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = pewter_link } }
+			add_trait = traveller
+			set_character_flag = specialisation_culture
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = platinum_link } }
+			hidden_tooltip = {
+				remove_character_modifier = student_of_language
+				remove_character_modifier = multilingual
+			}
+			add_trait = linguist
+			set_character_flag = specialisation_languages
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = red_gold_link } }
+			add_trait = justiciar
+			set_character_flag = specialisation_law
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = silver_link } }
+			add_trait = physician
+			set_character_flag = specialisation_medicine
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = steel_link } }
+			add_trait = metallurgist
+			set_character_flag = specialisation_metallurgy
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = tin_link } }
+			add_trait = herbologist
+			set_character_flag = specialisation_herblore
+		}
+		else_if = {
+			limit = { event_target:maester_link = { artifact_type = valyrian_steel_link } }
+			add_trait = mystic
+			set_character_flag = specialisation_mysteries
+		}
+	}
+	option = { # player alt 1
+		name = EVTOPTCmaester.43
+		trigger = {
+			ai = no
+			event_target:maester_link_alt_1 = { always = yes }
+		}
+		if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = black_iron_link } }
+			add_trait = raven
+			set_character_flag = specialisation_ravenry
+		}	
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = copper_link } }
+			add_trait = scholar
+			set_character_flag = specialisation_history
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = bronze_link } }
+			add_trait = astronomer
+			set_character_flag = specialisation_astronomy
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = brass_link } }
+			add_trait = time_keeper
+			set_character_flag = specialisation_seasons
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = electrum_link } }
+			add_trait = cartographer
+			set_character_flag = specialisation_geography
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = yellow_gold_link } }
+			add_trait = administrator
+			set_character_flag = specialisation_math
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = iron_link } }
+			add_trait = strategist
+			set_character_flag = specialisation_warcraft
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = lead_link } }
+			add_trait = architect
+			set_character_flag = specialisation_castles
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = pewter_link } }
+			add_trait = traveller
+			set_character_flag = specialisation_culture
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = platinum_link } }
+			hidden_tooltip = {
+				remove_character_modifier = student_of_language
+				remove_character_modifier = multilingual
+			}
+			add_trait = linguist
+			set_character_flag = specialisation_languages
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = red_gold_link } }
+			add_trait = justiciar
+			set_character_flag = specialisation_law
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = silver_link } }
+			add_trait = physician
+			set_character_flag = specialisation_medicine
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = steel_link } }
+			add_trait = metallurgist
+			set_character_flag = specialisation_metallurgy
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = tin_link } }
+			add_trait = herbologist
+			set_character_flag = specialisation_herblore
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_1 = { artifact_type = valyrian_steel_link } }
+			add_trait = mystic
+			set_character_flag = specialisation_mysteries
+		}
+	}
+	option = { # player alt 2
+		name = EVTOPTDmaester.43
+		trigger = {
+			ai = no
+			event_target:maester_link_alt_2 = { always = yes }
+		}
+		if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = black_iron_link } }
+			add_trait = raven
+			set_character_flag = specialisation_ravenry
+		}	
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = copper_link } }
+			add_trait = scholar
+			set_character_flag = specialisation_history
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = bronze_link } }
+			add_trait = astronomer
+			set_character_flag = specialisation_astronomy
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = brass_link } }
+			add_trait = time_keeper
+			set_character_flag = specialisation_seasons
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = electrum_link } }
+			add_trait = cartographer
+			set_character_flag = specialisation_geography
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = yellow_gold_link } }
+			add_trait = administrator
+			set_character_flag = specialisation_math
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = iron_link } }
+			add_trait = strategist
+			set_character_flag = specialisation_warcraft
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = lead_link } }
+			add_trait = architect
+			set_character_flag = specialisation_castles
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = pewter_link } }
+			add_trait = traveller
+			set_character_flag = specialisation_culture
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = platinum_link } }
+			hidden_tooltip = {
+				remove_character_modifier = student_of_language
+				remove_character_modifier = multilingual
+			}
+			add_trait = linguist
+			set_character_flag = specialisation_languages
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = red_gold_link } }
+			add_trait = justiciar
+			set_character_flag = specialisation_law
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = silver_link } }
+			add_trait = physician
+			set_character_flag = specialisation_medicine
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = steel_link } }
+			add_trait = metallurgist
+			set_character_flag = specialisation_metallurgy
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = tin_link } }
+			add_trait = herbologist
+			set_character_flag = specialisation_herblore
+		}
+		else_if = {
+			limit = { event_target:maester_link_alt_2 = { artifact_type = valyrian_steel_link } }
+			add_trait = mystic
+			set_character_flag = specialisation_mysteries
+		}
+	}
+	option = { # Change your mind
+		name = EVTOPTBmaester.43
+		trigger = { ai = no }
+		add_society_currency_minor_effect = yes
+		clr_character_flag = choosing_hermetic_art
+	}
+	after = {
+		if = {
+			limit = { ai = no }
+			any_artifact = {
+				limit = { 
+					has_artifact_flag = maester_link 
+				}
+				clr_artifact_flag = maester_link_checked
+			}
+		}	
+	}
+}
+
+####Study for Link Mission
+#Ping event for mission
+character_event = {
+	id = maester.45
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = { 
+		FROM = { society_quest_event = { id = maester.46 } }
+	}
+}
+society_quest_event = {
+	id = maester.46
+	desc = EVTDESCmaester.46
+	quest_target = ROOT
+
+	is_triggered_only = yes
+	
+	immediate = {
+	}
+
+	option = { #accept
+		name = ACCEPT
+		if = {
+			limit = { is_ruler = yes }
+			add_trait = travelling
+		}	
+		custom_tooltip = {
+			text = TOOLTIPmaester.46
+			character_event = { id = maester.47 days = 30 }
+		}
+		hidden_tooltip = {
+			set_quest_target = {
+				id = study_for_link
+				holder = ROOT
+			}	
+		}	
+	}
+	option = { #nah thx
+		name = DECLINE
+		custom_tooltip = { text = decline_quest_tooltip }
+
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = quest_cooldown_timer
+				hidden = yes
+				days = 500
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+}
+#Arrive at Citadel
+character_event = {
+	id = maester.47
+	desc = EVTDESCmaester.47
+	picture = GFX_oldtown
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+	}
+	
+	fail_trigger_effect = {
+		remove_trait = travelling
+		clr_quest = study_for_link
+	}
+	
+	immediate = { 
+		#Find 4 options
+		while = {
+			limit = { always = yes }
+			count = 4
+			random_list = {
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = { artifact_type = black_iron_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_ravenry
+								NOT = { any_artifact = {	artifact_type = black_iron_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = ravenry_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = black_iron_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_ravenry
+					}
+					modifier = {
+						factor = 2
+						trait = shy
+					}
+					set_character_flag = ravenry_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = copper_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_history
+								NOT = { any_artifact = {	artifact_type = copper_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = history_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = copper_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_history
+					}
+					set_character_flag = history_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = bronze_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_astronomy
+								NOT = { any_artifact = {	artifact_type = bronze_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = astronomy_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = bronze_link }
+					}
+					modifier = {
+						factor = 3
+						OR = {
+							has_character_modifier = astronomical_insights_2
+							has_character_modifier = astronomical_insights_3
+							has_character_modifier = astronomical_insights_4
+							has_character_modifier = studying_the_stars
+						}
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_astronomy
+					}
+					set_character_flag = astronomy_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = brass_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_seasons
+								NOT = { any_artifact = {	artifact_type = brass_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = seasons_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = brass_link }
+					}
+					modifier = {
+						factor = 2
+						culture_group = first_men
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_seasons
+					}
+					set_character_flag = seasons_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = electrum_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_geography
+								NOT = { any_artifact = {	artifact_type = electrum_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = geography_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = electrum_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_geography
+					}
+					set_character_flag = geography_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = yellow_gold_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_math
+								NOT = { any_artifact = {	artifact_type = yellow_gold_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = math_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = yellow_gold_link }
+					}
+					modifier = {
+						factor = 3
+						has_education_stewardship_trigger = yes
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_math
+					}
+					set_character_flag = math_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = iron_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_warcraft
+								NOT = { any_artifact = {	artifact_type = iron_link count = 3 } }
+							}				
+						}
+						NOT = { has_character_flag = warcraft_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = iron_link }
+					}
+					modifier = {
+						factor = 3
+						has_education_martial_trigger = yes
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_warcraft
+					}
+					set_character_flag = warcraft_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = lead_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_castles
+								NOT = { any_artifact = {	artifact_type = lead_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = castles_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = lead_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_castles
+					}
+					set_character_flag = castles_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = pewter_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_culture
+								NOT = { any_artifact = {	artifact_type = pewter_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = culture_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = pewter_link }
+					}
+					modifier = {
+						factor = 3
+						trait = erudite
+					}
+					modifier = {
+						factor = 0.25
+						trait = proud
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_culture
+					}
+					set_character_flag = culture_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = platinum_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_languages
+								NOT = { any_artifact = {	artifact_type = platinum_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = languages_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = platinum_link }
+					}
+					modifier = {
+						factor = 2
+						has_education_diplomacy_trigger = yes
+					}
+					modifier = {
+						factor = 3
+						OR = {
+							has_character_modifier = multilingual
+							has_character_modifier = student_of_language
+						}
+					}
+					modifier = {
+						factor = 0.25
+						trait = proud
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_languages
+					}
+					set_character_flag = languages_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = red_gold_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_law
+								NOT = { any_artifact = {	artifact_type = red_gold_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = law_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = red_gold_link }
+					}
+					modifier = {
+						factor = 2
+						has_education_diplomacy_trigger = yes
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_law
+					}
+					set_character_flag = law_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = silver_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_medicine
+								NOT = { any_artifact = {	artifact_type = silver_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = medicine_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = silver_link }
+					}
+					modifier = {
+						factor = 4
+						NOT = { any_artifact = { artifact_type = silver_link } }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_medicine
+					}
+					set_character_flag = medicine_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = steel_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_metallurgy
+								NOT = { any_artifact = {	artifact_type = steel_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = metallurgy_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = steel_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_metallurgy
+					}
+					set_character_flag = metallurgy_option
+				}
+				10 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = tin_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_herblore
+								NOT = { any_artifact = {	artifact_type = tin_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = herblore_option }
+					}
+					modifier = {
+						factor = 0.5
+						any_artifact = { artifact_type = tin_link }
+					}
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_herblore
+					}
+					set_character_flag = herblore_option
+				}
+				1 = {
+					trigger = {			
+						OR = {
+							NOT = { any_artifact = {	artifact_type = valyrian_steel_link count = 2 } }
+							AND = {
+								has_character_flag = specialisation_mysteries
+								NOT = { any_artifact = {	artifact_type = valyrian_steel_link count = 3 } }
+							}	
+						}
+						NOT = { has_character_flag = mysteries_option }
+					}
+					# modifier = {
+						# factor = 0.25
+					# }		
+					modifier = {
+						factor = 10
+						any_artifact = { artifact_type = valyrian_steel_link }
+					}			
+					modifier = {
+						factor = 6
+						has_character_flag = specialisation_mysteries
+					}
+					modifier = {
+						factor = 4
+						OR = {
+							trait = mystic
+							trait = lunatic
+							trait = paranoid
+						}
+					}
+					modifier = {
+						factor = 0
+						OR = {
+							trait = proud
+							trait = trusting
+							trait = content
+						}
+					}
+					set_character_flag = mysteries_option
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAmaester.47
+		trigger = { has_character_flag = ravenry_option }
+		set_character_flag = ravenry_study		
+	}
+	option = {
+		name = EVTOPTBmaester.47
+		trigger = { has_character_flag = history_option }
+		set_character_flag = history_study		
+	}
+	option = {
+		name = EVTOPTCmaester.47
+		trigger = { has_character_flag = astronomy_option }
+		set_character_flag = astronomy_study		
+	}
+	option = {
+		name = EVTOPTDmaester.47
+		trigger = { has_character_flag = seasons_option }
+		set_character_flag = seasons_study		
+	}
+	option = {
+		name = EVTOPTEmaester.47
+		trigger = { has_character_flag = geography_option }
+		set_character_flag = geography_study		
+	}
+	option = {
+		name = EVTOPTFmaester.47
+		trigger = { has_character_flag = math_option }
+		set_character_flag = math_study		
+	}
+	option = {
+		name = EVTOPTGmaester.47
+		trigger = { has_character_flag = warcraft_option }
+		set_character_flag = warcraft_study		
+	}
+	option = {
+		name = EVTOPTHmaester.47
+		trigger = { has_character_flag = castles_option }
+		set_character_flag = castles_study		
+	}
+	option = {
+		name = EVTOPTImaester.47
+		trigger = { has_character_flag = culture_option }
+		set_character_flag = culture_study		
+	}
+	option = {
+		name = EVTOPTJmaester.47
+		trigger = { has_character_flag = languages_option }
+		set_character_flag = languages_study		
+	}
+	option = {
+		name = EVTOPTKmaester.47
+		trigger = { has_character_flag = law_option }
+		set_character_flag = law_study		
+	}
+	option = {
+		name = EVTOPTLmaester.47
+		trigger = { has_character_flag = medicine_option }
+		set_character_flag = medicine_study		
+	}
+	option = {
+		name = EVTOPTMmaester.47
+		trigger = { has_character_flag = metallurgy_option }
+		set_character_flag = metallurgy_study		
+	}
+	option = {
+		name = EVTOPTNmaester.47
+		trigger = { has_character_flag = herblore_option }
+		set_character_flag = herblore_study		
+	}
+	option = {
+		name = EVTOPTOmaester.47
+		trigger = { has_character_flag = mysteries_option }
+		set_character_flag = mysteries_study		
+	}
+	after = {
+		custom_tooltip = {
+			text = TOOLTIPmaester.48
+			character_event = { id = maester.48 }
+		}
+		clr_character_flag = ravenry_option
+		clr_character_flag = history_option
+		clr_character_flag = astronomy_option
+		clr_character_flag = seasons_option
+		clr_character_flag = geography_option
+		clr_character_flag = math_option
+		clr_character_flag = warcraft_option
+		clr_character_flag = castles_option
+		clr_character_flag = culture_option
+		clr_character_flag = languages_option
+		clr_character_flag = law_option
+		clr_character_flag = medicine_option
+		clr_character_flag = metallurgy_option
+		clr_character_flag = herblore_option
+		clr_character_flag = mysteries_option
+	}
+}	
+character_event = { #Start studying
+	id = maester.48
+	desc = EVTDESCmaester.48
+	picture = GFX_evt_library
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	portrait = event_target:archmaester_tutor
+	
+	immediate = {
+		hidden_tooltip = {
+			c_the_citadel = {
+				holder_scope = {
+					random_courtier = {
+						limit = {
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+							trait = archmaester
+						}
+						preferred_limit = {
+							OR = {
+								AND = {
+									ROOT = { has_character_flag = ravenry_study }
+									has_character_flag = specialisation_ravenry
+								}
+								AND = {
+									ROOT = { has_character_flag = history_study }
+									has_character_flag = specialisation_history
+								}
+								AND = {
+									ROOT = { has_character_flag = astronomy_study }
+									has_character_flag = specialisation_astronomy
+								}
+								AND = {
+									ROOT = { has_character_flag = seasons_study }
+									has_character_flag = specialisation_seasons
+								}
+								AND = {
+									ROOT = { has_character_flag = geography_study }
+									has_character_flag = specialisation_geography
+								}
+								AND = {
+									ROOT = { has_character_flag = math_study }
+									has_character_flag = specialisation_math
+								}
+								AND = {
+									ROOT = { has_character_flag = warcraft_study }
+									has_character_flag = specialisation_warcraft
+								}
+								AND = {
+									ROOT = { has_character_flag = castles_study }
+									has_character_flag = specialisation_castles
+								}
+								AND = {
+									ROOT = { has_character_flag = culture_study }
+									has_character_flag = specialisation_culture
+								}
+								AND = {
+									ROOT = { has_character_flag = languages_study }
+									has_character_flag = specialisation_languages
+								}
+								AND = {
+									ROOT = { has_character_flag = law_study }
+									has_character_flag = specialisation_law
+								}
+								AND = {
+									ROOT = { has_character_flag = medicine_study }
+									has_character_flag = specialisation_medicine
+								}
+								AND = {
+									ROOT = { has_character_flag = metallurgy_study }
+									has_character_flag = specialisation_metallurgy
+								}
+								AND = {
+									ROOT = { has_character_flag = herblore_study }
+									has_character_flag = specialisation_herblore
+								}
+								AND = {
+									ROOT = { has_character_flag = mysteries_study }
+									has_character_flag = specialisation_mysteries
+								}
+							}
+						}
+						preferred_limit = {
+							opinion = { who = ROOT value = -10 }
+							reverse_opinion = { who = ROOT value = -10 }
+						}
+						save_event_target_as = archmaester_tutor
+					}
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.48
+		show_portrait = event_target:archmaester_tutor
+		custom_tooltip = {
+			text = TOOLTIPmaester.48A
+			#Outcome
+			random_list = {
+				25 = { #Success
+					modifier = {
+						factor = 1.5
+						trait = diligent
+					}
+					modifier = {
+						factor = 1.5
+						trait = ambitious
+					}
+					modifier = {
+						factor = 1.5
+						trait = patient
+					}
+					modifier = {
+						factor = 1.5
+						trait = humble
+					}
+					modifier = {
+						factor = 1.5
+						learning = 8
+					}
+					modifier = {
+						factor = 1.5
+						learning = 12
+					}
+					modifier = {
+						factor = 1.5
+						learning = 16
+					}
+					set_character_flag = study_great_success
+					character_event = { id = maester.49 days = 75 random = 75 }
+				}
+				25 = { #Some success
+					modifier = {
+						factor = 1.5
+						trait = slothful
+					}
+					modifier = {
+						factor = 1.5
+						trait = content
+					}
+					modifier = {
+						factor = 1.5
+						trait = wroth
+					}
+					modifier = {
+						factor = 1.5
+						trait = proud
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { learning = 4 }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { learning = 1 }
+					}
+					character_event = { id = maester.49 days = 125 random = 125 }
+				}
+				10 = { #Fail
+					modifier = {
+						factor = 1.5
+						trait = slothful
+					}
+					modifier = {
+						factor = 1.5
+						trait = content
+					}
+					modifier = {
+						factor = 1.5
+						trait = wroth
+					}
+					modifier = {
+						factor = 1.5
+						trait = proud
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { learning = 4 }
+					}
+					modifier = {
+						factor = 1.5
+						NOT = { learning = 1 }
+					}
+					character_event = { id = maester.50 days = 125 random = 125 }
+				}
+			}
+			#Flavour
+			random_list = {
+				8 = { #Stressed
+					trigger = { NOT = { trait = stressed } }
+					modifier = {
+						factor = 2
+						trait = diligent
+					}
+					modifier = {
+						factor = 0.5
+						trait = slothful
+					}
+					character_event = { id = maester.54 days = 30 random = 30 }
+				}
+				4 = { #Make friend
+					trigger = {
+						NOT = { num_of_friends = 5 }
+						society = {
+							any_society_member = {
+								OR = {
+									society_rank < 3
+									AND = {
+										is_ruler = no
+										liege = { has_landed_title = c_the_citadel }
+									}	
+								}
+								NOT = { character = ROOT }
+								war = no
+								is_incapable = no
+								in_command = no
+								prisoner = no
+								age = 16						
+								NOT = { is_friend = ROOT }
+								NOT = { is_rival = ROOT }
+								opinion = { who = ROOT value = 0 }
+								reverse_opinion = { who = ROOT value = 0 }
+								NOT = { is_inaccessible_trigger = yes }
+							}
+						}
+					}
+					modifier = {
+						factor = 2
+						trait = patient
+					}
+					modifier = {
+						factor = 0.5
+						trait = wroth
+					}
+					modifier = {
+						factor = 2
+						trait = humble
+					}
+					modifier = {
+						factor = 0.5
+						trait = proud
+					}
+					modifier = {
+						factor = 2
+						trait = gregarious
+					}
+					modifier = {
+						factor = 0.5
+						trait = shy
+					}
+					character_event = { id = maester.55 days = 30 random = 30 }
+				}
+				4 = { #Make rival
+					trigger = {
+						NOT = { num_of_rivals = 5 }
+						society = {
+							any_society_member = {
+								OR = {
+									society_rank < 3
+									AND = {
+										is_ruler = no
+										liege = { has_landed_title = c_the_citadel }
+									}	
+								}
+								NOT = { character = ROOT }
+								war = no
+								is_incapable = no
+								in_command = no
+								prisoner = no
+								age = 16						
+								NOT = { is_friend = ROOT }
+								NOT = { is_rival = ROOT }
+								NOT = { opinion = { who = ROOT value = -20 } }
+								NOT = { reverse_opinion = { who = ROOT value = -20 } }
+								NOT = { is_inaccessible_trigger = yes }
+								NOT = { num_of_rivals = 5 }
+							}
+						}
+					}
+					modifier = {
+						factor = 0.5
+						trait = patient
+					}
+					modifier = {
+						factor = 2
+						trait = wroth
+					}
+					modifier = {
+						factor = 0.5
+						trait = humble
+					}
+					modifier = {
+						factor = 2
+						trait = proud
+					}
+					character_event = { id = maester.57 days = 30 random = 30 }
+				}
+				4 = { #Find lover
+					trigger = {
+						is_female = no
+						trait = homosexual
+						NOT = { trait = chaste }
+						NOT = { trait = celibate }
+						NOT = { trait = eunuch }
+						OR = {
+							trait = lustful
+							has_lover = no
+						}
+					}
+					modifier = {
+						factor = 2
+						has_focus = focus_seduction
+					}
+					modifier = {
+						factor = 2
+						trait = lustful
+					}
+					modifier = {
+						factor = 2
+						OR = {
+							trait = seducer
+							trait = seductress
+						}
+					}
+					modifier = {
+						factor = 2
+						trait = gregarious
+					}
+					modifier = {
+						factor = 0.5
+						trait = shy
+					}
+					character_event = { id = maester.59 days = 30 random = 30 }
+				}
+				#Cut open live body?
+				30 = {
+					trigger = { 
+						has_character_flag = medicine_study 
+						OR = {
+							trait = cruel
+							trait = impaler
+							trait = ruthless
+							trait = lunatic
+						}
+						NOR = {
+							trait = kind
+							trait = honorable
+						}
+					}
+					modifier = {
+						factor = 4
+						OR = {
+							trait = cruel
+							trait = impaler
+						}
+					}
+					character_event = { id = maester.60 days = 30 random = 30 }
+				}
+				#Necromancy?
+				30 = {
+					trigger = { 
+						has_character_flag = mysteries_study
+						OR = {
+							trait = cruel
+							trait = greedy
+							trait = ruthless
+							trait = lunatic
+						}
+						NOR = {
+							trait = kind
+							trait = honorable
+						}
+					}
+					modifier = {
+						factor = 4
+						OR = {
+							trait = cruel
+							trait = greedy
+						}
+					}
+					character_event = { id = maester.62 days = 30 random = 30 }
+				}
+				25 = { #No event
+				}
+			}
+		}
+	}
+	option = { #Go travelling
+		name = EVTOPTBmaester.48
+		trigger = { 
+			ai = no 
+			has_links_for_maester_rank_trigger = yes
+			OR = {
+				has_character_flag = history_study	
+				has_character_flag = astronomy_study
+				has_character_flag = seasons_study	
+				has_character_flag = geography_study
+				has_character_flag = castles_study
+				has_character_flag = warcraft_study
+				has_character_flag = culture_study
+				has_character_flag = languages_study
+				has_character_flag = medicine_study
+				has_character_flag = mysteries_study
+			}
+			war = no
+			in_command = no
+			has_epidemic = no
+			is_ill = no
+			NOT = { has_severe_disability_trigger = yes }	
+			is_priest = no			
+			NOT = { has_minor_title = title_triarch }
+		}
+		clear_event_target = archmaester_tutor
+		set_character_flag = maester_foreign_tour
+		set_character_flag = on_a_foreign_tour # Safety check, use as fast trigger in all events
+		set_character_flag = page_1
+		character_event = { id = wikid.295 tooltip = TOOLTIPwikid.295 }
+	}	
+}	
+character_event = { #Success
+    id = maester.49
+    border = GFX_event_normal_frame_religion
+	
+	desc = {
+		text = EVTDESCmaester.49
+		trigger = { has_character_flag = study_great_success }
+	}	
+	desc = {
+		text = EVTDESCmaester.49B
+		trigger = { has_character_flag = maester_foreign_tour }
+	}
+	desc = {
+		text = EVTDESCmaester.49C
+		trigger = {
+			NOT = { has_character_flag = study_great_success } 
+			NOT = { has_character_flag = maester_foreign_tour } 
+		}
+	}
+	
+	picture = {
+		picture = GFX_evt_courier
+		trigger = { has_character_flag = ravenry_study }
+	}
+	picture = {
+		picture = GFX_evt_library
+		trigger = { has_character_flag = history_study }
+	}
+	picture = {
+		picture = GFX_evt_comet
+		trigger = { has_character_flag = astronomy_study }
+	}
+	picture = {
+		picture = GFX_summer_1
+		trigger = { has_character_flag = seasons_study }
+	}
+	picture = {
+		picture = GFX_evt_map
+		trigger = { has_character_flag = geography_study }
+	}
+	picture = {
+		picture = GFX_evt_relaxed_ruler
+		trigger = { has_character_flag = math_study }
+	}
+	picture = {
+		picture = GFX_evt_war_planning
+		trigger = { has_character_flag = warcraft_study }
+	}
+	picture = {
+		picture = GFX_evt_castle_construction
+		trigger = { has_character_flag = castles_study }
+	}
+	picture = {
+		picture = GFX_evt_rider_adventure
+		trigger = { has_character_flag = culture_study }
+	}
+	picture = {
+		picture = GFX_evt_monk
+		trigger = { has_character_flag = languages_study }
+	}
+	picture = {
+		picture = GFX_evt_scientist
+		trigger = { has_character_flag = law_study }
+	}
+	picture = {
+		picture = GFX_evt_court_physician
+		trigger = { has_character_flag = medicine_study }
+	}
+	picture = {
+		picture = GFX_evt_weaponsmith
+		trigger = { has_character_flag = metallurgy_study }
+	}
+	picture = {
+		picture = GFX_evt_court_physician
+		trigger = { has_character_flag = herblore_study }
+	}
+	picture = {
+		picture = GFX_valyria_dragon
+		trigger = { has_character_flag = mysteries_study }
+	}
+	
+    is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	portrait = event_target:archmaester_tutor
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+	}
+	
+	fail_trigger_effect = {
+		remove_trait = travelling
+		clr_quest = study_for_link
+		clr_character_flag = maester_foreign_tour
+		clr_character_flag = ravenry_study
+		clr_character_flag = history_study
+		clr_character_flag = astronomy_study
+		clr_character_flag = seasons_study
+		clr_character_flag = geography_study
+		clr_character_flag = math_study
+		clr_character_flag = warcraft_study
+		clr_character_flag = castles_study
+		clr_character_flag = culture_study
+		clr_character_flag = languages_study
+		clr_character_flag = law_study
+		clr_character_flag = medicine_study
+		clr_character_flag = metallurgy_study
+		clr_character_flag = herblore_study
+		clr_character_flag = mysteries_study
+	}
+
+    option = { 
+		name = {
+			text = EVTOPTAmaester.49
+			trigger = { has_character_flag = study_great_success }
+		}	
+		name = {
+			text = EVTOPTAmaester.49B
+			trigger = { has_character_flag = maester_foreign_tour }
+		}
+		name = {
+			text = EVTOPTAmaester.49C
+			trigger = {
+				NOT = { has_character_flag = study_great_success } 
+				NOT = { has_character_flag = maester_foreign_tour } 
+			}
+		}
+		if = {
+			limit = { has_character_flag = ravenry_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = black_iron_link count = 3 } } }
+				add_artifact = black_iron_link
+			}	
+			clr_character_flag = ravenry_study
+		}
+		if = {
+			limit = { has_character_flag = history_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = copper_link count = 3 } } }
+				add_artifact = copper_link
+			}	
+			clr_character_flag = history_study
+		}
+		if = {
+			limit = { has_character_flag = astronomy_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = bronze_link count = 3 } } }
+				add_artifact = bronze_link
+			}	
+			clr_character_flag = astronomy_study
+		}
+		if = {
+			limit = { has_character_flag = seasons_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = brass_link count = 3 } } }
+				add_artifact = brass_link
+			}	
+			clr_character_flag = seasons_study
+		}
+		if = {
+			limit = { has_character_flag = geography_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = electrum_link count = 3 } } }
+				add_artifact = electrum_link
+			}	
+			clr_character_flag = geography_study
+		}
+		if = {
+			limit = { has_character_flag = math_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = yellow_gold_link count = 3 } } }
+				add_artifact = yellow_gold_link
+			}	
+			clr_character_flag = math_study
+		}
+		if = {
+			limit = { has_character_flag = warcraft_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = iron_link count = 3 } } }
+				add_artifact = iron_link
+			}	
+			clr_character_flag = warcraft_study
+		}
+		if = {
+			limit = { has_character_flag = castles_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = lead_link count = 3 } } }
+				add_artifact = lead_link
+			}	
+			clr_character_flag = castles_study
+		}
+		if = {
+			limit = { has_character_flag = culture_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = pewter_link count = 3 } } }
+				add_artifact = pewter_link
+			}	
+			clr_character_flag = culture_study
+		}
+		if = {
+			limit = { has_character_flag = languages_study }
+			if = {
+				limit = { has_character_modifier = student_of_language }
+				remove_character_modifier = student_of_language
+				add_character_modifier = { name = multilingual duration = -1 }
+			}
+			else_if = {
+				limit = { 
+					NOT = { trait = linguist }
+					NOT = { has_character_modifier = multilingual }
+				}
+				add_character_modifier = { name = student_of_language duration = -1 }
+			}
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = platinum_link count = 3 } } }
+				add_artifact = platinum_link
+			}	
+			clr_character_flag = languages_study
+		}
+		if = {
+			limit = { has_character_flag = law_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = red_gold_link count = 3 } } }
+				add_artifact = red_gold_link
+			}	
+			clr_character_flag = law_study
+		}
+		if = {
+			limit = { has_character_flag = medicine_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = silver_link count = 3 } } }
+				add_artifact = silver_link
+			}	
+			clr_character_flag = medicine_study
+		}
+		if = {
+			limit = { has_character_flag = metallurgy_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = steel_link count = 3 } } }
+				add_artifact = steel_link
+			}	
+			clr_character_flag = metallurgy_study
+		}
+		if = {
+			limit = { has_character_flag = herblore_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = tin_link count = 3 } } }
+				add_artifact = tin_link
+			}	
+			clr_character_flag = herblore_study
+		}
+		if = {
+			limit = { has_character_flag = mysteries_study }
+			if = {
+				limit = { NOT = { any_artifact = { artifact_type = valyrian_steel_link count = 3 } } }
+				add_artifact = valyrian_steel_link
+			}	
+			clr_character_flag = mysteries_study
+		}
+     	clr_quest = study_for_link
+		sound_effect = hermetic_society_recover_scroll
+		if = {
+			limit = { has_character_flag = study_great_success }
+			add_society_currency_minor_effect = yes
+			clr_character_flag = study_great_success
+			event_target:archmaester_tutor = {
+				if = {
+					limit = {
+						NOT = { is_friend = ROOT }
+						NOT = { is_rival = ROOT }
+						opinion = { who = ROOT value = 30 }
+						reverse_opinion = { who = ROOT value = 30 }
+					}
+					add_friend = ROOT
+				}
+				opinion = { who = ROOT modifier = opinion_pupil_great months = 120 }
+				hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_teacher_great months = 120 } }
+			}
+			if = {
+				limit = { trait = stressed }
+				remove_trait = stressed
+			}
+		}	
+		else_if = {
+			limit = { has_character_flag = maester_foreign_tour }
+			add_society_currency_medium_effect = yes
+			clr_character_flag = maester_foreign_tour
+		}
+		else = {
+			add_society_currency_tiny_effect = yes
+			event_target:archmaester_tutor = {
+				opinion = { who = ROOT modifier = opinion_pupil months = 60 }
+				hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_teacher months = 60 } }
+			}
+			if = {
+				limit = { trait = stressed }
+				random = {
+					chance = 50
+					remove_trait = stressed
+					character_event = { id = 38313 } # Notify lost Stressed
+				}	
+			}
+		}
+		if = {
+			limit = { society_rank == 1 }
+			society_rank_up = 1
+		}
+		remove_trait = travelling
+		clr_character_flag = maester_foreign_tour
+		character_event = { id = maester.5 } #check for promotion
+		character_event = { id = maester.42 days = 3 } #increase learning edu level
+		character_event = { id = MNM.1000 days = 100 random = 100 } #mission tombola
+    }
+}
+character_event = { #Fail
+    id = maester.50
+	desc = EVTDESCmaester.50
+    picture = GFX_evt_bad_news
+    border = GFX_event_normal_frame_religion
+	
+    is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	portrait = event_target:archmaester_tutor
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+	}
+	
+	fail_trigger_effect = {
+		remove_trait = travelling
+		clr_quest = study_for_link
+		clr_character_flag = ravenry_study
+		clr_character_flag = history_study
+		clr_character_flag = astronomy_study
+		clr_character_flag = seasons_study
+		clr_character_flag = geography_study
+		clr_character_flag = math_study
+		clr_character_flag = warcraft_study
+		clr_character_flag = castles_study
+		clr_character_flag = culture_study
+		clr_character_flag = languages_study
+		clr_character_flag = law_study
+		clr_character_flag = medicine_study
+		clr_character_flag = metallurgy_study
+		clr_character_flag = herblore_study
+		clr_character_flag = mysteries_study
+	}
+
+    option = { 
+		name = EVTOPTAmaester.50
+		clr_character_flag = ravenry_study
+		clr_character_flag = history_study
+		clr_character_flag = astronomy_study
+		clr_character_flag = seasons_study
+		clr_character_flag = geography_study
+		clr_character_flag = math_study
+		clr_character_flag = warcraft_study
+		clr_character_flag = castles_study
+		clr_character_flag = culture_study
+		clr_character_flag = languages_study
+		clr_character_flag = law_study
+		clr_character_flag = medicine_study
+		clr_character_flag = metallurgy_study
+		clr_character_flag = herblore_study
+		clr_character_flag = mysteries_study
+		clr_quest = { id = study_for_link failure = yes }
+		detract_society_currency_minor_effect = yes
+		event_target:archmaester_tutor = {
+			opinion = { who = ROOT modifier = opinion_pupil_bad months = 60 }
+			hidden_tooltip = { reverse_opinion = { who = ROOT modifier = opinion_teacher_bad months = 60 } }
+		}
+		remove_trait = travelling
+		character_event = { id = MNM.1000 days = 150 random = 125 } #mission tombola
+    }
+}
+#Maester requests permission to go study
+character_event = {
+    id = maester.51
+	desc = EVTDESCmaester.51
+    picture = GFX_evt_library
+    border = GFX_event_normal_frame_religion
+	
+    is_triggered_only = yes
+
+    option = { 
+		name = EVTOPTAmaester.51 #OK
+		FROM = {
+			custom_tooltip = {
+				text = TOOLTIPmaester.51
+				hidden_tooltip = {
+					add_trait = travelling
+					remove_title = job_physician
+					character_event = { id = maester.52 days = 150 random = 75 }
+					set_quest_target = {
+						id = study_for_link
+						holder = THIS
+					}	
+				}
+			}
+			opinion = { who = ROOT modifier = opinion_allowed_maester_study months = 60 }
+		}
+		scaled_wealth = { value = 0.05 min = 2 max = 25 }
+	}
+	option = { 
+		name = EVTOPTBmaester.51 #No
+		FROM = {
+			opinion = { who = ROOT modifier = opinion_disallowed_maester_study months = 60 }
+		}
+	}
+}
+character_event = { #Finished
+    id = maester.52
+
+    is_triggered_only = yes
+	hide_window = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+	}
+	
+	fail_trigger_effect = {
+		remove_trait = travelling
+		clr_quest = study_for_link
+	}
+	
+	immediate = {
+		remove_trait = travelling
+		clr_quest = study_for_link
+		
+		if = { #this makes any education trait promotion happen in liege's event
+			limit = { 
+				has_education_learning_trigger = yes
+				NOT = { trait = mastermind_theologian }
+				is_ruler = no 
+			}
+			set_character_flag = is_liege_maester_quest
+		}
+		add_society_currency_tiny_effect = yes
+		add_random_maester_link_effect = yes
+		if = { #Cut open live body?
+			limit = { 
+				any_artifact = { artifact_type = silver_link } #Medicine
+				OR = {
+					trait = cruel
+					trait = impaler
+					trait = ruthless
+					trait = lunatic
+				}
+				NOR = {
+					trait = kind
+					trait = honorable
+				}
+			}
+			random = {
+				chance = 2
+				modifier = {
+					factor = 4
+					OR = {
+						trait = cruel
+						trait = impaler
+					}
+				}
+				character_event = { id = maester.60 }
+			}	
+		}
+		if = { #Necromancy?
+			limit = { 
+				any_artifact = { artifact_type = valyrian_steel_link } #Medicine
+				OR = {
+					trait = cruel
+					trait = greedy
+					trait = ruthless
+					trait = lunatic
+				}
+				NOR = {
+					trait = kind
+					trait = honorable
+				}
+			}
+			random = {
+				chance = 2
+				modifier = {
+					factor = 4
+					OR = {
+						trait = cruel
+						trait = greedy
+					}
+				}
+				character_event = { id = maester.62 }
+			}	
+		}
+		#Chance of a second
+		if = {
+			limit = { learning = 12 }
+			random = {
+				chance = 50
+				modifier = {
+					factor = 1.1
+					learning = 14
+				}
+				modifier = {
+					factor = 1.1
+					learning = 16
+				}
+				modifier = {
+					factor = 1.1
+					learning = 18
+				}
+				modifier = {
+					factor = 0.85
+					OR = { 	
+						trait = stressed
+						trait = depressed
+					}
+				}
+				modifier = {
+					factor = 1.15
+					trait = scholar
+				}
+				modifier = {
+					factor = 0.9
+					trait = slothful
+				}
+				modifier = {
+					factor = 1.15
+					trait = diligent
+				}
+				modifier = {
+					factor = 1.15
+					trait = ambitious
+				}
+				modifier = {
+					factor = 0.9
+					trait = content
+				}
+				add_society_currency_minor_effect = yes
+				add_random_maester_link_effect = yes
+			}
+		}
+		
+		if = {
+			limit = { is_ruler = no }
+			
+			hidden_tooltip = { #Add specialisation if eligible
+				if = {
+					limit = { 
+						has_society_currency_minor_trigger = yes
+						NOT = { has_character_flag = choosing_hermetic_art } 
+						any_artifact = { 
+							is_artifact_same_type_as = event_target:new_maester_link
+							count = 2 
+						}
+					}
+					hidden_tooltip = {
+						event_target:new_maester_link = { save_event_target_as = maester_link }
+						character_event = { id = maester.43 }
+					}
+					set_character_flag = choosing_hermetic_art
+					detract_society_currency_minor_effect = yes
+				}	
+			}		
+			liege = { character_event = { id = maester.53 } }
+		}
+	}
+
+    option = { 
+		name = OK
+	}
+}	
+character_event = { #Inform liege
+    id = maester.53
+	desc = EVTDESCmaester.53
+    picture = GFX_evt_library
+    border = GFX_event_normal_frame_religion
+	
+    is_triggered_only = yes
+
+    option = { 
+		name = EVTOPTAmaester.53
+		FROM = {
+			if = {
+				limit = {
+					has_character_flag = is_liege_maester_quest 
+				}
+				if = {
+					limit = { 
+						trait = detached_priest 
+						has_links_level_2_trigger = yes
+					}
+					hidden_tooltip = { remove_trait = detached_priest }
+					add_trait = martial_cleric
+				}
+				else_if = {
+					limit = { 
+						trait = martial_cleric 
+						has_links_level_3_trigger = yes
+					}
+					hidden_tooltip = { remove_trait = martial_cleric }
+					add_trait = scholarly_theologian
+				}
+				else_if = {
+					limit = { 
+						trait = scholarly_theologian 
+						has_links_level_4_trigger = yes
+					}
+					hidden_tooltip = { remove_trait = scholarly_theologian }
+					add_trait = mastermind_theologian
+				}
+				clr_character_flag = is_liege_maester_quest 
+			}
+			tooltip = {
+				add_artifact = event_target:new_maester_link
+				remove_trait = travelling
+			}
+		}
+		if = {
+			limit = {
+				NOT = { job_physician = { always = yes } } 
+				FROM = { trait = maester }
+			}
+			FROM = { give_job_title = job_physician }
+		}
+	}
+}	
+
+character_event = { #Stressed
+	id = maester.54
+	desc = EVTDESCmaester.54
+	picture = GFX_evt_stressed_ruler
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = event_target:archmaester_tutor
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+		NOT = { trait = stressed }
+	}
+	
+	option = {
+		name = EVTOPTAmaester.54
+		add_trait = stressed
+	}
+}
+character_event = { #Make friend
+	id = maester.55
+	desc = EVTDESCmaester.55
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = event_target:maester_friend
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+		society = {
+			any_society_member = {
+				OR = {
+					society_rank < 3
+					AND = {
+						is_ruler = no
+						liege = { has_landed_title = c_the_citadel }
+					}	
+				}
+				NOT = { character = ROOT }
+				war = no
+				is_incapable = no
+				in_command = no
+				prisoner = no
+				age = 16						
+				NOT = { is_friend = ROOT }
+				NOT = { is_rival = ROOT }
+				opinion = { who = ROOT value = 0 }
+				reverse_opinion = { who = ROOT value = 0 }
+				NOT = { is_inaccessible_trigger = yes }
+				NOT = { num_of_friends = 5 }
+			}
+		}
+	}
+	
+	immediate = {
+		society = {
+			random_society_member = {
+				limit = {
+					OR = {
+						society_rank < 3
+						AND = {
+							is_ruler = no
+							liege = { has_landed_title = c_the_citadel }
+						}	
+					}
+					NOT = { character = ROOT }
+					war = no
+					is_incapable = no
+					in_command = no
+					prisoner = no
+					age = 16						
+					NOT = { is_friend = ROOT }
+					NOT = { is_rival = ROOT }
+					opinion = { who = ROOT value = 0 }
+					reverse_opinion = { who = ROOT value = 0 }
+					NOT = { is_inaccessible_trigger = yes }
+					NOT = { num_of_friends = 5 }
+				}	
+				save_event_target_as = maester_friend
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.55
+		event_target:maester_friend = {
+			add_friend  = ROOT
+			character_event = { id = maester.56 }
+		}
+	}
+}
+character_event = { #Inform second
+	id = maester.56
+	desc = EVTDESCmaester.56
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAmaester.56
+		add_friend  = FROM
+	}
+}	
+character_event = { #Make rival
+	id = maester.57
+	desc = EVTDESCmaester.57
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = event_target:maester_rival
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+		society = {
+			any_society_member = {
+				OR = {
+					society_rank < 3
+					AND = {
+						is_ruler = no
+						liege = { has_landed_title = c_the_citadel }
+					}	
+				}
+				NOT = { character = ROOT }
+				war = no
+				is_incapable = no
+				in_command = no
+				prisoner = no
+				age = 16						
+				NOT = { is_friend = ROOT }
+				NOT = { is_rival = ROOT }
+				NOT = { opinion = { who = ROOT value = -20 } }
+				NOT = { reverse_opinion = { who = ROOT value = -20 } }
+				NOT = { is_inaccessible_trigger = yes }
+				NOT = { num_of_rivals = 5 }
+			}
+		}
+	}
+	
+	immediate = {
+		society = {
+			random_society_member = {
+				limit = {
+					OR = {
+						society_rank < 3
+						AND = {
+							is_ruler = no
+							liege = { has_landed_title = c_the_citadel }
+						}	
+					}
+					NOT = { character = ROOT }
+					war = no
+					is_incapable = no
+					in_command = no
+					prisoner = no
+					age = 16						
+					NOT = { is_friend = ROOT }
+					NOT = { is_rival = ROOT }
+					NOT = { opinion = { who = ROOT value = -20 } }
+					NOT = { reverse_opinion = { who = ROOT value = -20 } }
+					NOT = { is_inaccessible_trigger = yes }
+					NOT = { num_of_rivals = 5 }
+				}	
+				save_event_target_as = maester_rival
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.57
+		event_target:maester_rival = {
+			add_rival = ROOT
+			character_event = { id = maester.58 }
+		}
+	}
+}
+character_event = { #Inform second
+	id = maester.58
+	desc = EVTDESCmaester.58
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAmaester.58
+		add_rival = FROM
+	}
+}	
+character_event = { #Find lover
+	id = maester.59
+	desc = EVTDESCmaester.59
+	picture = GFX_evt_lovers
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = ROOT
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = study_for_link
+		NOT = { trait = chaste }
+		NOT = { trait = celibate }
+		NOT = { trait = eunuch }
+		is_pregnant = no
+		OR = {
+			NOT = { age = 40 }
+			is_female = no
+		}	
+		OR = {
+			trait = lustful
+			has_lover = no
+		}
+	}
+	
+	immediate = {
+		society = {
+			persistent_event_target:location = {
+				ROOT = {
+					if = {
+						limit = { prefers_men_trigger = yes }
+						create_random_steward = {
+							random_traits = yes
+							dynasty = none
+							female = no
+							culture = PREV
+							religion = PREV
+						}
+					}
+					else = {
+						create_random_steward = {
+							random_traits = yes
+							dynasty = none
+							female = yes
+							culture = PREV
+							religion = PREV
+						}
+					}
+					new_character = {
+						save_event_target_as = maester_lover
+						join_society = PREVPREVPREV
+						if = {
+							limit = { ROOT = { is_ruler = no } }
+							ROOT = { liege = { reverse_banish = PREVPREV } }
+						}
+						if = {
+							limit = { same_sex = ROOT }
+							add_trait = homosexual
+						}
+						random = {
+							chance = 25
+							add_trait = fair
+							remove_trait = ugly
+						}
+						remove_trait = slow
+						remove_trait = imbecile
+						remove_trait = dull
+						
+						remove_lifestyle_trait_effect = yes
+						
+						random_list = { # Flavor Randomization
+							35 = { 
+								# Nothing
+							}
+							15 = {
+								change_learning = 2
+							}
+							10 = {
+								add_trait = erudite
+							}
+							10 = {
+								change_learning = 4
+							}
+							5 = {
+								change_learning = 6
+							}
+							5 = {
+								trigger = { 
+									is_smart_incl_genius_trigger = no
+								}
+								add_trait = shrewd
+							}
+						}
+						if = {
+							limit = { 
+								culture_group = hyrkoon_group
+							}
+							add_trait = eunuch
+						}
+						while = {
+							limit = { NOT = { learning = 8 } }
+							change_learning = 1
+						}			
+					}
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.59
+		event_target:maester_lover = {
+			add_lover = ROOT
+		}
+	}
+	option = {
+		name = EVTOPTBmaester.59
+		trigger = { ai = no }
+		hidden_tooltip = {
+			event_target:maester_lover = {
+				death = { death_reason = death_missing }
+			}
+		}	
+	}
+}
+character_event = { #Cut open living bodies?   #ADD TO RANDOM LINK ADDITION
+	id = maester.60
+	desc = EVTDESCmaester.60
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = ROOT
+	
+	trigger = {
+		society_member_of = hermetics
+		OR = {
+			has_quest = study_for_link
+			ai = yes
+		}	
+		OR = {
+			trait = cruel
+			trait = impaler
+			trait = ruthless
+			trait = lunatic
+		}
+		NOR = {
+			trait = kind
+			trait = honorable
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.60
+		custom_tooltip = { #Ensures success
+			text = TOOLTIPmaester.60		
+			if = {
+				limit = { 
+					NOT = { has_character_flag = study_great_success }
+					has_quest = study_for_link
+				}
+				clear_delayed_event = { id = maester.49 } 
+				clear_delayed_event = { id = maester.50 } 
+				character_event = { id = maester.49 days = 50 random = 50 }
+			}
+		}
+		if = {
+			limit = {
+				trait = stressed
+				OR = {
+					trait = cruel
+					trait = impaler
+				}
+			}
+			remove_trait = stressed
+		}
+		random = { #Chance of being caught
+			chance = 10
+			modifier = {
+				factor = 1.5
+				NOT = { intrigue = 3 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { intrigue = 6 }
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 10
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 13
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 16
+			}
+			character_event = { id = maester.61 tooltip = TOOLTIPmaester.61 days = 200 random = 200 }
+		}
+	}
+	option = {
+		name = EVTOPTBmaester.60
+		trigger = { ai = no }
+	}
+}
+character_event = { #Caught!
+	id = maester.61
+	desc = EVTDESCmaester.61
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	portrait = ROOT
+	
+	trigger = { NOT = { has_landed_title = c_the_citadel } }
+
+	option = {
+		name = EVTOPTAmaester.61
+		if = {
+			limit = { society_member_of = hermetics }
+			leave_society = yes
+			add_character_modifier = { name = expelled_from_citadel duration = -1 }
+		}
+		if = {
+			limit = { NOT = { has_character_modifier = known_murderer } }
+			add_character_modifier = {
+				name = known_murderer
+				years = 50
+			}
+		}
+		if = {
+			limit = { trait = maester }
+			remove_trait = maester
+		}
+		if = {
+			limit = { trait = archmaester }
+			remove_trait = archmaester
+			clr_character_flag = grandmaester
+		}
+		custom_tooltip = {
+			text = TOOLTIPmaester.61
+			any_artifact = {
+				limit = { has_artifact_flag = maester_link }
+				unsafe_destroy_artifact = yes
+			}
+		}
+		if = {
+			limit = { 
+				is_ruler = no
+				liege = { has_landed_title = c_the_citadel }
+			}
+			random_playable_ruler = {
+				limit = { valid_exile_destination_ROOT_trigger = yes }
+				ROOT = { move_character = PREV }
+			}
+		}
+		piety = -100
+	}
+}	
+character_event = { #Necromancy?   #ADD TO RANDOM LINK ADDITION
+	id = maester.62
+	desc = EVTDESCmaester.62
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	portrait = ROOT
+	
+	trigger = {
+		society_member_of = hermetics
+		OR = {
+			has_quest = study_for_link
+			ai = yes
+		}
+		OR = {
+			trait = cruel
+			trait = greedy
+			trait = ruthless
+			trait = lunatic
+		}
+		NOR = {
+			trait = kind
+			trait = honorable
+		}
+	}
+	
+	option = {
+		name = EVTOPTAmaester.62
+		add_character_modifier = { name = necromancer_maester duration = -1 }
+		random = { #Chance of being caught
+			chance = 10
+			modifier = {
+				factor = 1.5
+				NOT = { intrigue = 3 }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { intrigue = 6 }
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 10
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 13
+			}
+			modifier = {
+				factor = 0.66
+				intrigue = 16
+			}
+			character_event = { id = maester.63 tooltip = TOOLTIPmaester.63 days = 200 random = 200 }
+		}
+	}
+	option = {
+		name = EVTOPTBmaester.62
+		trigger = { ai = no }
+	}
+}
+character_event = { #Caught!
+	id = maester.63
+	desc = EVTDESCmaester.63
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	portrait = ROOT
+	
+	trigger = { NOT = { has_landed_title = c_the_citadel } }
+
+	option = {
+		name = EVTOPTAmaester.63
+		if = {
+			limit = { society_member_of = hermetics }
+			leave_society = yes
+			add_character_modifier = { name = expelled_from_citadel duration = -1 }
+		}
+		if = {
+			limit = { NOT = { has_character_modifier = known_necromancer } }
+			add_character_modifier = {
+				name = known_necromancer
+				years = 50
+			}
+		}
+		if = {
+			limit = { trait = maester }
+			remove_trait = maester
+		}
+		if = {
+			limit = { trait = archmaester }
+			remove_trait = archmaester
+			clr_character_flag = grandmaester
+		}
+		custom_tooltip = {
+			text = TOOLTIPmaester.61
+			any_artifact = {
+				limit = { has_artifact_flag = maester_link }
+				unsafe_destroy_artifact = yes
+			}
+		}
+		if = {
+			limit = { 
+				is_ruler = no
+				liege = { has_landed_title = c_the_citadel }
+			}
+			random_playable_ruler = {
+				limit = { valid_exile_destination_ROOT_trigger = yes }
+				ROOT = { move_character = PREV }
+			}
+		}
+		piety = -100
+	}
+}	
+####Kill Dragon Mission
+#Ping event for mission
+character_event = {
+	id = maester.80
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = { 
+		FROM = { society_quest_event = { id = maester.81 } }
+	}
+}
+society_quest_event = {
+	id = maester.81
+	desc = EVTDESCmaester.81
+	quest_target = event_target:target_dragon
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = { #find target dragon
+			random_courtier = {
+				limit = {
+					trait = dragon
+					NOT = { has_character_modifier = mnm_effected }
+				}
+				preferred_limit = {
+					age = 100
+				}
+				preferred_limit = {
+					age = 75
+				}
+				preferred_limit = {
+					age = 50
+				}
+				preferred_limit = {
+					age = 25
+				}
+				preferred_limit = {				
+					age = 10
+				}
+				save_event_target_as = target_dragon
+			}
+		}	
+	}
+
+	option = { #accept
+		name = ACCEPT
+		custom_tooltip = {
+			text = TOOLTIPmaester.82
+			character_event = { id = maester.82 days = 15 random = 20 }
+		}
+		show_portrait = event_target:target_dragon
+		hidden_tooltip = {
+			event_target:target_dragon = {
+				set_quest_target = {
+					id = kill_dragon
+					holder = ROOT
+				}	
+			}	
+		}	
+	}
+	option = { #nah thx
+		name = DECLINE
+		custom_tooltip = { text = decline_quest_tooltip }
+
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = quest_cooldown_timer
+				hidden = yes
+				days = 500
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+}
+#Choose attack option
+character_event = {
+	id = maester.82
+	desc = EVTDESCmaester.82
+	picture = GFX_tamingdragon
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	
+	portrait = event_target:target_dragon
+	
+	trigger = {
+		society_member_of = hermetics
+		has_quest = kill_dragon
+		event_target:target_dragon = { is_alive = yes }
+	}
+	
+	fail_trigger_effect = {
+		clr_quest = kill_dragon
+	}
+
+	option = {
+		name = EVTOPTAmaester.82 #History option	
+		trigger = { trait = scholar }
+		tooltip_info = scholar
+		set_character_flag = kill_dragon_scholar
+	}
+	option = {
+		name = EVTOPTBmaester.82 #Medicine option	
+		trigger = { trait = physician }
+		tooltip_info = physician
+		set_character_flag = kill_dragon_physician
+	}
+	option = {
+		name = EVTOPTCmaester.82 #Herbs option	
+		trigger = { trait = herbologist }
+		tooltip_info = herbologist
+		set_character_flag = kill_dragon_herbologist
+	}	
+	option = {
+		name = EVTOPTDmaester.82 #Rudimentary poison	
+		trigger = {
+			NOR = {
+				trait = scholar
+				trait = physician
+				trait = herbologist
+			}
+		}
+		set_character_flag = kill_dragon_regular
+	}
+	
+	after = {
+		random_list = {
+			20 = { #Success
+				modifier = {
+					factor = 2
+					OR = {
+						trait = scholar
+						trait = physician
+						trait = herbologist
+					}
+				}
+				modifier = {
+					factor = 1.33
+					learning = 12
+				}
+				modifier = {
+					factor = 1.33
+					learning = 15
+				}
+				modifier = {
+					factor = 1.33
+					learning = 18
+				}
+				modifier = {
+					factor = 1.33
+					learning = 21
+				}
+				modifier = {
+					factor = 1.33
+					learning = 24
+				}
+				character_event = { id = maester.83 tooltip = TOOLTIPmaester.83 }
+			}
+			60 = { #Fail
+				modifier = {
+					factor = 1.5
+					NOT = { learning = 9 }
+				}
+				modifier = {
+					factor = 1.5
+					NOT = { learning = 5 }
+				}
+				character_event = { id = maester.84 tooltip = TOOLTIPmaester.84 }
+			}
+			20 = { #Poisoned!
+				modifier = {
+					factor = 1.5
+					NOT = { learning = 9 }
+				}
+				modifier = {
+					factor = 1.5
+					NOT = { learning = 5 }
+				}
+				character_event = { id = maester.85 tooltip = TOOLTIPmaester.85 }
+			}
+		}
+	}
+}	
+character_event = { #Success
+    id = maester.83
+    picture = GFX_evt_dragon_skull
+    border = GFX_event_normal_frame_religion
+	
+	desc = {
+		text = EVTDESCmaester.83
+		trigger = { has_character_flag = kill_dragon_scholar }
+	}	
+	desc = {
+		text = EVTDESCmaester.83B
+		trigger = { has_character_flag = kill_dragon_physician }
+	}	
+	desc = {
+		text = EVTDESCmaester.83C
+		trigger = { has_character_flag = kill_dragon_herbologist }
+	}	
+	desc = {
+		text = EVTDESCmaester.83D
+		trigger = { has_character_flag = kill_dragon_regular }
+	}	
+	
+    is_triggered_only = yes
+	
+	portrait = event_target:target_dragon
+	
+    option = { 
+		name = EVTOPTAmaester.83
+		event_target:target_dragon = {
+			add_character_modifier = {
+				name = mnm_effected
+				duration = 3650
+				hidden = yes
+			}
+		}
+     	clr_quest = kill_dragon
+		sound_effect = hermetic_society_recover_scroll
+		add_society_currency_medium_effect = yes
+		clr_character_flag = kill_dragon_scholar
+		clr_character_flag = kill_dragon_physician
+		clr_character_flag = kill_dragon_herbologist
+    }
+}
+character_event = { #Fail
+    id = maester.84
+    picture = GFX_evt_dragon_angry
+    border = GFX_event_normal_frame_religion
+	
+	desc = {
+		text = EVTDESCmaester.84
+		trigger = { has_character_flag = kill_dragon_scholar }
+	}	
+	desc = {
+		text = EVTDESCmaester.84B
+		trigger = { has_character_flag = kill_dragon_physician }
+	}	
+	desc = {
+		text = EVTDESCmaester.84C
+		trigger = { has_character_flag = kill_dragon_herbologist }
+	}	
+	desc = {
+		text = EVTDESCmaester.84D
+		trigger = { has_character_flag = kill_dragon_regular }
+	}	
+	
+    is_triggered_only = yes
+	
+	portrait = event_target:target_dragon
+	
+    option = { 
+		name = EVTOPTAmaester.84
+		clr_quest = { id = kill_dragon failure = yes }
+		detract_society_currency_minor_effect = yes
+		clr_character_flag = kill_dragon_scholar
+		clr_character_flag = kill_dragon_physician
+		clr_character_flag = kill_dragon_herbologist
+    }
+}
+character_event = { #Fail + injury
+    id = maester.85
+    picture = GFX_evt_dragon_flame_death
+    border = GFX_event_normal_frame_religion
+	
+	desc = {
+		text = EVTDESCmaester.85
+		trigger = { has_character_flag = kill_dragon_scholar }
+	}	
+	desc = {
+		text = EVTDESCmaester.85B
+		trigger = { has_character_flag = kill_dragon_physician }
+	}	
+	desc = {
+		text = EVTDESCmaester.85C
+		trigger = { has_character_flag = kill_dragon_herbologist }
+	}	
+	desc = {
+		text = EVTDESCmaester.85D
+		trigger = { has_character_flag = kill_dragon_regular }
+	}	
+	
+    is_triggered_only = yes
+	
+	portrait = event_target:target_dragon
+	
+    option = { 
+		name = EVTOPTAmaester.85
+		if = {
+			limit = { has_character_flag = kill_dragon_scholar }
+			add_trait = burned
+			hidden_tooltip = { character_event = { id = trait_notification.23 } } 
+		}
+		else_if = {
+			limit = { has_character_flag = kill_dragon_physician }
+			random_list = {
+				50 = {
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = {
+						character_event ={
+							id = 38280 #Notify
+						}
+					}
+				}
+				15 = {
+					add_maimed_trait_effect = yes
+				}
+			}
+		}
+		else_if = {
+			limit = { has_character_flag = kill_dragon_herbologist }
+			if = {
+				limit = { has_dlc = "Reapers" }
+				tooltip = { add_trait = food_poisoning }
+				character_event = { id = RIP.5035 }
+			}
+			else = {
+				add_trait = ill
+			}
+		}
+		else = {
+			add_maimed_trait_effect = yes
+		}
+		clr_quest = { id = kill_dragon failure = yes }
+		detract_society_currency_minor_effect = yes
+		clr_character_flag = kill_dragon_scholar
+		clr_character_flag = kill_dragon_physician
+		clr_character_flag = kill_dragon_herbologist
+    }
+}
+####Kill Magic Person Mission
+#Ping event for mission
+character_event = {
+	id = maester.90
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	immediate = { 
+		FROM = { society_quest_event = { id = maester.91 } }
+	}
+}
+society_quest_event = {
+	id = maester.91
+	desc = EVTDESCmaester.91
+	quest_target = event_target:target_courtier
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = { #find target
+			random_courtier = {
+				limit = {
+					OR = {
+						ROOT = { ai = no }
+						NOT = { reverse_opinion = { who = ROOT value = 20 } }
+					}
+					NOT = { is_child_of = ROOT } # Not my own children
+					NOT = { father_even_if_dead = { is_child_of = ROOT } }
+					NOT = { mother_even_if_dead = { is_child_of = ROOT } }
+					NOT = { has_blood_oath_with = ROOT }				
+					NOT = { is_lover = ROOT }		
+					NOT = { is_friend = ROOT }
+					OR = {
+						trait = mystic
+						trait = warlock
+						trait = shadowbinder
+						trait = immortal
+						trait = undead
+						trait = dragon_dreams
+						trait = chosen_by_rhllor
+						trait = resurrected_by_rhllor
+						trait = greensight
+						trait = favored_by_rhoyne
+					}
+				}
+				save_event_target_as = target_courtier
+			}
+		}	
+	}
+
+	option = { #accept
+		name = ACCEPT
+		custom_tooltip = {
+			text = TOOLTIPmaester.92
+			character_event = { id = maester.92 days = 50 }
+			if = {
+				limit = { ai = yes }
+				cancel_plot = yes
+			}
+		}
+		show_portrait = event_target:target_courtier
+		hidden_tooltip = {
+			event_target:target_courtier = {
+				set_quest_target = {
+					id = maester_kill_magic_person
+					holder = ROOT
+				}	
+			}	
+		}	
+	}
+	option = { #nah thx
+		name = DECLINE
+		custom_tooltip = { text = decline_quest_tooltip }
+
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = quest_cooldown_timer
+				hidden = yes
+				days = 500
+			}
+		}
+		ai_chance = { factor = 0 }
+	}
+}
+character_event = { #Check mission every 50 days
+    id = maester.92
+	
+    is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				NAND = {
+					society_member_of = hermetics
+					has_quest = maester_kill_magic_person
+				}
+			}
+			clr_quest = maester_kill_magic_person
+			break = yes
+		}
+		if = {
+			limit = {
+				event_target:target_courtier = { is_alive = no }
+			}
+			if = {
+				limit = { killer = { character = ROOT } }
+				character_event = { id = maester.93 }
+			}
+			else = {
+				character_event = { id = maester.94 }
+			}
+			break = yes
+		}
+		repeat_event = { id = maester.92 days = 50 }
+	}
+
+    option = { 
+		name = OK
+	}
+}	
+
+character_event = { #Success
+    id = maester.93
+    border = GFX_event_normal_frame_religion
+	desc = EVTDESCmaester.93
+	
+    is_triggered_only = yes
+	
+	portrait = event_target:target_courtier
+	
+    option = { 
+		name = EVTOPTAmaester.93
+     	clr_quest = maester_kill_magic_person
+		sound_effect = hermetic_society_recover_scroll
+		add_society_currency_medium_effect = yes
+    }
+}
+character_event = { #Minor Success
+    id = maester.94
+    border = GFX_event_normal_frame_religion
+	desc = EVTDESCmaester.94
+	
+    is_triggered_only = yes
+	
+	portrait = event_target:target_courtier
+	
+    option = { 
+		name = EVTOPTAmaester.94
+     	clr_quest = maester_kill_magic_person
+		sound_effect = hermetic_society_recover_scroll
+		add_society_currency_minor_effect = yes
+    }
+}
+#Offered eternal life by necromancer maester
+character_event = {
+	id = maester.100
+	desc = "EVTDESCmaester.100"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAmaester.100" #Accept
+		set_character_flag = necromancy_target
+		custom_tooltip = {
+			text = TOOLTIPmaester.100A
+			save_persistent_event_target = { name = necromancer scope = FROMFROM }
+			FROMFROM = { character_event = { id = maester.101 } }
+		}
+	}	
+	option = {
+		name = "EVTOPTBmaester.100"
+		FROMFROM = { 
+			opinion = { who = ROOT modifier = opinion_rejected_necromancy months = 120 }
+			character_event = { id = maester.102 } 
+		}
+	}	
+}
+character_event = { #Inform accept
+	id = maester.101
+	desc = "EVTDESCmaester.101"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.101"
+		FROM = { 
+			opinion = { who = ROOT modifier = opinion_promised_necromancy months = 1200 }
+		}	
+		persistent_event_target:necromancy_target = { #existing taregt will be annoyed
+			if = {
+				limit = { is_alive = yes }
+				remove_opinion = { who = ROOT modifier = opinion_promised_necromancy }
+				opinion = { who = ROOT modifier = opinion_withdrawn_necromancy months = 120 }
+				character_event = { id = maester.103 } 
+			}		
+		}
+		save_persistent_event_target = { name = necromancy_target scope = FROM }
+		clr_character_flag = preparing_necromancy
+	}
+}	
+character_event = { #Inform rejected
+	id = maester.102
+	desc = "EVTDESCmaester.102"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.102"
+		clr_character_flag = preparing_necromancy
+	}
+}	
+character_event = { #Inform lost necromancy
+	id = maester.103
+	desc = "EVTDESCmaester.103"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.103"
+		clr_character_flag = necromancy_target
+		clear_persistent_event_target = necromancer
+	}
+}	
+#Maester does necromancy
+character_event = {
+	id = maester.105
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCmaester.105"
+		trigger = { trait = undead }
+	}
+	desc = {
+		text = "EVTDESCmaester.105B" #First Time
+		trigger = { NOT = { trait = undead } }
+	}
+	
+	immediate = {
+		#make sure old women are infertile
+		if = {
+			limit = {
+				is_female = yes
+				age = 40				
+			}
+			fertility = -100
+		}
+		#remove special execution traits 
+		hidden_tooltip = {
+			remove_trait = fed_to_dragon
+			# remove_trait = flayed
+			# remove_trait = burned_alive
+			# remove_trait = thrown_out_moon_door
+			# remove_trait = crucified
+			# remove_trait = snu_snu
+		}
+		#Injury
+		random_list = {
+			25 = {
+				modifier = {
+					factor = 0
+					NOR = {
+						has_character_flag = eye_injury
+						trait = stutter
+						has_scarred_trait_trigger = yes
+						trait = disfigured_AGOT
+						is_maimed_trigger = yes
+						trait = wounded
+					}
+				}
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					is_crippled_trigger = yes
+				}
+				set_character_flag = crippled
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					has_character_flag = eye_injury
+				}
+				modifier = {
+					factor = 0
+					trait = blinded
+				}
+				set_character_flag = new_eye_injury
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = stutter
+				}
+				set_character_flag = stutter
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = scarred_high 
+				}
+				set_character_flag = scarred
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = disfigured_AGOT
+				}
+				set_character_flag = disfigured
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = maimed
+				}
+				set_character_flag = maimed
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = wounded
+				}
+				set_character_flag = wounded
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					trait = burned
+				}
+				set_character_flag = burned
+			}
+		}
+		#Crazy
+		random_list = {
+			18 = {
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = zealous
+				}
+				set_character_flag = zealous
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = lunatic
+				}
+				set_character_flag = lunatic
+			}
+			2 = {
+				modifier = {
+					factor = 0
+					trait = possessed
+				}
+				set_character_flag = possessed
+			}		
+		}
+			
+		#Lose Personality Trait
+		if = {
+			limit = { trait = kind }
+			set_character_flag = resurrected_kind
+			break = yes
+		}
+		if = {
+			limit = { trait = honorable }
+			set_character_flag = resurrected_honorable
+			break = yes
+		}
+		if = {
+			limit = { trait = patient }
+			set_character_flag = resurrected_patient
+			break = yes
+		}
+		if = {
+			limit = { trait = gregarious }
+			set_character_flag = resurrected_gregarious
+			break = yes
+		}
+		if = {
+			limit = { trait = just }
+			set_character_flag = resurrected_just
+			break = yes
+		}
+		if = {
+			limit = { trait = diligent }
+			set_character_flag = resurrected_diligent
+			break = yes
+		}
+		if = {
+			limit = { trait = humble }
+			set_character_flag = resurrected_humble
+			break = yes
+		}
+		if = {
+			limit = { trait = familyperson }
+			set_character_flag = resurrected_familyperson
+			break = yes
+		}
+		if = {
+			limit = { trait = chaste }
+			set_character_flag = resurrected_chaste
+			break = yes
+		}
+		if = {
+			limit = { trait = temperate }
+			set_character_flag = resurrected_temperate
+			break = yes
+		}
+		if = {
+			limit = { trait = charitable }
+			set_character_flag = resurrected_charitable
+			break = yes
+		}
+		if = {
+			limit = { trait = honest }
+			set_character_flag = resurrected_honest
+			break = yes
+		}
+		if = {
+			limit = { trait = brave }
+			set_character_flag = resurrected_brave
+			break = yes
+		}
+		if = {
+			limit = { trait = trusting }
+			set_character_flag = resurrected_trusting
+			break = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAmaester.105"
+		persistent_event_target:necromancer = {
+			character_event = { id = maester.107 }
+			hidden_tooltip = {
+				reverse_remove_opinion = { who = ROOT modifier = opinion_promised_necromancy }
+			}
+		}
+		clr_character_flag = necromancy_target
+		clear_persistent_event_target = necromancer
+		if = {
+			limit = { NOT = { trait = undead } }
+			add_trait = undead
+		}
+		prestige = 200
+		piety = -200
+		#Crazy
+		if = {
+			limit = { has_character_flag = lunatic }
+			add_trait = lunatic
+			clr_character_flag = lunatic
+		}
+		if = {
+			limit = { has_character_flag = possessed }
+			add_trait = possessed
+			clr_character_flag = possessed
+		}
+		if = {
+			limit = { has_character_flag = zealous }
+			if = {
+				limit = { trait = cynical }
+				remove_trait = cynical
+			}	
+			add_trait = zealous
+			clr_character_flag = zealous
+		}
+		#Injuries
+		if = {
+			limit = { has_character_flag = crippled }
+			add_crippled_trait_effect = yes
+			clr_character_flag = crippled
+		}
+		if = {
+			limit = { has_character_flag = new_eye_injury }
+			add_trait = one_eyed
+			clr_character_flag = new_eye_injury
+		}
+		if = {
+			limit = { has_character_flag = stutter }
+			add_trait = stutter
+			clr_character_flag = stutter
+		}
+		if = {
+			limit = { has_character_flag = scarred }
+			add_scarred_tiered_effect = yes
+			clr_character_flag = scarred
+		}
+		if = {
+			limit = { has_character_flag = disfigured }
+			add_trait = disfigured_AGOT
+			clr_character_flag = disfigured
+		}
+		if = {
+			limit = { has_character_flag = maimed }
+			add_maimed_trait_effect = yes
+			clr_character_flag = maimed
+		}
+		if = {
+			limit = { has_character_flag = burned }
+			add_trait = burned
+			clr_character_flag = burned
+		}
+		#Remove good personality
+		if = {
+			limit = { has_character_flag = resurrected_kind }
+			remove_trait = kind
+			clr_character_flag = resurrected_kind
+		}
+		if = {
+			limit = { has_character_flag = resurrected_honorable }
+			remove_trait = honorable
+			clr_character_flag = resurrected_honorable
+		}
+		if = {
+			limit = { has_character_flag = resurrected_patient }
+			remove_trait = patient
+			clr_character_flag = resurrected_patient
+		}
+		if = {
+			limit = { has_character_flag = resurrected_gregarious }
+			remove_trait = gregarious
+			clr_character_flag = resurrected_gregarious
+		}
+		if = {
+			limit = { has_character_flag = resurrected_just }
+			remove_trait = just
+			clr_character_flag = resurrected_just
+		}
+		if = {
+			limit = { has_character_flag = resurrected_diligent }
+			remove_trait = diligent
+			clr_character_flag = resurrected_diligent
+		}
+		if = {
+			limit = { has_character_flag = resurrected_humble }
+			remove_trait = humble
+			clr_character_flag = resurrected_humble
+		}
+		if = {
+			limit = { has_character_flag = resurrected_familyperson }
+			remove_trait = familyperson
+			clr_character_flag = resurrected_familyperson
+		}
+		if = {
+			limit = { has_character_flag = resurrected_chaste }
+			remove_trait = chaste
+			clr_character_flag = resurrected_chaste
+		}
+		if = {
+			limit = { has_character_flag = resurrected_temperate }
+			remove_trait = temperate
+			gain_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+			clr_character_flag = resurrected_temperate
+		}
+		if = {
+			limit = { has_character_flag = resurrected_charitable }
+			remove_trait = charitable
+			clr_character_flag = resurrected_charitable
+		}
+		if = {
+			limit = { has_character_flag = resurrected_honest }
+			remove_trait = honest
+			clr_character_flag = resurrected_honest
+		}
+		if = {
+			limit = { has_character_flag = resurrected_brave }
+			remove_trait = brave
+			clr_character_flag = resurrected_brave
+		}
+		if = {
+			limit = { has_character_flag = resurrected_trusting }
+			remove_trait = trusting
+			clr_character_flag = resurrected_trusting
+		}	
+	}
+}
+character_event = { #Inform enemy was resurrected!
+	id = maester.106
+	desc = "EVTDESCmaester.106"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.106"
+	}
+}
+character_event = { #Inform you resurrected target!
+	id = maester.107
+	desc = "EVTDESCmaester.107"
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAmaester.107"
+		clear_persistent_event_target = necromancy_target
+	}
+}
+# add_random_maester_link_effect = {
+	# random_list = {
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = black_iron_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_ravenry
+						# NOT = { any_artifact = {	artifact_type = black_iron_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = shy
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_ravenry
+			# }
+			# add_artifact = black_iron_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = copper_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_history
+						# NOT = { any_artifact = {	artifact_type = copper_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_history
+			# }
+			# add_artifact = copper_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = bronze_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_astronomy
+						# NOT = { any_artifact = {	artifact_type = bronze_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# OR = {
+					# has_character_modifier = astronomical_insights_2
+					# has_character_modifier = astronomical_insights_3
+					# has_character_modifier = astronomical_insights_4
+					# has_character_modifier = studying_the_stars
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_astronomy
+			# }
+			# add_artifact = bronze_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = brass_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_seasons
+						# NOT = { any_artifact = {	artifact_type = brass_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# culture_group = first_men
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_seasons
+			# }
+			# add_artifact = brass_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = electrum_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_geography
+						# NOT = { any_artifact = {	artifact_type = electrum_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_geography
+			# }
+			# add_artifact = electrum_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = yellow_gold_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_math
+						# NOT = { any_artifact = {	artifact_type = yellow_gold_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_education_stewardship_trigger = yes
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_math
+			# }
+			# add_artifact = yellow_gold_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = iron_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_warcraft
+						# NOT = { any_artifact = {	artifact_type = iron_link count = 3 } }
+					# }				
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_education_martial_trigger = yes
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_warcraft
+			# }
+			# add_artifact = iron_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = lead_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_castles
+						# NOT = { any_artifact = {	artifact_type = lead_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_castles
+			# }
+			# add_artifact = lead_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = pewter_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_culture
+						# NOT = { any_artifact = {	artifact_type = pewter_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = erudite
+			# }
+			# modifier = {
+				# factor = 0.25
+				# trait = proud
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_culture
+			# }
+			# add_artifact = pewter_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = platinum_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_languages
+						# NOT = { any_artifact = {	artifact_type = platinum_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# has_education_diplomacy_trigger = yes
+			# }
+			# modifier = {
+				# factor = 3
+				# OR = {
+					# has_character_modifier = multilingual
+					# has_character_modifier = student_of_language
+				# }
+			# }
+			# modifier = {
+				# factor = 0.25
+				# trait = proud
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_languages
+			# }
+			# if = {
+				# limit = { has_character_modifier = student_of_language }
+				# remove_character_modifier = student_of_language
+				# add_character_modifier = { name = multilingual duration = -1 }
+			# }
+			# else_if = {
+				# limit = { 
+					# NOT = { trait = linguist }
+					# NOT = { has_character_modifier = multilingual }
+				# }
+				# add_character_modifier = { name = student_of_language duration = -1 }
+			# }
+			# add_artifact = platinum_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = red_gold_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_law
+						# NOT = { any_artifact = {	artifact_type = red_gold_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 2
+				# has_education_diplomacy_trigger = yes
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_law
+			# }
+			# add_artifact = red_gold_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = silver_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_medicine
+						# NOT = { any_artifact = {	artifact_type = silver_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 4
+				# NOT = { any_artifact = {	artifact_type = silver_link } }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_medicine
+			# }
+			# add_artifact = silver_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = steel_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_metallurgy
+						# NOT = { any_artifact = {	artifact_type = steel_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_metallurgy
+			# }
+			# add_artifact = steel_link
+		# }
+		# 10 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = tin_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_herblore
+						# NOT = { any_artifact = {	artifact_type = tin_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_herblore
+			# }
+			# add_artifact = tin_link
+		# }
+		# 1 = {
+			# trigger = {			
+				# OR = {
+					# NOT = { any_artifact = {	artifact_type = valyrian_steel_link count = 2 } }
+					# AND = {
+						# has_character_flag = specialisation_mysteries
+						# NOT = { any_artifact = {	artifact_type = valyrian_steel_link count = 3 } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 0.25
+			# }		
+			# modifier = {
+				# factor = 10
+				# any_artifact = {	artifact_type = valyrian_steel_link }
+			# }			
+			# modifier = {
+				# factor = 3
+				# has_character_flag = specialisation_mysteries
+			# }
+			# modifier = {
+				# factor = 4
+				# OR = {
+					# trait = mystic
+					# trait = lunatic
+					# trait = paranoid
+				# }
+			# }
+			# modifier = {
+				# factor = 0
+				# OR = {
+					# trait = proud
+					# trait = trusting
+					# trait = content
+				# }
+			# }
+			# add_artifact = valyrian_steel_link
+		# }
+	# }
+	# character_event = { id = maester.5 } #check for promotion
+	# character_event = { id = maester.41 } #check for promotion
+	# character_event = { id = maester.42 days = 3 } #increase learning edu level
+# }

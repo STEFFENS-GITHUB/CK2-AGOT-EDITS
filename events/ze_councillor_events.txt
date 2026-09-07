@@ -1,0 +1,4030 @@
+###########################################
+#                                         #
+# Zeus | Chancellor flavor events		  #
+# ID ZE.2000-2049	                      #
+#                                         #
+###########################################
+
+# Written by Joel Hansson
+
+namespace = ZE
+
+character_event = {
+	id = ZE.2020
+	hide_window = yes
+	
+	is_triggered_only = yes	
+	min_age = 16
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		NOR = {
+			trait = charismatic_negotiator
+			trait = grey_eminence
+			trait = gregarious
+			is_inaccessible_trigger = yes
+			has_character_modifier = multilingual
+			trait = linguist
+		}
+		job_chancellor = {
+			is_alive = yes
+			vassal_of = ROOT
+			NOT = { is_inaccessible_trigger = yes }
+			NOT = { character = ROOT }
+			OR = {
+				trait = diligent
+				AND = {
+					trait = gregarious
+					diplomacy = 12
+				}
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { diplomacy = 10 }
+		}
+		modifier = {
+			factor = 1.5
+			trait = wroth
+		}
+	}
+	
+	immediate = {
+		job_chancellor = {
+			character_event = { id = ZE.2021 }
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2021
+	desc = EVTDESC_ZE_2021
+	picture = GFX_evt_leaving_table_angrily 
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2021
+		ai_chance = {
+			factor = 10
+		}
+		liege = { 
+			custom_tooltip = {
+				text = EVTTOOLTIP_ZE_2021
+				character_event = { id = ZE.2022 } 
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2021
+		ai_chance = {
+			factor = 0
+		}
+		prestige = -5
+	}
+}
+
+character_event = {
+	id = ZE.2022
+	desc = EVTDESC_ZE_2022
+	picture = GFX_evt_council_speaker
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		job_chancellor = {
+			save_event_target_as = language_teacher
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2022
+		if = {
+			limit = { NOT = { has_character_modifier = student_of_language } }
+			add_character_modifier = {
+				modifier = student_of_language
+				duration = -1
+			}
+		}
+		tooltip = {
+			reverse_add_favor = FROM
+		}
+		hidden_tooltip = {
+			character_event = { id = ZE.2023 days = 30 }
+			random_list = {
+				65 = {
+					character_event = { id = ZE.2026 days = 200 random = 50 }
+				}
+				35 = {
+					character_event = { id = ZE.2025 days = 545 random = 100 }
+				}
+			}
+			FROM  = {
+				character_event = { id = ZE.2029 }
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2022
+		if = {
+			limit = { NOT = { personality_traits = 6 } }
+			random_list = {
+				40 = {
+					if = {
+						limit = {
+							NOT = { trait = shy }
+							NOT = { trait = gregarious }
+						}
+						add_trait = shy
+						hidden_tooltip = {
+							character_event = { id = 38263 } # notify shy
+						}
+					}	
+				}
+				20 = {
+					if = {
+						limit = {
+							NOT = { trait = humble }
+							NOT = { trait = proud }
+						}
+						add_trait = proud
+						hidden_tooltip = {
+							character_event = { id = 38261 } # notify proud
+						}
+					}	
+				}
+				40 = {
+				}
+			}
+		}	
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = ZE.2028 }
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2023
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = {
+				NOT = { job_chancellor = { character = event_target:language_teacher } }
+			}
+			clear_delayed_event = { id = ZE.2025 }
+			clear_delayed_event = { id = ZE.2026 }
+			character_event = { id = ZE.2024 }
+			break = yes
+		}
+		repeat_event = { id = ZE.2023 days = 30 }
+	}
+}
+
+character_event	= {
+	id = ZE.2024
+	desc = EVTDESC_ZE_2024
+	picture = GFX_evt_stressed_ruler 
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2024
+		remove_character_modifier = student_of_language
+	}
+}
+
+character_event = {
+	id = ZE.2025
+	desc = EVTDESC_ZE_2025
+	picture = GFX_evt_noble_in_castle
+	border = GFX_event_normal_frame_diplomacy
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clear_delayed_event = { id = ZE.2023 }
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2025
+		hidden_tooltip = {
+			remove_character_modifier = student_of_language
+		}
+		add_character_modifier = {
+			modifier = multilingual
+			duration = -1
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2026
+	desc = EVTDESC_ZE_2026
+	picture = GFX_evt_stressed_ruler
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2026
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				event_target:language_teacher = {
+					diplomacy = 12
+				}
+			}
+		}
+		hidden_tooltip = {
+			character_event = { id = ZE.2025 days = 340 random = 150 }
+		}
+	
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				NOT = { trait = diligent }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = diligent
+				hidden_tooltip = { # Notify diligent
+					character_event = { id = 38256 }
+				}
+			}	
+		}
+		if = {
+			limit = {
+				trait = slothful
+			}
+			random = {
+				chance = 15
+				remove_trait = slothful
+				hidden_tooltip = { # Notify loss of slothful
+					character_event = { id = 38298 }
+				}
+			}	
+		}
+		
+		if = {
+			limit = {
+				NOT = {
+					trait = stressed
+				}
+			}
+			random = {
+				chance = 30
+				add_trait = stressed
+				hidden_tooltip = { # Notify stressed
+					character_event = { id = 38282 }
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2026
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 5
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				event_target:language_teacher = {
+					trait = underhanded_rogue
+				}
+			}
+			modifier = {
+				factor = 3
+				event_target:language_teacher = {
+					trait = naive_appeaser
+				}
+			}
+		}
+		clear_delayed_event = { id = ZE.2023 }
+		remove_character_modifier = student_of_language
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				NOT = { trait = diligent }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 15
+				add_trait = slothful
+				hidden_tooltip = {
+					character_event = { id = 38251 } # Notify Slothful
+				}
+			}	
+		}
+		ROOT = {
+			custom_tooltip = {
+				text = EVTTOOLTIP_ZE_2026
+			}
+		}
+		event_target:language_teacher = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 5
+			}
+			hidden_tooltip = {
+				character_event = { id = ZE.2027 }
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2027
+	desc = EVTDESC_ZE_2027
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2027
+		if = {
+			limit = {
+				NOT = { trait = wroth }
+				NOT = { trait = patient }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 35
+				add_trait = wroth
+				hidden_tooltip = {
+					character_event = { id = 38254 } # Notify wroth
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2027
+		if = {
+			limit = {
+				NOT = { trait = wroth }
+				NOT = { trait = patient }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 10
+				add_trait = patient
+				hidden_tooltip = {
+					character_event = { id = 38264 } # Notify patient
+				}
+			}
+		}		
+	}
+}
+
+character_event = {
+	id = ZE.2028
+	desc = EVTDESC_ZE_2028
+	picture = GFX_evt_council_speaker 
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2028
+	}
+}
+
+character_event = {
+	id = ZE.2029
+	desc = EVTDESC_ZE_2029
+	picture = GFX_evt_council_speaker 
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EXCELLENT
+		add_favor = FROM
+	}
+}
+
+# Abuse of office
+character_event = {
+	id = ZE.2030
+	desc = EVTDESC_ZE_2030
+	picture = GFX_evt_bad_news_female
+	border = GFX_event_normal_frame_diplomacy 
+	
+	is_triggered_only = yes
+	
+	min_age = 16
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		NOT = { is_inaccessible_trigger = yes }
+		
+		job_chancellor = {
+			NOT = { opinion = { who = liege value = -74 } }
+			NOR = { 
+				trait = honest 
+				trait = honorable
+			}
+			NOT = { intrigue = 10 }
+			ai = yes
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+  
+		modifier = {
+			factor = 2
+			job_chancellor = { trait = deceitful }
+		}
+		modifier = {
+			factor = 2
+			job_chancellor = { trait = arbitrary }
+		}
+		modifier = {
+			factor = 0.5
+			job_chancellor = { trait = craven }
+		}
+		modifier = {
+			factor = 0.5
+			job_chancellor = { trait = slothful }
+		}
+	}
+	
+	immediate = {
+		job_chancellor = {
+			wealth = 100
+			set_character_flag = chancellor_abuse_of_office
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2030 # Depose + get imprison reason
+		job_chancellor = {
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			remove_title = job_chancellor
+			prestige = -50
+			piety = -50
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_2030 # Turn a blind eye for now but get imprison reason
+		capital_scope = {
+			add_province_modifier = {
+				modifier = excessive_bureaucracy
+				months = 60
+			}
+		}
+		job_chancellor = {
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			opinion = {
+				who = ROOT
+				years = 3
+				modifier = opinion_turned_a_blind_eye
+			}
+		}
+	}
+}
+
+###########################################
+#                                         #
+# Zeus | Spymaster flavor events		  #
+# ID ZE.2050-2099	                      #
+#                                         #
+###########################################
+
+# Written by Joel Hansson
+
+
+
+# Stealing from realm coffers
+character_event = {
+	id = ZE.2060
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes
+		NOR = {
+			has_character_flag = had_royal_coffers_robbed
+			is_inaccessible_trigger = yes
+			trait = blinded
+		}
+		prisoner = no
+		any_courtier = {
+			is_councillor = yes
+			liege = { character = ROOT }
+			NOR = { 
+				trait = incapable
+				is_inaccessible_trigger = yes
+				has_character_flag = caught_stealing_from_coffers
+			}
+			prisoner = no
+			OR = {
+				trait = arbitrary
+				AND = {
+					trait = greedy
+					NOT = { trait = just }
+				}
+			}
+			NOT = { trait = honorable }
+			NOT = { trait = honest }
+			NOT = {
+				opinion = {
+					who = ROOT
+					value = 35
+				}
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	immediate = {
+		save_event_target_as = councillor_liege
+		random_courtier = {
+			limit = {
+				is_councillor = yes
+				liege = { character = ROOT }
+				NOR = { 
+					trait = incapable
+					is_inaccessible_trigger = yes
+					has_character_flag = caught_stealing_from_coffers
+				}
+				prisoner = no
+				OR = {
+					trait = arbitrary
+					trait = lunatic
+					AND = {
+						trait = greedy
+						NOT = { trait = just }
+					}
+				}
+				NOT = { trait = honorable }
+				NOT = { trait = honest }
+				NOT = { trait = charitable }
+				NOT = {
+					opinion = {
+						who = ROOT
+						value = 35
+					}
+				}
+			}
+			character_event = { id = ZE.2061 }			
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2061
+	desc = {
+		text = EVTDESC_ZE_2061A
+		trigger = {
+			liege = { NOT = { has_character_flag = had_royal_coffers_robbed } }
+		}
+	}
+	desc = {
+		text = EVTDESC_ZE_2061B
+		trigger = {
+			liege = { has_character_flag = had_royal_coffers_robbed }
+		}
+	}
+	picture = GFX_evt_eavesdropping
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_job_title = yes
+		liege = {
+			character = event_target:councillor_liege
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2061
+		ai_chance = { 
+			factor = 100 
+			modifier = {
+				factor = 0
+				NOT = { intrigue = 8 }
+				NOR = {
+					trait = greedy
+					trait = deceitful
+					trait = lunatic
+					trait = envious
+					trait = selfish
+				}
+			}
+		}
+		liege = {
+			set_character_flag = had_royal_coffers_robbed
+			tooltip = {
+				transfer_scaled_wealth = {
+					value = 0.2
+					min = 10
+					max = 100
+					to = ROOT
+				}
+			}
+			hidden_tooltip = {
+				random_list = {
+					60 = { # No trace
+						modifier = {
+							factor = 0.66
+							ROOT = { NOT = { intrigue = 8 } }
+						}
+						modifier = {
+							factor = 2
+							ROOT = { intrigue = 14 }
+						}
+						character_event = { id = ZE.2062 }
+						ROOT = {
+							repeat_event = { id = ZE.2061 days = 200 random = 50 }
+						}
+					}
+					40 = { # Caught red-handed
+						modifier = {
+							factor = 1.6
+							ROOT = { NOT = { intrigue = 8 } }
+						}
+						modifier = {
+							factor = 0.8
+							ROOT = { intrigue = 14 }
+						}
+						modifier = {
+							factor = 1.5
+							trait = paranoid
+						}
+						character_event = { id = ZE.2063 }
+						clr_character_flag = had_royal_coffers_robbed
+					}
+					40 = { # Steward tracks down the money trace
+						modifier = {
+							factor = 0
+							job_treasurer = {
+								OR = {
+									ai = no
+									NOR = { 
+										trait = diligent 
+										intrigue = 14
+									}
+									character = ROOT
+								}
+							}
+						}
+						modifier = {
+							factor = 0.66
+							job_treasurer = { NOT = { intrigue = 8 } }
+						}
+						modifier = {
+							factor = 2
+							job_treasurer = { intrigue = 14 }
+						}
+						character_event = { id = ZE.2062 }
+						character_event = { id = ZE.2064 days = 30 }
+						clr_character_flag = had_royal_coffers_robbed
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2061
+		ai_chance = { 
+			factor = 100 
+			modifier = {
+				factor = 0.25
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.25
+				trait = deceitful
+			}
+			modifier = {
+				factor = 0.5
+				trait = selfish
+			}
+			modifier = {
+				factor = 0.5
+				trait = envious
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.75
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2.0
+				trait = kind
+			}
+			modifier = {
+				factor = 3.0
+				trait = just
+			}
+		}
+	}
+}
+
+character_event = { #events also called from plot_event.305 (bought councillor mission)
+	id = ZE.2062
+	desc = {
+		text = EVTDESC_ZE_2062A
+		trigger = {
+			liege = { NOT = { has_character_flag = had_royal_coffers_robbed } }
+		}
+	}
+	desc = {
+		text = EVTDESC_ZE_2062B
+		trigger = {
+			liege = { has_character_flag = had_royal_coffers_robbed }
+		}
+	}
+	picture = GFX_evt_stressed_ruler
+	border = GFX_event_normal_frame_intrigue 
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2062
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { 
+				NOT = { trait = stressed } 
+				NOT = { trait = depressed } 
+			}
+			random = {
+				chance = 25
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2062
+		trigger = { NOT = { trait = trusting } }
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 10
+				trait = paranoid
+			}
+		}	
+		if = {
+			limit = { 
+				NOT = { trait = paranoid } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = paranoid
+				hidden_tooltip = { character_event = { id = 38275 } }
+			}
+		}
+	}
+	
+	after = {
+		tooltip = {
+			scaled_wealth = {
+				value = -0.2
+				min = -10
+				max = -100
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { has_character_flag = bought_councillor_embezzle }
+				transfer_scaled_wealth = {
+					value = 0.1
+					to = FROM
+					min = 5
+					max = 50
+				}
+				transfer_scaled_wealth = {
+					value = 0.1
+					to = FROMFROMFROM
+					min = 5
+					max = 50
+				}
+				clr_character_flag = bought_councillor_embezzle
+			}	
+			else = {
+				transfer_scaled_wealth = {
+					value = 0.2
+					to = FROM
+					min = 10
+					max = 100
+				}
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2063
+	desc = {
+		text = EVTDESC_ZE_2063A
+		trigger = {
+			NOT = { trait = paranoid }
+		}
+	}
+	desc = {
+		text = EVTDESC_ZE_2063B
+		trigger = {
+			trait = paranoid
+		}
+	}
+	picture = GFX_evt_bribe_accepted
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	option = {
+		trigger = {
+			NOT = {
+				holds_favor_on = FROM
+			}
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = deceitful
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = selfish
+			}
+		}
+		name = EVTOPTA_ZE_2063
+		add_favor = FROM
+		hidden_tooltip = {
+			FROM = {
+				set_character_flag = favor_given
+				set_character_flag = caught_stealing_from_coffers
+				character_event = { id = ZE.2065 }
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2063
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+		}
+		FROM = {
+			reverse_opinion = {
+				modifier = abuse_of_office
+				who = ROOT
+				years = 3
+			}
+		}
+		random_list = {
+			50 = { 
+				modifier = {
+					factor = 1.33
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 1.2
+					realm_intrigue = 37
+				}
+				FROM = {  #successfully imprisoned
+					imprison = ROOT
+					tooltip = {
+						opinion = {
+							who = ROOT
+							modifier = opinion_imprisoned
+							months = 60
+						}
+					}
+					hidden_tooltip = { character_event = { id = 151 } }					
+				} 
+			} 
+			50 = { 
+				modifier = {
+					factor = 0.5
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 0.4
+					realm_intrigue = 37
+				}
+				hidden_tooltip = {
+					FROM = { #avoided prison
+						if = { #Flee
+							limit = { is_ruler = no }
+							banish = yes
+							character_event = { id = 152 } 								
+						}
+						if = { #Rebel?
+							limit = { is_ruler = yes }
+							character_event = { id = 150 } 
+						}							
+					} 
+				}	
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTA_ZE_2064
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = kind
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				reverse_opinion = {
+					modifier = abuse_of_office
+					who = ROOT
+					years = 3
+				}
+				set_character_flag = caught_stealing_from_coffers
+				character_event = { id = ZE.2065 }
+			}
+		}
+		
+	}
+}
+
+character_event = {
+	id = ZE.2064
+	desc = EVTDESC_ZE_2064
+	picture = GFX_evt_accused
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			has_job_title = yes
+			liege = {
+				character = event_target:councillor_liege
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2064
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = kind
+			}
+		}
+		FROM = {
+			reverse_opinion = {
+				modifier = abuse_of_office
+				who = ROOT
+				years = 3
+			}
+			character_event = { id = ZE.2066 }
+			set_character_flag = caught_stealing_from_coffers
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2064
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+		}
+		FROM = {
+			reverse_opinion = {
+				modifier = abuse_of_office
+				who = ROOT
+				years = 3
+			}
+		}
+		random_list = {
+			50 = { 
+				modifier = {
+					factor = 1.33
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 1.2
+					realm_intrigue = 37
+				}
+				FROM = {  #successfully imprisoned
+					imprison = ROOT
+					tooltip = {
+						opinion = {
+							who = ROOT
+							modifier = opinion_imprisoned
+							months = 60
+						}
+					}
+					hidden_tooltip = { character_event = { id = 151 } }					
+				} 
+			} 
+			50 = { 
+				modifier = {
+					factor = 0.5
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 0.4
+					realm_intrigue = 37
+				}
+				hidden_tooltip = {
+					FROM = { #avoided prison
+						if = { #Flee
+							limit = { is_ruler = no }
+							banish = yes
+							character_event = { id = 152 } 								
+						}
+						if = { #Rebel?
+							limit = { is_ruler = yes }
+							character_event = { id = 150 } 
+						}							
+					} 
+				}	
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2065
+	desc = EVTDESC_ZE_2065
+	picture = GFX_evt_powerful_ruler
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2065
+		trigger = {
+			NOT = { has_character_flag = favor_given }
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2065
+		trigger = {
+			has_character_flag = favor_given
+		}
+		clr_character_flag = favor_given
+		tooltip = {
+			reverse_add_favor = FROM
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2066
+	desc = EVTDESC_ZE_2066
+	picture = GFX_evt_powerful_ruler
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2066
+	}
+}
+
+# Using spy network to blackmail people
+character_event = {
+	id = ZE.2070
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	has_dlc = "Zeus"
+	prisoner = no
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes
+		NOT = {
+			is_inaccessible_trigger = yes
+		}
+		job_spymaster = {
+			NOR = {
+				trait = honest
+				is_inaccessible_trigger = yes
+				opinion = { who = liege value = -74 }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 2
+			job_spymaster = { trait = deceitful }
+		}
+		modifier = {
+			factor = 2
+			job_spymaster = { trait = arbitrary }
+		}
+		modifier = {
+			factor = 0.5
+			job_spymaster = { trait = craven }
+		}
+		modifier = {
+			factor = 0.5
+			job_spymaster = { trait = slothful }
+		}
+	}
+	
+	immediate = {
+		random_list = {
+			40 = {
+				modifier = {
+					NOT = {
+						any_courtier = {
+							ai = yes
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { is_inaccessible_trigger = yes }
+							NOT = {
+								ROOT = {
+									job_spymaster = {
+										character = PREVPREV
+									}
+								}
+							}
+						}
+					}
+					factor = 0
+				}
+				random_courtier = {
+					limit = {
+						ai = yes
+						prisoner = no
+						NOT = { trait = incapable }
+						NOT = { is_inaccessible_trigger = yes }
+						NOT = {
+							ROOT = {
+								job_spymaster = {
+									character = PREVPREV
+								}
+							}
+						}
+					}
+					save_event_target_as = blackmailed_target
+				}
+			}
+			60 = {
+				modifier = {
+					NOT = {
+						any_vassal = {
+							ai = yes
+							prisoner = no
+							NOT = { trait = incapable }
+							NOT = { is_inaccessible_trigger = yes }
+							NOT = {
+								ROOT = {
+									job_spymaster = {
+										character = PREVPREV
+									}
+								}
+							}
+						}
+					}
+					factor = 0
+				}
+				random_vassal = {
+					limit = {
+						ai = yes
+						prisoner = no
+						NOT = { trait = incapable }
+						NOT = { is_inaccessible_trigger = yes }
+						NOT = {
+							ROOT = {
+								job_spymaster = {
+									character = PREVPREV
+								}
+							}
+						}
+					}
+					save_event_target_as = blackmailed_target
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					event_target:blackmailed_target = { always = yes }
+				}
+			}
+			break = yes # failed to find a target to blackmail
+		}
+		character_event = { id = ZE.2071 }
+	}
+}
+
+character_event = {
+	id = ZE.2071
+	desc = EVTDESC_ZE_2071
+	picture = GFX_evt_throne_room
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		event_target:blackmailed_target = {
+			if = {
+				limit = {
+					is_ruler = yes
+				}
+				wealth = -100
+				ROOT = {
+					job_spymaster = {
+						wealth = 100
+					}
+				}
+			}
+			if = {
+				limit = {
+					is_ruler = no
+				}
+				wealth = -50
+				ROOT = {
+					job_spymaster = {
+						wealth = 50
+					}
+				}
+			}
+			ROOT = {
+				job_spymaster = {
+					reverse_opinion = {
+						who = PREVPREV
+						modifier = opinion_blackmailed
+						years = 15
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2071
+		event_target:blackmailed_target = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_pleased
+				years = 3
+			}
+		}
+		job_spymaster = {
+			reverse_opinion = {
+				who = ROOT
+				modifier = abuse_of_office
+				years = 3
+			}
+			remove_title = job_spymaster
+			prestige = -50
+			piety = -50
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2071
+		event_target:blackmailed_target = {	
+			opinion = {
+				who = ROOT
+				modifier = opinion_corrupt
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTC_ZE_2071
+		trigger = {
+			intrigue = 12
+		}
+		tooltip_info = intrigue
+		event_target:blackmailed_target = {
+			wealth = -25
+			opinion = {
+				who = ROOT
+				modifier = opinion_blackmailed
+				years = 15
+			}
+		}
+		wealth = 25
+	}
+}
+
+# Precautionary safety measures
+character_event = {
+	id = ZE.2075
+	desc = EVTDESC_ZE_2075
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	has_dlc = "Zeus"
+	prisoner = no
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes
+		NOR = { 
+			has_character_flag = had_spymaster_safety_help
+			is_inaccessible_trigger = yes
+			trait = blinded
+		}
+		job_spymaster = {
+			NOT = { is_inaccessible_trigger = yes }
+			OR = {
+				trait = diligent
+				trait = lunatic
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 3
+			any_known_plotter = {
+				target = ROOT
+			}
+		}
+	}
+	
+	immediate = {
+		set_character_flag = had_spymaster_safety_help
+		job_spymaster = {
+			save_event_target_as = safety_measure_spymaster
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2075
+		scaled_wealth = { value = -0.15 min = -10 max = -100 }
+		custom_tooltip = {
+			text = EVTTOOLTIP_ZE_2075
+			hidden_tooltip = {
+				random_list = {
+					10 = {
+						character_event = { id = ZE.2076 days = 100 random = 60 }
+					}
+					10 = {
+						character_event = { id = ZE.2077 days = 100 random = 60 }
+					}
+					80 = {
+						modifier = {
+							factor = 0
+							event_target:safety_measure_spymaster = {
+								NOT = { trait = lunatic }
+							}
+						}
+						character_event = { id = ZE.2078 days = 100 random = 60 }
+					}
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2075
+		job_spymaster = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 3
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2076
+	desc = {
+		text = EVTDESCA_ZE_2076
+		trigger = {
+			NOT = { has_character_flag = safety_measure_failure }
+		}
+	}
+	desc = {
+		text = EVTDESCB_ZE_2076
+		trigger = {
+			has_character_flag = safety_measure_failure
+		}
+	}
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	immediate = {
+		random_list = {
+			30 = {
+				modifier = {
+					factor = 7
+					event_target:safety_measure_spymaster = {
+						NOR = {
+							intrigue = 10
+							trait = diligent
+						}
+					}
+				}
+				set_character_flag = safety_measure_failure
+			}
+			70 = {
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2076
+		trigger = {
+			NOT = { has_character_flag = safety_measure_failure }
+		}
+		add_character_modifier = {
+			modifier = prepared_home
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2076
+		trigger = {
+			has_character_flag = safety_measure_failure
+		}
+		if = {
+			limit = {
+				NOR = { 
+					is_maimed_trigger = yes
+					trait = wounded
+				}
+			}
+			random = {
+				chance = 40
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = {
+					character_event = { id = 38280 } # notify wounded
+				}
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2077
+	desc = {
+		text = EVTDESCA_ZE_2077
+		trigger = {
+			NOT = { has_character_flag = safety_measure_failure }
+		}
+	}
+	desc = {
+		text = EVTDESCB_ZE_2077
+		trigger = {
+			has_character_flag = safety_measure_failure
+		}
+	}
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	immediate = {
+		random_list = {
+			30 = {
+				modifier = {
+					factor = 7
+					event_target:safety_measure_spymaster = {
+						NOR = {
+							intrigue = 10
+							trait = diligent
+						}
+					}
+				}
+				set_character_flag = safety_measure_failure
+			}
+			70 = {
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2077
+		trigger = {
+			NOT = { has_character_flag = safety_measure_failure }
+		}
+		add_character_modifier = {
+			modifier = guard_dogs
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2077
+		trigger = {
+			has_character_flag = safety_measure_failure
+			NOT = {
+				any_sibling = {
+					is_female = yes
+					at_location = ROOT
+					ai = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					trait = wounded
+					is_maimed_trigger = yes
+				}
+			}
+			random = {
+				chance = 15
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = {
+					character_event = { id = 38280 } # notify wounded
+				}
+			}
+		}
+		event_target:safety_measure_spymaster = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 3
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTC_ZE_2077
+		trigger = {
+			has_character_flag = safety_measure_failure
+			any_sibling = {
+				is_female = yes
+				at_location = ROOT
+				ai = yes
+			}
+		}
+		random_sibling = {
+			limit = {
+				is_female = yes
+				at_location = ROOT
+				ai = yes
+			}
+			if = {
+				limit = {
+					NOR = {
+						trait = wounded
+						is_maimed_trigger = yes
+					}
+				}
+				random = {
+					chance = 15
+					add_trait_silently_wounded_effect = yes
+				}
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2078
+	desc = EVTDESC_ZE_2078
+	picture = GFX_evt_lunatic
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2078
+		add_character_modifier = {
+			modifier = bad_breath
+			days = 365
+		}
+		hidden_tooltip = {
+			character_event = { 
+				id = ZE.2080
+				days = 100
+				random = 50
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2080
+	desc = EVTDESC_ZE_2080
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2080
+		if = {
+			limit = {
+				NOT = { trait = impaler }
+			}
+			add_character_modifier = {
+				modifier = suspected_impaler
+				years = 3
+			}
+		}
+		hidden_tooltip = {
+			character_event = { 
+				id = ZE.2081
+				days = 100
+				random = 50
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2080
+		event_target:safety_measure_spymaster = {
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 5
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2081
+	desc = EVTDESC_ZE_2081
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_2081
+		trigger = {
+			NOT = { trait = zealous }
+		}
+		scaled_wealth = { value = -0.05 min = -5 max = -75 }
+		hidden_tooltip = {
+			character_event = {
+				id = ZE.2082
+				days = 100
+				random = 50
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2081
+		trigger = {
+			trait = zealous
+		}
+		scaled_wealth = { value = -0.05 min = -5 max = -75 }
+		piety = 30
+		hidden_tooltip = {
+			character_event = {
+				id = ZE.2082
+				days = 100
+				random = 50
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTC_ZE_2081
+		scaled_wealth = { value = -0.05 min = -5 max = -75 }
+		event_target:safety_measure_spymaster = {
+			reverse_opinion = {
+				who = ROOT
+				modifier = opinion_disappointed
+				years = 5
+			}
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2082
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		job_spymaster = {
+			character = event_target:safety_measure_spymaster
+		}
+	}
+	
+	immediate = {
+		job_spiritual = {
+			if = {
+				limit = {
+					prisoner = no
+					is_adult = yes
+					NOR = {
+						trait = incapable
+						is_inaccessible_trigger = yes
+					}
+				}
+				save_event_target_as = spiritual
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					event_target:spiritual = {
+						always = yes
+					}
+				}
+			}
+			random_vassal = {
+				limit = {
+					is_theocracy = yes
+					prisoner = no
+					is_adult = yes
+					NOR = { 
+						is_inaccessible_trigger = yes
+						trait = incapable
+					}
+				}
+				save_event_target_as = spiritual
+			}
+			if = {
+				limit = {
+					NOT = {
+						event_target:spiritual = {
+							always = yes
+						}
+					}
+				}
+				break = yes # no matching character found for interaction
+			}
+		}
+		character_event = {
+			id = ZE.2083
+		}
+	}
+}
+
+character_event = {
+	id = ZE.2083
+	desc = EVTDESC_ZE_2083
+	picture = GFX_evt_quarrel
+	border = GFX_event_normal_frame_intrigue 
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_ZE_2083
+		event_target:spiritual = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 3
+			}
+		}
+		event_target:safety_measure_spymaster = {
+			remove_title = job_spymaster
+			prestige = -50
+			piety = -50
+			imprison = ROOT
+		}
+	}
+	
+	option = {
+		name = EVTOPTB_ZE_2083
+		event_target:spiritual = {
+			opinion = {
+				modifier = opinion_disapprove
+				who = ROOT
+				years = 5
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTC_ZE_2083
+		trigger = {
+			OR = {
+				diplomacy = 12
+				AND = {
+					diplomacy = 9
+					event_target:spiritual = {
+						trait = arbitrary
+					}
+				}
+			}
+		}
+		transfer_scaled_wealth = {
+			value = 0.2
+			to = event_target:spiritual
+			min = 10
+			max = 100
+		}
+		add_character_modifier = {
+			modifier = sanctuary
+			years = 10
+		}
+		prestige = -30
+	}
+}
+
+#Written by Markus Olsén
+#ZE.3000 - ZE.3001 Steward borrows money
+#ZE.3002 - ZE.3003 Steward collects money but wants land
+#ZE.3004 - ZE.3010 Steward builds statue for liege
+#ZE.3011 - ZE.3014 Steward wants to educate liege in stewardship
+
+
+
+
+#Steward has high stewardship, makes extra money
+character_event = {
+	id = ZE.3002
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3000
+
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	has_dlc = "Zeus"
+	
+	trigger = {		
+		NOR = { 
+			has_character_flag = ZE.3002_flag
+			is_inaccessible_trigger = yes
+		}
+		job_treasurer = {
+			trait = ambitious
+			stewardship = 18
+		}
+	}
+
+	immediate = {
+		set_character_flag = ZE.3002_flag
+		#job_treasurer = { save_event_target_as = target_treasurer }
+	}
+
+	option = {
+		name = EVTOPTA_ZE_3000
+		if = {
+			limit = { higher_tier_than = DUKE }
+			wealth = 300	
+		}	
+		if = {
+			limit = { tier = DUKE }
+			wealth = 150	
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			wealth = 75	
+		}
+		job_treasurer = { 
+			reverse_opinion = {
+				modifier = opinion_service_rendered
+				who = ROOT
+				years = 3
+			}
+			hidden_tooltip = { change_variable = { which = "services_rendered" value = 2 } }
+		}
+		# hidden_tooltip = {
+			# character_event = { id = ZE.3003 days = 14 }
+		# }
+	}
+}
+
+# #Steward is ambitious and wants land for work done
+# character_event = {
+	# id = ZE.3003
+	# picture = GFX_evt_relaxed_ruler
+	# border = GFX_event_normal_frame_economy
+	# desc = EVTDESC_ZE_3003
+
+	# is_triggered_only = yes
+
+	# trigger = {
+		# any_demesne_title = { 
+			# tier = COUNT
+			# can_be_given_away = yes
+			# num_of_settlements = 1
+		# }
+		# event_target:target_treasurer = { can_press_claims_trigger = yes }
+	# }
+
+	# immediate = { 
+		# random_demesne_title = { 
+			# limit = { 
+				# tier = COUNT
+				# can_be_given_away = yes 
+				# num_of_settlements = 1
+			# }
+			# save_event_target_as = requested_province 
+		# }
+	# }
+
+	# #approve request, granting province title
+	# option = {
+		# name = EVTOPTA_ZE_3003
+		# if = { limit = { trait = arbitrary } remove_trait = arbitrary }
+		# if = { limit = { NOT = { trait = just } } add_trait = just }
+		# wealth = 200
+		# event_target:target_treasurer = {
+			# grant_title = event_target:requested_province
+		# }
+	# }
+
+	# #deny request but owe favor to steward
+	# option = {
+		# trigger = {
+			# NOT = {
+				# owes_favor_to = event_target:target_treasurer
+			# }
+		# }
+		# name = EVTOPTB_ZE_3003
+		# reverse_add_favor = event_target:target_treasurer
+	# }
+
+	# #deny request
+	# option = {
+		# name = EVTOPTC_ZE_3003
+		# if = { limit = { trait = charitable } remove_trait = charitable }
+		# if = { limit = { NOT = { trait = greedy } } add_trait = greedy }
+		# event_target:target_treasurer = {
+			# add_rival = ROOT
+		# }
+	# }
+# }
+
+#Steward wants to build a statue in the capital
+#Depending on traits, statue outcome will change
+character_event = {
+	id = ZE.3004
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3004
+
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	has_dlc = "Zeus"
+	
+	trigger = {
+		scaled_wealth = 2
+		NOR = { 
+			has_character_flag = ZE.3004_flag
+			trait = blinded
+			is_inaccessible_trigger = yes
+		}
+	}
+
+	immediate = {
+		job_treasurer = { save_event_target_as = target_treasurer }
+		set_character_flag = ZE.3004_flag
+	}
+
+	#approve request, pay the gold and wait
+	option = {
+		name = EVTOPTA_ZE_3004
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = charitable
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+		}
+		scaled_wealth = { value = -1 min = -25 max = -150 }
+		event_target:target_treasurer = {
+			opinion = {
+				modifier = opinion_grateful
+				who = ROOT
+				years = 1
+			}
+			hidden_tooltip = {
+				if = { #lunatic = a giant ear 
+					limit = { event_target:target_treasurer = { trait = lunatic } }
+					ROOT = { character_event = { id = ZE.3006 days = 365 } }
+					break = yes
+				}
+				if = { #possessed = demon on a throne
+					limit = { event_target:target_treasurer = { trait = possessed } }
+					ROOT = { character_event = { id = ZE.3009 days = 365 } }
+					break = yes
+				}
+				if = { #zealous = head of religion +piety
+					limit = { 
+						event_target:target_treasurer = { trait = zealous }
+						religion_head = { always = yes }
+						NOT = { religion_head = { character = ROOT } }
+					}
+					religion_head = { save_event_target_as = religious_head }
+					ROOT = { character_event = { id = ZE.3005 days = 365 } }
+					break = yes
+				}
+				if = { #proud = him/her self +nothing happens
+					limit = { event_target:target_treasurer = { trait = proud } }
+					ROOT = { character_event = { id = ZE.3007 days = 365 } }
+					break = yes
+				}
+				if = { #lustful = something vulgar -piety
+					limit = { event_target:target_treasurer = { trait = lustful } }
+					ROOT = { character_event = { id = ZE.3008 days = 365 } }
+					break = yes
+				}
+				ROOT = { character_event = { id = ZE.3010 days = 365 } }
+			}
+		}
+	}
+
+
+	#deny request
+	option = {
+		name = EVTOPTB_ZE_3004
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 4
+				trait = temperate
+			}
+		}
+		event_target:target_treasurer = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+#statue completed and revealed, zealous type
+character_event = {
+	id = ZE.3005
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3005
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Statue revealed
+	option = {
+		name = EVTOPTA_ZE_3005
+		piety = 100
+	}
+}
+
+#statue completed and revealed, lunatic type
+character_event = {
+	id = ZE.3006
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3006
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Statue revealed
+	option = {
+		trigger = {
+			NOT = {
+				trait = lunatic
+			}
+		}
+		name = EVTOPTA_ZE_3006
+		prestige = 100
+	}
+
+	option = {
+		trigger = {
+			trait = lunatic
+		}
+		name = EVTOPTB_ZE_3006
+		tooltip_info = lunatic	
+		if = { 
+			limit = { 
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			} 
+			add_trait = brave 
+		}
+		if = { 
+			limit = { trait = craven } 
+			remove_trait = craven 
+		}
+		prestige = 200
+	}
+}
+
+#statue completed and revealed, proud type
+character_event = {
+	id = ZE.3007
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3007
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#be disappointed
+	option = {
+		name = EVTOPTA_ZE_3007
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+		}
+		opinion = {
+			modifier = opinion_very_disappointed
+			who = event_target:target_treasurer
+			years = 5
+		}
+		event_target:target_treasurer = { prestige = 200 }
+	}
+
+	#become rival, tear statue down
+	option = {
+		name = EVTOPTB_ZE_3007
+		trigger = { NOT = { is_friend = event_target:target_treasurer } }
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+		}
+		ROOT = { add_rival = event_target:target_treasurer }
+	}
+}
+
+#statue completed and revealed, lustful type
+character_event = {
+	id = ZE.3008
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3008
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Accept statue
+	option = {
+		name = EVTOPTA_ZE_3008
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = lustful
+			}
+			modifier = {
+				factor = 4
+				trait = gregarious
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+		}
+		piety = -100
+	}
+
+	#Tear it down
+	option = {
+		name = EVTOPTB_ZE_3008
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 4
+				trait = chaste
+			}
+			modifier = {
+				factor = 4
+				trait = zealous
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+		}
+		opinion = {
+			modifier = opinion_very_disappointed
+			who = event_target:target_treasurer
+			years = 2
+		}
+	}
+}
+
+#statue completed and revealed, possessed type
+character_event = {
+	id = ZE.3009
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3009
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Statue revealed
+	option = {
+		name = EVTOPTA_ZE_3009
+		piety = -200
+	}
+}
+
+#statue completed and revealed, none of above type
+character_event = {
+	id = ZE.3010
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3010
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Statue revealed
+	option = {
+		name = EVTOPTA_ZE_3010
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+		}
+		prestige = 200
+		opinion = {
+			modifier = opinion_grateful
+			who = event_target:target_treasurer
+			years = 2
+		}
+	}
+
+	#Statue revealed, take it down
+	option = {
+		name = EVTOPTB_ZE_3010
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = content
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+		}
+		event_target:target_treasurer = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+#Steward offers to teach liege some stewardship
+character_event = {
+	id = ZE.3011
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3011
+
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_treasurer = { 
+			stewardship = 15
+			OR = {
+				trait = kind
+				trait = ambitious
+				trait = proud
+			}
+		}
+		ROOT = { 
+			NOR = {
+				trait = imbecile 
+				stewardship = 10 
+				has_character_flag = ZE.3011_flag 
+				is_inaccessible_trigger = yes
+			} 
+		}
+	}
+
+	immediate = {
+		job_treasurer = { save_event_target_as = steward }
+		ROOT = { set_character_flag = ZE.3011_flag }
+	}
+
+	#accept
+	option = {
+		name = EVTOPTA_ZE_3011
+		hidden_tooltip = {
+			character_event = { id = ZE.3012 }
+		}
+	}
+
+	#decline
+	option = {
+		name = EVTOPTB_ZE_3011
+		event_target:steward = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+#Steward takes liege tax collecting
+character_event = {
+	id = ZE.3012
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3012
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#earn respect to earn money
+	option = {
+		name = EVTOPTA_ZE_3012
+		hidden_tooltip = {
+			character_event = { id = ZE.3013 days = 1 }
+		}
+		prestige = 50
+		if = { 
+			limit = { 
+				NOT = { trait = honest } 
+				NOT = { trait = deceitful } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = honest 
+				hidden_tooltip = { character_event = { id = 38262 } }
+			}	
+		}
+		if = { 
+			limit = { trait = deceitful }
+			random = {
+				chance = 33
+				remove_trait = deceitful 
+				#hidden_tooltip = { character_event = { id = 38262 } }
+			}		
+		}		
+	}
+
+	#demand more money
+	option = {
+		name = EVTOPTB_ZE_3012
+		scaled_wealth = { value = 0.2 min = 10 max = 75 }
+		if = { 
+			limit = { 
+				NOT = { trait = greedy } 
+				NOT = { trait = charitable } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = greedy
+				hidden_tooltip = { character_event = { id = 38252 } }
+			}		
+		}
+		if = { 
+			limit = { trait = charitable } 
+			random = {
+				chance = 33
+				remove_trait = charitable 
+				hidden_tooltip = { character_event = { id = trait_notification.11 } }
+			}		
+		}
+		hidden_tooltip = {
+			set_character_flag = ZE.3011_failed_flag
+			character_event = { id = ZE.3013 days = 1 }
+		}
+	}
+}
+
+#Steward takes liege to construction site
+character_event = {
+	id = ZE.3013
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3013
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#Be stern, but fair
+	option = {
+		name = EVTOPTA_ZE_3013
+		if = { 
+			limit = { trait = shy } 
+			random = {
+				chance = 33
+				remove_trait = shy
+				hidden_tooltip = { character_event = { id = 38295 } }
+			}		
+		}
+		hidden_tooltip = {
+			character_event = { id = ZE.3014 days = 1 }
+		}
+	}
+
+	#give builders money
+	option = {
+		name = EVTOPTB_ZE_3013
+		scaled_wealth = { value = -0.2 min = -10 max = -100 }
+		if = { 
+			limit = { 
+				NOT = { trait = trusting } 
+				NOT = { trait = paranoid } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = trusting
+				hidden_tooltip = { character_event = { id = 38250 } }
+			}		
+		}
+		if = { 
+			limit = { trait = paranoid } 
+			random = {
+				chance = 33
+				remove_trait = paranoid
+				hidden_tooltip = { character_event = { id = 38305 } }
+			}		
+		}
+		hidden_tooltip = {
+			set_character_flag = ZE.3011_failed_flag
+			character_event = { id = ZE.3014 days = 1 }
+		}
+	}
+
+	#make sure their reputation is ruined
+	option = {
+		name = EVTOPTC_ZE_3013
+		if = { 
+			limit = { 
+				NOT = { trait = wroth } 
+				NOT = { trait = kind } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = wroth
+				hidden_tooltip = { character_event = { id = 38254 } }
+			}		
+		}
+		if = { 
+			limit = { trait = kind } 
+			random = {
+				chance = 33
+				remove_trait = kind
+				hidden_tooltip = { character_event = { id = 38307 } }
+			}		
+		}
+		event_target:steward = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+		hidden_tooltip = {
+			set_character_flag = ZE.3011_failed_flag
+			character_event = { id = ZE.3014 days = 1 }
+		}
+	}
+}
+
+#Steward gets visit from friend asking about your experiences doing steward work
+character_event = {
+	id = ZE.3014
+	picture = GFX_evt_relaxed_ruler
+	border = GFX_event_normal_frame_economy
+	desc = EVTDESC_ZE_3014
+
+	is_triggered_only = yes
+	only_playable = yes
+
+	#it was interesting
+	#remove any level 1 educations, add thrifty_clerk instead
+	option = {
+		trigger = {
+			NOT = { has_character_flag = ZE.3011_failed_flag }
+		}
+		name = EVTOPTA_ZE_3014
+		if = {
+			limit = { has_bottom_tier_education_trait_trigger = yes }
+			trigger_switch = {
+				on_trigger = trait
+				detached_priest = {
+					remove_trait = detached_priest
+					add_trait = thrifty_clerk
+				}
+				misguided_warrior = {
+					remove_trait = misguided_warrior
+					add_trait = thrifty_clerk
+				}
+				indulgent_wastrel = {
+					remove_trait = indulgent_wastrel
+					add_trait = thrifty_clerk
+				}
+				naive_appeaser = {
+					remove_trait = naive_appeaser
+					add_trait = thrifty_clerk
+				}
+				amateurish_plotter = {
+					remove_trait = amateurish_plotter
+					add_trait = thrifty_clerk
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { trait = arbitrary }
+				random = {
+					chance = 33
+					remove_trait = arbitrary
+					#hidden_tooltip = { character_event = { id = 38307 } }
+				}
+			}
+			if = {
+				limit = { 
+					NOT = { trait = just } 
+					NOT = { trait = arbitrary } 
+					NOT = { personality_traits = 6 } 
+				}
+				add_trait = just
+				break = yes
+			}
+			change_stewardship = 2
+		}
+	}
+
+	#wasnt for me
+	option = {
+		name = EVTOPTB_ZE_3014
+		if = { 
+			limit = { 
+				NOT = { trait = charitable } 
+				NOT = { trait = greedy } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = charitable
+				hidden_tooltip = { character_event = { id = 38273 } }
+			}		
+		}
+		if = { 
+			limit = { trait = greedy } 
+			random = {
+				chance = 33
+				remove_trait = greedy
+				#hidden_tooltip = { character_event = { id = 38307 } }
+			}		
+		}
+		event_target:steward = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+	
+
+	#it was horrible we should take their money by force!
+	option = {
+		name = EVTOPTC_ZE_3014
+		if = { 
+			limit = { 
+				NOT = { trait = slothful } 
+				NOT = { trait = diligent } 
+				NOT = { personality_traits = 6 } 
+			} 
+			random = {
+				chance = 33
+				add_trait = slothful
+				hidden_tooltip = { character_event = { id = 38251 } }
+			}		
+		}
+		if = { 
+			limit = { trait = diligent } 
+			random = {
+				chance = 33
+				remove_trait = diligent
+				#hidden_tooltip = { character_event = { id = 38307 } }
+			}		
+		}
+		event_target:steward = {
+			opinion = {
+				modifier = opinion_very_disappointed
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+###########################################
+#                                         #
+# ZE Marshal Events                       #
+# ID ZE.4000-ZE.4999                      #
+#                                         #
+###########################################
+
+# Written by Tobias Bodlund
+
+
+
+
+### Marshal suggests candidate for commander position (if corrupt, may suggest moderately competent friends instead of the best)
+character_event = {
+	id = ZE.4000
+	desc = EVTDESC_ZE_4000
+	picture = GFX_evt_melee
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	
+	ai = no
+	only_capable = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		is_nomadic = no
+		job_marshal = {
+			ai = yes
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		OR = {
+			NOT = {
+				any_courtier_or_vassal = {
+					count = 2
+					liege = { character = ROOT }
+					has_minor_title = title_commander
+				}
+			}
+			AND = {
+				tier = DUKE
+				NOT = {
+					any_courtier_or_vassal = {
+						count = 4
+						liege = { character = ROOT }
+						has_minor_title = title_commander
+					}
+				}
+			}
+			AND = {
+				tier = KING
+				NOT = {
+					any_courtier_or_vassal = {
+						count = 6
+						liege = { character = ROOT }
+						has_minor_title = title_commander
+					}
+				}
+			}
+			AND = {
+				tier = EMPEROR
+				NOT = {
+					any_courtier_or_vassal = {
+						count = 8
+						liege = { character = ROOT }
+						has_minor_title = title_commander
+					}
+				}
+			}
+		}
+		any_courtier_or_vassal = {
+			ai = yes
+			martial = 9
+			liege = { character = ROOT }
+			NOT = { has_minor_title = title_commander }
+			NOT = { has_job_title = job_marshal }
+			can_hold_title = title_commander
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			job_marshal = {
+				OR = {
+					trait = arbitrary
+					trait = deceitful
+				}
+				any_friend = { ai = yes }
+			}
+		}
+	}
+		
+	immediate = {
+		if = {
+			limit = {
+				job_marshal = {
+					OR = {
+						trait = arbitrary
+						trait = deceitful
+					}
+					any_friend = { ai = yes }
+				}
+				any_courtier_or_vassal = {
+					ai = yes
+					liege = { character = ROOT }
+					ROOT = { job_marshal = { is_friend = PREVPREV } }
+					NOT = { has_minor_title = title_commander }
+					NOT = { has_job_title = job_marshal }
+					can_hold_title = title_commander
+					martial = 9
+				}
+			}
+			job_marshal = { set_character_flag = marshal_interested_commander_suggestion }
+			random_courtier_or_vassal = {
+				limit = {
+					ai = yes
+					liege = { character = ROOT }
+					ROOT = { job_marshal = { is_friend = PREVPREV } }
+					NOT = { has_minor_title = title_commander }
+					NOT = { has_job_title = job_marshal }
+					can_hold_title = title_commander
+					martial = 9
+				}
+				save_event_target_as = recommended_for_marshal_ze_4000
+				break = yes
+			}
+		}
+		if = {
+			limit = {
+				job_marshal = {
+					OR = {
+						trait = arbitrary
+						trait = deceitful
+					}
+				}
+				any_courtier_or_vassal = {
+					ai = yes
+					liege = { character = ROOT }
+					ROOT = { job_marshal = { dynasty = PREVPREV } }
+					NOT = { has_minor_title = title_commander }
+					NOT = { has_job_title = job_marshal }
+					can_hold_title = title_commander
+					martial = 9
+				}
+			}
+			job_marshal = { set_character_flag = marshal_interested_commander_suggestion }
+			random_courtier_or_vassal = {
+				limit = {
+					ai = yes
+					liege = { character = ROOT }
+					ROOT = { job_marshal = { dynasty = PREVPREV } }
+					NOT = { has_minor_title = title_commander }
+					NOT = { has_job_title = job_marshal }
+					can_hold_title = title_commander
+					martial = 9
+				}
+				save_event_target_as = recommended_for_marshal_ze_4000
+				break = yes
+			}
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				ai = yes
+				liege = { character = ROOT }
+				NOT = { has_minor_title = title_commander }
+				NOT = { has_job_title = job_marshal }
+				can_hold_title = title_commander
+				martial = 19
+			}
+			save_event_target_as = recommended_for_marshal_ze_4000
+			break = yes
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				ai = yes
+				liege = { character = ROOT }
+				NOT = { has_minor_title = title_commander }
+				NOT = { has_job_title = job_marshal }
+				can_hold_title = title_commander
+				martial = 15
+			}
+			save_event_target_as = recommended_for_marshal_ze_4000
+			break = yes
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				ai = yes
+				liege = { character = ROOT }
+				NOT = { has_minor_title = title_commander }
+				NOT = { has_job_title = job_marshal }
+				can_hold_title = title_commander
+				martial = 12
+			}
+			save_event_target_as = recommended_for_marshal_ze_4000
+			break = yes
+		}
+		random_courtier_or_vassal = {
+			limit = {
+				ai = yes
+				liege = { character = ROOT }
+				NOT = { has_minor_title = title_commander }
+				NOT = { has_job_title = job_marshal }
+				can_hold_title = title_commander
+				martial = 9
+			}
+			save_event_target_as = recommended_for_marshal_ze_4000
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_4000 # Yes
+		event_target:recommended_for_marshal_ze_4000 = {
+			give_minor_title = title_commander
+		}
+		job_marshal = { clr_character_flag = marshal_interested_commander_suggestion }
+	}
+	option = {
+		name = EVTOPTB_ZE_4000 # No
+		job_marshal = {
+			prestige = -20
+			if = {
+				limit = { has_character_flag = marshal_interested_commander_suggestion }
+				opinion = {
+					who = ROOT
+					modifier = opinion_very_disappointed
+					years = 3
+				}
+				clr_character_flag = marshal_interested_commander_suggestion
+			}
+		}
+	}
+}
+
+### Marshal on mission turns populace against liege
+character_event = {
+	id = ZE.4100
+	desc = EVTDESC_ZE_4100
+	picture = GFX_evt_noble_haughty_talking_to_peasants
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	
+	only_rulers = yes
+	only_capable = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_marshal = {
+			ai = yes
+			NOT = { opinion = { who = ROOT value = -75 } }
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { intrigue = 10 }
+			has_job_action = yes
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			job_marshal = { trait = deceitful }
+		}
+		modifier = {
+			factor = 2
+			job_marshal = { trait = arbitrary }
+		}
+		modifier = {
+			factor = 0.5
+			job_marshal = { trait = craven }
+		}
+		modifier = {
+			factor = 0.5
+			job_marshal = { trait = slothful }
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_4100 # Depose + get imprison reason
+		add_character_modifier = {
+			name = disloyal_peasantry
+			years = 5
+			inherit = yes
+		}
+		job_marshal = {
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+		}
+		job_marshal = {
+			remove_title = job_marshal
+			prestige = -50
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_4100 # Turn a blind eye for now but get imprison reason
+		add_character_modifier = {
+			name = disloyal_peasantry
+			years = 5
+			inherit = yes
+		}
+		job_marshal = {
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			opinion = {
+				who = ROOT
+				years = 3
+				modifier = opinion_turned_a_blind_eye
+			}
+		}
+	}
+}
+
+### Marshal - abuse of office, runs protection racket in province
+character_event = {
+	id = ZE.4120
+	desc = EVTDESC_ZE_4120
+	picture = GFX_evt_steppe_mercenaries
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+
+	only_rulers = yes
+	only_capable = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_marshal = {
+			ai = yes
+			has_job_action = yes
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = just }
+			NOT = { trait = kind }
+			NOT = { is_inaccessible_trigger = yes }
+			NOT = { intrigue = 10 }
+			NOT = { has_character_flag = marshal_abuse_of_office }
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 1.5
+			job_marshal = {
+				trait = deceitful
+			}
+		}
+		modifier = {
+			factor = 2
+			job_marshal = {
+				trait = arbitrary
+			}
+		}
+		modifier = {
+			factor = 2
+			job_marshal = {
+				trait = greedy
+			}
+		}
+		modifier = {
+			factor = 0.5
+			job_marshal = {
+				trait = craven
+			}
+		}
+		modifier = {
+			factor = 0.5
+			job_marshal = {
+				trait = slothful
+			}
+		}
+	}
+	
+	immediate = {
+		job_marshal = {
+			wealth = 100
+			set_character_flag = marshal_abuse_of_office
+			save_event_target_as = custom_marshal_4120
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_4120 # Depose + get imprison reason
+		event_target:custom_marshal_4120 = {
+			location = {
+				add_province_modifier = {
+					name = peasant_unrest
+					years = 3
+				}
+			}
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			remove_title = job_marshal
+			prestige = -50
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_4120 # Turn a blind eye for now but get imprison reason
+		event_target:custom_marshal_4120 = {
+			location = {
+				add_province_modifier = {
+					name = peasant_unrest
+					years = 3
+				}
+			}
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			opinion = {
+				who = ROOT
+				years = 3
+				modifier = opinion_turned_a_blind_eye
+			}
+		}
+	}
+}
+
+###########################################
+#                                         #
+# ZE Lord Spiritual Events                #
+# ID ZE.5000-ZE.5999                      #
+#                                         #
+###########################################
+
+# Written by Tobias Bodlund
+
+
+
+
+# Zealous Lord Spiritual asks to go and proselytize among heathens
+character_event = {
+	id = ZE.5000
+	desc = EVTDESC_ZE_5000
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+
+	is_triggered_only = yes
+	
+	ai = no
+	only_capable = yes
+	prisoner = no
+	religion = rhllor
+	has_dlc = "Zeus"
+	
+	trigger = {	
+		OR = {
+			independent = yes
+			higher_tier_than = DUKE
+		}
+		job_spiritual = {
+			ai = yes
+			trait = zealous
+			NOR = {
+				trait = craven
+				trait = slothful
+				has_character_flag = lord_spiritual_wants_to_proselytize_ze
+				has_job_action = action_inquisition
+				is_inaccessible_trigger = yes
+				has_character_flag = do_not_disturb
+			}
+			prisoner = no
+			religion = ROOT
+		}
+		any_independent_ruler = {
+			NOT = {
+				religion = ROOT
+				has_opinion_modifier = { who = ROOT modifier = opinion_sent_preacher }
+			}
+			NOT_mythical_creature_trigger = yes
+			NOT = { religion = ROOT }
+			# OR = {
+				# NOT = { religion = aztec }
+				# year = 1350
+			# }
+			is_reformed_religion = no
+			controls_religion = no
+			ROOT = {
+				OR = {
+					higher_tier_than = DUKE
+					AND = {
+						independent = yes
+						higher_tier_than = COUNT
+					}
+				}	
+			}
+			is_within_diplo_range = ROOT
+			is_landed = yes
+		}
+	}
+
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			job_spiritual = { trait = brave }
+		}
+		modifier = {
+			factor = 1.5
+			job_spiritual = { trait = diligent }
+		}
+	}
+
+	
+	immediate = {
+		job_spiritual = {
+			set_character_flag = lord_spiritual_wants_to_proselytize_ze
+		}
+		random_independent_ruler = {
+			limit = {
+				NOT = {
+					religion = ROOT
+					has_opinion_modifier = { who = ROOT modifier = opinion_sent_preacher }
+				}
+				NOT_mythical_creature_trigger = yes
+				NOT = { religion = ROOT }
+				# OR = {
+					# NOT = { religion = aztec }
+					# year = 1350
+				# }
+				is_reformed_religion = no
+				controls_religion = no
+				ROOT = {
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							independent = yes
+							higher_tier_than = COUNT
+						}
+					}	
+				}
+				is_within_diplo_range = ROOT
+				is_landed = yes
+			}
+			capital_scope = {
+				save_event_target_as = event_ze_5000_province
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5000 # Go ahead
+		trigger = {
+			NOT = { trait = cynical }
+		}
+		job_spiritual = {
+			set_job_action = {
+				action = action_inquisition
+				where = event_target:event_ze_5000_province
+			}
+		}
+		clear_event_target = event_ze_5000_province
+		clr_character_flag = lord_spiritual_wants_to_proselytize_ze
+	}
+	option = {
+		name = EVTOPTB_ZE_5000 # Go ahead
+		trigger = {
+			trait = cynical
+		}
+		job_spiritual = {
+			set_job_action = {
+				action = action_inquisition
+				where = event_target:event_ze_5000_province
+			}
+		}
+		clear_event_target = event_ze_5000_province
+		clr_character_flag = lord_spiritual_wants_to_proselytize_ze
+	}
+	option = {
+		name = EVTOPTC_ZE_5000 # No
+		job_spiritual = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_very_disappointed
+				years = 3
+			}
+		}
+		clear_event_target = event_ze_5000_province
+		clr_character_flag = lord_spiritual_wants_to_proselytize_ze
+	}
+}
+
+# Zealous Lord Spiritual wants to build temple, willing to donate own money
+letter_event = {
+	id = ZE.5010
+	desc = EVTDESC_ZE_5010
+	border = GFX_event_letter_frame_religion
+	
+	is_triggered_only = yes
+	only_playable = yes
+	only_capable = yes
+	prisoner = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes
+		wealth = 250
+		any_demesne_province = { has_empty_holding = yes }
+		is_unorganised_religion_trigger = no
+		job_spiritual = {
+			ai = yes
+			trait = zealous
+			wealth = 350
+			NOR = {
+				trait = greedy
+				is_inaccessible_trigger = yes
+				has_character_flag = lord_spiritual_build_temple_ze
+			}
+			prisoner = no
+			opinion = { who = ROOT value = 25 }
+			religion = ROOT
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			wealth = 1000
+		}
+	}
+	
+	immediate = {
+		job_spiritual = { set_character_flag = lord_spiritual_build_temple_ze }
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5010 # Let's do it
+		wealth = -250
+		job_spiritual = {
+			wealth = -250
+			piety = 100
+			opinion = {
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}		
+		}
+		random_demesne_province = {
+			limit = { has_empty_holding = yes }
+			build_holding = {
+			   type = temple
+			   holder = ROOT
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_5010 # No
+		piety = -30
+	}
+}
+
+# Lord Spiritual on mission turns disloyal and and writes letters home about virtues of enemy religion, converting courtiers...
+character_event = {
+	id = ZE.5020
+	desc = EVTDESC_ZE_5020
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+
+	is_triggered_only = yes
+	ai = no
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_spiritual = {
+			ai = yes
+			NOT = { opinion = { who = ROOT value = -75 } }
+			has_job_action = action_inquisition
+			NOT = { trait = honest }
+			diplomacy = 10
+			location = { 
+				NOT = { religion_group = ROOT }
+				owner = { NOT_mythical_creature_trigger = yes }
+			}
+			OR = {
+				trait = cynical
+				has_any_sympathy_trait_trigger = yes
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			job_spiritual = { trait = deceitful }
+		}
+		modifier = {
+			factor = 0.5
+			job_spiritual = { trait = craven }
+		}
+	}
+	
+	immediate = {
+		job_spiritual = {
+			set_character_flag = spiritual_reverse_convert_ze_5020
+			save_event_target_as = job_spiritual_5020
+			location = {
+				save_event_target_as = ze_5020_province
+				if = {
+					limit = { religion_group = westerosi_religion }
+					PREV = { add_trait = sympathy_westerosi }
+				}
+				if = {
+					limit = { religion_group = drowned_god_group }
+					PREV = { add_trait = sympathy_drowned_god }
+				}	
+				if = {
+					limit = { religion_group = essos_group }
+					PREV = { add_trait = sympathy_essos_group }
+				}
+				if = {
+					limit = { religion_group = ghiscar_rel }
+					PREV = { add_trait = sympathy_ghiscar_rel }
+				}
+				if = {
+					limit = { religion_group = valyrian_rel_group }
+					PREV = { add_trait = sympathy_valyrian_rel_group }
+				}
+				if = {
+					limit = { religion_group = wildling_religion }
+					PREV = { add_trait = sympathy_wildling_religion }
+				}
+				if = {
+					limit = { religion_group = sarnor_rel }
+					PREV = { add_trait = sympathy_sarnor_rel }
+				}
+				if = {
+					limit = { religion_group = qarth_rel }
+					PREV = { add_trait = sympathy_qarth_rel }
+				}
+				if = {
+					limit = { religion_group = far_east_group }
+					PREV = { add_trait = sympathy_far_east_group }
+				}
+				if = {
+					limit = { religion_group = ibben_rel }
+					PREV = { add_trait = sympathy_ibben_rel }
+				}
+				if = {
+					limit = { religion_group = dothraki_rel_group }
+					PREV = { add_trait = sympathy_dothraki_rel_group }
+				}
+				if = {
+					limit = { religion_group = jogos_rel_group }
+					PREV = { add_trait = sympathy_jogos_rel_group }
+				}
+				if = {
+					limit = { religion_group = lhazar_rel_group }
+					PREV = { add_trait = sympathy_lhazar_rel_group }
+				}
+				if = {
+					limit = { religion_group = summer_rel_group }
+					PREV = { add_trait = sympathy_summer_rel_group }
+				}
+				if = {
+					limit = { religion_group = sothoryos_rel_group }
+					PREV = { add_trait = sympathy_sothoryos_rel_group }
+				}
+				if = {
+					limit = { religion_group = pirate_group }
+					PREV = { add_trait = sympathy_pirate_group }
+				}
+				if = {
+					limit = { religion_group = pagan_group }
+					PREV = { add_trait = sympathy_pagans }
+				}
+			}
+		}
+		random_courtier = {
+			limit = {
+				is_ruler = no
+				is_adult = yes
+				religion = ROOT
+				NOR = {
+					trait = zealous
+					is_primary_heir = ROOT
+					trait = incapable
+					is_inaccessible_trigger = yes
+				}
+				prisoner = no
+			}
+			save_event_target_as = target_courtier
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5020  # Strange, why convert?
+		event_target:target_courtier = {
+			event_target:ze_5020_province = {
+				reverse_religion = PREV
+			}
+		}
+		hidden_tooltip = {
+			random_list = {
+				80 = {
+					character_event = { id = ZE.5022 days = 100 }  # Convert one more...
+				}
+				20 = {
+					character_event = { id = ZE.5027 days = 100 } # Letters discovered!
+					modifier = {
+						factor = 2
+						attribute_diff = {
+							character = event_target:job_spiritual_5020
+							attribute = intrigue
+							value = 4
+						}
+					}
+					modifier = {
+						factor = 2
+						attribute_diff = {
+							character = event_target:job_spiritual_5020
+							attribute = intrigue
+							value = 8
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Lord Spiritual continues converting courtiers...
+character_event = {
+	id = ZE.5022
+	desc = EVTDESC_ZE_5022
+	picture = GFX_evt_bishop
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_spiritual = {
+			has_job_action = action_inquisition
+			has_character_flag = spiritual_reverse_convert_ze_5020
+			location = {
+				province = event_target:ze_5020_province
+			}
+		}
+	}
+	
+	immediate = {
+		random_courtier = {
+			limit = {
+				is_ruler = no
+				is_adult = yes
+				religion = ROOT
+				NOR = {
+					trait = zealous
+					is_primary_heir = ROOT
+					trait = incapable
+					is_inaccessible_trigger = yes
+				}
+				prisoner = no
+			}
+			save_event_target_as = target_courtier
+		}
+		job_spiritual = {
+			save_event_target_as = target_spiritual
+		}
+	}
+
+	option = {
+		name = EVTOPTA_ZE_5022  # Strange, why convert?
+		event_target:target_courtier = {
+			event_target:ze_5020_province = {
+				reverse_religion = PREV
+			}
+		}
+		hidden_tooltip = {
+			random_list = {
+				80 = {
+					character_event = { id = ZE.5022 days = 100 }  # Convert one more...
+				}
+				20 = {
+					character_event = { id = ZE.5027 days = 100 } # Letters discovered!
+					modifier = {
+						factor = 2
+						attribute_diff = {
+							character = event_target:target_spiritual
+							attribute = intrigue
+							value = 4
+						}
+					}
+					modifier = {
+						factor = 2
+						attribute_diff = {
+							character = event_target:target_spiritual
+							attribute = intrigue
+							value = 8
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Lord Spiritual discovered reverse-converting!
+character_event = {
+	id = ZE.5027
+	desc = EVTDESC_ZE_5027
+	picture = GFX_evt_recieve_letter
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	only_playable = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		job_spiritual = {
+			has_character_flag = spiritual_reverse_convert_ze_5020
+		}
+		is_unorganised_religion_trigger = no
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5027  # Accuse him of treason!
+		job_spiritual = {
+			remove_title = job_spiritual
+			add_character_modifier = {
+				name = annoyed_religious
+				years = 5
+			}
+			reverse_opinion = {
+				who = ROOT
+				years = 5
+				modifier = opinion_traitor
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_5027  # Depose but forgive him on condition he stops misbehaving.
+		job_spiritual = {
+			remove_title = job_spiritual
+			add_character_modifier = {
+				name = annoyed_religious
+				years = 5
+			}
+		}
+		add_character_modifier = {
+			name = annoyed_religious
+			years = 5
+		}
+	}
+}
+
+
+
+# Abuse of office - charges money from populace for temple favors
+character_event = {
+	id = ZE.5030
+	desc = EVTDESC_ZE_5030
+	picture = GFX_evt_pope_feast
+	border = GFX_event_normal_frame_religion
+
+	is_triggered_only = yes
+	only_playable = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		is_unorganised_religion_trigger = no
+		job_spiritual = {
+			ai = yes
+			NOR = {
+				trait = zealous
+				trait = honest
+				trait = just
+				has_character_flag = lord_spiritual_abuse_of_office
+				is_inaccessible_trigger = yes
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 1.5
+			trait = deceitful
+		}
+		modifier = {
+			factor = 2
+			trait = arbitrary
+		}
+		modifier = {
+			factor = 2
+			trait = greedy
+		}
+		modifier = {
+			factor = 0.5
+			trait = craven
+		}
+		modifier = {
+			factor = 0.5
+			trait = slothful
+		}
+	}
+	
+	immediate = {
+		job_spiritual = {
+			wealth = 100
+			set_character_flag = lord_spiritual_abuse_of_office
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5030 # Depose + get imprison reason
+		job_spiritual = {
+			prestige = -50
+			piety = -50
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			remove_title = job_spiritual
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_5030 # Turn a blind eye for now but get imprison reason
+		job_spiritual = {
+			reverse_opinion = {
+				who = ROOT
+				years = 3
+				modifier = abuse_of_office
+			}
+			opinion = {
+				who = ROOT
+				years = 3
+				modifier = opinion_turned_a_blind_eye
+			}
+		}
+		add_character_modifier = {
+			name = annoyed_religious
+			years = 5
+		}
+	}
+}
+
+# Craven or Cynical Lord Spiritual complains about dangerous mission to convert heathens
+letter_event = {
+	id = ZE.5040
+	desc = EVTDESC_ZE_5040
+	border = GFX_event_letter_frame_religion
+
+	is_triggered_only = yes
+	only_playable = yes
+	has_dlc = "Zeus"
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes
+		NOT = { religion_group = wildling_religion }
+		job_spiritual = {
+			has_job_action = action_inquisition
+			location = { owner = { religion_group = wildling_religion } }
+			OR = {
+				trait = craven
+				trait = cynical
+			}
+			NOT = { has_character_flag = lord_spiritual_wants_to_go_home_ze_5040 }
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 4
+			job_spiritual = { trait = craven }
+		}
+	}
+
+
+	immediate = {
+		job_spiritual = { set_character_flag = lord_spiritual_wants_to_go_home_ze_5040 }
+	}
+	
+	option = {
+		name = EVTOPTA_ZE_5040  # Allow him to return home
+		trigger = {
+			OR = {
+				trait = kind
+				trait = charitable
+			}
+		}
+		job_spiritual = {
+			cancel_job_action = action_inquisition
+			opinion = {
+				who = ROOT
+				modifier = opinion_grateful
+				years = 5
+			}
+			clr_character_flag = lord_spiritual_wants_to_go_home_ze_5040
+			add_character_modifier = {
+				name = spiritual_refused_pagans
+				duration = -1
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB_ZE_5040  # Allow him to return home
+		trigger = {
+			NOR = {
+				trait = kind
+				trait = charitable
+			}
+		}
+		job_spiritual = {
+			cancel_job_action = action_inquisition
+			opinion = {
+				who = ROOT
+				modifier = opinion_grateful
+				years = 5
+			}
+			clr_character_flag = lord_spiritual_wants_to_go_home_ze_5040
+			add_character_modifier = {
+				name = spiritual_refused_pagans
+				duration = -1
+			}
+		}
+	}
+	option = {
+		name = EVTOPTC_ZE_5040  # Insist that he stays
+		job_spiritual = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_unhappy
+				years = 5
+			}
+		}
+	}
+}
+
+
+
+
+
+

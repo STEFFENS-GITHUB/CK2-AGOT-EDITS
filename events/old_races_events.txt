@@ -1,0 +1,1067 @@
+namespace = old_races
+
+character_event = {  ## Give trait to Giants (just in case any randomly spawn)
+	id = old_races.1
+
+	hide_window = yes
+	culture = giant
+	
+	trigger = {		
+		NOT = { trait = giant }
+	}
+	
+	immediate = {
+		add_trait = giant
+		add_trait = tall
+		add_trait = strong
+	}
+
+	option = {
+		name = "OK"	
+	}
+}
+
+# Giants passing through	
+character_event = {
+	id = old_races.2
+	desc = EVTDESCold_races.2
+	picture = GFX_evt_giants
+	
+	only_playable = yes
+	prisoner = no
+	capable_only = yes
+	min_age = 14
+	culture_group = free_folk	
+	
+	trigger = {
+		
+	}
+
+	mean_time_to_happen = {
+		months = 1820
+	}	
+
+	option = {
+		name = EVTOPTAold_races.2
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		random = {
+			chance = 65
+			create_random_soldier = {
+				random_traits = yes
+				culture = giant
+				religion = beyond_wall_old_gods
+				female = no
+				dynasty = random
+				historical = yes
+			}
+			hidden_tooltip = {
+				new_character = {
+					add_trait = giant
+					add_trait = strong
+					add_trait = tall
+				}
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTBold_races.2
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		random = {
+			chance = 65
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						trait = giant
+						trait = strong
+						trait = tall
+						dynasty = random
+						religion = beyond_wall_old_gods
+						culture = giant
+						female = no
+						age = 30
+						employer = e_rebels
+						historical = yes
+					}
+					new_character = {
+						spawn_unit = {
+							province = PREVPREV
+							scaled_by_biggest_garrison = 1
+							troops = {
+								heavy_infantry = { 10 10 }
+								mammoths = { 1 1 }							
+							}
+							match_min = 100
+							match_max = 1000
+						}
+					}
+				}
+			}	
+		}
+	}	
+
+	option = {
+		name = EVTOPTCold_races.2
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = just }
+				NOT = { trait = arbitrary }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 40		
+				add_trait = just
+				hidden_tooltip = { character_event = { id = 38267 } }
+			}
+		}	
+	}
+}
+
+#Children of the Forest offer to teach Wildling child with greensight
+
+character_event = {
+	id = old_races.3
+	desc = "EVTDESCold_races.3" 	#child has green dreams and the trees have eyes
+	picture = "GFX_evt_cotf"
+	
+	is_triggered_only = yes
+	
+	min_age = 6
+	max_age = 16
+	culture_group = free_folk
+	
+	trigger = {	
+		trait = greensight
+		OR = { 
+			father = { 
+				OR = {
+					tier = duke
+					tier = king
+				}
+			} 
+			mother = { 
+				OR = {
+					tier = duke
+					tier = king
+				}
+			}
+			educator = {
+				OR = {
+					tier = duke
+					tier = king
+				}
+			}
+			tier = duke
+			tier = king
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		#Good
+		modifier = {
+			factor = 2
+			OR = {
+				is_strong_trigger = yes
+				trait = wroth
+				trait = brave
+			}
+		}
+		
+		#Bad
+		modifier = {
+			factor = 0.5
+			OR = {
+				trait = gluttonous
+				trait = slothful
+				trait = craven
+				is_female = yes
+			}
+		}
+	}
+
+	option = {
+		name = "OK"
+		hidden_tooltip = { 
+			if = {
+				limit = { 
+					father = {
+						is_alive = yes
+					}
+				}
+				set_character_flag = old_races.4	
+				father = {
+					character_event = { id = old_races.4 } 
+				} 
+			}	
+			if = {
+				limit = { 
+					NOT = { has_character_flag = old_races.4 }
+					mother = {
+						is_alive = yes
+					}
+				}
+				set_character_flag = old_races.4	
+				mother = {
+					character_event = { id = old_races.4 } 
+				} 
+			}
+			if = {
+				limit = { 
+					NOT = { has_character_flag = old_races.4 }
+				}
+				educator = {
+					character_event = { id = old_races.4 } 
+				} 
+			}	
+			clr_character_flag = old_races.4				
+		}
+	}
+}
+
+#old_races.4 - Guardian - CotF offer to teach green dreaming child.
+character_event = {
+	id = old_races.4
+	desc = "EVTDESCold_races.4" 	#accept help or not
+	picture = "GFX_evt_cotf"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAold_races.4" #Refuse
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = proud
+					trait = cynical
+					trait = zealous
+				}
+			}
+		}
+		prestige = 15
+		if = {
+			limit = { 
+				NOT = { personality_traits = 5 } 
+				NOT = { trait = proud }
+				NOT = { trait = humble }
+			}	
+		}		
+		FROM = { hidden_tooltip = { character_event = { id = old_races.5 } } }
+	}
+	
+	option = {
+		name = "EVTOPTBold_races.4" # I will pay
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 5
+				OR = {
+					trait = mystic
+					trait = ambitious
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = yes }
+			scaled_wealth = { value = -0.2 min = -5 max = -75 }
+		}		
+		create_character = {
+			age = 50
+			dynasty = none
+			trait = greensight
+			trait = mystic
+			trait = elusive_shadow
+			trait = cotf
+			religion = beyond_wall_old_gods
+			culture = children_forest
+			attributes = {intrigue = 12}
+		}
+		
+		new_character = {
+			reverse_opinion = {
+				modifier = opinion_mentor	
+				who = FROM
+				years = 25
+			}
+		}
+		
+		random_list = {
+			70 = {}
+			30 = {
+				FROM =  {
+					add_trait=mystic
+				}
+			}
+		}
+
+		FROM = {
+			hidden_tooltip = {character_event = { id = old_races.6 }} #Notification
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 5
+			}
+		}
+   	}
+}
+
+#old_races.5 - Ward notification - Refused.
+character_event = {
+	id = old_races.5
+	desc = "EVTDESCold_races.5" 	# Guardian refused
+	picture = "GFX_evt_cotf"
+	
+	is_triggered_only = yes
+	
+	option = { name = "OK" }
+}
+
+#old_races.6 - Ward notification - Accepted.
+character_event = {
+	id = old_races.6
+	desc = "EVTDESCold_races.6" # Guardian accepted offer
+	picture = "GFX_evt_cotf"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok" 
+		if = {
+			limit  = { FROM = { is_ruler = no } }
+			scaled_wealth = { value = -0.2 min = -5 max = -75 }
+		}	
+		random_courtier = {
+			limit = {
+				culture = children_forest
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_mentor }
+			}
+			tooltip = { show_portrait = yes }
+		}
+	}
+}
+
+character_event = {  ## Give trait to Children of the Forest (just in case any randomly spawn)
+	id = old_races.7
+	desc = "EVTDESCcotf1"
+	picture = GFX_evt_wildlings
+
+	hide_from = yes
+	culture = children_forest
+	
+	trigger = {		
+		NOT = { trait = cotf }
+	}
+
+	option = {
+		name = "EVTOPTACOTF1"
+		add_trait = cotf
+	}
+}
+
+# ###  Giants cannot interbreed with regular men
+# character_event = {
+	# id = old_races.8 #MERGED WITH BIRTH.990
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "OK"	
+	# }
+# }
+
+####  Ibbenese/Skagosi Unicorn riding
+
+#Ride the Unicorn?
+character_event = {  
+	id = old_races.9
+	desc = EVTDESCold_races.9
+	picture = GFX_evt_unicorn
+
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	only_playable = yes
+	
+	trigger = {
+		location = {
+			OR = {
+				region = world_ibben
+				duchy = { title = d_skagos }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			NOR = {
+				culture = ibbenese
+				culture = skagosi
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTAold_races.9 #I'll ride it
+		trigger = {
+			age = 14
+			NOT = { is_crippled_trigger = yes }
+			NOT = { trait = infirm }
+		}
+		random_list = {
+			30 = { 
+				modifier = {
+					factor = 2
+					trait = trained_warrior
+				}
+				modifier = {
+					factor = 5
+					trait = skilled_warrior
+				}
+				modifier = {
+					factor = 15
+					trait = master_warrior
+				}
+				modifier = {
+					factor = 1.5
+					trait = brave
+				}
+				modifier = {
+					factor = 0.66
+					trait = craven
+				}
+				modifier = {
+					factor = 2
+					is_strong_trigger = yes
+				}
+				modifier = {
+					factor = 0.5
+					is_weak_trigger = yes
+				}
+				modifier = {
+					factor = 2
+					trait = genius
+				}
+				modifier = {
+					factor = 1.5
+					is_smart_trigger = yes
+				}
+				modifier = {
+					factor = 0.66
+					is_dumb_trigger = yes
+				}
+				modifier = {
+					factor = 0.5
+					trait = imbecile
+				}
+				character_event = { id = old_races.10 tooltip = TOOLTIPold_races.10 days = 2 } #success 
+			} 
+			70 = { character_event = { id = old_races.11 tooltip = TOOLTIPold_races.11 days = 2 } } #fail
+		}
+	}
+	option = {
+		name = EVTOPTBold_races.9 #No
+		prestige = -50	
+	}
+}
+#Unicorn is tamed
+character_event = {  
+	id = old_races.10
+	desc = EVTDESCold_races.10
+	picture = GFX_evt_unicorn
+
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAold_races.10
+		prestige = 50
+		add_character_modifier = {
+			name = unicorn_rider
+			duration = 54688
+		}
+	}
+}
+#Unicorn is not tamed
+character_event = {  
+	id = old_races.11
+	desc = EVTDESCold_races.11
+	picture = GFX_evt_unicorn
+
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAold_races.11
+		prestige = -50
+		if = {
+			limit = { 
+				NOT = { trait = wounded } 
+				NOT = { is_maimed_trigger = yes }
+			}	
+			random = {
+				chance = 15
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+		}
+	}
+}	
+#Unicorn is wild
+character_event = {  
+	id = old_races.12
+	desc = EVTDESCold_races.12
+	picture = GFX_evt_unicorn
+
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+	only_playable = yes
+	
+	trigger = {
+		location = {
+			OR = {
+				region = world_ibben
+				duchy = { title = d_skagos }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 0.1
+			NOR = {
+				culture = ibbenese
+				culture = skagosi
+			}
+		}
+	}
+
+	option = {
+		name = EVTOPTAold_races.12 #Kill it
+		if = {
+			limit = {
+				NOT = { trait = cruel }
+				NOT = { trait = kind }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = cruel
+				hidden_tooltip = { character_event = { id = 38259 } }
+			}
+		}
+		if = {
+			limit = {
+				trait = kind 
+			}
+			remove_trait = kind
+		}
+	}
+	
+	option = {
+		name = EVTOPTBold_races.12 #Ignore
+		prestige = -50
+	}
+	
+	option = {
+		name = EVTOPTCold_races.12 #Sooth it
+		trigger = { learning = 10 }
+		tooltip_info = learning
+		prestige = 30
+		random = {
+			chance = 15
+			add_character_modifier = {
+				name = unicorn_rider
+				duration = 54688
+			}
+		}
+	}
+}	
+
+
+###Giants hiring events###
+character_event = {
+	id = old_races.200
+	desc = "EVTDESCold_races.200"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = { is_alive = yes }
+	}
+	
+	option = {
+		name = "EVTOPTAold_races.200" #I demand much gold
+		trigger = { FROM = { ai = no } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 0.5
+				trait = honest
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 12 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 10 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 8 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 6 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 4 } } }
+			}
+		}
+		if = {
+			limit = { trait = greedy }
+			random_list = {
+				20 = { set_character_flag = demand_50_gold }
+				20 = { set_character_flag = demand_40_gold }
+				20 = { set_character_flag = demand_30_gold }
+				20 = { set_character_flag = demand_20_gold }
+				20 = { set_character_flag = demand_10_gold }
+			}
+		}
+		if = {
+			limit = { NOT = { trait = greedy } }
+			random_list = {
+				5 = { set_character_flag = demand_50_gold }
+				10 = { set_character_flag = demand_40_gold }
+				20 = { set_character_flag = demand_30_gold }
+				30 = { set_character_flag = demand_20_gold }
+				35 = { set_character_flag = demand_10_gold }
+			}
+		}
+		FROM = { letter_event = { id = old_races.300 days = 100 random = 50 } }
+		FROM = { letter_event = { id = old_races.700 days = 251  } }
+	}	
+	option = {
+		name = "EVTOPTBold_races.200" #Yes
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				FROM = { ai = yes }
+			}
+			modifier = {
+				factor = 1.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.75
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.75
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 20 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 40 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 60 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 80 } 
+			}
+			modifier = {
+				factor = 1.3
+				opinion = { who = FROM value = 100 } 
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 14 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 16 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 18 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 20 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 24 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 26 } } 
+			}
+			modifier = {
+				factor = 1.2
+				FROM = { job_chancellor = { diplomacy = 28 } } 
+			}
+		}
+		FROM = { letter_event = { id = old_races.400 days = 100 random = 50 } }
+		FROM = { letter_event = { id = old_races.700 days = 251  } }
+	}	
+	option = {
+		name = "EVTOPTCold_races.200" #No
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				FROM = { ai = yes }
+			}
+			modifier = {
+				factor = 0.75
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				trait = content
+			}
+			modifier = {
+				factor = 0.75
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -20 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -40 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -60 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -80 } }
+			}
+			modifier = {
+				factor = 1.2
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 12 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 10 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 8 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 6 } } }
+			}
+			modifier = {
+				factor = 1.1
+				FROM = { job_chancellor = { NOT = { diplomacy = 4 } } }
+			}
+		}
+		FROM = { letter_event = { id = old_races.500 days = 100 random = 50 } }
+		FROM = { letter_event = { id = old_races.700 days = 251  } }
+	}	
+	
+}
+#inform commander demands gold
+letter_event = {
+	id = old_races.300
+	desc = "EVTDESCold_races.300"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			in_command = no
+			war = no
+			NOT = { demesne_size = 1 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAold_races.300" #OK
+		if = {
+			limit = { FROM = { has_character_flag = demand_50_gold } }
+			custom_tooltip = { text = TOOLTIPGIANTS500 }
+			hidden_tooltip = { wealth = -50 FROM = { wealth = 50 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_40_gold } }
+			custom_tooltip = { text = TOOLTIPGIANTS400 }
+			hidden_tooltip = { wealth = -40 FROM = { wealth = 40 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_30_gold } }
+			custom_tooltip = { text = TOOLTIPGIANTS300 }
+			hidden_tooltip = { wealth = -30 FROM = { wealth = 30 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_20_gold } }
+			custom_tooltip = { text = TOOLTIPGIANTS200 }
+			hidden_tooltip = { wealth = -20 FROM = { wealth = 20 } }
+		}
+		if = {
+			limit = { FROM = { has_character_flag = demand_10_gold } }
+			custom_tooltip = { text = TOOLTIPGIANTS100 }
+			hidden_tooltip = { wealth = -10 FROM = { wealth = 10 } }
+		}
+		custom_tooltip = { text = TOOLTIPCANHIREGIANTS }
+		set_character_flag = giants_hired
+	}	
+	option = {
+		name = "EVTOPTBold_races.300" #No
+		set_character_flag = giants_decision
+	}	
+}
+#inform commander accepts offer
+letter_event = {
+	id = old_races.400
+	desc = "EVTDESCold_races.400"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			in_command = no
+			war = no
+			NOT = { demesne_size = 1 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAold_races.400" #OK
+		custom_tooltip = { text = TOOLTIPCANHIREGIANTS }
+		set_character_flag = giants_hired
+	}	
+	option = {
+		name = "EVTOPTBold_races.400" #No
+		trigger = { ai = no }
+		set_character_flag = giants_decision
+	}	
+}
+#inform commander declines
+letter_event = {
+	id = old_races.500
+	desc = "EVTDESCold_races.500"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			is_alive = yes
+			in_command = no
+			war = no
+			NOT = { demesne_size = 1 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBold_races.500" #OK
+		set_character_flag = giants_decision
+	}	
+}
+#iflag cleanup
+character_event = {
+	id = old_races.600
+	desc = "EVTDESCold_races.600"
+	
+	only_rulers = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		had_character_flag = { flag = giants_hired days = 200 }
+		d_giants = {
+			holder_scope = {
+				OR = {
+					in_command = no
+					war = yes
+					demesne_size = 1 
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "OK" #OK
+		clr_character_flag = giants_hired
+	}	
+}
+
+#inform commander already hired
+letter_event = {
+	id = old_races.700
+	desc = "EVTDESCold_races.700"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = {
+			OR = {
+				is_alive = no
+				in_command = yes
+				war = yes
+				demesne_size = 1 
+			}	
+		}
+	}
+	
+	option = {
+		name = "OK" #OK
+		set_character_flag = giants_decision
+	}	
+}

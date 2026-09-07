@@ -1,0 +1,802 @@
+#######################
+# Royal Proclamations #
+#######################
+# Galle (Gregory Hayes)/Philosophert/knuckey
+#######################
+# Flavor events proclaiming the reign of a new
+# King or Queen
+#######################
+
+namespace = royal_proclamations
+
+character_event = { #Check for required proclamation (from on action)
+	id = royal_proclamations.999
+	
+	is_triggered_only = yes
+	only_independent = yes	
+	hide_window = yes
+
+	trigger = {
+		tier = EMPEROR
+		FROM = { tier = EMPEROR }
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+	
+	immediate = {
+		if = {
+			limit = { FROM = { title = e_iron_throne } }
+			character_event = { id = royal_proclamations.25 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_north } }
+			character_event = { id = royal_proclamations.1 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_westerlands } }
+			character_event = { id = royal_proclamations.3 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_reach } }
+			character_event = { id = royal_proclamations.5 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_riverlands } }
+			character_event = { id = royal_proclamations.7 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_vale } }
+			character_event = { id = royal_proclamations.9 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_stormlands } }
+			character_event = { id = royal_proclamations.11 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_dorne } }
+			character_event = { id = royal_proclamations.13 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_iron_isles } }
+			character_event = { id = royal_proclamations.15 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_ghiscar } }
+			character_event = { id = royal_proclamations.17 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_new_valyria } }
+			character_event = { id = royal_proclamations.19 days = 2 }
+		}
+		else_if = {
+			limit = { FROM = { title = e_yi_ti } }
+			character_event = { id = royal_proclamations.21 days = 15 } #give time for colour assignment
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #Check for required proclamation (from game start and kingsmoot and other events )
+	id = royal_proclamations.998
+	
+	only_independent = yes
+	is_triggered_only = yes
+	hide_window = yes
+
+	trigger = {
+		tier = EMPEROR
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_landed_title = e_iron_throne }
+			character_event = { id = royal_proclamations.25 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_north }
+			character_event = { id = royal_proclamations.1 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_westerlands }
+			character_event = { id = royal_proclamations.3 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_reach }
+			character_event = { id = royal_proclamations.5 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_riverlands }
+			character_event = { id = royal_proclamations.7 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_vale }
+			character_event = { id = royal_proclamations.9 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_stormlands }
+			character_event = { id = royal_proclamations.11 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_dorne }
+			character_event = { id = royal_proclamations.13 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_iron_isles }
+			character_event = { id = royal_proclamations.15 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_ghiscar }
+			character_event = { id = royal_proclamations.17 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_new_valyria }
+			character_event = { id = royal_proclamations.19 days = 2 }
+		}
+		else_if = {
+			limit = { has_landed_title = e_yi_ti }
+			character_event = { id = royal_proclamations.21 days = 15 } #give time for colour assignment
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+	
+character_event = {
+	id = royal_proclamations.25
+	desc = "EVTDESCroyal_proclamations.25"
+	picture = GFX_KINGS_LANDING
+	
+	is_triggered_only = yes
+	hide_from = yes
+
+	trigger = {
+		has_landed_title = e_iron_throne
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+
+	# All hail!
+	option = {
+		name = "EVTOPTAroyal_proclamations.25"
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no NOT = { character = ROOT } }
+				character_event = { id = royal_proclamations.26 }
+			}
+			if = { #If Daenerys is at war with Young Griff trigger marriage proposal event
+				limit = { 
+					character = 77041
+					is_married = no
+					is_betrothed = no
+				}	
+				e_iron_throne = {
+					any_war = {
+						limit = {
+							attacker = { character = 125009 }
+						}
+						attacker = { character_event = { id = invasions.100 days = 7 } }#Offer to be consort in exchange for a dragon 
+					}
+				}	
+			}
+			character_event = { id = iron_throne.40 days = 5 } #forge a crown?
+		}
+	}
+}
+
+character_event = {
+	id = royal_proclamations.26
+	desc = "EVTDESCroyal_proclamations.26"
+	picture = GFX_KINGS_LANDING
+
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {
+			e_iron_throne = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_iron_throne } }
+			culture_group = andal
+			culture_group = iron_isles_culture
+			culture_group = dornish
+			culture = western_valyrian
+			culture_group = first_men
+			culture = skagosi
+			capital_scope = { region = world_westeros }		
+		}
+	}
+
+	option = {
+		name = "EVTOPTAroyal_proclamations.26"
+	}
+
+	option = {
+		name = "EVTOPTBroyal_proclamations.26"
+	}
+}
+
+character_event = {
+	id = royal_proclamations.1
+	desc = "EVTDESCroyal_proclamations.1"
+	picture = GFX_STARK
+   
+	is_triggered_only = yes
+	hide_from = yes
+
+	trigger = {
+		has_landed_title = e_north
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+   
+	# All hail!
+	option = {
+		name = "EVTOPTAroyal_proclamations.1"
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no NOT = { character = ROOT } }
+				character_event = { id = royal_proclamations.2 }
+			}
+		}
+	}
+}
+
+character_event = {
+   id = royal_proclamations.2
+   desc = "EVTDESCroyal_proclamations.2"
+   picture = GFX_STARK
+   
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_north = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_north } }
+			culture_group = first_men
+			culture = skagosi
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.2"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.2"
+   }
+}
+character_event = {
+   id = royal_proclamations.3
+   desc = "EVTDESCroyal_proclamations.3"
+   picture = GFX_LANNISTER
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_westerlands
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.3"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.4 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.4
+   desc = "EVTDESCroyal_proclamations.4"
+   picture = GFX_LANNISTER
+
+   is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			e_westerlands = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_westerlands } }
+			culture = westerman
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.4"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.4"
+   }
+}
+
+character_event = {
+   id = royal_proclamations.5
+   desc = "EVTDESCroyal_proclamations.5"
+   picture = GFX_evt_highgarden
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_reach
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.5"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.6 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.6
+   desc = "EVTDESCroyal_proclamations.6"
+   picture = GFX_evt_highgarden
+
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_reach = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_reach } }
+			culture = reachman
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.6"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.6"
+   }
+}
+character_event = {
+   id = royal_proclamations.7
+   desc = "EVTDESCroyal_proclamations.7"
+   picture = GFX_evt_riverrun
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_riverlands
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.7"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.8 }
+         }
+      }
+	  
+	  if = { #Mudds re-found bloodline
+		limit = {
+			dynasty = 174399
+			NOT = { any_owned_bloodline = { has_flag = dynastic_bloodline } }
+		}
+		tooltip = {
+			create_bloodline = {
+				type = mudd
+			}
+		}
+		hidden_tooltip = {
+			c_600174399 = { #Mudd
+				create_bloodline = {
+					type = mudd
+				}
+				random_owned_bloodline = { 			
+					ROOT = {
+						add_to_bloodline = PREV
+						any_dynasty_member_even_if_dead = { 
+							add_to_bloodline = PREVPREV 
+						}
+					}
+					any_bloodline_member = {
+						character_event = { id = traditional_claims.199 days = 5 } #check for traditional dynastic claims
+					}	
+				}
+			}
+		}	
+	  }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.8
+   desc = "EVTDESCroyal_proclamations.8"
+   picture = GFX_evt_riverrun
+
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_riverlands = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_riverlands } }
+			culture = riverlander
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.8"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.8"
+   }
+}
+character_event = {
+   id = royal_proclamations.9
+   desc = "EVTDESCroyal_proclamations.9"
+   picture = GFX_evt_theeyrie
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_vale
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.9"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.10 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.10
+   desc = "EVTDESCroyal_proclamations.10"
+   picture = GFX_evt_theeyrie
+
+   is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			e_vale = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_vale } }
+			culture = valeman
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.10"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.10"
+   }
+}
+character_event = {
+   id = royal_proclamations.11
+   desc = "EVTDESCroyal_proclamations.11"
+   picture = GFX_BARATHEON
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_stormlands
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.11"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.12 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.12
+   desc = "EVTDESCroyal_proclamations.12"
+   picture = GFX_BARATHEON
+
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_stormlands = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_stormlands } }
+			culture = stormlander
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.12"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.12"
+   }
+}
+character_event = {
+   id = royal_proclamations.13
+   desc = "EVTDESCroyal_proclamations.13"
+   picture = GFX_MARTELL
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_dorne
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+   
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.13"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.14 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.14
+   desc = "EVTDESCroyal_proclamations.14"
+   picture = GFX_MARTELL
+
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_dorne = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_dorne } }
+			culture_group = dornish
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.14"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.14"
+   }
+}
+character_event = {
+   id = royal_proclamations.15
+   desc = "EVTDESCroyal_proclamations.15"
+   picture = GFX_GREYJOY
+   
+   is_triggered_only = yes
+   hide_from = yes
+
+   trigger = {
+      has_landed_title = e_iron_isles
+	  NOT = { has_character_flag = kingsmoot }
+	  NOT = { government = feudal_government_LP }
+   }
+
+   immediate = {
+		if = {
+			limit = { has_character_flag = primogeniture }
+			primary_title = { succession = primogeniture }
+			recalc_succession = yes
+			clr_character_flag = primogeniture
+		}
+   }
+
+   # All hail!
+   option = {
+      name = "EVTOPTAroyal_proclamations.15"
+      hidden_tooltip = {
+         any_realm_lord = {
+            limit = { ai = no NOT = { character = ROOT } }
+            character_event = { id = royal_proclamations.16 }
+         }
+      }
+   }
+}
+
+character_event = {
+   id = royal_proclamations.16
+   desc = "EVTDESCroyal_proclamations.16"
+   picture = GFX_GREYJOY
+
+   is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			e_iron_isles = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_iron_isles } }
+			culture_group = iron_isles_culture
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.16"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.16"
+   }
+} 
+character_event = {
+	id = royal_proclamations.17
+	desc = "EVTDESCroyal_proclamations.17"
+	picture = GFX_evt_yunkai
+   
+    is_triggered_only = yes
+	hide_from = yes
+
+	trigger = {
+		has_landed_title = e_ghiscar
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+   
+	# All hail!
+	option = {
+		name = "EVTOPTAroyal_proclamations.17"
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no NOT = { character = ROOT } }
+				character_event = { id = royal_proclamations.18 }
+			}
+		}
+	}
+}
+
+character_event = {
+   id = royal_proclamations.18
+   desc = "EVTDESCroyal_proclamations.18"
+   picture = GFX_evt_yunkai
+   
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_ghiscar = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_ghiscar } }
+			culture_group = ghiscari_group
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.18"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.18"
+   }
+}
+character_event = {
+	id = royal_proclamations.19
+	desc = "EVTDESCroyal_proclamations.19"
+	picture = GFX_evt_ironthrone
+   
+    is_triggered_only = yes
+	hide_from = yes
+
+	trigger = {
+		has_landed_title = e_new_valyria
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+   
+	# All hail!
+	option = {
+		name = "EVTOPTAroyal_proclamations.19"
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no NOT = { character = ROOT } }
+				character_event = { id = royal_proclamations.20 }
+			}
+		}
+	}
+}
+
+character_event = {
+   id = royal_proclamations.20
+   desc = "EVTDESCroyal_proclamations.20"
+   picture = GFX_evt_ironthrone
+   
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_new_valyria = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_new_valyria } }
+			culture_group = valyrian
+			culture_group = free_cities
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.20"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.20"
+   }
+}
+character_event = {
+	id = royal_proclamations.21
+	desc = "EVTDESCroyal_proclamations.21"
+	picture = GFX_god_emperor
+   
+    is_triggered_only = yes
+	hide_from = yes
+
+	trigger = {
+		has_landed_title = e_yi_ti
+		NOT = { has_character_flag = kingsmoot }
+		NOT = { government = feudal_government_LP }
+	}
+   
+	# All hail!
+	option = {
+		name = "EVTOPTAroyal_proclamations.21"
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no NOT = { character = ROOT } }
+				character_event = { id = royal_proclamations.22 }
+			}
+		}
+	}
+}
+
+character_event = {
+   id = royal_proclamations.22
+   desc = "EVTDESCroyal_proclamations.22"
+   picture = GFX_god_emperor
+   
+   is_triggered_only = yes
+
+   trigger = {
+		OR = {
+			e_yi_ti = { is_primary_holder_title = yes }
+			capital_scope = { empire = { title = e_yi_ti } }
+			culture_group = yi_ti_group
+		}
+	}
+
+   option = {
+      name = "EVTOPTAroyal_proclamations.22"
+   }
+
+   option = {
+      name = "EVTOPTBroyal_proclamations.22"
+   }
+}

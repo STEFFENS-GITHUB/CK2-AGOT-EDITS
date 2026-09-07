@@ -1,0 +1,1240 @@
+######################
+###Written by Rodri###
+######################
+
+namespace = seasons
+
+###Westeros Seasons###
+
+###Rodri Stuff###
+#seasons.1 - Turn on/off (Testing).
+#seasons.2 - Raven arrives (Winter is comming).
+#seasons.3 - Raven arrives (Winter is Ending).
+#seasons.4 - On death, passing the letter (Debugging).
+#2515004 - Choosing Winter modifiers (Citadel Event).
+#seasons.6 - Choosing Summer modifiers (Citadel Event).
+#2515006 - Winter modifiers (Province Event).
+#2515007 - Clear province modifier (Province Event). [Winter End]
+###End##
+
+###Winter Events###
+#seasons.14 - Peasants Dying
+
+###
+
+# character_event = { #triggered by console to set normal summer
+	# id = seasons.1
+	# desc = "EVTDESCseasons.1"
+	
+	# picture = "GFX_evt_emissary"
+	
+	# hide_from = yes
+
+	# trigger = {
+		# ai = no
+		# NOT = { has_global_flag = play_with_seasons }
+		# NOT = { has_global_flag = play_without_seasons }
+	# }
+		
+	# is_triggered_only = yes
+
+	# immediate = {
+		# clr_global_flag = asoiaf_mild_winter
+		# clr_global_flag = asoiaf_normal_winter
+		# clr_global_flag = asoiaf_harsh_winter
+		# clr_global_flag = short_summer
+		# clr_global_flag = normal_summer
+		# clr_global_flag = long_summer
+	# }
+	
+	# option = {
+		# name = "EVTOPTAseasons.1"
+		# set_global_flag = play_without_seasons
+	# }
+	# option = {
+		# name = "EVTOPTBseasons.1"
+		# set_global_flag = short_summer
+		# set_global_flag = play_with_seasons
+	# }
+	# option = {
+		# name = "EVTOPTCseasons.1"
+		# set_global_flag = normal_summer
+		# set_global_flag = play_with_seasons
+	# }
+	# option = {
+		# name = "EVTOPTDseasons.1"
+		# set_global_flag = long_summer
+		# set_global_flag = play_with_seasons
+	# }
+# }
+
+#seasons.2 - Raven arrives (Winter is comming).
+character_event = { 
+	id = seasons.2
+	picture = "GFX_winter_2"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_winter_trigger = yes
+		any_demesne_province = {
+			NOR = {
+				region = world_summer_sea
+				region = world_moraq
+			}
+		}
+	}
+
+	desc = {
+		text = EVTDESCseasons.2 #Westerosi (Citadel)
+		trigger = {
+			OR = {
+				capital_scope = { region = world_westeros }
+				maester_culture_trigger = yes 
+			}	
+			NOT = { trait = wildling }
+			NOT = { culture = moon_clansman }		
+		}
+	}
+	
+	desc = {
+		text = EVTDESC2515101 #Non-Westerosi 
+		trigger = {
+			OR = {
+				NOT = {
+					OR = {
+						capital_scope = { region = world_westeros }
+						maester_culture_trigger = yes 
+					}	
+				}	
+				trait = wildling
+				culture = moon_clansman				
+			}	
+		}	
+	}
+	
+	option = {
+		name = "OK"
+	}
+}
+
+#seasons.3 - Raven arrives (Winter is Ending).
+character_event = { 
+	id = seasons.3
+	picture = "GFX_winter_1"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_summer_trigger = yes
+		any_demesne_province = {
+			NOT = {
+				OR = {
+					region = world_summer_sea
+					region = world_moraq
+				}
+			}
+		}		
+	}
+	
+	desc = {
+		text = EVTDESCseasons.3 #Westerosi (Citadel)
+		trigger = {
+			OR = {
+				capital_scope = { region = world_westeros }
+				maester_culture_trigger = yes 
+			}	
+			NOT = { trait = wildling }
+			NOT = { culture = moon_clansman }		
+		}
+	}
+	
+	desc = {
+		text = EVTDESC2515102 #Non-Westerosi 
+		trigger = {
+			OR = {
+				NOT = {
+					OR = {
+						capital_scope = { region = world_westeros }
+						maester_culture_trigger = yes 
+					}	
+				}	
+				trait = wildling
+				culture = moon_clansman				
+			}	
+		}	
+	}
+	
+	option = {
+		name = "OK"
+		#If player with large demesne, remove modifiers immediately
+		if = {
+			limit = {
+				ai = no
+				any_demesne_province = {
+					count = 4
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			any_demesne_province = {
+				limit = { has_province_modifier = asoiaf_mild_winter }
+				remove_province_modifier = asoiaf_mild_winter
+			}	
+			any_demesne_province = {
+				limit = { has_province_modifier = asoiaf_normal_winter }
+				remove_province_modifier = asoiaf_normal_winter
+			}
+			any_demesne_province = { 
+				limit = { has_province_modifier = asoiaf_harsh_winter	 }
+				remove_province_modifier = asoiaf_harsh_winter	
+			}	
+			any_demesne_province = {
+				limit = { has_province_modifier = large_winter_reserve }
+				remove_province_modifier = large_winter_reserve
+			}
+			any_demesne_province = {
+				limit = { has_province_modifier = small_winter_reserve }
+				remove_province_modifier = small_winter_reserve
+			}	
+		}
+	}
+}
+
+# #seasons.4 - On death, passing the letter (Debugging).   #moved to event 45340 in on_actions.txt
+# character_event = { #on_dead event that passes flag to heir
+	# id = seasons.4
+	# desc = "EVTDESCseasons.4"
+	# picture = "GFX_evt_emissary"
+	
+	# is_triggered_only = yes
+	# only_rulers = yes
+	
+	# mean_time_to_happen = {
+		# days = 1
+	# }
+
+	# immediate = {
+		# if = { 
+			# limit = { has_character_flag = winter_letter }
+			# current_heir = { set_character_flag = winter_letter }
+		# }
+		# if = { 
+			# limit = { has_character_flag = summer_letter }
+			# current_heir = { set_character_flag = summer_letter }
+		# }
+	# }
+	
+	# option = {
+		# name = "ok"
+	# }
+# }
+
+#2515004 - Choosing Winter modifiers (Citadel Event).
+character_event = { #changing from summer to winter
+	id = seasons.5
+	desc = "choosing summer"
+	
+	picture = "GFX_evt_bandits"
+	
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = c_the_citadel
+		OR = {
+			had_global_flag = { flag = short_summer days = 730 } 
+			had_global_flag = { flag = normal_summer days = 730 }
+			had_global_flag = { flag = long_summer days = 730 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.5
+			has_global_flag = short_summer
+		}
+		modifier = {
+			factor = 2
+			has_global_flag = long_summer
+		}
+		modifier = {
+			factor = 0.75
+			OR = {
+				had_global_flag = { flag = short_summer days = 4000 }
+				had_global_flag = { flag = normal_summer days = 4000 }
+				had_global_flag = { flag = long_summer days = 4000 }
+			}	
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				had_global_flag = { flag = short_summer days = 6000 }
+				had_global_flag = { flag = normal_summer days = 6000 }
+				had_global_flag = { flag = long_summer days = 6000 }
+			}	
+		}
+		modifier = {
+			factor = 0.25
+			OR = {
+				had_global_flag = { flag = short_summer days = 8000 }
+				had_global_flag = { flag = normal_summer days = 8000 }
+				had_global_flag = { flag = long_summer days = 8000 }
+			}	
+		}
+	}	
+	
+	option = {
+		name = "choosing winter"
+		if = {
+			limit = { has_global_flag = short_summer } 
+			clr_global_flag = short_summer
+			set_global_flag = asoiaf_mild_winter
+		}
+		if = {
+			limit = { has_global_flag = normal_summer } 
+			clr_global_flag = normal_summer
+			set_global_flag = asoiaf_normal_winter
+		}
+		if = {
+			limit = { has_global_flag = long_summer } 
+			clr_global_flag = long_summer
+			set_global_flag = asoiaf_harsh_winter
+		}
+		any_player = {	
+			character_event = { id = seasons.2 }
+		}
+	}
+}
+
+#seasons.6 - Choosing Summer modifiers (Citadel Event).
+character_event = { #changing from winter to summer
+	id = seasons.6
+	desc = "choosing summer"
+	
+	picture = "GFX_evt_bandits"
+	
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = c_the_citadel
+		#has_global_flag = play_with_seasons
+		NOT = { has_global_flag = cold_winds }
+		OR = {
+			had_global_flag = { flag = asoiaf_mild_winter days = 730 } 
+			had_global_flag = { flag = asoiaf_normal_winter days = 730 }
+			had_global_flag = { flag = asoiaf_harsh_winter days = 730 }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.5
+			has_global_flag = asoiaf_mild_winter
+		}
+		modifier = {
+			factor = 2
+			has_global_flag = asoiaf_harsh_winter
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				had_global_flag = { flag = asoiaf_mild_winter days = 4000 }
+				had_global_flag = { flag = asoiaf_normal_winter days = 4000 }
+				had_global_flag = { flag = asoiaf_harsh_winter days = 4000 }
+			}	
+		}
+		modifier = {
+			factor = 0.5
+			OR = {
+				had_global_flag = { flag = asoiaf_mild_winter days = 6000 }
+				had_global_flag = { flag = asoiaf_normal_winter days = 6000 }
+				had_global_flag = { flag = asoiaf_harsh_winter days = 6000 }
+			}	
+		}
+		modifier = {
+			factor = 0.25
+			OR = {
+				had_global_flag = { flag = asoiaf_mild_winter days = 8000 }
+				had_global_flag = { flag = asoiaf_normal_winter days = 8000 }
+				had_global_flag = { flag = asoiaf_harsh_winter days = 8000 }
+			}	
+		}
+	}	
+	
+	option = {
+		name = "choosing summer"
+		clr_global_flag = asoiaf_mild_winter
+		clr_global_flag = asoiaf_normal_winter
+		clr_global_flag = asoiaf_harsh_winter
+		random_list = {
+			20 = {
+				set_global_flag = short_summer
+			}
+			60 = {		
+				set_global_flag = normal_summer
+			}
+			20 = {
+				set_global_flag = long_summer
+			}
+		}
+		any_player = {	
+			character_event = { id = seasons.3 }
+		}
+		#hidden_tooltip = {
+			#any_province = {
+				#limit = { 
+					#has_province_modifier = asoiaf_mild_winter 
+				#}
+				#character_event = { id = seasons.13 days = 25 }
+			#}
+			#any_province = {
+				#limit = { 
+					#has_province_modifier = asoiaf_normal_winter
+				#}
+				#character_event = { id = seasons.13 days = 50 }
+			#}
+			#any_province = {
+				#limit = { 
+					#has_province_modifier = asoiaf_harsh_winter
+				#}
+				#remove_province_modifier = asoiaf_harsh_winter	
+				#add_province_modifier = { name = asoiaf_normal_winter duration = -1 }
+				#character_event = { id = seasons.13 days = 75 }
+			#}
+		#}
+	}
+}
+
+#2515006000 - Setting mild_winter in The Thenn
+province_event = { 
+	id = seasons.7
+	desc = "EVTDESC2515006"
+	
+	picture = "GFX_winter_2"
+	
+	trigger = {
+		province_id = 2
+		is_winter_trigger = yes
+		NOT = { has_province_modifier = asoiaf_mild_winter }
+		NOT = { has_province_modifier = asoiaf_normal_winter }
+		NOT = { has_province_modifier = asoiaf_harsh_winter }	
+	}
+	
+	mean_time_to_happen = {
+		months = 2
+	}	
+	
+	option = {
+		name = "Ok"
+		add_province_modifier = {
+			name = asoiaf_mild_winter
+			duration = -1
+		}
+	}
+}
+#2515006011 - Setting normal_winter in The Thenn
+province_event = { 
+	id = seasons.8
+	desc = "EVTDESC2515006"
+	
+	picture = "GFX_winter_2"
+	
+	trigger = {
+		province_id = 2
+		OR = {
+			has_global_flag = asoiaf_normal_winter
+			has_global_flag = asoiaf_harsh_winter
+		}
+		has_province_modifier = asoiaf_mild_winter	
+	}
+	
+	mean_time_to_happen = {
+		months = 10
+	}	
+	
+	option = {
+		name = "Ok"
+		remove_province_modifier = asoiaf_mild_winter
+		add_province_modifier = {
+			name = asoiaf_normal_winter
+			duration = -1
+		}
+	}
+}
+#2515006022 - Setting harsh_winter in The Thenn
+province_event = { 
+	id = seasons.9
+	desc = "EVTDESC2515006"
+	
+	picture = "GFX_winter_3"
+	
+	has_global_flag = asoiaf_harsh_winter
+	
+	trigger = {
+		province_id = 2		
+		has_province_modifier = asoiaf_normal_winter
+	}
+	
+	mean_time_to_happen = {
+		months = 14
+	}	
+	
+	option = {
+		name = "Ok"
+		remove_province_modifier = asoiaf_normal_winter
+		add_province_modifier = {
+			name = asoiaf_harsh_winter
+			duration = -1
+		}
+	}
+}
+
+province_event = { #spreading mild winter
+	id = seasons.10
+	desc = "EVTDESC2515006"
+	
+	picture = "GFX_winter_2"
+	
+	trigger = {
+		OR = {
+			has_global_flag = asoiaf_mild_winter
+			has_global_flag = asoiaf_normal_winter
+			has_global_flag = asoiaf_harsh_winter
+		}
+		NOT = { has_province_modifier = asoiaf_mild_winter }
+		NOT = { has_province_modifier = asoiaf_normal_winter }
+		NOT = { has_province_modifier = asoiaf_harsh_winter }
+		OR = {
+			any_neighbor_province = { 
+				OR = {
+					has_province_modifier = asoiaf_mild_winter
+					has_province_modifier = asoiaf_normal_winter
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Dragonstone
+				OR = {
+					province_id = 221
+					province_id = 220
+				}
+				214 = { #Rook's rest
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to The Arbor
+				province_id = 292
+				290 = { #Sunhouse
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Sweetsister
+				province_id = 119
+				70 = { #Silvereed
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to The Iron Islands
+				OR = {
+					province_id = 151 #Blacktyde
+					province_id = 155 #Sealskin point
+					province_id = 357 #Lonely Light
+				}
+				76 = { #Cape of Eagles
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Ibben
+				OR = {
+					province_id = 580 #Ib Oss
+					province_id = 582 #Ib Nor
+					province_id = 594 #Far Ibb
+					duchy = { title = d_bayofwhales }
+				}
+				47 = { #Winterfell
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to North Essos
+				OR = {
+					province_id = 470 #Braavos
+					province_id = 471 #Lorath
+					province_id = 474 #The Axe
+					province_id = 545 #Morosh
+					province_id = 566 #Walrus point
+					province_id = 576 #New Ibbish
+					province_id = 833 #Northpoint
+					province_id = 839 #Howling Point
+				}
+				71 = { #Winter has reached the neck
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Stepstones/Tyrosh
+				OR = {
+					province_id = 358 #Bloodstone
+					province_id = 366 #Little Tyrosh
+					province_id = 367 #Tyrosh
+				}
+				375 = { #Forest of Myr
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Lys
+				province_id = 368
+				398 = { #Silkhead
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Elyria
+				province_id = 602
+				601 = { #Tolos
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to isle of cedars
+				province_id = 621
+				613 = { #Astapor
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to new ghis
+				province_id = 624
+				620 = { #Qimbreen
+					OR = {
+						has_province_modifier = asoiaf_mild_winter
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+		}		
+	}
+	
+	mean_time_to_happen = {
+		months = 5
+	}
+	
+	option = {
+		name = "Ok"
+		add_province_modifier = {
+			name = asoiaf_mild_winter
+			duration = -1
+		}
+		#If player with large demesne, add modifiers to neighbours immediately
+		if = {
+			limit = {
+				owner = {
+					ai = no
+					num_of_count_titles = 3
+				}
+			}
+			any_neighbor_province = {
+				limit = {
+					NOT = { has_province_modifier = asoiaf_mild_winter }
+					NOT = { has_province_modifier = asoiaf_normal_winter }
+					NOT = { has_province_modifier = asoiaf_harsh_winter }
+					owner = { ROOT = { owner = { character = PREVPREV } } }
+					NOT = { province_id = ROOT }
+				}
+				add_province_modifier = {
+					name = asoiaf_mild_winter
+					duration = -1
+				}
+			}
+		}
+	}
+}
+province_event = { #spreading normal winter
+	id = seasons.11
+	desc = "EVTDESC2515008"
+	
+	picture = "GFX_winter_2"
+	
+	trigger = {
+		is_winter_trigger = yes
+		has_province_modifier = asoiaf_mild_winter
+		OR = {
+			any_neighbor_province = { 
+				OR = {
+					has_province_modifier = asoiaf_normal_winter
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Dragonstone
+				OR = {
+					province_id = 221
+					province_id = 220
+				}
+				214 = { #Rook's rest
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to The Arbor
+				province_id = 292
+				290 = { #Sunhouse
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Sweetsister
+				province_id = 119
+				70 = { #Silvereed
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to The Iron Islands
+				OR = {
+					province_id = 151 #Blacktyde
+					province_id = 155 #Sealskin point
+					province_id = 357 #Lonely Light
+				}
+				76 = { #Cape of Eagles
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Ibben
+				OR = {
+					province_id = 580 #Ib Oss
+					province_id = 582 #Ib Nor
+					province_id = 594 #Far Ibb
+					duchy = { title = d_bayofwhales }
+				}
+				47 = { #Winterfell
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to North Essos
+				OR = {
+					province_id = 470 #Braavos
+					province_id = 471 #Lorath
+					province_id = 474 #The Axe
+					province_id = 545 #Morosh
+					province_id = 566 #Walrus point
+					province_id = 576 #New Ibbish
+					province_id = 833 #Northpoint
+					province_id = 839 #Howling Point
+				}
+				71 = { #Winter has reached the neck
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Stepstones/Tyrosh
+				OR = {
+					province_id = 358 #Bloodstone
+					province_id = 366 #Little Tyrosh
+					province_id = 367 #Tyrosh
+				}
+				375 = { #Forest of Myr
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Lys
+				province_id = 368
+				398 = { #Silkhead
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to Elyria
+				province_id = 602
+				601 = { #Tolos
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to isle of cedars
+				province_id = 621
+				613 = { #Astapor
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+			AND = { #Spread to new ghis
+				province_id = 624
+				620 = { #Qimbreen
+					OR = {
+						has_province_modifier = asoiaf_normal_winter
+						has_province_modifier = asoiaf_harsh_winter
+					}
+				}
+			}
+		}
+		
+	}
+	
+	mean_time_to_happen = {
+		months = 10
+	}
+	
+	option = {
+		name = "Ok"
+		remove_province_modifier = asoiaf_mild_winter
+		add_province_modifier = {
+			name = asoiaf_normal_winter
+			duration = -1
+		}
+		#If player with large demesne, add modifiers to neighbours immediately
+		if = {
+			limit = {
+				owner = {
+					ai = no
+					num_of_count_titles = 3
+				}
+			}
+			any_neighbor_province = {
+				limit = {
+					has_province_modifier = asoiaf_mild_winter
+					owner = { ROOT = { owner = { character = PREVPREV } } }
+				}
+				remove_province_modifier = asoiaf_mild_winter
+				add_province_modifier = {
+					name = asoiaf_normal_winter
+					duration = -1
+				}
+			}
+		}
+		if = {
+			limit = { has_dlc = "Reapers" }		
+			random = {
+				chance = 15 #chance to lower by 1 step
+				hidden_tooltip = { set_variable = { which = prosperity_value value = 0 } }
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_1
+					}
+					remove_province_modifier = prosperity_modifier_1
+					break = yes
+				}
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_2
+					}
+					remove_province_modifier = prosperity_modifier_2
+					add_province_modifier = { name = prosperity_modifier_1 duration = -1 }
+					break = yes
+				}
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_3
+					}
+					remove_province_modifier = prosperity_modifier_3
+					add_province_modifier = { name = prosperity_modifier_2 duration = -1 }
+				}
+			}
+		}
+	}
+}
+province_event = { #spreading harsh winter
+	id = seasons.12
+	desc = "EVTDESC2515009"
+	
+	picture = "GFX_winter_3"
+	
+	trigger = {
+		is_winter_trigger = yes
+		has_province_modifier = asoiaf_normal_winter
+		OR = {
+			any_neighbor_province = { 
+				has_province_modifier = asoiaf_harsh_winter
+			}
+			AND = { #Spread to Dragonstone
+				OR = {
+					province_id = 221
+					province_id = 220
+				}
+				214 = { #Rook's rest
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to The Arbor
+				province_id = 292
+				290 = { #Sunhouse
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Sweetsister
+				province_id = 119
+				70 = { #Silvereed
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to The Iron Islands
+				OR = {
+					province_id = 151 #Blacktyde
+					province_id = 155 #Sealskin point
+					province_id = 357 #Lonely Light
+				}
+				76 = { #Cape of Eagles
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Ibben
+				OR = {
+					province_id = 580 #Ib Oss
+					province_id = 582 #Ib Nor
+					province_id = 594 #Far Ibb
+					duchy = { title = d_bayofwhales }
+				}
+				47 = { #Winterfell
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to North Essos
+				OR = {
+					province_id = 470 #Braavos
+					province_id = 471 #Lorath
+					province_id = 474 #The Axe
+					province_id = 545 #Morosh
+					province_id = 566 #Walrus point
+					province_id = 576 #New Ibbish
+					province_id = 833 #Northpoint
+					province_id = 839 #Howling Point
+				}
+				71 = { #Winter has reached the neck
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Stepstones/Tyrosh
+				OR = {
+					province_id = 358 #Bloodstone
+					province_id = 366 #Little Tyrosh
+					province_id = 367 #Tyrosh
+				}
+				375 = { #Forest of Myr
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Lys
+				province_id = 368
+				398 = { #Silkhead
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to Elyria
+				province_id = 602
+				601 = { #Tolos
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to isle of cedars
+				province_id = 621
+				613 = { #Astapor
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+			AND = { #Spread to new ghis
+				province_id = 624
+				620 = { #Qimbreen
+					has_province_modifier = asoiaf_harsh_winter
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 13
+	}
+	
+	option = {
+		name = "Ok"
+		remove_province_modifier = asoiaf_normal_winter
+		add_province_modifier = {
+			name = asoiaf_harsh_winter
+			duration = -1
+		}
+		#If player with large demesne, add modifiers to neighbours immediately
+		if = {
+			limit = {
+				owner = {
+					ai = no
+					num_of_count_titles = 3
+				}
+			}
+			any_neighbor_province = {
+				limit = {
+					has_province_modifier = asoiaf_normal_winter
+					owner = { ROOT = { owner = { character = PREVPREV } } }
+				}
+				remove_province_modifier = asoiaf_normal_winter
+				add_province_modifier = {
+					name = asoiaf_harsh_winter
+					duration = -1
+				}
+			}
+		}
+		if = {
+			limit = { has_dlc = "Reapers" }
+			random = {
+				chance = 30 #chance to lower by 1 step
+				hidden_tooltip = { set_variable = { which = prosperity_value value = 0 } }
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_1
+					}
+					remove_province_modifier = prosperity_modifier_1
+					break = yes
+				}
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_2
+					}
+					remove_province_modifier = prosperity_modifier_2
+					add_province_modifier = { name = prosperity_modifier_1 duration = -1 }
+					break = yes
+				}
+				if = {
+					limit = {
+						has_province_modifier = prosperity_modifier_3
+					}
+					remove_province_modifier = prosperity_modifier_3
+					add_province_modifier = { name = prosperity_modifier_2 duration = -1 }
+				}
+			}
+		}	
+	}
+}
+
+#2515007 - Clear province modifier (Province Event). [Winter End]
+province_event = { #clear province modifier
+	id = seasons.13
+	desc = "EVTDESC2515007"
+
+	#random picture
+	picture = {
+		picture = "GFX_summer_1"
+	}
+	picture = {
+		picture = "GFX_summer_2"
+	}
+	
+	trigger = {
+		is_summer_trigger = yes
+		OR = {
+			has_province_modifier = asoiaf_mild_winter
+			has_province_modifier = asoiaf_normal_winter
+			has_province_modifier = asoiaf_harsh_winter
+		}
+		NOT = {
+			has_global_flag = cold_winds
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 3
+	}	
+	
+	option = {
+		name = "OK"
+		if = { 
+			limit = { has_province_modifier = asoiaf_mild_winter }
+			remove_province_modifier = asoiaf_mild_winter
+		}	
+		if = { 
+			limit = { has_province_modifier = asoiaf_normal_winter }
+			remove_province_modifier = asoiaf_normal_winter
+		}
+		if = { 
+			limit = { has_province_modifier = asoiaf_harsh_winter	 }
+			remove_province_modifier = asoiaf_harsh_winter	
+		}	
+		if = { 
+			limit = { has_province_modifier = large_winter_reserve }
+			remove_province_modifier = large_winter_reserve
+		}
+		if = { 
+			limit = { has_province_modifier = small_winter_reserve }
+			remove_province_modifier = small_winter_reserve
+		}	
+	}
+}
+###
+province_event = { #peasants dying
+    id = seasons.14
+	desc = "EVTDESCwinter1"
+	
+	picture = "GFX_winter_3"
+	
+	trigger = {
+		OR = {
+			has_province_modifier = asoiaf_harsh_winter
+			AND = {
+				has_province_modifier = asoiaf_normal_winter
+				has_province_modifier = small_winter_reserve
+			}
+		}	
+		NOT = { has_province_modifier = asoiaf_peasants_dying }
+		NOT = {
+			owner = {
+				OR = {
+					culture_group = unoccupied_group
+					culture_group = winter_group
+				}
+			}
+		}
+    }
+        
+    mean_time_to_happen = {
+		years = 3
+			
+		modifier = {
+			factor = 2
+			owner = {
+				OR = {
+					trait = time_keeper
+					job_physician = { trait = time_keeper }
+				}
+			}
+		}
+		modifier = {
+			factor = 4
+			has_province_modifier = large_winter_reserve
+		}
+		modifier = {
+			factor = 0.33
+			has_province_modifier = small_winter_reserve
+		}
+		
+		modifier = {
+			factor = 2
+			any_neighbor_province = {
+				NOT = { has_province_modifier = asoiaf_harsh_winter }
+			}
+		}
+		modifier = {
+			factor = 2
+			culture_group = first_men
+		}
+		modifier = {
+			factor = 2
+			wildling_culture_trigger = yes
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_dlc = "Reapers" }
+			if = {
+				limit = { check_variable = { which = prosperity_value value = 100 } }
+				change_variable = { which = prosperity_value value = -100 }
+			}
+			if = {
+				limit = { NOT = { check_variable = { which = prosperity_value value = 100 } } }
+				set_variable = { which = prosperity_value value = 0 }
+			}
+		}	
+	}
+                
+	option = {
+		name = {
+			text = EVTOPTAseasons.14 #ok
+			trigger = { NOT = { has_province_modifier = small_winter_reserve } }
+		}	
+		name = {
+			text = EVTOPTAseasons.14B 
+			trigger = { has_province_modifier = small_winter_reserve }
+		}
+		add_province_modifier = {
+			name = asoiaf_peasants_dying
+			duration = 548
+		}
+		if = {
+			limit = { has_dlc = "Reapers" }
+			if = {
+				limit = {
+					has_province_modifier = prosperity_modifier_3
+					NOT = { check_variable = { which = prosperity_value value = 500 } }	
+				}
+				remove_province_modifier = prosperity_modifier_3
+				add_province_modifier = { name = prosperity_modifier_2 duration = -1 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = prosperity_modifier_2
+					NOT = { check_variable = { which = prosperity_value value = 250 } }	
+				}
+				remove_province_modifier = prosperity_modifier_2
+				add_province_modifier = { name = prosperity_modifier_1 duration = -1 }
+			}
+			if = {
+				limit = {
+					has_province_modifier = prosperity_modifier_1
+					NOT = { check_variable = { which = prosperity_value value = 100 } }	
+				}
+				remove_province_modifier = prosperity_modifier_1
+			}					
+		}	
+	}    
+}

@@ -1,0 +1,4203 @@
+namespace = trial
+#Trial by Court - Fashbinder
+#ai chance factors need constant revision
+
+#trial.0 -  Courtier decides trial method. 
+#trial.1 -  Inform host stall Trial by combat
+#trial.2 -  Citadel determines defence OPT 3 4 5
+#trial.3 -  Citadel poor defence option to accused inf 06
+#trial.4 -  Citadel average defence option to accused 07
+#trial.5 -  citadel strong defence option to accused 08
+#trial.6 -  inform FROM of poor defence OPT sends case to citadel
+#trial.7 -  inform FROM of average defence OPT sends sends case to citadel
+#trial.8 -  inform FROM of strong defence OPT sends sends case to citadel
+#trial.9 -  #####cut redundant### 
+#trial.10 - #####cut redundant### 
+#trial.11 - #####cut redundant### 
+#trial.12 - Citidel Determines OPT 13 14 15
+#trial.13 - citadel poor case to host OPT tags self case str and informs
+#trial.14 - citadel average cast to host ##then 5 days trial.19
+#trial.15 - citadel strong case to host
+#trial.16 - inform accused of poor strenght OPT no effect #intrigue exploit potentia
+#trial.17 - inform accused of avera strenght OPT no effect
+#trial.18 - inform accused of strong strenght OPT no effect
+#trial.19 - citadel determines guilt FROMFrom is host|accuser, FROM is defender|accused
+##both characters now have a x_case/x_defence modifier in addition to their base stats/traits. This should have significant factor.
+#trial.20 - #####cut redundant###### 
+#trial.21 - Guilty: Choose punishment
+#trial.22 - Death
+#trial.23 - Banish to NW ##checkproperkingsguardremoval
+#trial.24 - Parade through street naked then keep under house arrest #-opinion
+#trial.25 - Release them because i am magnanimous #friend
+#trial.26 - Citadel finds innocent FROM is informed and released. Flags removed
+#trial.27 - Citadel finds innocent FromFROM is informed and is disappointed. Flags removed
+
+
+#Choice event for courtier
+character_event = {
+   id = trial.0
+   desc = "EVTDESCtrial.0"
+   picture = GFX_evt_accused
+   
+   is_triggered_only = yes
+   
+   desc = {
+		text = EVTDESCtrial.0
+		trigger = { 
+			NOT = { has_character_flag = choosing_champion } 
+			NOT = { has_character_flag = choosing_seven_champion } 
+		}
+   }
+   
+   desc = {
+		text = EVTDESCtrial.0B
+		trigger = { 
+			OR = {
+				has_character_flag = choosing_seven_champion
+				has_character_flag = choosing_champion 
+			}	
+		}
+   }
+   
+   trigger = { 
+		OR = {
+			AND = {
+				prisoner = yes 
+				host = { has_character_modifier = giving_justice }
+				OR = {
+					has_character_flag = choosing_champion
+					has_character_flag = choosing_seven_champion
+					has_character_flag = first_trial.0_event
+				}
+			}	
+			has_character_flag = lunatic_trial
+		}
+	}
+
+	option = { #trial by combat
+		name = "EVTOPTAtrial.0"
+		trigger = {
+			has_character_flag = first_trial.0_event
+			NOT = { has_character_flag = lunatic_trial } 
+		}
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 10
+				OR = {
+					any_courtier = {
+						combat_rating = 60				
+						eligible_trial_by_combat_champion_for_ROOT_trigger = yes
+					}
+					any_dynasty_member = {
+						combat_rating = 60				
+						eligible_trial_by_combat_champion_for_ROOT_trigger = yes
+					}
+				}	
+			}
+			modifier = {
+				factor = 10
+				combat_rating = 60
+				age = 16
+				is_ill = no
+				NOT = { has_severe_disability_trigger = yes }			
+				OR = {
+					is_female = no
+					female_get_masculine_event_trigger = yes
+				}	
+			}
+			modifier = {
+				factor = 0.2
+				host = {
+					any_courtier = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes	
+						}
+						liege = { character = PREV }
+						NOT = { character = PREV }
+						combat_rating = 60	
+						NOT = { has_severe_disability_trigger = yes }
+						is_ill = no
+						prisoner = no
+					}
+				}	
+			}
+			modifier = {
+				factor = 0.2
+				host = {
+					combat_rating = 60
+					OR = {
+						is_female = no
+						female_get_masculine_event_trigger = yes
+					}
+					NOT = { has_severe_disability_trigger = yes }	
+				}	
+			}
+			modifier = {
+				factor = 0.2
+				host = {
+					has_landed_title = e_iron_throne
+					kingsguard = {
+						is_alive = yes
+						combat_rating = 60
+					}
+				}	
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = demmanded_first_trial_by_combat
+				NOT = { had_character_flag = { flag = demmanded_first_trial_by_combat days = 720 } }
+			}
+			modifier = { #has no champions and character is bad bad fighter
+				factor = 0
+				NOT = { 
+					any_dynasty_member = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes	
+						}
+						OR = {
+							liege = { character = ROOT }
+							is_close_relative = ROOT
+						}	
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						NOT = { has_severe_disability_trigger = yes }
+						OR = {
+							ROOT = { has_landed_title = e_iron_throne }
+							liege = { character = ROOT }
+							NOT = { trait = kingsguard }
+						}		
+						OR = {
+							liege = { character = ROOT }
+							NOT = { trait = slave }
+						}
+						is_ill = no
+						prisoner = no	
+						opinion = { who = ROOT value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+						NOT = { 
+							reverse_has_opinion_modifier = {
+								who = FROM
+								modifier = refused_championing
+							}
+						}
+					}
+				}#
+				NOT = { 
+					any_courtier = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes	
+						}
+						liege = { character = ROOT }
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						NOT = { has_severe_disability_trigger = yes }			
+						is_ill = no
+						prisoner = no	
+						opinion = { who = ROOT value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+						NOT = { 
+							reverse_has_opinion_modifier = {
+								who = ROOT
+								modifier = refused_championing
+							}
+						}
+					}
+				}#
+				NOT = { 
+					AND = {	
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						is_ill = no
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+						}
+						NOT = { has_severe_disability_trigger = yes }	
+					} 
+				} 
+			}#modifier
+
+		}#AI chance
+		###Rodri's Trial-By-Combat event chain. the flags should allow the prisoner to continue FROM TBC Decisions-Fight Personally
+		hidden_tooltip = {
+			remove_character_modifier = getting_justice
+			set_character_flag = demmanded_first_trial_by_combat
+			set_character_flag = choosing_champion
+			clr_character_flag = prisoner_has_champion
+			clr_character_flag = first_trial.0_event
+			if = {
+				limit = {
+					NOR = {
+						has_character_modifier = the_dungeon
+						has_character_modifier = the_oubliette
+						has_character_modifier = house_arrest
+					}
+				}
+				add_character_modifier = {
+					name = the_dungeon
+					duration = -1
+				}
+			}	
+			if = {
+				limit = { ai = no }
+				set_character_flag = select_champion
+				character_event = { id = trial_by_combat.999 }
+			}	
+			if = {
+				limit = { ai = yes } #Ai select via event
+				character_event = { id = trial_by_combat.27 days = 5 random = 2 }
+			}
+			hidden_tooltip = { #30 day time limit to find champion
+				repeat_event = { id = trial.0 days = 30 }
+			}
+		}	
+		FROM = { FROM = { character_event = { id = trial.1 } } }
+	}#endoption
+	option = { #trialbycourt
+		name = "EVTOPTBtrial.0"
+
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				diplomacy = 15
+			}
+			modifier = {
+				factor = 5
+				diplomacy = 10
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { diplomacy = 6 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { diplomacy = 3 }
+			}
+		}#AI chance	
+		hidden_tooltip = { 
+			clr_character_flag = first_trial.0_event
+			#so diplomacy stat is normal
+			remove_character_modifier = the_dungeon
+			remove_character_modifier = the_oubliette
+			remove_character_modifier = house_arrest
+			if = { #inform host combat champion not found
+				limit = { has_character_flag = choosing_champion }
+				FROMFROM = { character_event = { id = trial.50 } }
+				clr_character_flag = choosing_champion
+			}
+			if = { #inform host combat champion not found
+				limit = { has_character_flag = choosing_seven_champion }
+				FROMFROM = { character_event = { id = trial.50 } }
+				clr_character_flag = choosing_seven_champion
+			}
+			calculate_trial_strength_effect = yes  #determines defense strength in background
+			FROMFROM = { #Order of priority for Judges is: Triarchs, High Judges, Jogos Moonsinger, Most Devout, Venerable Elders, Regents, Forrester Sentinel, Castellans,  Master of Laws, Random Councillor, Random Courtier
+				##NOTE: Change give_justice decision localisation if this changes
+				if = {
+					limit = {
+						higher_tier_than = DUKE
+						is_merchant_republic = yes
+						OR = {
+							culture = volantene
+							culture = eastern_valyrian
+							AND = {
+								culture_group = valyrian
+								primary_title = { title = k_volantis }
+							}
+						}
+					}
+					random_realm_character = {
+						limit = { 
+							has_minor_title = title_triarch 
+							prisoner = no
+							is_incapable = no
+						}
+						character_event = { id = trial.2 days = 2 } 	
+						break = yes
+					}
+				}
+				if = {
+					limit = { has_minor_title = title_triarch }
+					any_liege = {
+						limit = {
+							higher_tier_than = DUKE
+							is_merchant_republic = yes
+							OR = {
+								culture = volantene
+								culture = eastern_valyrian
+								AND = {
+									culture_group = valyrian
+									primary_title = { title = k_volantis }
+								}
+							}
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+						}	
+						character_event = { id = trial.2 days = 2 } 	
+						break = yes	
+					}
+				}
+				random_realm_character = {
+					limit = { 
+						liege = { character = PREVPREV }
+						has_minor_title = title_high_judge 
+						prisoner = no
+						is_incapable = no
+						NOT = { is_inaccessible_trigger = yes }
+					}
+					character_event = { id = trial.2 days = 2 } 	
+					break = yes	
+				}
+				if = {
+					limit = { 
+						ROOT = { 
+							OR = {
+								religion = jogos_pagan 
+								religion = jogos_pagan_reformed
+							}	
+						} 
+					}
+					job_spiritual = {
+						if = {
+							limit = {
+								prisoner = no
+								is_incapable = no
+								NOT = { is_inaccessible_trigger = yes }
+							}
+							character_event = { id = trial.2 days = 2 } 	
+							break = yes
+						}	
+					}
+				}
+				if = {
+					limit = {
+						religion = the_seven
+						has_landed_title = k_the_most_devout
+					}
+					current_heir = {
+						if = {
+							limit = { 
+								trait = septon 
+								prisoner = no
+								is_incapable = no
+								NOT = { is_inaccessible_trigger = yes }
+							}
+							character_event = { id = trial.2 days = 2 } 	
+							break = yes
+						}	
+					}
+					random_courtier = {
+						limit = { 
+							trait = septon 
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+						}
+						character_event = { id = trial.2 days = 2 } 	
+						break = yes
+					}
+				}
+				random_realm_character = {
+					limit = { 
+						liege = { character = PREVPREV }
+						has_minor_title = title_venerable_elder 
+						prisoner = no
+						is_incapable = no
+						NOT = { is_inaccessible_trigger = yes }
+					}
+					character_event = { id = trial.2 days = 2 } 
+					break = yes	
+				}
+				if = {
+					limit = { 
+						has_regent = yes
+					}
+					regent = {
+						character_event = { id = trial.2 days = 2 } 
+						break = yes
+					}
+				}
+				if = {
+					limit = { 
+						dynasty = 1443
+						has_landed_title = c_blackgrove
+					}
+					random_realm_character = {
+						limit = { 
+							liege = { character = PREVPREV }
+							has_minor_title = title_sentinel 
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+						}
+						character_event = { id = trial.2 days = 2 } 	
+						break = yes
+					}
+				}
+				job_castellan = {
+					if = {
+						limit = { 
+							NOT = { trait = slave }
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+						}
+						character_event = { id = trial.2 days = 2 } 	
+						break = yes
+					}	
+				}
+				job_chancellor = {
+					if = {
+						limit = { 
+							NOT = { trait = slave }
+							prisoner = no
+							is_incapable = no
+							NOT = { is_inaccessible_trigger = yes }
+						}
+						character_event = { id = trial.2 days = 2 } 
+						break = yes
+					}	
+				}
+				random_courtier = {
+					limit = { 
+						OR = {
+							is_voter = yes
+							is_councillor = yes
+						}
+						liege = { character = PREVPREV }
+						NOT = { trait = slave }	
+						prisoner = no
+						is_incapable = no
+						NOT = { is_inaccessible_trigger = yes }						
+					}
+					character_event = { id = trial.2 days = 2 } 	
+					break = yes	
+				}
+				random_courtier = { 
+					limit = {
+						age = 16
+						NOT = { trait = incapable }
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+						is_consort = no
+						prisoner = no
+						is_incapable = no
+						NOT = { is_inaccessible_trigger = yes }
+						liege = { character = PREVPREV }
+					}
+					character_event = { id = trial.2 days = 2 } 	
+					break = yes					
+				}					
+			}		
+		}
+	}#endopt
+	option = { #trial by seven
+		name = "EVTOPTCtrial.0"
+		trigger = {
+			has_character_flag = first_trial.0_event
+			NOT = { has_character_flag = lunatic_trial } 
+			age = 16		
+			NOT = { trait = incapable }
+			religion = the_seven
+			FROM = { FROM = { religion = the_seven } }
+			OR = {
+				ai = no
+				higher_tier_than = DUKE
+				liege = {
+					higher_tier_than = DUKE
+					is_close_relative = PREV
+				}					
+			}
+			OR = { #can either command or pay for support
+				ai = no
+				piety = 300
+				prestige = 400
+				wealth = 300
+			}
+			NOT = { has_severe_disability_trigger = yes }
+			has_epidemic = no
+		}
+		ai_chance = {
+			factor = 15
+			
+			modifier = {
+				factor = 0
+				trait = cynical
+			}
+			modifier = {
+				factor = 5
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.5
+				host = { has_landed_title = e_iron_throne }
+				d_kingsguard = { has_holder = yes }
+			}
+			
+			modifier = {
+				factor = 10
+				any_courtier = { 
+					age = 16
+					OR = {
+						is_female = no
+						female_get_masculine_event_trigger = yes	
+					}
+					liege = { character = ROOT }
+					NOT = { character = ROOT }
+					OR = {
+						trait = skilled_warrior
+						trait = master_warrior
+					}	
+					NOT = { has_severe_disability_trigger = yes }	
+					is_ill = no
+					prisoner = no	
+					opinion = { who = ROOT value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+					NOT = { 
+						reverse_has_opinion_modifier = {
+							who = ROOT
+							modifier = refused_championing
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+				}	
+				is_ill = no
+				OR = {
+					is_female = no
+					female_get_masculine_event_trigger = yes
+				}
+				NOT = { has_severe_disability_trigger = yes }	
+			}	
+			modifier = {
+				factor = 0.2
+				host = {
+					any_courtier = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes	
+						}
+						liege = { character = PREV }
+						NOT = { character = PREV }
+						OR = {
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						NOT = { has_severe_disability_trigger = yes }	
+						is_ill = no
+						prisoner = no	
+						opinion = { who = PREV value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+						NOT = { 
+							reverse_has_opinion_modifier = {
+								who = PREV
+								modifier = refused_championing
+							}
+						}
+					}
+				}	
+			}
+			modifier = {
+				factor = 0.2
+				host = {
+					OR = {
+						trait = skilled_warrior
+						trait = master_warrior
+					}	
+					is_ill = no
+					OR = {
+						is_female = no
+						female_get_masculine_event_trigger = yes
+					}
+					NOT = { has_severe_disability_trigger = yes }	
+				}	
+			}
+			modifier = { #has no champions and character is bad bad fighter
+				factor = 0
+				NOT = { 
+					any_dynasty_member = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes	
+						}
+						OR = {
+							liege = { character = ROOT }
+							is_close_relative = ROOT
+						}	
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						NOT = { has_severe_disability_trigger = yes }
+						OR = {
+							ROOT = { has_landed_title = e_iron_throne }
+							liege = { character = ROOT }
+							NOT = { trait = kingsguard }
+						}		
+						OR = {
+							liege = { character = ROOT }
+							NOT = { trait = slave }
+						}
+						is_ill = no
+						prisoner = no	
+						opinion = { who = ROOT value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+						NOT = { 
+							reverse_has_opinion_modifier = {
+								who = FROM
+								modifier = refused_championing
+							}
+						}
+					}
+				}#
+				NOT = { 
+					any_courtier = { 
+						age = 16
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+						}
+						liege = { character = ROOT }
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						NOT = { has_severe_disability_trigger = yes }			
+						is_ill = no
+						prisoner = no	
+						opinion = { who = ROOT value = 0 }  #TESTING POURPOSES CHANGE -99 TO 50	
+						NOT = { 
+							reverse_has_opinion_modifier = {
+								who = ROOT
+								modifier = refused_championing
+							}
+						}
+					}
+				}#
+				NOT = { 
+					AND = {	
+						OR = {
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+						is_ill = no
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+						}
+						NOT = { has_severe_disability_trigger = yes }
+					} 
+				} 
+			}#modifier
+
+		}#AI chance
+		hidden_tooltip = {
+			remove_character_modifier = getting_justice
+			set_character_flag = demmanded_first_trial_by_combat
+			set_character_flag = choosing_seven_champion
+			clr_character_flag = prisoner_has_champion
+			clr_character_flag = first_trial.0_event
+			if = {
+				limit = {
+					NOR = {
+						has_character_modifier = the_dungeon
+						has_character_modifier = the_oubliette
+						has_character_modifier = house_arrest
+					}
+				}
+				add_character_modifier = {
+					name = the_dungeon
+					duration = -1
+				}
+			}	
+			hidden_tooltip = { #30 day time limit to find champion
+				repeat_event = { id = trial.0 days = 30 }
+			}
+			character_event = { id = trial_by_seven.1 }
+		}	
+		FROM = { FROM = { character_event = { id = trial_by_seven.1 tooltip = TOOLTIPtrial_by_seven.1 } } }
+	}#endoption
+}#end character event
+
+#Inform host trial by combat
+character_event = {
+   id = trial.1
+   desc = "EVTDESCtrial.1"
+   picture = GFX_knights
+   
+   is_triggered_only = yes
+   
+   trigger = { 
+		OR = {
+			FROM = { prisoner = yes  }
+			has_character_flag = lunatic_trial
+		}	
+   }
+
+	option = { #FROM is summoning his champion, the trial by combat will commence shortly
+		name = "EVTOPTAtrial.1"
+		show_portrait = FROM
+	}
+}
+#Inform host champion not found
+character_event = {
+   id = trial.50
+   desc = "EVTDESCtrial.50"
+	picture = GFX_evt_courtiers_talking
+   
+   is_triggered_only = yes
+   
+	option = { 
+		name = OK
+		show_portrait = FROM
+		clr_character_flag = choosing_seven_champion
+	}
+}
+
+#Judge determines defence OPT 3 4 5
+long_character_event = {
+	id = trial.2
+	desc = "EVTDESCtrial.2" 
+	picture = GFX_evt_accused
+   
+	is_triggered_only = yes
+	
+	trigger = { 
+		FROM = {
+			OR = {
+				prisoner = yes 
+				has_character_flag = lunatic_trial
+			}	
+		} 
+	}
+	
+	immediate = {
+		#determines prosecution strength
+		calculate_trial_strength_effect = yes	
+		#Find accuser and accusation for flavour text
+		if = {
+			limit = {
+				OR = {
+					ai = no
+					FROM = { ai = no }
+					FROM = { host = { ai = no } }
+				}
+			}
+			clear_event_target = accuser
+			clear_event_target = accused
+			FROM = { #accused
+				save_event_target_as = accused
+				if = { 
+					limit = {
+						OR = {
+							has_character_modifier = known_satanist
+							has_character_modifier = accused_apostate
+						}
+					}
+					host = {
+						random_courtier = {
+							limit = { 
+								NOT = { character = PREV } 
+								has_opinion_modifier = { who = ROOT_FROM modifier = opinion_accused_apostate }									
+							}
+							save_event_target_as = accuser
+						}
+					}
+				}
+				if = {
+					limit = { NOT = { event_target:accuser = { always = yes } } }
+					host = { #captor
+						ROOT_FROM = {					
+							if = { 
+								limit = {
+									OR = {
+										is_foe = PREV
+										PREV_has_abused_opinion_trigger = yes
+										PREV_has_abused_relative_opinion_trigger = yes
+										PREV_has_murder_opinion_trigger = yes
+										PREV_has_attempted_murder_opinion_trigger = yes
+										PREV_has_treason_opinion_trigger = yes
+										PREV_has_adultery_opinion_trigger = yes
+										PREV_has_oath_breaking_opinion_trigger = yes
+										PREV_has_blackmail_opinion_trigger = yes
+										reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+										reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+										reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+										reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+										reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+									}
+								}
+								PREV = { save_event_target_as = accuser }
+							}
+						}
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }
+							random_dynasty_member = {
+								limit = {
+									is_close_relative = PREV
+									NOT = { character = ROOT_FROM }
+									is_adult = yes
+									prisoner = no
+									is_incapable = no
+									NOT = { opinion = { who = ROOT_FROM value = 0 } }
+									OR = {
+										trait = ruthless
+										trait = just
+										NOT = { is_close_relative = FROM }
+									}
+									ROOT_FROM = {
+										OR = {
+											#is_foe = PREV
+											PREV_has_abused_opinion_trigger = yes
+											PREV_has_abused_relative_opinion_trigger = yes
+											PREV_has_murder_opinion_trigger = yes
+											PREV_has_attempted_murder_opinion_trigger = yes
+											PREV_has_treason_opinion_trigger = yes
+											PREV_has_adultery_opinion_trigger = yes
+											PREV_has_oath_breaking_opinion_trigger = yes
+											PREV_has_blackmail_opinion_trigger = yes
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+										}
+									}
+								}
+								save_event_target_as = accuser
+							}
+						}	
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }
+							random_spouse = {
+								limit = {
+									NOT = { character = ROOT_FROM }
+									is_adult = yes
+									prisoner = no
+									is_incapable = no
+									NOT = { opinion = { who = ROOT_FROM value = 0 } }
+									OR = {
+										trait = ruthless
+										trait = just
+										NOT = { is_close_relative = FROM }
+									}								
+									ROOT_FROM = {
+										OR = {
+											#is_foe = PREV
+											PREV_has_abused_opinion_trigger = yes
+											PREV_has_abused_relative_opinion_trigger = yes
+											PREV_has_murder_opinion_trigger = yes
+											PREV_has_attempted_murder_opinion_trigger = yes
+											PREV_has_treason_opinion_trigger = yes
+											PREV_has_adultery_opinion_trigger = yes
+											PREV_has_oath_breaking_opinion_trigger = yes
+											PREV_has_blackmail_opinion_trigger = yes
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+										}
+									}
+								}
+								save_event_target_as = accuser
+							}
+						}
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }					
+							random_courtier = {
+								limit = {
+									NOT = { character = ROOT_FROM }	
+									NOT = { trait = slave }
+									is_adult = yes
+									prisoner = no
+									is_incapable = no
+									NOT = { opinion = { who = ROOT_FROM value = 0 } }
+									OR = {
+										trait = ruthless
+										trait = just
+										NOT = { is_close_relative = FROM }
+									}
+									ROOT_FROM = {
+										OR = {
+											#is_foe = PREV
+											PREV_has_abused_opinion_trigger = yes
+											PREV_has_abused_relative_opinion_trigger = yes
+											PREV_has_murder_opinion_trigger = yes
+											PREV_has_attempted_murder_opinion_trigger = yes
+											PREV_has_treason_opinion_trigger = yes
+											PREV_has_adultery_opinion_trigger = yes
+											PREV_has_oath_breaking_opinion_trigger = yes
+											PREV_has_blackmail_opinion_trigger = yes
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+										}
+									}
+								}
+								save_event_target_as = accuser
+							}
+						}	
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }
+							random_realm_lord = {
+								limit = {
+									NOT = { character = ROOT_FROM }
+									is_adult = yes
+									prisoner = no
+									is_incapable = no
+									NOT = { opinion = { who = ROOT_FROM value = 0 } }
+									OR = {
+										trait = ruthless
+										trait = just
+										NOT = { is_close_relative = FROM }
+									}
+									ROOT_FROM = {
+										OR = {
+											#is_foe = PREV
+											PREV_has_abused_opinion_trigger = yes
+											PREV_has_abused_relative_opinion_trigger = yes
+											PREV_has_murder_opinion_trigger = yes
+											PREV_has_attempted_murder_opinion_trigger = yes
+											PREV_has_treason_opinion_trigger = yes
+											PREV_has_adultery_opinion_trigger = yes
+											PREV_has_oath_breaking_opinion_trigger = yes
+											PREV_has_blackmail_opinion_trigger = yes
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+										}
+									}
+								}
+								save_event_target_as = accuser
+							}
+						}	
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }
+							random_realm_character = {
+								limit = {
+									NOT = { character = ROOT_FROM }
+									NOT = { trait = slave }
+									is_adult = yes
+									prisoner = no
+									is_incapable = no
+									NOT = { opinion = { who = ROOT_FROM value = 0 } }
+									OR = {
+										trait = ruthless
+										trait = just
+										NOT = { is_close_relative = FROM }
+									}
+									OR = {
+										prestige = 150
+										liege = { is_close_relative = PREV }
+									}
+									ROOT_FROM = {
+										OR = {
+											#is_foe = PREV
+											PREV_has_abused_opinion_trigger = yes
+											PREV_has_abused_relative_opinion_trigger = yes
+											PREV_has_murder_opinion_trigger = yes
+											PREV_has_attempted_murder_opinion_trigger = yes
+											PREV_has_treason_opinion_trigger = yes
+											PREV_has_adultery_opinion_trigger = yes
+											PREV_has_oath_breaking_opinion_trigger = yes
+											PREV_has_blackmail_opinion_trigger = yes
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }																			
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_slaver }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_illegal_slave_trader }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_cancelled_loan }
+											reverse_has_opinion_modifier = { who = PREV modifier = opinion_loan_default }
+										}
+									}
+								}
+								save_event_target_as = accuser
+							}
+						}	
+						if = {
+							limit = { NOT = { event_target:accuser = { always = yes } } }
+							save_event_target_as = accuser
+						}	
+					}	
+				}	
+			}	
+		}
+		#find third party victim if needed
+		event_target:accuser = {
+			if = { #murder
+				limit = { FROM = { PREV_has_murder_opinion_trigger = yes } }
+				random_child_even_if_dead = {
+					limit = {
+						is_alive = no
+						death_murder_known_trigger = yes
+						killer = { character = FROM }
+					}
+					save_event_target_as = third_party_murder_victim
+					break = yes
+				}
+				father_even_if_dead = {
+					if = {
+						limit = {
+							is_alive = no
+							death_murder_known_trigger = yes
+							killer = { character = FROM }
+						}
+						save_event_target_as = third_party_murder_victim
+						break = yes
+					}	
+				}	
+				mother_even_if_dead = {
+					if = {
+						limit = {
+							is_alive = no
+							death_murder_known_trigger = yes
+							killer = { character = FROM }
+						}
+						save_event_target_as = third_party_murder_victim
+						break = yes
+					}	
+				}
+				random_dynasty_member_even_if_dead = {
+					limit = {
+						is_alive = no
+						is_close_relative = PREV
+						death_murder_known_trigger = yes
+						killer = { character = FROM }
+					}
+					save_event_target_as = third_party_murder_victim
+					break = yes
+				}
+				random_dynasty_member_even_if_dead = {
+					limit = {
+						is_alive = no
+						death_murder_known_trigger = yes
+						killer = { character = FROM }
+					}
+					save_event_target_as = third_party_murder_victim
+					break = yes
+				}
+			}	
+			FROM = {	
+				if = {  #attempted murder
+					limit = { PREV_has_attempted_murder_opinion_trigger = yes }
+					if = {
+						limit = {
+							reverse_has_opinion_modifier = { who = PREV modifier = attempted_murder } 
+						}
+						PREV = { save_event_target_as = third_party_murder_attempt_victim }
+						break = yes
+					}
+					random_character = {
+						limit = {
+							OR = {
+								is_close_relative = event_target:accuser
+								is_friend = event_target:accuser
+								vassal_of = event_target:accuser
+							}
+							has_opinion_modifier = { who = FROM modifier = attempted_murder }
+						}
+						save_event_target_as = third_party_murder_attempt_victim
+					}
+				}
+				if = { #torture/abuse
+					limit = { PREV_has_abused_relative_opinion_trigger = yes }
+					random_character = {
+						limit = {
+							OR = {
+								is_close_relative = event_target:accuser
+								is_friend = event_target:accuser
+								is_lover = event_target:accuser
+							}
+							ROOT_FROM = { PREV_has_abused_opinion_trigger = yes }
+						}
+						save_event_target_as = third_party_abuse_victim
+					}
+				}				
+			}
+		}
+	}
+
+	option = { #poor defence
+		name = "EVTOPTAtrial.2"
+		trigger = { FROM = { has_character_flag = poor_defence } }	
+		FROM = { 
+			clr_character_flag = poor_defence
+			add_character_modifier = { name = poor_defence duration = -1 }
+			character_event = { id = trial.3  }  ###FROM is 'choice for courtier' scope
+			host = { character_event = { id = trial.6  days = 1 }  }  ##fromfrom is sender of 'choice for courtier' scope
+		} 
+
+	}
+
+	option = { #AVERAGE DEFENCE - 
+		name = "EVTOPTBtrial.2"
+		trigger = { FROM = { has_character_flag = average_defence } }
+		FROM = { 
+			clr_character_flag = average_defence
+			add_character_modifier = { name = average_defence duration = -1 }
+			character_event = { id = trial.4  }  ###FROM is 'choice for courtier' scope
+			host = { character_event = { id = trial.7  days = 1 } }  
+		}	
+	}
+
+	option = { #STRONG DEFENCE
+		name = "EVTOPTCtrial.2"
+		trigger = { FROM = { has_character_flag = strong_defence } }
+		FROM = { 
+			clr_character_flag = strong_defence
+			add_character_modifier = { name = strong_defence duration = -1 }
+			character_event = { id = trial.5  }  ###FROM is 'choice for courtier' scope
+			host = { character_event = { id = trial.8  days = 1 }	 }  ##fromfrom is sender of 'choice for courtier' scope
+		} 
+	}
+	after = {
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#Inform defendant poor defence
+long_character_event = {
+	id = trial.3
+	desc = "EVTDESCtrial.3" #I have made a poor defence because I am dumb
+	picture = GFX_evt_courtiers_talking
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.3" #I wish i had done better.		
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+	option = { #use favor on judge
+		name = "EVTOPTBtrial.3" 
+		trigger = {
+			FROM = { owes_favor_to = ROOT }
+			intrigue = 14
+		}
+		tooltip_info = intrigue
+		FROM = { 
+			character_event = { id = trial.399 tooltip = TOOLTIPtrial.399 }
+			tooltip = { reverse_remove_favor = ROOT }
+		}	
+	}
+	after = {
+		add_character_modifier = { name = poor_defence duration = -1 } #probably ok the player sees it, piece of mind
+	}
+}
+
+#Inform defendant average defence
+long_character_event = {
+	id = trial.4
+	desc = "EVTDESCtrial.4" #I have made an average defence
+	picture = GFX_evt_scandal
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.4" #I did my best
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+	option = { #use favor on judge
+		name = "EVTOPTBtrial.3" 
+		trigger = {
+			FROM = { owes_favor_to = ROOT }
+			intrigue = 14
+		}
+		tooltip_info = intrigue
+		FROM = { 
+			character_event = { id = trial.399 tooltip = TOOLTIPtrial.399 }
+			tooltip = { reverse_remove_favor = ROOT }
+		}	
+	}
+	after = {
+		add_character_modifier = { name = average_defence duration = -1 } #probably ok the player sees it, piece of mind
+	}
+}
+
+#Inform defendant strong defence
+long_character_event = {
+	id = trial.5
+	desc = "EVTDESCtrial.5" #I have made a strong defence because I am boss
+	picture = GFX_evt_scandal
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.5" #I am a boss.
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+	option = { #use favor on judge
+		name = "EVTOPTBtrial.3" 
+		trigger = {
+			FROM = { owes_favor_to = ROOT }
+			intrigue = 14
+		}
+		tooltip_info = intrigue
+		FROM = { 
+			character_event = { id = trial.399 tooltip = TOOLTIPtrial.399 }
+			tooltip = { reverse_remove_favor = ROOT }
+		}	
+	}
+	after = {
+		add_character_modifier = { name = strong_defence duration = -1 } #probably ok the player sees it, piece of mind
+	}
+}
+#Favor called on judge
+character_event = {
+	id = trial.399
+	desc = "EVTDESCtrial.399" 
+	picture = GFX_evt_courtiers_talking
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAtrial.399" 
+		reverse_remove_favor = FROM	
+		custom_tooltip = {
+			text = TOOLTIPtrial.399
+			opinion = {
+				who = FROM
+				modifier = opinion_trial_favor_called
+				months = 2
+			}
+		}
+	}
+}	
+#Inform accusor poor defence + inform trial by court
+long_character_event = {
+	id = trial.6
+	desc = "EVTDESCtrial.6" #He made a fool of himself
+	picture = GFX_evt_scandal
+
+	is_triggered_only = yes
+
+	trigger = { 
+		OR = {
+			FROM = { FROM = { prisoner = yes  } }
+			has_character_flag = lunatic_trial
+		}	
+	}
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.6" #I will present my side of the case now.
+		hidden_tooltip = { 
+			FROM = { character_event = { id = trial.12 } }		
+		} 
+		FROMFROM = { tooltip = { show_portrait = yes } }
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#Inform accusor average defence  + inform trial by court
+long_character_event = {
+	id = trial.7
+	desc = "EVTDESCtrial.7" #He made an average defence
+	picture = GFX_evt_scandal
+
+	is_triggered_only = yes
+
+	trigger = { 
+		OR = {
+			FROM = { FROM = { prisoner = yes  } }
+			has_character_flag = lunatic_trial
+		}	
+	}
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.7" #I will present my side of the case now.
+		hidden_tooltip = { 
+			FROM = { character_event = { id = trial.12 } }		
+		}
+		FROMFROM = { tooltip = { show_portrait = yes } }
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#Inform accusor strong defence + inform trial by court
+long_character_event = {
+	id = trial.8
+	desc = "EVTDESCtrial.8" #he made a strong defence what rehtoric!!
+	picture = GFX_evt_scandal
+
+	is_triggered_only = yes
+
+	trigger = { 
+		OR = {
+			FROM = { FROM = { prisoner = yes  } }
+			has_character_flag = lunatic_trial
+		}	
+	}
+
+	option = { #could include a bribe option here to %chance upgrade defence level
+		name = "EVTOPTAtrial.8" #I will present my side of the case now.
+		hidden_tooltip = { 
+			FROM = { character_event = { id = trial.12 } }		
+		}
+		FROMFROM = { tooltip = { show_portrait = yes } }
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#Judge determines case strength OPT 13 14 15
+character_event = {
+	id = trial.12
+	desc = "EVTDESCtrial.12"
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { #POOR Accusation
+		name = "EVTOPTAtrial.12"
+		trigger = { has_character_flag = poor_defence } 
+		clr_character_flag = poor_defence
+		add_character_modifier = { name = poor_case duration = -1 }
+		FROM = { character_event = { id = trial.13 } }
+	}
+
+	option = { #AVERAGE Accusation
+		name = "EVTOPTBtrial.12"
+		trigger = { has_character_flag = average_defence }
+		add_character_modifier = { name = average_case duration = -1 }
+		clr_character_flag = average_defence
+		FROM = { character_event = { id = trial.14 } }
+	}
+
+	option = { #STRONG Accusation
+		name = "EVTOPTCtrial.12"
+		trigger = { has_character_flag = strong_defence }
+		add_character_modifier = { name = strong_case duration = -1 }
+		clr_character_flag = strong_defence
+		FROM = { character_event = { id = trial.15 } }
+	}
+}
+
+
+#Inform accusor poor accusation
+character_event = {
+	id = trial.13
+	desc = "EVTDESCtrial.13" #I have presented my side poorly
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade level, id like a stewardship 15 trigger
+		name = "EVTOPTAtrial.13" #I am disappointed poor case
+		FROM = { add_character_modifier = { name = poor_case duration = -1 } }
+		FROMFROMFROMFROM = {
+			show_portrait = yes
+			character_event = { id = trial.16 }
+		}#endcourt
+		if = { 
+			limit = {
+				has_character_flag = lunatic_trial
+			}
+			character_event = { id = trial.16 }
+		}
+	}
+}
+
+
+#Inform accusor average accusation
+character_event = {
+	id = trial.14
+	desc = "EVTDESCtrial.14" #I have presented my side averagely
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade level, id like a stewardship 15 trigger
+		name = "EVTOPTAtrial.14" #I did my best
+		FROM = { add_character_modifier = { name = average_case duration = -1 } }
+		FROMFROMFROMFROM = {
+			show_portrait = yes
+			character_event = { id = trial.17  }
+		 }
+		 if = { 
+			limit = {
+				has_character_flag = lunatic_trial
+			}
+			character_event = { id = trial.17  }
+		}
+	}
+}
+
+#Inform accusor strong accusation
+character_event = {
+	id = trial.15
+	desc = "EVTDESCtrial.15" #I have presented my case propa... 
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { #could include a bribe option here to %chance upgrade level
+		name = "EVTOPTAtrial.15" #I did my best
+		FROM = { add_character_modifier = { name = strong_case duration = -1 } }
+		FROMFROMFROMFROM = {
+			show_portrait = yes
+			character_event = { id = trial.18  }
+		}
+		if = { 
+			limit = {
+				has_character_flag = lunatic_trial
+			}
+			character_event = { id = trial.18  }
+		}
+	}
+}
+
+#inform accused of poor str case but most importantly sets accused to FROM and accuser to FROM FROM
+character_event = {
+	id = trial.16
+	desc = "EVTDESCtrial.16" #he made a poor defence, this is good for me.
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.16" #I now away the verdict
+		hidden_tooltip = { 
+			FROM = {
+				FROM = { character_event = { id = trial.19 }  }	
+			}	
+		}
+	}
+}
+
+#inform accused of average str case but most importantly sets accused to FROM and accuser to FROM FROM
+character_event = {
+	id = trial.17
+	desc = "EVTDESCtrial.17" #he made an average defence, im getting nervous
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.17" #I now away the verdict
+		hidden_tooltip = { 
+			FROM = {
+				FROM = { character_event = { id = trial.19 }  }	
+			}	
+		}
+	}
+}
+
+#inform accused of strong str case but most importantly sets accused to FROM and accuser to FROM FROM
+character_event = {
+	id = trial.18
+	desc = "EVTDESCtrial.18" #he made a strong defence,
+	picture = GFX_evt_accused
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.18" #I should have asked for a trial by combat!
+		hidden_tooltip = { 
+			FROM = {
+				FROM = { character_event = { id = trial.19 }  }	
+			}	
+		}
+	}
+}
+
+#Judge chooses verdict
+#The concept is that both guilty and innocent have the exact same factors but are inverted.
+#This allows for a ballanced reflection of the characters traits VS eachother.
+#FROM = accused
+character_event = {
+   id = trial.19
+   desc = "EVTDESCtrial.19"
+   picture = GFX_evt_accused
+   
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAtrial.19" #Guilty
+		trigger = {
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_trial_favor_called } }
+		}
+		ai_chance = {
+			factor = 50
+			###Personality doesnt matter, only pragmatic factors
+			#####Intelligence & Intrigue
+			modifier = {
+				factor = 2
+				trait = genius 
+			}
+			modifier = {
+				factor = 1.5
+				is_smart_trigger = yes 
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 10 
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 14
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 18 
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 22
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 26
+			}
+			modifier = {
+				factor = 1.2
+				intrigue = 30
+			}
+
+			###Diplomacy
+			modifier = { ###incompetent
+				factor = 0.5
+				NOT = { diplomacy = 7 }
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 12
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 14
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 16
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 18
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 20
+			}			
+			modifier = {
+				factor = 1.2
+				diplomacy = 22
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 24
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 26
+			}
+			modifier = {
+				factor = 1.2
+				diplomacy = 28
+			}
+			###Society isnt just
+			modifier = {
+				factor = 1.5
+				has_fair_trait_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				has_ugly_trait_trigger = yes
+			}
+			modifier = {
+				factor = 0.75
+				OR = {  
+					trait = harelip 
+					trait = incapable 
+					trait = infirm
+					trait = dwarf
+					trait = stutter
+				}
+			}
+			modifier = {
+				factor = 0.75
+				is_female = yes
+			}
+			###Trust
+			modifier = {
+				factor = 0.5
+				check_variable = { which = "dishonorable" value = 9.9 }
+			}
+			modifier = {
+				factor = 0.75
+				OR = {  
+					is_any_kinslayer_trigger = yes
+					trait = suspected_kinslayer
+					trait = bastard 
+					trait = deserter  
+				}
+			}
+			modifier = {
+				factor = 1.25
+				trait = knight
+			}
+			
+			modifier = {
+				factor = 0.66
+				NOT = { prestige = 0 }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { prestige = 100 }
+			}
+			modifier = {
+				factor = 1.25
+				prestige = 1000
+			}
+			modifier = {
+				factor = 1.5
+				prestige = 2000
+			}
+			modifier = {
+				factor = 1.5
+				prestige = 4000
+			}
+			
+			modifier = {
+				factor = 0.66
+				NOT = { piety = -100 }
+			}
+			modifier = {
+				factor = 0.8
+				NOT = { piety = 0 }
+			}
+			modifier = {
+				factor = 1.25
+				piety = 300
+			}
+			modifier = {
+				factor = 1.5
+				piety = 600
+			}
+			modifier = {
+				factor = 1.5
+				piety = 1000
+			}
+
+			###How you did in court
+			modifier = {
+				factor = 4
+				has_character_modifier = strong_case
+			}
+			modifier = {
+				factor = 2
+				has_character_modifier = average_case
+			}
+		}
+
+		FROM = { FROM = { character_event = { id = trial.21  } } } ##accuser gets 'yay he is guilty event'
+		#If the defendent made a better case, bad things happen to human for picking guilty...
+		if = {
+			limit = { 
+				ai = no 
+				OR = {
+					AND = {
+						FROM = {  has_character_modifier = strong_defence }
+						NOT = { has_character_modifier = strong_case }
+					}
+					AND = {
+						FROM = {  has_character_modifier = average_defence }
+						has_character_modifier = poor_case
+					}
+				}
+			}
+			prestige = -100
+			if = {
+				limit = { 
+					NOT = { trait = just }
+					NOT = { trait = arbitrary }
+				}
+				random = {
+					chance = 50
+					add_trait = arbitrary
+					hidden_tooltip = {
+						character_event = {
+							id = 38266 #Notify Arbitrary
+						}
+					}
+				}
+			}
+			if = {
+				limit = { trait = just }
+				remove_trait = just
+			}
+			reverse_opinion = {
+				who = FROM
+				modifier = opinion_found_me_guilty
+			}
+			liege = {
+				any_courtier = {
+					limit = {
+						age = 16
+						opinion = { who = FROM value = -25 }
+						NOT = { character = ROOT }
+						NOT = { character = FROM }
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_unjust
+					}
+				}
+			}			
+		}
+	}
+
+	option = { 
+		name = "EVTOPTBtrial.19" #Innocent
+		ai_chance = {
+			factor = 50
+			
+			###Personality doesnt matter, only pragmatic factors
+			#####Intelligence & Intrigue
+			modifier = {
+				factor = 2
+				FROM = {  trait = genius }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_smart_trigger = yes }
+			}
+
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 10 } 
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 14 } 
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 18 }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 22 }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 26 }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { intrigue = 30 }
+			}
+			###Diplomacy
+			modifier = { ###incompetent
+				factor = 0.5
+				FROM = { NOT = { diplomacy = 7 } }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 12 }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 14 }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 16  }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 18  }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 20  }
+			}			
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 22  }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 24  }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 26  }
+			}
+			modifier = { 
+				factor = 1.2
+				FROM = { diplomacy = 28  }
+			}
+			###Society isnt just
+			modifier = {
+				factor = 1.5
+				FROM = { has_fair_trait_trigger = yes  }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { has_ugly_trait_trigger = yes  }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = {  
+					OR = {
+						trait = harelip 
+						trait = incapable 
+						trait = infirm
+						trait = dwarf
+						trait = stutter
+					}
+				 }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = {  is_female = yes }
+			}
+			###Trust
+			modifier = {
+				factor = 0.5
+				FROM = {  
+					check_variable = { which = "dishonorable" value = 9.9 }
+				}
+			}
+
+			modifier = {
+				factor = 0.75
+				FROM = {  
+					OR = {
+						is_any_kinslayer_trigger = yes
+						trait = suspected_kinslayer
+						trait = bastard 
+						trait = deserter 
+					}
+				 }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = knight }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { NOT = { prestige = 0 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { NOT = { prestige = 100 } }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { prestige = 1000 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { prestige = 2000 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { prestige = 4000 }
+			}
+			
+			modifier = {
+				factor = 0.66
+				FROM = { NOT = { piety = -100 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { NOT = { piety = 0 } }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { piety = 300 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 600 }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { piety = 1000 }
+			}
+			###How you did in court
+			modifier = {
+				factor = 4
+				FROM = { has_character_modifier = strong_defence }
+			}
+			modifier = {
+				factor = 2
+				FROM = { has_character_modifier = average_defence }
+			}
+		}
+		#FROM = { character_event = { id = trial.26  } } ###innocent FROM is informed and released.
+		FROM = { FROM = { character_event = { id = trial.27  } } } ###innocent FromFROM is informed and is disappointed.
+		#If the defendent made a poor case, bad things happen to human for picking innocent...
+		if = {
+			limit = { 
+				ai = no 
+				OR = {
+					AND = {
+						has_character_modifier = strong_case
+						FROM = { NOT = { has_character_modifier = strong_defence } }
+					}
+					AND = {
+						has_character_modifier = average_case
+						FROM = { has_character_modifier = poor_defence }
+					}
+				}
+			}
+			prestige = -100
+			if = {
+				limit = { 
+					NOT = { trait = just }
+					NOT = { trait = arbitrary }
+				}
+				random = {
+					chance = 50
+					add_trait = arbitrary
+					hidden_tooltip = {
+						character_event = {
+							id = 38266 #Notify Arbitrary
+						}
+					}
+				}
+			}
+			if = {
+				limit = { trait = just }
+				remove_trait = just
+			}
+			reverse_opinion = {
+				who = FROM
+				modifier = opinion_found_me_innocent
+			}
+			liege = {
+				any_courtier = {
+					limit = {
+						age = 16
+						NOT = { opinion = { who = FROM value = 75 } }
+						NOT = { character = ROOT }
+						NOT = { character = FROM }
+						NOT = { character = PREV }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_unjust
+					}
+				}
+			}			
+		}
+	}
+}
+
+#The accused is guilty, You won, pick sentence. Accused is FROMFROM, citadel is FROM.
+character_event = {
+   id = trial.21
+   desc = "EVTDESCtrial.21" #He is guilty and i will decide his fate.
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = lunatic_trial
+		hidden_tooltip = {
+			FROMFROM = {
+				remove_character_modifier = poor_defence
+				remove_character_modifier = average_defence
+				remove_character_modifier = strong_defence
+				if = { #If this was a just execution remove all loans
+					limit = { 
+						has_character_flag = given_personal_loan
+						persistent_event_target:loan_title = {
+							holder_scope = {
+								character = ROOT
+							}
+						}
+					}
+					clr_character_flag = given_personal_loan
+					remove_opinion = { who = ROOT modifier = opinion_liege_loan }
+					remove_character_modifier = liege_loan
+				}
+				if = {
+					limit = {
+						NOR = {
+							has_character_modifier = the_dungeon
+							has_character_modifier = the_oubliette
+							has_character_modifier = house_arrest
+						}
+					}
+					add_character_modifier = {
+						name = the_dungeon
+						duration = -1
+					}
+				}
+			}
+			FROM = { 	
+				remove_character_modifier = poor_case 
+				remove_character_modifier = average_case 
+				remove_character_modifier = strong_case 
+			}
+			any_player = { #Inform world/realm
+				limit = {
+					NOT = { character = ROOT }
+					NOT = { character = FROM }
+					NOT = { character = FROMFROM }
+					NOT = { has_character_modifier = giving_justice }
+					OR = {
+						dynasty = FROMFROM
+						is_close_relative = FROMFROM
+						AND = {
+							OR = {
+								is_liege_or_above = ROOT
+								AND = {
+									ROOT = { higher_tier_than = DUKE }
+									is_within_diplo_range = ROOT
+									OR = {
+										same_realm = ROOT
+										culture_group = ROOT
+									}								
+								}
+							}	
+							FROMFROM = {
+								OR = {
+									is_ruler = yes
+									is_close_relative = ROOT
+									father_even_if_dead = { higher_tier_than = BARON }
+									mother_even_if_dead = { higher_tier_than = BARON }
+									trait = dragon_rider
+								}
+							}	
+						}
+					}
+				}
+				character_event = { id = trial.300 days = 4 }
+			}
+		}
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.21" ##OFF WITH HIS HEAD
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }
+				AND = {
+					has_regent = no
+					NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				}	
+			}
+		}
+		ai_chance = { 
+			factor = 25 	
+			
+			modifier = { #avoid kinslayer
+				factor = 0
+				NOT = { has_cutthroat_religion_trigger = yes }
+				OR = {
+					is_close_relative = FROMFROM
+					AND = {
+						dynasty = FROMFROM
+						NOT = { dynasty = 0 }						
+					}
+				}
+				OR = {
+					trait = honorable
+					trait = familyperson
+					NOR = {
+						trait = zealous
+						trait = ruthless
+						trait = cruel
+						trait = lunatic
+					}
+				}	
+			}	
+			modifier = { #avoid kinslayer
+				factor = 0.25
+				NOT = { has_cutthroat_religion_trigger = yes }
+				OR = {
+					is_close_relative = FROMFROM
+					AND = {
+						dynasty = FROMFROM
+						NOT = { dynasty = 0 }						
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				opinion = { who = FROMFROM value = 50 }
+				NOR = {
+					trait = just
+					trait = zealous
+					trait = ruthless
+					trait = cruel
+					trait = lunatic
+				}					
+			}				
+			modifier = {
+				factor = 4
+				trait = zealous
+			}			
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				OR = {
+					trait = paranoid
+					trait = ruthless
+				}
+				FROMFROM = { any_claim = { holder_scope = { character = ROOT } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -10 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -35 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -60 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -85 } }
+			}
+		}
+		FROM = { 
+			FROM = { 
+				hidden_tooltip = { character_event = { id = trial.22 } }
+				tooltip = { 
+					death = yes 
+					save_event_target_as = kinslayer_target #check for kinslayer
+					ROOT = { add_kinslayer_trait_effect = yes }
+				}
+			} 
+		}	
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+
+	option = { 
+		name = {
+			text = "EVTOPTBtrial.21" ##Send him to the wall
+			trigger = { FROMFROM = { trial_charge_can_be_castrated_trigger = no } }
+		}	
+		name = {
+			text = "EVTOPTBtrial.21B" ##Send him to the wall and geld
+			trigger = { FROMFROM = { trial_charge_can_be_castrated_trigger = yes } }
+		}	
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }
+				AND = {
+					has_regent = no
+					NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				}	
+			}
+			NOT = { trait = nightswatch }
+			NOT = { trait = deserter }
+			FROM = { 
+				FROM = { 
+					is_female = no
+					age = 14
+					NOT = { trait = nightswatch } 
+				} 
+			}
+			nightswatch_culture_trigger = yes
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}		
+		}
+		FROM = { 
+			FROM = { 
+				tooltip = {
+					if = { #rape charge or similar
+						limit = { 
+							trial_charge_can_be_castrated_trigger = yes
+						}
+						add_trait = eunuch
+					}
+				}	
+
+				custom_tooltip = { 
+					text = TOOLTIPBANISHTONW 
+					hidden_tooltip = { character_event = { id = nightswatch.2098 } } #set banisher as FROMFROM
+				}
+				hidden_tooltip = { character_event = { id = trial.23 } }
+			} 
+		}	
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	
+	option = { 
+		name = "EVTOPTEtrial.21" ##Send to priesthood
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }
+				AND = {
+					has_regent = no
+					NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				}	
+			}
+			FROMFROM = { 
+				is_female = yes 
+				OR = {
+					AND = {
+						religion = the_seven
+						ROOT = { religion = the_seven }
+						NOT = { trait = silent_sister }
+						NOT = { trait = septa }
+					}
+					AND = {
+						OR = {
+							religion = harpy
+							religion = harpy_reformed
+						}
+						ROOT = { 
+							OR = {
+								religion = harpy
+								religion = harpy_reformed
+							}
+						}
+						NOT = { trait = grace }
+					}				
+				}
+			}		
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}		
+		}
+		FROM = { 
+			FROM = { 
+				tooltip = {
+					if = {
+						limit = { religion = the_seven }
+						add_trait = silent_sister
+					}
+					if = {
+						limit = { 
+							OR = {
+								religion = harpy
+								religion = harpy_reformed
+							}
+						}
+						add_trait = grace
+					}
+				}
+				hidden_tooltip = { character_event = { id = trial.235 } }
+			} 
+		}	
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	
+	option = { 
+		name = {
+			text = "EVTOPTFtrial.21" ##Exile
+			trigger = { FROMFROM = { trial_charge_can_be_castrated_trigger = no } }
+		}	
+		name = {
+			text = "EVTOPTFtrial.21B" ##Geld and Exile
+			trigger = { FROMFROM = { trial_charge_can_be_castrated_trigger = yes } }
+		}
+		
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }
+				AND = {
+					has_regent = no
+					NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				}	
+			}
+			NAND = {
+				NOT = { trait = nightswatch }
+				FROM = { 
+					FROM = { 
+						is_female = no
+						age = 14
+						NOT = { trait = nightswatch } 
+					} 
+				}
+				nightswatch_culture_trigger = yes	
+			}	
+			NOT = {
+				FROMFROM = { 
+					is_female = yes 
+					OR = {
+						AND = {
+							religion = the_seven
+							ROOT = { religion = the_seven }
+							NOT = { trait = silent_sister }
+							NOT = { trait = septa }
+						}
+						AND = {
+							OR = {
+								religion = harpy
+								religion = harpy_reformed
+							}
+							ROOT = { 
+								OR = {
+									religion = harpy
+									religion = harpy_reformed
+								}
+							}
+							NOT = { trait = grace }
+						}				
+					}
+				}	
+			}	
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}		
+		}
+		FROM = { 
+			FROM = { 
+				tooltip = {
+					if = { #rape charge or similar
+						limit = { 
+							trial_charge_can_be_castrated_trigger = yes
+						}
+						add_trait = eunuch
+					}
+				}
+				tooltip = { banish = yes }
+				hidden_tooltip = { 
+					character_event = { id = trial.237 } 
+					character_event = { id = 155 days = 1 }
+				}
+			} 
+		}	
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+
+	option = { 
+		name = "EVTOPTCtrial.21" ##will be walked through the street naked and sent back to prison.
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }
+				AND = {
+					has_regent = no
+					NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				}	
+			}
+		}
+		FROM = { FROM = { character_event = { id = trial.24 tooltip = TOOLTIPtrial.24 } } }
+		ai_chance = { 
+			factor = 25
+			
+			modifier = {
+				factor = 0.25
+				FROM = { any_claim = { holder_scope = { character = ROOT } } }
+			}
+			modifier = {
+				factor = 4
+				trait = slothful
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = cynical
+			}	
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 10 } 
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 35 } 
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 60 } 
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROM value = 85 } 
+			}
+		}	
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	option = { 
+		name = "EVTOPTGtrial.21" ##The council must decide the punishment
+		trigger = { 
+			has_dlc = "Zeus"
+			OR = {
+				has_regent = yes
+				primary_title = { has_law = justice_voting_power_1 } 
+			}	
+		}
+		FROM = { FROM = { character_event = { id = trial.239 tooltip = TOOLTIPtrial.239 } } }
+		####conclave tryanny
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+		ai_chance = { 
+			factor = 250
+			modifier = {
+				factor = 10
+				trait = just
+			}
+		}
+	}
+	option = { 
+		name = "EVTOPTDtrial.21" ##I will release him because I am magnanimous
+		trigger = { 
+			OR = {
+				NOT = { has_dlc = "Zeus" }				
+				NOT = { primary_title = { has_law = justice_voting_power_1 } }
+				has_regent = no
+			}
+		}
+		ai_chance = { 
+			factor = 10
+			
+			modifier = {
+				factor = 0.25
+				FROM = { any_claim = { holder_scope = { character = ROOT } } }
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = arbitrary }
+				NOT = { trait = lunatic }
+				primary_title = { has_law = justice_voting_power_1 }
+			}
+			modifier = {
+				factor = 0
+				NOT = { opinion = { who = FROM value = -30 } }
+				NOR = {
+					trait = kind
+					trait = humble
+					trait = honorable
+					AND = {
+						trait = familyperson
+						OR = {
+							is_close_relative = FROM
+							AND = {
+								dynasty = FROM
+								NOT = { dynasty = 0 }						
+							}
+						}
+					}
+				}					
+			}
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}
+			modifier = {
+				factor = 4
+				trait = cynical
+			}	
+			modifier = {
+				factor = 4
+				trait = honorable
+				FROM = { 
+					OR = {
+						is_ruler = yes 
+						trait = knight
+						has_priest_trait_trigger = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				NOT = { dynasty = 0 }
+				FROM = { dynasty = ROOT }
+			}
+			modifier = {
+				factor = 3
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROM value = 10 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROM value = 35 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROM value = 60 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROM value = 85 } 
+			}
+		}
+		FROM = { FROM = { character_event = { id = trial.25 tooltip = TOOLTIPtrial.25 } } }
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_ignored_my_verdict
+		}	
+		extrajudicial_action_tyranny_effect = yes
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	after = {
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#DEATH
+character_event = {
+   id = trial.22
+   desc = "EVTDESCtrial.22" 
+   picture = GFX_evt_beheading
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.220 } #Inform Judge
+			}
+		}		
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.22" ##I got killed. Wah!	
+		tooltip = { death = { death_reason = death_execution killer = FROM } }
+		hidden_tooltip = { FROM = { character_event = { id = imprisoned.10 } } } #Select execution method
+	}
+
+}
+
+#Sent to wall
+character_event = {
+   id = trial.23	
+   picture = GFX_evt_judged_by_ruler
+   
+	desc = {
+		text = "EVTDESCtrial.23" 
+		trigger = { trial_charge_can_be_castrated_trigger = no }
+	}
+	desc = {
+		text = "EVTDESCtrial.23B" 
+		trigger = { trial_charge_can_be_castrated_trigger = yes }
+	}
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.230 } #Inform Judge
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.23" ##I got sent to the wall. Wah!
+		if = { #rape charge or similar
+			limit = { 
+				trial_charge_can_be_castrated_trigger = yes
+			}
+			add_trait = eunuch
+		}
+		hidden_tooltip = {
+			remove_character_modifier = getting_justice
+		}
+	}
+
+}
+
+#Sent to priesthood
+character_event = {
+   id = trial.235
+   desc = "EVTDESCtrial.235" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.236 } #Inform Judge
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.235" ##I got sent to the wall. Wah!
+		hidden_tooltip = {
+			any_spouse = { remove_spouse = ROOT }
+			any_consort = { remove_consort = ROOT }
+			betrothed = { break_betrothal = ROOT }
+			if = {
+				limit = {
+					trait = kingsguard
+				}
+				character_event = { id = kingsguard.1 } #remove from kingsguard
+			}
+			remove_character_modifier = getting_justice
+		}
+		prisoner = no
+		if = {
+			limit = { religion = the_seven }
+			add_trait = silent_sister
+		}
+		if = {
+			limit = { 
+				OR = {
+					religion = harpy
+					religion = harpy_reformed
+				}
+			}
+			add_trait = grace
+		}
+		set_character_flag = no_court_invites
+		if = {
+			limit = { is_ruler = yes }
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				if = {
+					limit = { is_merchant_republic = no }
+					current_heir = { save_event_target_as = wealth_heir }
+				}
+				if = {
+					limit = { is_merchant_republic = yes }
+					family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+				}
+				transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+			}
+			abdicate = yes
+		}
+		FROM = {
+			random_realm_lord = {
+				limit = {
+					religion = ROOT
+					is_theocracy = yes
+				}
+				ROOT = { move_character = PREV }
+			}
+		}
+	}
+
+}
+
+#Exiled
+character_event = {
+   id = trial.237
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCtrial.237" 
+		trigger = { trial_charge_can_be_castrated_trigger = yes }
+	}	
+	desc = {
+		text = "EVTDESCtrial.237B" 
+		trigger = { trial_charge_can_be_castrated_trigger = yes }
+	}
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.238 } #Inform Judge
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.237" ##I got sent to the wall. Wah!
+		hidden_tooltip = {	
+			remove_character_modifier = getting_justice
+		}
+		if = { #rape charge or similar
+			limit = { 
+				trial_charge_can_be_castrated_trigger = yes
+			}
+			add_trait = eunuch
+		}
+		prisoner = no
+		if = {
+			limit = { is_ruler = yes }
+			hidden_tooltip = { #Universal on death/abdication event
+				if = {
+					limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+					set_character_flag = do_not_inherit_sword
+				}
+				set_character_flag = abdication
+				character_event = { id = 45341 } 
+				clr_character_flag = abdication
+				clr_character_flag = do_not_inherit_sword
+				if = {
+					limit = { is_merchant_republic = no }
+					current_heir = { save_event_target_as = wealth_heir }
+				}
+				if = {
+					limit = { is_merchant_republic = yes }
+					family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+				}
+				transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+			}
+			abdicate = yes
+		}
+		banish = yes
+	}
+
+}
+
+#Paraded through street naked
+character_event = {
+   id = trial.24
+   desc = "EVTDESCtrial.24" 
+   picture = GFX_evt_humiliation_prisoner
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		set_character_flag = lost_trial_by_combat
+		FROM = {
+			FROM = {
+				character_event = { id = trial.240 } #Inform Judge
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.24" ##My milkshakes brought all the peasants to the town.
+		hidden_tooltip = {
+			remove_character_modifier = getting_justice
+			set_character_flag = lost_trial_by_combat
+		}#endhidden
+		prestige = -50
+		add_character_modifier = {
+			name = publicly_shamed
+			duration = -1
+		}
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = opinion_found_guilty
+			}
+		}
+		if = {
+			limit = {
+				character = FROM
+				prisoner = no
+			}
+			add_character_modifier = { 
+				name = the_dungeon
+				duration = 365
+			}
+		}
+	}
+
+}
+
+#Released because the accuser was magananimous
+character_event = {
+   id = trial.25
+   desc = "EVTDESCtrial.25" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+
+	immediate = {
+		prisoner = no
+		if = {
+			limit = { any_claim = { tier = EMPEROR holder_scope = { character = FROM } } }
+			clr_character_flag = exiled_royal_family
+			reverse_remove_opinion = {
+				who = FROM
+				modifier = opinion_exiled_pretender
+			}
+		}	
+		FROM = {
+			FROM = {
+				character_event = { id = trial.250 } #Inform Judge
+			}
+		}
+		remove_character_modifier = getting_justice
+		
+		#One year diplomatic immunity
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = yes
+		character_event = { id = trial.500 days = 365 }
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.25" ##This could be the start of a beautiful friendship. (Davos/Stannis)	
+		random_list = {
+			15 = { 
+				add_friend = FROM
+			}#50
+			85 = { 
+				reverse_opinion = {
+					modifier = opinion_ignored_false_accusation
+					who = FROM
+					years = 10
+				}
+				opinion = {
+					modifier = opinion_ignored_false_accusation
+					who = FROM
+					years = 10
+				}	
+			}#50
+		}#randomlist
+	}
+
+}
+#Council decide
+character_event = {
+   id = trial.239
+   desc = "EVTDESCtrial.239" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.251 } #Inform Judge
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.239"
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_found_guilty
+		}
+		hidden_tooltip = {	
+			remove_character_modifier = getting_justice
+		}
+	}
+}
+###Inform Judge of punishment###
+#DEATH
+character_event = {
+   id = trial.220
+   desc = "EVTDESCtrial.220" 
+   picture = GFX_evt_beheading
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.220" 
+	}
+
+}
+#Sent to wall
+character_event = {
+   id = trial.230
+   desc = "EVTDESCtrial.230" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.220" 
+	}
+
+}
+#Sent to priesthood
+character_event = {
+   id = trial.236
+   desc = "EVTDESCtrial.236" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.220" 
+	}
+
+}
+#Exiled
+character_event = {
+   id = trial.238
+   desc = "EVTDESCtrial.238" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.220" 
+	}
+
+}
+#Paraded through street naked
+character_event = {
+   id = trial.240
+   desc = "EVTDESCtrial.240" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.220" 
+	}
+
+}
+
+#Released because the accuser was magananimous
+character_event = {
+   id = trial.250
+   desc = "EVTDESCtrial.250" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAtrial.250" 
+		prestige = -50
+	}
+
+}
+#Council decision
+character_event = {
+   id = trial.251
+   desc = "EVTDESCtrial.251" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.251" 
+	}
+
+}
+###
+
+#I lost the case and am upset about it.
+character_event = {
+   id = trial.27
+   desc = "EVTDESCtrial.27" 
+   picture = GFX_evt_throne_room
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		clr_character_flag = lunatic_trial
+		hidden_tooltip = {
+			FROMFROM = {
+				remove_character_modifier = poor_defence
+				remove_character_modifier = average_defence
+				remove_character_modifier = strong_defence
+				remove_character_modifier = getting_justice
+				if = {
+					limit = {
+						NOR = {
+							has_character_modifier = the_dungeon
+							has_character_modifier = the_oubliette
+							has_character_modifier = house_arrest
+						}
+					}
+					add_character_modifier = {
+						name = the_dungeon
+						duration = -1
+					}
+				}
+			}
+			FROM = {	
+				remove_character_modifier = poor_case 
+				remove_character_modifier = average_case 
+				remove_character_modifier = strong_case 
+			}
+			any_player = { #Inform world/realm
+				limit = {
+					NOT = { character = ROOT }
+					NOT = { character = FROM }
+					NOT = { character = FROMFROM }
+					NOT = { has_character_modifier = giving_justice }
+					OR = {
+						dynasty = FROMFROM
+						is_close_relative = FROMFROM
+						AND = {
+							OR = {
+								is_liege_or_above = ROOT
+								AND = {
+									ROOT = { higher_tier_than = DUKE }
+									is_within_diplo_range = ROOT
+									OR = {
+										same_realm = ROOT
+										culture_group = ROOT
+									}								
+								}
+							}	
+							FROMFROM = {
+								OR = {
+									is_ruler = yes
+									is_close_relative = ROOT
+									father_even_if_dead = { higher_tier_than = BARON }
+									mother_even_if_dead = { higher_tier_than = BARON }
+									trait = dragon_rider
+								}
+							}	
+						}
+					}
+				}
+				character_event = { id = trial.301 days = 3 }
+			}			
+		}
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.27" ##I have no choice
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { dynasty = ROOT } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { FROM = { is_close_relative = ROOT } }
+			}
+		}
+		FROM = {
+			FROM = {			
+				prisoner = no
+				hidden_tooltip = { 
+					character_event = { id = trial.26 } 
+					if = {
+						limit = { 
+							is_ruler = no 
+							liege = { character = ROOT }
+						}
+						character_event = { id = trial_by_combat.239 } # Prisoner leaves court
+					}
+				}				
+			}
+		}
+		#Just rulers are ok with losing a trial so reduced prestige hit and are less likely to be depressed/stressed
+		if = { 
+			limit = { 
+				trait = stressed 
+				NOT = { trait = arbitrary }
+				NOT = { has_landed_title = k_the_most_devout }
+				has_regent = no
+			}
+			random = {
+				chance = 33
+				modifier = {
+					factor = 0.3
+					trait = just
+				}
+				hidden_tooltip = { remove_trait = stressed }
+				add_trait = depressed
+			}
+		}
+		if = { 
+			limit = { 
+				NOT = { trait = stressed }
+				NOT = { trait = depressed }
+				NOT = { trait = arbitrary }
+				NOT = { has_landed_title = k_the_most_devout }
+				has_regent = no
+			}
+			random = {
+				chance = 33
+				modifier = {
+					factor = 0.3
+					trait = just
+				}
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = { id = 38282 days = 1 }
+				}
+			}
+		}
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+		if = {
+			limit = { NOT = { trait = just } }
+			prestige = -100
+		}
+	}
+	
+	option = { 
+		name = "EVTOPTBtrial.27" ##No, I will have his head!
+		trigger = { NOT = { trait = just } }
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { FROM = { dynasty = ROOT } }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { FROM = { is_close_relative = ROOT } }
+			}
+		}
+		FROM = {
+			FROM = {
+				hidden_tooltip = { character_event = { id = trial.28 } }
+				tooltip = { 
+					death = yes 
+					save_event_target_as = kinslayer_target #check for kinslayer
+					ROOT = { add_kinslayer_trait_effect = yes }
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { character = FROMFROM } }
+			custom_tooltip = { text = TOOLTIPTYRANNYUP2 }
+			piety = -150
+			prestige = -100
+		}	
+		if = {
+			limit = { trait = just }
+			remove_trait = just
+		}
+		if = { 
+			limit = { 
+				NOT = { trait = arbitrary }
+			}
+			random = {
+				chance = 50
+				add_trait = arbitrary
+				hidden_tooltip = {
+					character_event = {
+						id = 38266 #Notify Arbitrary
+					}
+				}
+			}
+		}
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_ignored_my_verdict
+		}
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	
+	option = { 
+		name = "EVTOPTCtrial.27" ##back to the cells
+		trigger = { NOT = { trait = just } }
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+		FROM = {
+			FROM = {
+				character_event = { id = trial.29 tooltip = TOOLTIPtrial.24 } 
+			}
+		}
+		if = {
+			limit = { NOT = { character = FROMFROM } }
+			custom_tooltip = { text = TOOLTIPTYRANNYUP2 }
+			piety = -100
+			prestige = -100
+		}	
+		if = {
+			limit = { trait = just }
+			remove_trait = just
+		}
+		if = { 
+			limit = { 
+				NOT = { trait = arbitrary }
+			}
+			random = {
+				chance = 30
+				add_trait = arbitrary
+				hidden_tooltip = {
+					character_event = {
+						id = 38266 #Notify Arbitrary
+					}
+				}
+			}
+		}
+		reverse_opinion = {
+			who = FROM
+			modifier = opinion_ignored_my_verdict
+		}
+		hidden_tooltip = { remove_character_modifier = giving_justice }
+	}
+	
+	after = {
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}
+}
+
+#I was found innocent and am released FROM prison
+character_event = {
+   id = trial.26
+   desc = "EVTDESCtrial.26" 
+   picture = GFX_evt_throne_room
+   
+	is_triggered_only = yes
+
+	immediate = {
+		prisoner = no
+		if = {
+			limit = { any_claim = { tier = EMPEROR holder_scope = { character = FROM } } }
+			clr_character_flag = exiled_royal_family
+			reverse_remove_opinion = {
+				who = FROM
+				modifier = opinion_exiled_pretender
+			}
+		}
+		remove_character_modifier = getting_justice	
+		#One year diplomatic immunity
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = yes
+		character_event = { id = trial.500 days = 365 }
+	}
+	
+	option = { 
+		name = "EVTOPTAtrial.26" ##JUSTICE!!!
+		if = {
+			limit = { FROM = { has_landed_title = k_the_most_devout } }
+			remove_kinslayer_trait_effect = yes
+			if = {
+				limit = { trait = excommunicated  }
+				remove_trait = excommunicated 
+			}
+		}
+	}
+
+}
+
+#DEATH (Unjust)
+character_event = {
+   id = trial.28
+   desc = "EVTDESCtrial.28" 
+   picture = GFX_evt_beheading
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			FROM = {
+				character_event = { id = trial.280 } #Inform Judge
+			}
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			FROM = {
+				change_variable = { which = "tyrant" value = 15 } 
+				hidden_tooltip = { character_event = { id = maintenance.1 } }#tyrant trait					
+			}
+		}	
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.28" ##I got killed. Wah!	
+		tooltip = { death = { death_reason = death_execution killer = FROM } }
+		hidden_tooltip = { FROM = { character_event = { id = imprisoned.10 } } } #Select execution method
+	}
+
+}
+
+#Back to the cells, unjust
+character_event = {
+   id = trial.29
+   desc = "EVTDESCtrial.29" 
+   picture = GFX_evt_into_the_dungeon
+   
+	is_triggered_only = yes
+	
+	immediate = {
+		set_character_flag = lost_trial_by_combat
+		remove_character_modifier = getting_justice
+		FROM = {
+			FROM = {
+				character_event = { id = trial.290 } #Inform Judge
+			}
+		}
+		if = {
+			limit = { NOT = { character = FROM } }
+			FROM = {
+				change_variable = { which = "tyrant" value = 15 } 
+				hidden_tooltip = { character_event = { id = maintenance.1 } }#tyrant trait				
+			}
+		}
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = no
+	}
+
+	option = { 
+		name = "EVTOPTAtrial.29" ##My milkshakes brought all the peasants to the town.
+		prestige = -50
+		add_character_modifier = {
+			name = publicly_shamed
+			duration = -1
+		}
+		if = {
+			limit = {
+				character = FROM
+				prisoner = no
+			}
+			add_character_modifier = { 
+				name = the_dungeon
+				duration = 365
+			}
+		}
+	}
+
+}
+
+###Inform Judge of unjust punishment###
+#DEATH
+character_event = {
+   id = trial.280
+   desc = "EVTDESCtrial.280" 
+   picture = GFX_evt_beheading
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.250" 
+		prestige = -50
+	}
+
+}
+#Sent to prison
+character_event = {
+   id = trial.290
+   desc = "EVTDESCtrial.290" 
+   picture = GFX_evt_judged_by_ruler
+   
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.250"
+		prestige = -50		
+	}
+
+}
+###
+##World informed of trial by combat results##
+#prisoner loses
+long_character_event = {
+	id = trial.300
+	desc = "EVTDESCtrial.300"
+	picture = GFX_evt_judged_by_ruler
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	
+	trigger = { NOT = { has_character_flag = do_not_inform_trial_by_court } }
+	
+	option = {
+		name = OK
+		show_portrait = FROM
+		show_portrait = FROMFROM
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}	
+	option = {
+		name = OPTNOINFORMTRIALCOURT
+		set_character_flag = do_not_inform_trial_by_court
+	}
+}	
+#prisoner wins
+long_character_event = {
+	id = trial.301	
+	picture = GFX_evt_judged_by_ruler
+	
+	desc = {
+		text = "EVTDESCtrial.301" #Released
+		trigger = { FROMFROMFROM = { prisoner = no } }
+	}
+	desc = {
+		text = "EVTDESCtrial.301B" #Not released
+		trigger = { NOT = { FROMFROMFROM = { prisoner = no } } }
+	}	
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	
+	trigger = { NOT = { has_character_flag = do_not_inform_trial_by_court } }
+	
+	option = {
+		name = OK
+		show_portrait = FROM
+		show_portrait = FROMFROM
+		show_portrait = event_target:accuser
+		show_portrait = event_target:third_party_murder_victim
+		show_portrait = event_target:third_party_murder_attempt_victim
+		show_portrait = event_target:third_party_abuse_victim
+	}	
+	option = {
+		name = OPTNOINFORMTRIALCOURT
+		set_character_flag = do_not_inform_trial_by_court
+	}
+}	
+
+# #Citadel determines defence/judge case strength #NOW SCRIPTED EFFECT
+# character_event = {
+	# id = trial.200
+	# desc = "EVTDESCtrial.200" #I am the citidel determining events poor/ave/strong
+	# picture = GFX_evt_courtiers_talking
+   
+	# is_triggered_only = yes
+	
+	# trigger = { 
+		# has_landed_title = c_the_citadel
+	# }
+
+	# option = { #poor defence
+		# name = POOR
+		# trigger = { ai = yes }
+		# ai_chance = {
+			# factor = 33
+			
+		# }#end AI chance
+		# FROM = { set_character_flag = poor_defence } 
+	# }
+
+	# option = { #AVERAGE DEFENCE - 
+		# name = AVERAGE
+		# trigger = { ai = yes }
+		# ai_chance = {
+			# factor = 33
+			
+		# }#end AI chance
+		# FROM = { set_character_flag = average_defence } 	
+	# }
+
+	# option = { #STRONG DEFENCE
+		# name = STRONG
+		# trigger = { ai = yes }
+		# ai_chance = {
+			# factor = 33
+			
+		# }#end AI chance
+
+		# FROM = { set_character_flag = strong_defence } 
+	# }
+# }
+#Prisoner offers to take the black
+character_event = { #Ai decision post imprisonment
+	id = trial.309
+	
+	is_triggered_only = yes
+	ai = yes
+	
+	trigger = {
+		offer_to_take_black_potential_trigger = yes
+		offer_to_take_black_allow_trigger = yes
+	}
+	
+	option = { 
+		name = "OFFER"
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				trait = wildling
+			}
+			modifier = { #If captured in battle, only do this if worried captor will do something nasty
+				factor = 0
+				has_character_flag = captured_in_battle
+				host = {
+					OR = {
+						NOR = {
+							ROOT = { just_execution_reason_PREV_trigger = yes }
+							has_character_modifier = feared_3
+							has_character_modifier = feared_4
+							has_character_modifier = feared_5
+							trait = cruel
+							trait = ruthless
+							trait = lunatic							
+						}
+						AND = {
+							pacifist = yes
+							NOT = { trait = cynical }
+						}	
+						AND = {
+							opinion = { who = ROOT value = 20 }
+							NOT = { trait = lunatic }
+							NOT = { trait = just }							
+							NOT = { trait = ruthless }
+							NOT = { trait = wroth }							
+						}
+					}	
+				}	
+			}
+			
+			#My heir is not ready/an idiot
+			modifier = {
+				factor = 0
+				is_ruler = yes
+				is_feudal = yes
+				NOT = { trait = craven }
+				NOT = { trait = slothful }
+				NOT = { trait = selfish }
+				current_heir = {
+					lower_tier_than = ROOT
+					OR = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+					}
+					OR = {
+						is_adult = no
+						prisoner = yes
+						is_incapable = yes
+						NOT = { reverse_opinion = { who = ROOT value = -50 } }
+						AND = {
+							NOT = { stewardship = 8 }
+							NOT = { diplomacy = 8 }
+							NOT = { martial = 8 }
+						}
+					}
+				}
+			}
+			#Fear of what captor may do to me
+			modifier = {
+				factor = 1.25
+				host = { has_character_modifier = feared_1 }
+				NOT = { trait = brave }
+			}
+			modifier = {
+				factor = 1.5
+				host = { has_character_modifier = feared_2 }
+				NOT = { trait = brave }
+			}
+			modifier = {
+				factor = 1.75
+				host = { has_character_modifier = feared_3 }
+				NOT = { trait = brave }
+			}
+			modifier = {
+				factor = 2
+				host = { has_character_modifier = feared_4 }
+				NOT = { trait = brave }
+			}
+			modifier = {
+				factor = 2.5
+				host = { has_character_modifier = feared_5 }
+				NOT = { trait = brave }
+			}
+			modifier = {
+				factor = 5
+				trait = craven
+				holder_scope = { 
+					OR = {
+						has_character_modifier = feared_1
+						has_character_modifier = feared_2
+						has_character_modifier = feared_3
+						has_character_modifier = feared_4
+						has_character_modifier = feared_5 
+					}	
+				}
+			}	
+			#Age
+			modifier = { 
+				factor = 0.1
+				NOT = { age = 21 }
+			}
+			modifier = { 
+				factor = 0.25
+				age = 21
+				NOT = { age = 30 }
+			}
+			modifier = { 
+				factor = 2
+				age = 50
+			}
+			#Conflicting ambition
+			modifier = {
+				factor = 0.5
+				OR = {
+					has_ambition = obj_wants_landed_title
+					has_ambition = obj_get_married
+					has_ambition = obj_marry_ruler
+					has_ambition = obj_find_lover
+					has_ambition = obj_have_a_daughter
+					has_ambition = obj_have_a_son
+					has_ambition = obj_five_children
+					has_ambition = obj_become_heir
+					has_ambition = obj_make_the_eight
+				}	
+			}
+			#I'm in line for a title
+			modifier = {
+				factor = 0.1
+				any_heir_title = { always = yes }
+			}
+			modifier = {
+				factor = 0.2
+				any_pretender_title = { always = yes }
+				NOT = { any_heir_title = { always = yes } }
+			}
+			#Culture
+			modifier = {
+				factor = 1.5
+				culture_group = first_men
+			}
+			modifier = {
+				factor = 1.5
+				dynasty = 59
+			}
+			#traits
+			modifier = { 
+				factor = 2
+				can_press_claims_trigger = no
+			}
+			modifier = {
+				factor = 0.1
+				nightswatch_culture_trigger = no
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 0.1
+				trait = lustful
+			}
+			modifier = {
+				factor = 0.1
+				trait = hedonist
+			}
+			modifier = {
+				factor = 0.1
+				trait = envious
+			}
+			
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 5
+				trait = content
+			}	
+			modifier = { #I deserve this
+				factor = 5
+				trait = just
+				host = { ROOT = { just_execution_reason_PREV_trigger = yes } }
+			}	
+							
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 1.5
+				trait = diligent
+			}
+			modifier = {
+				factor = 0.1
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.1
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.1
+				trait = selfish
+			}
+			modifier = {
+				factor = 0.5
+				trait = slothful
+			}
+		}
+		custom_tooltip = { 
+			text = TOOLTIPoffer_to_take_black
+			hidden_tooltip = {
+				host = { character_event = { id = trial.310 } }
+			}
+		}
+	}
+	option = { 
+		name = "NO"
+		ai_chance = {
+			factor = 95
+		}
+	}
+}
+character_event = {
+	id = trial.310
+	desc = "EVTDESCtrial.310" 
+	picture = GFX_evt_judged_by_ruler
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.310" #Accept
+		ai_chance = {
+			factor = 50
+			
+			modifier = { #Dont banish if like prisoner
+				factor = 0
+				opinion = { who = FROM value = 20 }	
+				NOR = {
+					trait = just
+					trait = ruthless
+					trait = wroth
+					trait = lunatic
+				}
+			}
+			modifier = { #Dont banish if my progeny
+				factor = 0
+				OR = {
+					is_parent_of = FROM
+					is_grandparent_of = FROM
+				}	
+				OR = {
+					opinion = { who = FROM value = -40 }
+					trait = familyperson
+				}
+				NOR = {
+					trait = just
+					trait = ruthless
+					trait = wroth
+					trait = lunatic
+				}
+			}
+			modifier = { #Dont actually have a reason
+				factor = 0.2
+				NOR = {
+					AND = {
+						has_landed_title = k_the_most_devout
+						FROM = {
+							OR = {
+								is_any_kinslayer_trigger = yes
+								trait = excommunicated
+							}
+						}	
+					}
+					FROM = { just_execution_reason_PREV_trigger = yes }
+					NOT = { opinion = { who = FROM value = -40 } }
+				}	
+			}
+			modifier = { #Is a competent/dangerous ruler/claimant
+				factor = 5
+				FROM = {
+					OR = {
+						AND = {
+							is_ruler = yes
+							OR = {
+								liege = { character = ROOT }
+								same_liege = ROOT
+								independent = yes
+							}
+						}	
+						any_claim = { holder_scope = { character = ROOT } } 
+					}
+					OR = {
+						trait = ambitious
+						NOT = { opinion = { who = ROOT value = -25 } }
+						martial = 15
+						intrigue = 15
+					}
+				}	
+			}
+			modifier = { #Is NOT a threat, prefer to keep in jail
+				factor = 0.2
+				FROM = {
+					is_ruler = yes
+					OR = {
+						liege = { character = ROOT }
+						same_liege = ROOT
+						independent = yes
+					}
+					OR = {
+						opinion = { who = ROOT value = 25 }
+						trait = content
+						check_variable = { which = tyrant value = 15 }
+						AND = {
+							NOT = { martial = 10 }
+							NOT = { diplomacy = 10 }
+							NOT = { intrigue = 10 }
+						}
+					}
+					NOR = {
+						trait = ambitious
+						NOT = { opinion = { who = ROOT value = -25 } }
+						martial = 15
+						intrigue = 15
+					}					
+				}	
+			}
+			
+			modifier = {
+				factor = 4
+				FROM = { 
+					any_claim = { holder_scope = { character = ROOT } } 
+					NOT = { is_child_of = ROOT }				
+				}				
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					is_pretender = yes
+					is_primary_heir = yes
+				}
+				FROM = {
+					is_pretender = yes
+					any_pretender_title = {
+						OR = {
+							current_heir = { character = ROOT }
+							ROOT = { any_pretender_title = { title = PREVPREV } }
+						}
+					}	
+				}	
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					is_lover = FROM
+					any_consort = { character = FROM }
+					is_married = FROM
+				}	
+			}
+			modifier = {
+				factor = 0.05 #Enemy has your relative
+				any_current_enemy = {
+					dynasty = FROM
+					is_close_relative = FROM
+					any_courtier = {
+						is_close_relative = ROOT
+						dynasty = ROOT
+					}
+				}
+			}					
+			modifier = {
+				factor = 0.2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.2
+				trait = impaler
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+		}
+		piety = 20		
+		FROM = {
+			custom_tooltip = { 
+				text = TOOLTIPBANISHTONW 
+				hidden_tooltip = { character_event = { id = trial.311 } }
+			}	
+		}
+	}
+	option = { 
+		name = "EVTOPTBtrial.310" #Reject
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			opinion = { who = ROOT modifier = opinion_rejected_NW_plea months = 60 }
+			character_event = { id = trial.312 }
+		}
+	}
+}
+character_event = { #Accepted
+	id = trial.311
+	desc = "EVTDESCtrial.311" 
+	picture = GFX_evt_judged_by_ruler
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.311"
+		if = {
+			limit = { higher_tier_than = DUKE }
+			wealth = -100
+			prestige = -500
+		}	
+		else_if = {
+			limit = { 
+				OR = {
+					tier = DUKE 
+					father_even_if_dead = { higher_tier_than = DUKE }
+					mother_even_if_dead = { higher_tier_than = DUKE }
+				}	
+			}
+			wealth = -60
+			prestige = -300
+		}
+		else_if = {
+			limit = { 
+				OR = {
+					tier = COUNT
+					father_even_if_dead = { tier = DUKE }
+					mother_even_if_dead = { tier = DUKE }
+				}	
+			}
+			wealth = -40
+			prestige = -200
+		}
+		else = {
+			wealth = -20
+			prestige = -50
+		}
+		if = {
+			limit = { is_patrician = yes }
+			family_palace = {
+				current_heir = {
+					add_character_modifier = {
+						name = predecessor_took_black
+						duration = 1825
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				is_ruler = yes
+				is_feudal = yes
+				current_heir = {
+					lower_tier_than = ROOT
+					OR = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+					}
+				}
+			}
+			current_heir = {
+				add_character_modifier = {
+					name = predecessor_took_black
+					duration = 1825
+				}
+			}
+		}
+		custom_tooltip = { 
+			text = TOOLTIPBANISHTONW 
+			hidden_tooltip = { character_event = { id = nightswatch.20 } }
+		}	
+	}
+}	
+character_event = { #Rejected
+	id = trial.312
+	desc = "EVTDESCtrial.312" 
+	picture = GFX_evt_judged_by_ruler
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial.312"
+		if = {
+			limit = { higher_tier_than = DUKE }
+			prestige = -100
+		}	
+		else_if = {
+			limit = { 
+				OR = {
+					tier = DUKE 
+					father_even_if_dead = { higher_tier_than = DUKE }
+					mother_even_if_dead = { higher_tier_than = DUKE }
+				}	
+			}
+			prestige = -60
+		}
+		else_if = {
+			limit = { 
+				OR = {
+					tier = COUNT
+					father_even_if_dead = { tier = DUKE }
+					mother_even_if_dead = { tier = DUKE }
+				}	
+			}
+			prestige = -40
+		}
+		else = {
+			prestige = -10
+		}	
+	}
+}	
+#One year diplomatic immunity after win trial (also used in mega war resolution events and during trials)
+character_event = {
+	id = trial.500
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = { diplomatic_immunity = no }
+
+	option = { 
+		name = OK	
+	}
+}

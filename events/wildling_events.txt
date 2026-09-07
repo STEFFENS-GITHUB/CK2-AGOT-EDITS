@@ -1,0 +1,3477 @@
+namespace = wildling
+###################
+# Wildling Events #
+###################
+# Galle (Gregory Hayes)
+###################
+# wildling.1	Assign Wildling Trait
+# wildling.2	Remove Wildling Trait
+# wildling.3-6	Wildlings Rebel
+
+# wildling.100-101	Wildling realm fractures on death if heir is weak
+
+# wildling.102 & 7-10 Night's Watchman captured by Wildlings Chain
+# wildling.11	Kidnapped Greenseer
+
+# wildling.12-14	Night's Watch Deserters Attack Province - Inform Lords #REMOVED
+#############
+# Fashbinder
+# wildling.15   Kills any wildling under d_nightswatch if holder isnt wildling or deserter #REMOVED
+# wildling.20-21   Wildling k_beyond_wall gets rallying event once wall is destroyed
+# wildling.22   Narrative Inform - winterhorn
+# wildling.23  Finds something
+# wildling.24   Narrative Inform - Winterhorn Destroyed
+# wildling.25   Narrative Inform - Winterhorn Found
+
+# wildling.50-54 Capturing Spear Wives
+# wildling.55 White Shadows in the Woods
+# wildling.60 Make wildlings invade
+# wildling.61-62 Skagosi ships events
+# wildling.63-65 Find Dark Sister
+
+# wildling.66 Thenn eat prisoner
+
+character_event = {
+	id = wildling.1
+	desc = "EVTDESCWILDLING1"
+	picture = GFX_evt_wildlings
+
+	hide_from = yes
+	
+	trigger = {
+		wildling_culture_trigger = yes
+		NOT = { trait = nightswatch }
+		NOT = { trait = wildling }
+	}
+
+	immediate = { add_trait = wildling }
+
+	option = {
+		name = "EVTOPTAWILDLING1"
+		add_trait = wildling
+		any_demesne_title = { succession = turkish_succession }
+		recalc_succession = yes
+	}
+}
+
+character_event = { #on_character_convert_culture
+	id = wildling.2
+	desc = "EVTDESCWILDLING2"
+	picture = GFX_evt_throne_room
+
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = wildling
+		OR = {
+			trait = nightswatch
+			AND = {
+				NOT = { wildling_culture_trigger = yes }
+				NOT = { trait = deserter }
+			}
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAWILDLING2"
+		remove_trait = wildling
+	}
+}
+
+# Wildling rebels
+province_event = {
+	id = wildling.3
+	picture = GFX_evt_wildlings
+	
+	desc = {
+		text = "EVTDESCWILDLING3" # The wildlings in PROVINCE have risen up against your rule!
+		trigger = { wildling_culture_trigger = yes }
+	}
+	desc = {
+		text = "EVTDESCWILDLING3B" # The shadowmen in PROVINCE have risen up against your rule!
+		trigger = { culture = shadowlander }
+	}
+	
+	trigger = {		
+		OR = {
+			wildling_culture_trigger = yes
+			culture = shadowlander
+		}
+		NOT = { culture = skagosi }		
+		#Must have a reason to revolt
+		OR = {
+			owner = { 
+				OR = {
+					NOT = { culture_group = ROOT } 
+					AND = {
+						NOT = { culture = ROOT }
+						ROOT = { culture = shadowlander }
+					}
+					NOT = { religion = ROOT }
+					NOT = { martial = 8 }
+					NOT = { diplomacy = 8 }
+					NOT = { prestige = 0 }
+					has_severe_disability_trigger = yes
+					prisoner = yes
+					is_adult = no
+					top_liege = { trait = nightswatch }
+				}	
+			}
+			revolt_risk = 0.01
+		}
+		
+		#Not in colonies
+		NOT = { has_province_flag = ruined_province }
+		NOT = { has_province_flag = colony_province }
+		NOT = { has_province_flag = winter_wasteland }
+		
+		NOT = { # Not if there is already an ongoing peasant revolt for this province
+			county = {		
+				any_war = {
+					using_cb = peasant_revolt
+				}
+			}
+		}
+		owner = {
+			NOT = { culture_group = unoccupied_group }
+			NOT = { culture_group = winter_group }
+		}
+		NOT = {
+			has_game_rule = {
+				name = provincial_revolts
+				value = none
+			}
+		}
+		NOT = { has_province_modifier = wildling_revolt_timer }
+	}
+	
+	mean_time_to_happen = {
+		months = 12
+		
+		modifier = {
+			factor = 2.5
+			has_game_rule = {
+				name = provincial_revolts
+				value = rare
+			}
+		}
+		modifier = {
+			factor = 20
+			owner = { top_liege = { culture_group = ROOT } }
+			NOT = { culture = shadowlander }
+		}
+		modifier = {
+			factor = 20
+			owner = { top_liege = { culture = ROOT } }
+			culture = shadowlander
+		}
+		
+		modifier = {
+			factor = 10
+			has_province_modifier = recent_revolt
+		}
+			
+		modifier = {
+			factor = 0.1
+			owner = { top_liege = { trait = nightswatch } }
+		}
+		
+		modifier = {
+			factor = 0.2
+			owner = {
+				NOT = { culture_group = ROOT }
+				any_current_enemy = {
+					culture_group = ROOT
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 3
+			is_capital = yes
+		}
+		
+		modifier = {
+			factor = 2
+			owner = { trait = kind }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { trait = cruel }
+		}
+		modifier = {
+			factor = 2
+			owner = { trait = just }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { trait = arbitrary }
+		}
+		
+		modifier = {
+			factor = 2
+			owner = { trait = greensight }
+		}
+		modifier = {
+			factor = 2
+			owner = { trait = crow }
+		}
+		modifier = {
+			factor = 2
+			owner = { trait = wolf }
+		}
+		
+		modifier = {
+			factor = 0.2
+			NOT = { owner = { religion = PREV } }
+		}
+			
+		modifier = {
+			factor = 0.2
+			NOT = { owner = { religion_group = PREV } }
+			OR = {
+				NOT = { religion_group = wildling_religion }
+				NOT = { 
+					owner = { 
+						OR = {
+							religion = old_gods_reformed
+							religion = old_gods
+						}
+					}
+				}
+			}
+		}
+		
+		modifier = {
+			factor = 0.1
+			owner = { trait = incapable }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { prisoner = yes }
+		}
+		modifier = {
+			factor = 0.5
+			owner = { is_adult = no }
+		}
+		
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.01
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.02
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.03
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.04
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.05
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.07
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.09
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.11
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.13
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.15
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.17
+		}
+		modifier = {
+			factor = 0.8
+			revolt_risk = 0.19
+		}
+
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { martial = 2 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { martial = 4 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { martial = 6 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { martial = 8 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { martial = 10 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { martial = 14 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { martial = 16 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { martial = 18 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { martial = 20 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { martial = 22 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { martial = 24 }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { diplomacy = 2 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { diplomacy = 4 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { diplomacy = 6 } }
+		}
+		modifier = {
+			factor = 0.6
+			NOT = { owner = { diplomacy = 8 } }
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { owner = { diplomacy = 10 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { diplomacy = 14 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { diplomacy = 16 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { diplomacy = 18 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { diplomacy = 20 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { diplomacy = 22 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { diplomacy = 24 }
+		}
+		modifier = {
+			factor = 0.25
+			NOT = { owner = { prestige = -200 } }
+		}
+		modifier = {
+			factor = 0.25
+			NOT = { owner = { prestige = -100 } }
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { owner = { prestige = 0 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 100 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 200 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 300 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 500 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 700 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { prestige = 900 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { prestige = 1100 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { prestige = 1600 }
+		}
+		modifier = {
+			factor = 1.5
+			owner = { prestige = 2100 }
+		}
+	}
+	
+	immediate = {
+		#Find wildling rebel leader
+		owner = {
+			random_courtier = { #try and find existing character first
+				limit = {
+					is_female = no
+					is_adult = yes
+					is_ill = no
+					prisoner = no
+					is_ruler = no
+					NOT = { trait = incapable }
+					OR = {
+						trait = ambitious
+						NOT = { opinion = { who = PREV value = 20 } }
+					}	
+					liege = { character = PREVPREV }
+					
+					OR = {
+						trait = wildling
+						culture = ROOT
+					}	
+					martial = 8
+					diplomacy = 8
+					prestige = 0	
+
+					NOT = { trait = craven }
+					NOT = { is_weak_trigger = yes }
+					NOT = { trait = dwarf }
+					NOT = { trait = content }
+					NOT = { trait = honorable }
+				}
+				save_event_target_as = wildling_rebel
+				break = yes
+			}
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = actually_culture
+				religion = ROOT
+				culture = ROOT
+				female = no
+			}
+			new_character = {
+				if = {
+					limit = { 
+						culture_group = free_folk 
+						NOT = { religion_group = wildling_religion }
+					}
+					religion = beyond_wall_old_gods
+				}
+				character_event = { id = wildling.1 } #check for wildling trait
+				change_martial = 2
+				change_diplomacy = 2
+				random_list = {
+					10 = { add_trait = master_warrior }
+					30 = { add_trait = skilled_warrior }
+					40 = { add_trait = trained_warrior }
+					20 = { add_trait = poor_warrior }
+				}
+				save_event_target_as = wildling_rebel
+			}
+		}
+		#May spawn the rebellion in neighbor province
+		save_event_target_as = rebel_spawn_location
+		if = {
+			limit = {
+				owner = {
+					lower_tier_than = KING
+					NOT = { num_of_count_titles = 2 }
+				}
+			}
+			random_neighbor_province = {
+				limit = { is_land = yes }
+				save_event_target_as = rebel_spawn_location
+			}
+		}
+	}
+	
+	option = { # Fight them!
+		name = "EVTOPTAWILDLING3"
+		# Create rebels
+		hidden_tooltip = {
+			event_target:wildling_rebel = {
+				if = {
+					limit = { wildling_culture_trigger = yes }
+					create_title = {
+						tier = DUKE
+						landless = yes
+						temporary = yes
+						rebel = yes
+						culture = ROOT
+						name = "WILDLING_REVOLT"
+						holder = THIS
+					}
+				}
+				if = {
+					limit = { culture = shadowlander }
+					create_title = {
+						tier = DUKE
+						landless = yes
+						temporary = yes
+						rebel = yes
+						culture = ROOT
+						name = "SHADOWLANDER_REVOLT"
+						holder = THIS
+					}
+				}
+				spawn_wildling_army_effect = yes
+			
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = powerful
+						}
+					}
+					spawn_wildling_army_effect = yes
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = very_powerful
+						}
+					}
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+				}
+				
+				if = {
+					limit = {
+						has_game_rule = {
+							name = provincial_revolt_strength
+							value = extremely_powerful
+						}
+					}
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+					spawn_wildling_army_effect = yes
+				}
+				primary_title = { set_title_flag = wildling_rebel_title } #used to stop culture province conversion
+				character_event = { id = wildling.5 }# declare war				
+			}
+			# Lower revolt risk
+			remove_province_modifier = recent_revolt
+			add_province_modifier = {
+				name = recent_revolt
+				duration = 3650
+			}
+			add_province_modifier = {
+				name = wildling_revolt_timer
+				duration = 1095
+				hidden = yes
+			}
+			# Inform province lords
+			#hidden_tooltip = { any_province_lord = { character_event = { id = wildling.5 } } }
+		}
+	}
+}
+
+# province_event = {
+	# id = wildling.4
+	# desc = "EVTDESCWILDLING4"
+	# picture = GFX_evt_wildlings
+	
+	# trigger = {
+		# NOT = {
+			# any_province_lord = {
+				# any_demesne_title = {
+					# location = {
+						# province_id = ROOT
+					# }
+					# tier = baron
+					# NOT = { controlled_by = e_rebels }
+				# }
+			# }
+		# }
+		# NOT = {
+			# any_province_lord = {
+				# any_realm_character = {
+					# in_command = yes
+					# location = { province_id = ROOT }
+				# }
+			# }
+		# }
+		# NOT = {
+			# e_rebels = {
+				# holder_scope = {
+					# any_realm_character = {
+						# in_command = yes
+						# at_location = ROOT
+						# trait = deserter
+					# }
+				# }
+			# }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 12
+	# }
+	
+	# option = {
+		# name = "EVTOPTAWILDLING4"
+		# hidden_tooltip = { any_province_lord = { character_event = { id = wildling.6 } } }
+		# e_rebels = {
+			# holder_scope = {
+				# random_realm_character = {
+					# limit = {
+						# in_command = yes
+						# at_location = ROOT
+					# }
+					# prestige = 100
+					# hidden_tooltip = { troops = -1.0 }
+					# ROOT = { county = { usurp_title_plus_barony_if_unlanded = PREVPREV } }
+					# set_defacto_liege = THIS
+					# e_rebels = {
+						# holder_scope = {
+							# any_realm_character = {
+								# limit = {
+									# in_command = yes
+									# at_location = ROOT
+									# NOT = { character = PREVPREVPREV }
+								# }
+								# prestige = 50
+								# hidden_tooltip = { troops = -1.0 }
+								# banish = PREVPREVPREV
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
+# }
+
+character_event = {
+	id = wildling.5
+	#desc = "EVTDESCWILDLING5"
+	#picture = GFX_evt_wildlings
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {	
+		# DoW on the province top liege
+		FROM = {
+			owner = {
+				if = {
+					limit = { independent = no }
+					liege = { ROOT = { set_defacto_liege = PREV } }
+					#ROOT = { set_character_flag = wildling_liege }
+				}
+				reverse_war = {
+					target = PREVPREV
+					casus_belli = peasant_revolt
+					thirdparty_title = FROM # The county
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAWILDLING5"
+	}
+}
+
+character_event = {
+	id = wildling.6
+	#desc = "EVTDESCWILDLING6"
+	#picture = GFX_evt_wildlings
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		random_opinion_modifier_target = {
+			limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } }
+			ROOT = { 
+				set_defacto_liege = PREV 
+				remove_opinion = { who = PREV modifier = opinion_de_facto_liege }
+			}
+		}
+		clr_character_flag = wildling_liege
+	}
+	
+	option = {
+		name = "EVTOPTAWILDLING6"
+	}	
+}
+#Wildling realm fractures on death if heir is weak
+character_event = {
+	id = wildling.100
+	picture = GFX_evt_death
+	
+	desc = {
+		text = "EVTDESCwildling.100"
+		trigger = { 
+			trait = wildling
+			NOT = { has_character_flag = wildling_defeat_realm_fracture }
+		}
+	}
+	desc = {
+		text = "EVTDESCwildling.100B"
+		trigger = { 
+			NOT = { trait = wildling } 
+			NOT = { has_character_flag = wildling_defeat_realm_fracture }
+		}
+	}
+	desc = {
+		text = "EVTDESCwildling.100C"
+		trigger = { has_character_flag = wildling_defeat_realm_fracture }
+	}
+	
+	is_triggered_only = yes
+	only_rulers = yes
+
+	trigger = {
+		government = wildling_feudal_government #also applies to shadowmen
+		OR = {
+			AND = { #High rank, weak heir
+				higher_tier_than = COUNT
+				current_heir = {
+					OR = {
+						is_female = yes
+						NOT = { age = 16 }
+						NOR = {
+							prestige = 500
+							martial = 10
+							trait = master_warrior
+							diplomacy = 10
+						}
+					}	
+				}
+			}
+			AND = { #Non free folk deserter with non-wildling heir
+				trait = deserter
+				NOT = { current_heir = { trait = wildling } }
+			}
+			has_character_flag = wildling_defeat_realm_fracture
+		}		
+	}
+	
+	immediate = {
+		#Mark current liege
+		if = { 
+			limit = { independent = no }
+			hidden_tooltip = { 
+				liege = { save_event_target_as = wildling_liege } 
+				liege_before_war = { save_event_target_as = wildling_liege } 
+			} 
+		}
+		
+		#Dserters lose all land if no wildling heir
+		if = {
+			limit = {
+				trait = deserter
+				NOT = { current_heir = { trait = wildling } }
+			}
+			random_courtier = {
+				limit = {
+					NOT = { character = ROOT }
+					trait = wildling
+					is_ruler = no
+					is_female = no
+					age = 16				
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { trait = maester }
+					NOT = { trait = nightswatch }
+					NOT = { trait = kingsguard }
+				}
+				preferred_limit = {
+					OR = {
+						prestige = 500
+						martial = 10
+						trait = master_warrior
+						diplomacy = 10
+					}
+				}
+				preferred_limit = {
+					martial = 8
+				}
+				save_event_target_as = wildling_usurper 
+			}
+			if = {
+				limit = { NOT = { event_target:wildling_usurper = { always = yes } } }
+				capital_scope = {
+					if = {
+						limit = { wildling_culture_trigger = yes }
+						create_random_soldier = {
+							random_traits = yes
+							dynasty = actually_culture
+							religion = THIS
+							culture = THIS
+							female = no
+						}
+					}
+					else = {
+						create_random_soldier = {
+							random_traits = yes
+							dynasty = actually_culture
+							religion = beyond_wall_old_gods
+							culture = wildling
+							female = no
+						}
+					}
+					new_character = {
+						character_event = { id = wildling.1 } #check for wildling trait
+						change_martial = 2
+						change_diplomacy = 2
+						random_list = {
+							30 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							20 = { add_trait = poor_warrior }
+						}
+						save_event_target_as = wildling_usurper
+					}
+				}				
+			}
+		}
+		#if spare county held, chance of courtier usurping capital and duchies
+		else_if = {
+			limit = {
+				is_feudal = yes
+				any_demesne_title = {
+					is_landless_type_title = no
+					tier = DUKE
+				}
+				num_of_count_titles = 2
+			}
+			random_courtier = {
+				limit = {
+					NOT = { character = ROOT }
+					trait = wildling
+					is_ruler = no
+					is_female = no
+					age = 16
+					OR = {
+						prestige = 500
+						martial = 10
+						trait = master_warrior
+						diplomacy = 10
+					}
+					prisoner = no
+					NOT = { trait = incapable }
+					NOT = { trait = maester }
+					NOT = { trait = nightswatch }
+					NOT = { trait = kingsguard }
+				}
+				hidden_tooltip = { 
+					random = {
+						chance = 75
+						save_event_target_as = wildling_usurper 
+					}		
+				}
+			}
+		}
+		
+		# #inform liege
+		# event_target:wildling_liege = {
+			# if = { 
+				# limit = { ai = no }
+				# hidden_tooltip = { character_event = { id =  } }
+			# }
+		# }
+		
+		#If not independent any wildling duke vassals become vassals of ruler's liege
+		if = { 
+			limit = { independent = no } 
+			event_target:wildling_liege = {
+				ROOT = {
+					any_vassal = {
+						limit = {						
+							tier = DUKE
+							government = wildling_feudal_government
+							OR = {
+								is_patrician = no
+								ROOT = { is_merchant_republic = no }
+							}
+						} 
+						set_defacto_liege = PREVPREV
+						if = {
+							limit = { ROOT = { tier = KING} }
+							any_demesne_title = {
+								limit = { 
+									OR = {
+										tier = COUNT
+										tier = DUKE
+									}
+								}								
+								set_variable = { which = "de_facto_kingdom" value = 0 }
+							}
+						}
+					}
+				}
+			}
+		}
+		#If independent any duke/king vassals become independent
+		if = { 
+			limit = { independent = yes }
+			any_vassal = {
+				limit = { 
+					higher_tier_than = COUNT 
+					government = wildling_feudal_government
+					OR = {
+						is_patrician = no
+						ROOT = { is_merchant_republic = no }
+					}
+				} 
+				set_defacto_liege = THIS
+				if = {
+					limit = { ROOT = { tier = EMPEROR } }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}	
+						set_variable = { which = "de_facto_empire" value = 0 }								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+				if = {
+					limit = { ROOT = { tier = KING} }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+			}
+		}	
+		
+		#Count Vassals become independent if dejure duchy is not held
+		if = { 
+			limit = { independent = no } 
+			event_target:wildling_liege = {
+				ROOT = {
+					any_vassal = {
+						limit = { 
+							tier = COUNT 
+							government = wildling_feudal_government
+							primary_title = { dejure_liege_title = { NOT = { holder_scope = { character = ROOT } } } }
+							OR = {
+								is_patrician = no
+								ROOT = { is_merchant_republic = no }
+							}
+						} 
+						set_defacto_liege = PREVPREV
+						if = {
+							limit = { ROOT = { tier = KING} }
+							any_demesne_title = {
+								limit = { 
+									OR = {
+										tier = COUNT
+										tier = DUKE
+									}
+								}								
+								set_variable = { which = "de_facto_kingdom" value = 0 }
+							}
+						}
+					}
+				}
+			}
+		}
+		if = { 
+			limit = { independent = yes } 
+			any_vassal = {
+				limit = { 
+					tier = COUNT 
+					government = wildling_feudal_government
+					primary_title = { dejure_liege_title = { NOT = { holder_scope = { character = ROOT } } } }
+					OR = {
+						is_patrician = no
+						ROOT = { is_merchant_republic = no }
+					}
+				} 
+				set_defacto_liege = THIS
+				if = {
+					limit = { ROOT = { tier = EMPEROR } }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}	
+						set_variable = { which = "de_facto_empire" value = 0 }								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+				if = {
+					limit = { ROOT = { tier = KING} }
+					any_demesne_title = {
+						limit = { 
+							OR = {
+								tier = COUNT
+								tier = DUKE
+							}
+						}								
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+				}
+			}
+		}
+		#Always lose kingdom beyond the wall
+		any_demesne_title = {
+			limit = { title = k_beyond_wall }
+			destroy_landed_title = THIS
+			if = {
+				limit = { ROOT = { has_character_flag = wildling_defeat_realm_fracture } }
+				add_pressed_claim = ROOT
+			}
+		}
+		#Always lose kingdom of the shadow
+		any_demesne_title = {
+			limit = { title = k_asshai }
+			destroy_landed_title = THIS
+			if = {
+				limit = { ROOT = { has_character_flag = wildling_defeat_realm_fracture } }
+				add_pressed_claim = ROOT
+			}
+		}
+		#Destroy all titles higher than duke if no non-wildling duke vassals
+		if = {
+			limit = { is_feudal = yes }
+			if = {
+				limit = {
+					NOT = { 
+						any_vassal = {
+							higher_tier_than = COUNT
+							NOT = { government = wildling_feudal_government }
+						}
+					}	
+				}
+				any_demesne_title = {
+					limit = {
+						is_landless_type_title = no
+						higher_tier_than = DUKE
+					}
+					destroy_landed_title = THIS
+					if = {
+						limit = { ROOT = { has_character_flag = wildling_defeat_realm_fracture } }
+						add_pressed_claim = ROOT
+					}
+				}
+			}	
+			
+			#Manage duke tier titles
+			#Usurper takes titles
+			event_target:wildling_usurper = { 
+				ROOT = {
+					random_demesne_title = {
+						limit = {
+							tier = COUNT
+							location = { is_capital = yes }
+						}
+						usurp_title = { target = PREVPREV type = revolt }
+						location = {
+							remove_province_modifier = employed_cityguard 
+							remove_province_modifier = cityguard_busy
+							remove_province_modifier = cityguard_drilling
+							remove_province_modifier = forced_training
+							remove_province_modifier = capital_defense
+							#remove_province_modifier = burned_land
+							remove_province_modifier = tyranny
+						}
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						usurp_title = { target = PREVPREV type = revolt }
+					}
+				}
+			}
+			#If no usurper and no non-wildling vassals
+			if = {
+				limit = {
+					NOT = { event_target:wildling_usurper  = { always = yes } }				
+					NOT = { 
+						any_vassal = {
+							higher_tier_than = BARON
+							NOT = { government = wildling_feudal_government }
+						}
+					}
+				}
+				if = {
+					limit = {
+						independent = no
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						gain_title = event_target:wildling_liege
+					}
+				}	
+				if = {
+					limit = {
+						independent = yes
+					}
+					any_demesne_title = {
+						limit = { tier = DUKE }
+						destroy_landed_title = THIS
+						if = {
+							limit = { ROOT = { has_character_flag = wildling_defeat_realm_fracture } }
+							add_pressed_claim = ROOT
+						}
+					}
+				}
+			}
+		}
+		#Double check for patrician game over
+		if = {
+			limit = {
+				is_patrician = yes
+				OR = {
+					AND = {
+						is_merchant_republic = yes
+						lower_tier_than = DUKE
+					}
+					AND = {
+						is_merchant_republic = no
+						NOT = {
+							liege = {
+								is_merchant_republic = yes
+								higher_tier_than = COUNT
+							}
+						}	
+					}
+				}
+			}
+			family_palace = { destroy_settlement = THIS }
+			set_government_type = feudal_government
+		}
+		
+		#Deserters with no heir lose all titles
+		if = {
+			limit = {
+				trait = deserter
+				NOT = { current_heir = { trait = wildling } }
+				event_target:wildling_usurper = { always = yes }
+			}
+			event_target:wildling_usurper = {
+				ROOT = {
+					any_demesne_title = {
+						usurp_title = PREVPREV
+					}
+				}	
+			}	
+		}
+		
+		#If split from liege via error, re-vassalise	
+		event_target:wildling_liege = {
+			ROOT = { 
+				if = {
+					limit = { independent = yes }
+					set_defacto_liege = PREV 
+				}
+			}
+		}
+		
+		disband_event_forces = wildling_horde # lose wildling event troops
+	}
+
+	option = {
+		name = "EVTOPTAwildling.100"	
+		clr_character_flag = wildling_defeat_realm_fracture
+	}
+}
+#Weak heir wildling warning
+character_event = {
+	id = wildling.101
+	picture = GFX_evt_wildlings
+	
+	desc = {
+		text = "EVTDESCwildling.101"
+		trigger = { trait = wildling }
+	}
+	desc = {
+		text = "EVTDESCwildling.101B"
+		trigger = { NOT = { trait = wildling } }
+	}
+	
+	only_rulers = yes
+	ai = no
+	
+	trigger = {
+		government = wildling_feudal_government
+		OR = {
+			AND = { #High rank, weak heir
+				higher_tier_than = COUNT
+				current_heir = {
+					OR = {
+						is_female = yes
+						NOT = { age = 16 }
+						NOR = {
+							prestige = 500
+							martial = 10
+							trait = master_warrior
+							diplomacy = 10
+						}
+					}	
+				}
+			}
+			AND = { #Non free folk deserter with non-wildling heir
+				trait = deserter
+				NOT = { current_heir = { trait = wildling } }
+			}
+		}
+		current_heir = {
+			OR = {
+				NOT = { has_character_flag = weak_heir_warning }	
+				had_character_flag = { flag = weak_heir_warning days = 2190 }
+			}
+		}
+		NOT = { has_character_flag = STOP_weak_heir_warning }		
+	}
+	
+	mean_time_to_happen = {
+		months = 1
+	}
+	
+	option = {
+		name = "EVTOPTApirate.8"
+		current_heir = { tooltip = { show_portrait = yes } set_character_flag = weak_heir_warning	}
+		custom_tooltip = { text = TOOLTIPwildling.101 }
+		if = {
+			limit = { 
+				trait = deserter
+				NOT = { current_heir = { trait = wildling } }
+			}	
+			custom_tooltip = { text = TOOLTIPwildling.101B }
+		}
+	}
+	option = {
+		name = "EVTOPTBwildling.101"	
+	}
+}
+# Night's Watchman captured by Wildlings
+character_event = {
+	id = wildling.102
+	desc = "EVTDESCwildling.102"
+	picture = GFX_evt_wildlings
+	is_triggered_only = yes
+	
+	trigger = {
+		trait = nightswatch
+		prisoner = yes
+		host = {
+			NOT = { trait = nightswatch }
+			trait = wildling
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwildling.102"
+		host = { character_event = { id = wildling.7 } }
+	}
+}
+
+# Captured Crow chain
+character_event = {
+	id = wildling.7
+	desc = "EVTDESCWILDLING7"
+	picture = GFX_evt_the_wall
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAWILDLING7"
+		prestige = 100
+		FROM = {
+			death = {
+				death_reason = death_execution
+				killer = ROOT
+			}
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = paranoid
+			}
+			modifier = {
+				factor = 4
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = just
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 0.25
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.25
+				trait = trusting
+			}
+			modifier = {
+				factor = 0.25
+				trait = kind
+			}
+			modifier = {
+				factor = 0.25
+				trait = cynical
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBWILDLING7"
+		ai_chance = {
+			factor = 100
+		}	
+		FROM = { character_event = { id = wildling.8 tooltip = "EVTTOOLTIPWILDLING8" } }
+	}
+}
+character_event = {
+	id = wildling.8
+	desc = "EVTDESCWILDLING8"
+	picture = GFX_evt_wildlings
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAWILDLING8"
+		death = {
+			death_reason = death_execution
+			killer = FROM
+		}
+		hidden_tooltip = { FROM = { character_event = { id = wildling.9 } } }
+		ai_chance = {
+			factor = 100			
+			modifier = {
+				factor = 5
+				trait = honest
+			}
+			modifier = {
+				factor = 5
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			modifier = {
+				factor = 1.25
+				trait = proud
+			}
+			modifier = {
+				factor = 1.25
+				trait = stubborn
+			}
+			modifier = {
+				factor = 0.8
+				trait = selfish
+			}
+			modifier = {
+				factor = 0.8
+				trait = humble
+			}
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.2
+				trait = deceitful
+			}
+			modifier = {
+				factor = 0.2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.01
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.01
+				trait = craven
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBWILDLING8"
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+		}	
+		hidden_tooltip = { #Universal on death/abdication event
+			if = {
+				limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+				set_character_flag = do_not_inherit_sword
+			}
+			set_character_flag = abdication
+			character_event = { id = 45341 } 
+			clr_character_flag = abdication
+			clr_character_flag = do_not_inherit_sword
+			if = {
+				limit = { is_merchant_republic = no }
+				current_heir = { save_event_target_as = wealth_heir }
+			}
+			if = {
+				limit = { is_merchant_republic = yes }
+				family_palace = { current_heir = { save_event_target_as = wealth_heir } }
+			}
+			transfer_scaled_wealth = { to = event_target:wealth_heir value = all }
+		}
+		abdicate = yes
+		remove_trait = nightswatch
+		clr_character_flag = no_court_invites
+		add_trait = deserter
+		add_trait = disinherited
+		add_trait = wildling
+		if = {
+			limit = { 
+				NOT = { trait = sympathy_wildling_religion } 
+				NOT = { trait = zealous } 
+			}
+			add_trait = sympathy_wildling_religion
+		}
+		FROM = { reverse_banish = ROOT }
+		prisoner = no
+		hidden_tooltip = { FROM = { character_event = { id = wildling.10 } } }
+	}
+}
+
+character_event = {
+	id = wildling.9
+	desc = "EVTDESCWILDLING9"
+	picture = GFX_evt_the_wall
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAWILDLING9"
+	}
+}
+
+character_event = {
+	id = wildling.10
+	desc = "EVTDESCWILDLING10"
+	picture = GFX_evt_the_wall
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAWILDLING10"
+	}
+}
+
+# Raiders find a greenseer
+character_event = {
+	id = wildling.11
+	picture = GFX_evt_wildlings
+	desc = "EVTDESCWILDLING11"
+	
+	is_triggered_only = yes
+	lacks_dlc = "Reapers"
+	only_playable = yes
+	
+	trigger = {
+		trait = wildling
+		capital_scope = {
+			OR = {
+				region = world_beyond_the_wall
+				region = world_north
+			}
+			is_old_gods_religion_trigger = yes
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+	}
+	
+	immediate = {
+		capital_scope = {
+			ROOT = {
+				create_character = {
+					religion = PREV
+					culture = PREV
+					dynasty = none
+					random_traits = yes
+					female = no
+					attributes = {
+						martial = 1
+					}
+					health = 6
+					trait = greensight
+					trait = quick
+					flag = is_court_physician
+					#flag = physician_greenseer
+					flag = ai_flag_refuse_conversion
+				}
+				new_character = {
+					character_event = { id = wildling.1 } #check for wildling trait
+					change_learning = 9
+					random_list = {
+						10 = { add_trait = crow }
+						10 = { add_trait = wolf }
+						10 = { add_trait = eagle }
+						10 = { add_trait = shadowcat }
+						10 = { add_trait = direwolf }
+					}
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					remove_lifestyle_trait_effect = yes
+					# random_list = { # Is the Physician a Quack?
+						# 90 = {
+						# }
+						# 10 = {
+							# set_character_flag = physician_is_quack
+						# }
+					# }
+					save_event_target_as = greenseer_target
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTAWILDLING11" 
+		if = {
+			limit = {
+				job_physician = {
+					always = yes
+				}
+			}
+			job_physician = {
+				remove_title = job_physician
+				opinion = {
+					modifier = opinion_fired_from_council
+					years = 5
+					who = ROOT
+				}
+			}
+		}
+		event_target:greenseer_target = {
+			give_job_title = job_physician
+			opinion = {
+				modifier = opinion_very_grateful
+				who = ROOT
+				years = 5
+			}
+		}
+		piety = -25
+	}
+	option = {
+		name = "EVTOPTBWILDLING11" 
+		event_target:greenseer_target = {
+			death = {
+				death_reason = death_execution
+				killer = ROOT
+			}
+		}
+		piety = 25
+	}
+}
+
+# character_event = {
+	# id = wildling.12
+	# desc = "EVTDESCWILDLING12"
+	# picture = GFX_evt_the_wall
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAWILDLING12"
+	# }
+# }
+
+# province_event = {
+	# id = wildling.13
+	# desc = "EVTDESCWILDLING13"
+	# picture = GFX_evt_the_wall
+	
+	# trigger = {
+		# NOT = {
+			# any_province_lord = {
+				# any_demesne_title = {
+					# location = {
+						# province_id = ROOT
+					# }
+					# tier = baron
+					# NOT = { controlled_by = e_rebels }
+				# }
+			# }
+		# }
+		# NOT = {
+			# any_province_lord = {
+				# any_realm_character = {
+					# in_command = yes
+					# location = { province_id = ROOT }
+				# }
+			# }
+		# }
+		# e_rebels = {
+			# holder_scope = {
+				# any_realm_character = {
+					# in_command = yes
+					# at_location = ROOT
+					# trait = deserter
+				# }
+			# }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# months = 12
+	# }
+	
+	# option = {
+		# name = "EVTOPTAWILDLING13"
+		# hidden_tooltip = { any_province_lord = { character_event = { id = wildling.14 } } }
+		# e_rebels = {
+			# holder_scope = {
+				# random_realm_character = {
+					# limit = {
+						# in_command = yes
+						# at_location = ROOT
+						# trait = deserter
+					# }
+					# prestige = 100
+					# hidden_tooltip = { troops = -1.0 }
+					# ROOT = { county = { usurp_title_plus_barony_if_unlanded = PREVPREV } }
+					# set_defacto_liege = THIS
+				# }
+			# }
+		# }
+	# }
+# }
+
+# character_event = {
+	# id = wildling.14
+	# desc = "EVTDESCWILDLING14"
+	# picture = GFX_evt_the_wall
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAWILDLING14"
+	# }
+# }
+
+# character_event = {
+	# id = wildling.15
+	# desc = "EVTDESCWILDLING15"
+	# picture = GFX_evt_wildlings
+	
+	# trigger = {
+		# trait = wildling
+		# is_ruler = no
+		# NOT = { any_liege = { trait = wildling } }
+		# any_liege = { 
+			# primary_title = { title = d_nightswatch } 
+			# OR = { 
+				# NOT = { trait = wildling }
+				# NOT = { trait = deserter }
+				# trait = nightswatch
+			# }
+		# }	
+	# }
+
+	# mean_time_to_happen = { #buys time for any title transfer to avoid shenannigans
+		# days = 10
+	# }
+
+	# option = {
+		# name = "EVTOPTAWILDLING.15"
+		# random_playable_ruler = {
+			# limit = { trait = wildling }
+			# reverse_banish = ROOT
+		# }
+	# }
+# }
+
+#wildling.20 - Wildling k_beyond_wall gets rallying event once wall is destroyed
+character_event = {
+	id = wildling.20
+	desc = "EVTDESCwildling.20"
+	picture = "GFX_evt_wildlings"
+	
+	only_independent = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 16
+	war = no
+	
+	trigger = { 
+		has_landed_title = k_beyond_wall
+		trait = wildling
+		OR = {
+			NOT = { has_global_flag = wildling_horde }
+			had_global_flag = { flag = wildling_horde days = 18250 } #only once every 50 years
+		}	
+		d_the_wall = {
+			holder_scope = {
+				OR = { 
+					character = ROOT
+					AND = {
+						trait = wildling
+						liege = { character = ROOT }
+					}	
+				}
+			}
+		}
+		47 = { # Winterfell
+			OR = {
+				kingdom = { 
+					holder_scope = {
+						NAND = {
+							prisoner = yes
+							host = { character = ROOT }
+						}
+					}
+				}
+				empire = { 
+					holder_scope = {
+						NAND = {
+							prisoner = yes
+							host = { character = ROOT }
+						}
+					}
+				}
+			}
+		}
+		OR = {
+			prestige = 750
+			martial = 12
+			diplomacy = 12
+			trait = master_warrior
+		}
+	}
+	
+	mean_time_to_happen = { 
+		years = 100
+		modifier = {
+			factor = 0.04
+			k_north = {
+				holder_scope = {
+					independent = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			k_north = {
+				holder_scope = {
+					war = yes
+				}
+			}
+		}
+		modifier = {
+			factor = 0.05
+			k_north = { has_holder = no }
+			e_north = {
+				holder_scope = {
+					war = yes
+				}
+			}
+		}
+	}
+	
+	immediate = { set_character_flag = wildling_horde }
+
+	option = {
+		name = "EVTOPTAwildling.20"
+		clr_global_flag = wildling_horde
+		set_global_flag = wildling_horde
+		piety = 100
+		clr_global_flag = war_cooldown_period
+		47 = { # Winterfell
+			if = {
+				limit = {
+					kingdom = { 
+						holder_scope = {
+							NAND = {
+								prisoner = yes
+								host = { character = ROOT }
+							}
+						}
+					}
+				}
+				kingdom = {
+					ROOT = {
+						war = {
+							casus_belli = AGOT_invasion
+							target = PREVPREV # The top liege of the owner of Winterfell
+							thirdparty_title = PREV # The de jure kingdom
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					empire = { 
+						holder_scope = {
+							NAND = {
+								prisoner = yes
+								host = { character = ROOT }
+							}
+						}
+					}
+				}
+				empire = {
+					ROOT = {
+						war = {
+							casus_belli = AGOT_invasion
+							target = PREVPREV # The top liege of the owner of Winterfell
+							thirdparty_title = PREV # The de jure kingdom
+						}
+					}
+				}
+			}				
+		}
+				
+		clr_character_flag = wildling_horde
+		wealth = 500
+		capital_scope = {
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = actually_culture
+				religion = THIS
+				culture = THIS
+				female = no
+			}
+			new_character = {
+				character_event = { id = wildling.1 } #check for wildling trait
+				random_list = {
+					10 = { add_trait = master_warrior }
+					30 = { add_trait = skilled_warrior }
+					40 = { add_trait = trained_warrior }
+					20 = { add_trait = poor_warrior }
+				}
+				remove_trait = weak
+				remove_trait = slow
+				remove_trait = imbecile
+				remove_trait = dull
+				
+				remove_lifestyle_trait_effect = yes
+				
+				random_list = { # Flavor Randomization
+					35 = { 
+						# Nothing
+					}
+					15 = {
+						change_martial = 2
+					}
+					10 = {
+						trigger = { NOT = { trait = strong } }
+						add_trait = robust
+					}
+					10 = {
+						add_trait = duelist
+					}
+					10 = {
+						add_trait = hunter
+					}
+					5 = {
+						add_trait = strategist
+					}
+					5 = {
+						change_martial = 4
+					}
+					5 = {
+						if = {
+							limit = {
+								has_dlc = "Reapers"
+							}
+							add_trait = one_eyed
+						}
+					}
+					5 = { 
+						trigger = { 
+							is_smart_incl_genius_trigger = no
+						}
+						add_trait = shrewd
+					}
+				}
+				while = {
+					limit = { NOT = { martial = 10 } }
+					change_martial = 1
+				}
+				spawn_unit = {
+					province = 18 # Eastwatch
+					owner = ROOT
+					troops =
+					{
+						archers = { 6000 6000 }
+						light_cavalry = { 4000 4000 }
+						light_infantry = { 7000 7000 }
+						heavy_infantry = { 3000 3000 }
+					}
+					attrition = 0.25
+					earmark = wildling_horde
+				}
+			}
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = actually_culture
+				religion = THIS
+				culture = THIS
+				female = no
+			}
+			new_character = {
+				character_event = { id = wildling.1 } #check for wildling trait
+				random_list = {
+					10 = { add_trait = master_warrior }
+					30 = { add_trait = skilled_warrior }
+					40 = { add_trait = trained_warrior }
+					20 = { add_trait = poor_warrior }
+				}
+				remove_trait = weak
+				remove_trait = slow
+				remove_trait = imbecile
+				remove_trait = dull
+				
+				remove_lifestyle_trait_effect = yes
+				
+				random_list = { # Flavor Randomization
+					35 = { 
+						# Nothing
+					}
+					15 = {
+						change_martial = 2
+					}
+					10 = {
+						trigger = { NOT = { trait = strong } }
+						add_trait = robust
+					}
+					10 = {
+						add_trait = duelist
+					}
+					10 = {
+						add_trait = hunter
+					}
+					5 = {
+						add_trait = strategist
+					}
+					5 = {
+						change_martial = 4
+					}
+					5 = {
+						if = {
+							limit = {
+								has_dlc = "Reapers"
+							}
+							add_trait = one_eyed
+						}
+					}
+					5 = { 
+						trigger = { 
+							is_smart_incl_genius_trigger = no
+						}
+						add_trait = shrewd
+					}
+				}
+				while = {
+					limit = { NOT = { martial = 10 } }
+					change_martial = 1
+				}
+				spawn_unit = {
+					province = 17 # Castle Black
+					owner = ROOT
+					troops =
+					{
+						archers = { 6000 6000 }
+						light_cavalry = { 4000 4000 }
+						light_infantry = { 7000 7000 }
+						heavy_infantry = { 3000 3000 }
+					}
+					attrition = 0.25
+					earmark = wildling_horde
+				}
+			}
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = actually_culture
+				religion = THIS
+				culture = THIS
+				female = no
+			}
+			new_character = {
+				character_event = { id = wildling.1 } #check for wildling trait
+				random_list = {
+					10 = { add_trait = master_warrior }
+					30 = { add_trait = skilled_warrior }
+					40 = { add_trait = trained_warrior }
+					20 = { add_trait = poor_warrior }
+				}
+				remove_trait = weak
+				remove_trait = slow
+				remove_trait = imbecile
+				remove_trait = dull
+				
+				remove_lifestyle_trait_effect = yes
+				
+				random_list = { # Flavor Randomization
+					35 = { 
+						# Nothing
+					}
+					15 = {
+						change_martial = 2
+					}
+					10 = {
+						trigger = { NOT = { trait = strong } }
+						add_trait = robust
+					}
+					10 = {
+						add_trait = duelist
+					}
+					10 = {
+						add_trait = hunter
+					}
+					5 = {
+						add_trait = strategist
+					}
+					5 = {
+						change_martial = 4
+					}
+					5 = {
+						if = {
+							limit = {
+								has_dlc = "Reapers"
+							}
+							add_trait = one_eyed
+						}
+					}
+					5 = { 
+						trigger = { 
+							is_smart_incl_genius_trigger = no
+						}
+						add_trait = shrewd
+					}
+				}
+				while = {
+					limit = { NOT = { martial = 10 } }
+					change_martial = 1
+				}
+				spawn_unit = {
+					province = 16 # Shadow Tower
+					owner = ROOT
+					troops =
+					{
+						archers = { 6000 6000 }
+						light_cavalry = { 4000 4000 }
+						light_infantry = { 7000 7000 }
+						heavy_infantry = { 3000 3000 }
+					}
+					attrition = 0.25
+					earmark = wildling_horde
+				}
+			}	
+		}	
+		hidden_tooltip = {
+			narrative_event = { id = wildling.21 }
+			any_independent_ruler = {
+				limit = { 
+					NOT = { trait = wildling } 
+					capital_scope = {
+						region = world_north
+					}
+				}
+				opinion = {
+					modifier = opinion_hate
+					who = ROOT
+					years = 20
+				}
+				any_vassal = {
+					opinion = {
+						modifier = opinion_hate
+						who = ROOT
+						years = 20
+					}
+				}	
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBwildling.20"
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = { factor = 0 }
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+			}
+			add_trait = craven
+		}
+		if = {
+			limit = { trait = brave }
+			remove_trait = brave
+		}
+		add_trait = depressed
+		add_trait = stressed
+		prestige = -1000
+		clr_character_flag = wildling_horde
+	}
+}
+
+# wildling.21 Narrative Inform - Horde
+narrative_event = {
+	id = wildling.21
+	title = "EVTNAMEwildling.21"
+	desc = "EVTDESCwildling.21"
+	picture = "GFX_evt_wildlings"
+	
+	major = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAwildling.21"
+	}
+}
+
+# wildling.22 Narrative Inform - Winterhorn Used
+narrative_event = {
+	id = wildling.22
+	title = "EVTNAMEwildling.22"
+	desc = "EVTDESCwildling.22"
+	picture = "GFX_evt_wildlings"
+	
+	major = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAwildling.22" #the realm is in great danger!!!
+	}
+}
+# wildling.23 finds horn
+character_event = { 
+	id = wildling.23
+	desc = "EVTDESCwildling.23" #Ancient graves of Joramun
+	picture = "GFX_evt_wildlings"
+
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = { 
+		is_primary_war_attacker = yes
+		location = { region = world_beyond_the_wall }
+		NOR = { 
+			has_global_flag = winterhorn_found
+			has_global_flag = winterhorn_used 
+			has_global_flag = winterhorn_destroyed
+		}
+	}
+
+	option = {
+		name = "EVTOPTAwildling.23" #I will search the graves for the horn of winter
+		ai_chance = { 
+		factor = 50
+			modifier = {
+				factor = 1.1
+				trait = mystic
+			}
+			modifier = {
+				factor = 1.1
+				trait = scholar
+			}
+			modifier = {
+				factor = 1.1
+				trait = diligent
+			}
+			modifier = {
+				factor = 1.1
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.1
+				trait = zealous
+			}
+			modifier = {
+				factor = 1.1
+				trait = ruthless
+			}
+		}
+
+		random_list = {
+			33 = { 
+				add_trait_silently_wounded_effect = yes 
+				hidden_tooltip = {
+					character_event = {
+						id = 38280 #Notify
+					}
+				}
+			}
+			33 = { 
+				add_artifact = winterhorn 
+				new_artifact = { set_artifact_flag = heirloom_@PREV }
+				set_global_flag = winterhorn_found
+				narrative_event = { id = wildling.25 }
+			}
+			33 = { }
+		}
+	}
+
+
+	option = {
+		name = "EVTOPTBwildling.23" #Mummer's stories do not interest me
+		ai_chance = {
+		factor = 50
+			modifier = {
+				factor = 1.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 1.1
+				trait = slothful
+			}
+		}
+	}
+}
+
+# wildling.24 Narrative Inform - Winterhorn Destroyed
+narrative_event = {
+	id = wildling.24
+	title = "EVTNAMEwildling.24"
+	desc = "EVTDESCwildling.24"
+	picture = "GFX_evt_the_wall"
+	
+	major = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAwildling.24" #The realm is safe
+		trigger = { NOT = { trait = wildling } }
+		opinion = { 
+			modifier = opinion_grateful
+			who = from
+			years = 10
+		}
+	}
+	option = {
+		name = "EVTOPTBwildling.24" #Grumpkins and snocks
+		trigger = { NOT = { trait = wildling } }
+	}
+	option = {
+		name = "EVTOPTCwildling.24" #He will die all the same
+		trigger = { trait = wildling }
+	}
+}
+
+# wildling.25 Narrative Inform - Winterhorn Found
+narrative_event = {
+	id = wildling.25
+	title = "EVTNAMEwildling.25"
+	desc = "EVTDESCwildling.25"
+	picture = "GFX_evt_the_wall"
+	
+	major = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAwildling.25" #From is finder.
+	}
+}
+###Capturing Spear Wives###
+character_event = { 
+	id = wildling.50	
+	picture = "GFX_evt_wildlings"
+	
+	desc = {
+		text = "EVTDESCwildling.50"
+		trigger = { is_female = no }
+	}	
+	desc = {
+		text = "EVTDESCwildling.50B"
+		trigger = { is_female = yes }
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		can_marry_trigger = yes
+		NOT = { has_severe_disability_trigger = yes }	
+		prisoner = no
+		is_married = no
+		in_command = no
+		is_ill = no
+		location = { culture_group = free_folk }
+		NOT = { is_inaccessible_trigger = yes }	
+	}
+	
+	immediate = {
+		location = {
+			if = {
+				limit = { ROOT = { is_female = no } }
+				create_random_soldier = {
+					random_traits = yes
+					female = yes
+					culture = THIS
+					religion = THIS
+					dynasty = none
+					min_age = 16
+				}
+			}
+			else = {
+				create_random_soldier = {
+					random_traits = yes
+					female = no
+					culture = THIS
+					religion = THIS
+					dynasty = none
+					min_age = 16
+				}
+			}
+			new_character = {
+				character_event = { id = wildling.1 } #check for wildling trait
+				add_trait = forbid_marriage
+				remove_trait = inbred
+				remove_trait = imbecile
+				remove_trait = infirm
+				remove_trait = incapable
+				remove_trait = dwarf
+				remove_trait = hunchback
+				remove_trait = clubfooted
+				remove_trait = weak
+				remove_trait = leper
+				remove_trait = possessed
+				remove_trait = ill
+				remove_trait = pneumonic
+				remove_trait = maimed
+				remove_trait = craven
+				remove_trait = celibate
+				random_list = {
+					25 = { add_trait = poor_warrior }
+					60 = { add_trait = trained_warrior }
+					15 = { add_trait = skilled_warrior }
+				}
+				random = {
+					chance = 10
+					add_trait = strong
+				}
+				random = {
+					chance = 10
+					add_trait = tall
+				}
+				random_list = {
+					25 = { add_trait = brave }
+					25 = { 
+						add_trait = wroth 
+						remove_trait = patient
+					}
+					25 = { 
+						add_trait = ruthless
+						remove_trait = honorable		
+					}
+					25 = { }
+				}
+				save_event_target_as = spearwife_target
+			}
+		}
+	}
+	
+	option = {
+		name = {
+			text = "EVTOPTAwildling.50"
+			trigger = { is_female = no }
+		}	
+		name = {
+			text = "EVTOPTAwildling.50B"
+			trigger = { is_female = yes }
+		}
+		ai_chance = { factor = 1 }
+		set_character_flag = flag_duel_friendly
+		set_character_flag = mock_duel
+		event_target:spearwife_target = {
+			character_event = { id = wildling.51 tooltip = TOOLTIPwildling.51 } 
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBwildling.51" 
+		ai_chance = { factor = 0 }
+		hidden_tooltip = {
+			character_event = { id = wildling.50 days = 4 } 
+			event_target:spearwife_target = {
+				remove_trait = forbid_marriage
+				death = { death_reason = death_missing }
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTCwildling.51" 
+		ai_chance = { factor = 0 }
+		hidden_tooltip = {
+			clr_character_flag = stealing_spearwife 
+			event_target:spearwife_target = {
+				remove_trait = forbid_marriage
+				death = { death_reason = death_missing }
+			}
+		}	
+	}
+}
+
+character_event = { 
+	id = wildling.51
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		set_character_flag = stealing_spearwife_target
+		set_character_flag = flag_duel_friendly
+		set_character_flag = mock_duel
+		set_character_flag = duel_can_be_draw
+		FROM = { set_character_flag = duel_can_be_draw }
+		e_rebels = { holder_scope = { character_event = { id = duel.0 } } }
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+#Spearwife captured
+character_event = { 
+	id = wildling.52
+	desc = "EVTDESCwildling.52"
+	picture = "GFX_evt_wildlings"
+
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = { 
+		has_character_flag = stealing_spearwife 
+		FROMFROM = { NOT = { same_sex = ROOT } }
+	}
+	
+	option = {
+		name = "EVTOPTAwildling.52" 
+		FROM = {
+			FROM = { 				
+				hidden_tooltip = { prisoner = no  remove_trait = forbid_marriage }
+				prestige = 50
+			}
+		}		
+		add_spouse = FROMFROM		
+		clr_character_flag = stealing_spearwife
+		prestige = 75
+		hidden_tooltip = {
+			#recover prestige for marrying a lowborn
+			if = {
+				limit = { tier = EMPEROR }
+				prestige = 400
+				spouse = { prestige = -400 }
+			}
+			if = {
+				limit = { tier = KING }
+				prestige = 300
+				spouse = { prestige = -300 }
+			}
+			if = {
+				limit = { tier = DUKE }
+				prestige = 200
+				spouse = { prestige = -200 }
+			}
+			if = {
+				limit = { tier = COUNT }
+				prestige = 100
+				spouse = { prestige = -100 }
+			}
+			if = {
+				limit = { 
+					is_ruler = no
+					liege = { is_close_relative = ROOT }
+				}	
+				liege = { character_event = { id = wildling.54 } }
+			}
+		}
+	}
+}
+#Spearwife not captured
+character_event = { 
+	id = wildling.53
+	desc = "EVTDESCwildling.53"
+	picture = "GFX_evt_wildlings"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			if = {
+				limit = { liege = { character = ROOT } }
+				banish = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwildling.53" 
+		clr_character_flag = stealing_spearwife
+		prestige = -100
+	}
+}
+#Spearwife draw
+character_event = { 
+	id = wildling.5399
+	desc = "EVTDESCwildling.5399"
+	picture = "GFX_evt_wildlings"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			if = {
+				limit = { liege = { character = ROOT } }
+				banish = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwildling.5399" 
+		clr_character_flag = stealing_spearwife
+		prestige = -25
+	}
+}
+#Inform liege relative captured spearwife
+character_event = { 
+	id = wildling.54
+	picture = "GFX_evt_wildlings"
+	
+	desc = {
+		text = "EVTDESCwildling.54"
+		trigger = { FROM = { is_female = no } }
+	}	
+	desc = {
+		text = "EVTDESCwildling.54B"
+		trigger = { FROM = { is_female = yes } }
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwildling.54" 
+		FROM = { spouse = { tooltip = { show_portrait = yes } } }
+	}
+}
+
+#####  White Shadows in the Woods  #####
+	
+character_event = {
+	id = wildling.55
+	desc = EVTDESCwildling.55
+	picture = GFX_evt_white_shadows
+	
+	prisoner = no
+	capable_only = yes
+	only_playable = yes
+	culture_group = free_folk
+	
+	trigger = {
+		is_winter_trigger = yes
+	}
+
+	mean_time_to_happen = {
+		months = 1820
+	}	
+
+	option = {
+		name = EVTOPTAwildling.55
+		random_list = {
+			45 = {
+				if = {
+					limit = {
+						NOT = { trait = craven }
+						NOT = { trait = brave }
+						NOT = { trait = berserker }
+						NOT = { personality_traits = 6 }
+					}
+					add_trait = craven
+					hidden_tooltip = { character_event = { id = 38257 } }
+				}
+				if = {
+					limit = { trait = brave }
+					remove_trait = brave
+					#hidden_tooltip = { character_event = { id =  } }
+				}				
+			}
+			45 = {
+				if = {
+					limit = {
+						NOT = { trait = craven }
+						NOT = { trait = brave }
+						NOT = { personality_traits = 6 }
+					}
+					add_trait = brave
+					hidden_tooltip = { character_event = { id = 38270 } }
+				}
+				if = {
+					limit = { trait = craven }
+					remove_trait = craven
+					hidden_tooltip = { character_event = { id = 38296  } }
+				}
+			}
+			5 = {
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = { death_reason = death_missing }
+			}
+		}
+	}
+}
+
+# Force the AI to consider invasions
+character_event = {
+	id = wildling.60
+	desc = "Hey, AI, you want to invade this person?"
+	
+	is_triggered_only = yes
+	only_independent = yes
+	ai = yes
+	min_age = 16
+	capable_only = yes
+	war = no
+	
+	trigger = {
+		trait = wildling
+		#top_liege = { trait = wildling }
+		demesne_size = 1
+		wealth = 0
+		
+		NOT = { trait = kingsguard }
+		NOT = { trait = archmaester }
+		NOT = { trait = nightswatch }
+		OR = {
+			NOT = { has_global_flag = war_cooldown_period } 
+			had_global_flag = { flag = war_cooldown_period days = 25 }
+		}	
+	}
+		
+	immediate = {
+		# Opinion flag a target
+		random_independent_ruler = {
+			limit = {
+				#NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_enforced_truce } }
+				NOT = { reverse_has_truce = ROOT }
+				OR = {
+					NOT = { primary_title = { title = d_nightswatch } }
+					ROOT = { higher_tier_than = COUNT }
+				}
+				NOT = { culture_group = unoccupied_group } 
+				NOT = { culture_group = winter_group }
+				any_realm_province = {
+					has_owner = yes
+					owner = {
+						OR = {
+							character = PREVPREV
+							is_liege_or_above = PREVPREV
+						}
+					}
+					any_neighbor_province = {
+						has_owner = yes
+						owner = {
+							OR = {
+								character = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+					}
+				}
+				any_demesne_title = {
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							tier = DUKE
+							holder_scope = { tier = DUKE }
+						}
+						AND = {
+							tier = COUNT
+							holder_scope = { tier = COUNT }
+						}
+					}
+					OR = {
+						AND = {
+							NOT = { title = d_kingsguard }
+							NOT = { title = b_white_sword_tower }
+						}
+						holder_scope = { NOT = { trait = kingsguard } }
+					}
+					controls_religion = no	
+					NOT = { title = d_nightswatch }	
+				}
+				OR = { #Cannot attack vassals split by mega war
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege } }
+					NOT = { ROOT = { higher_tier_than = PREV } }
+				}
+				
+				#Target considerations
+				OR = {
+					NOT = { relative_power = { who = ROOT power = 1.75 } }
+					AND = {
+						war = yes
+						NOT = { relative_power = { who = ROOT power = 3 } }
+					}
+				}	
+				OR = {
+					NOT = { reverse_opinion = { who = ROOT value = 40 } } #Don't target people they like
+					ROOT = { 
+						OR = {
+							trait = ambitious
+							trait = ruthless
+						}
+					}
+				}
+				OR = { #Have to dislike close family to attack them
+					NOT = { reverse_opinion = { who = ROOT value = -15 } } 
+					NOT = {
+						OR = {
+							is_married = ROOT
+							is_parent_of = ROOT
+							father = { character = ROOT }
+							mother = { character = ROOT }
+						}
+					}
+				}
+			}
+			save_event_target_as = opinion_invasion_target_evaluation
+		}
+	}
+	
+	option = {
+		name = "Let's do it!"
+		ai_chance = {
+			factor = 200
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.5
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.5
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				event_target:opinion_invasion_target_evaluation = {
+					NOT = {
+						relative_power = {
+							who = ROOT
+							power = 0.25
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:opinion_invasion_target_evaluation = {
+					NOT = {
+						relative_power = {
+							who = ROOT
+							power = 0.1
+						}
+					}	
+				}
+			}
+		}
+		event_target:opinion_invasion_target_evaluation = {
+			random_demesne_title = {
+				limit = {
+					OR = {
+						higher_tier_than = DUKE
+						AND = {
+							tier = DUKE
+							holder_scope = { tier = DUKE }
+						}
+						AND = {
+							tier = COUNT
+							holder_scope = { tier = COUNT }
+						}
+					}
+					OR = {
+						AND = {
+							NOT = { title = d_kingsguard }
+							NOT = { title = b_white_sword_tower }
+						}
+						holder_scope = { NOT = { trait = kingsguard } }
+					}
+					controls_religion = no	
+					NOT = { title = d_nightswatch }
+				}	
+				reverse_war = {
+					target = ROOT
+					casus_belli = AGOT_invasion
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "Let's not do it!"
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+
+### Skagosi Ships ###
+# Rebuilt
+narrative_event = {
+	id = wildling.61
+	title = EVTTITLEwildling.61
+	desc = EVTDESCwildling.61
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes
+	major = yes
+	
+	only_rulers = yes
+	
+	major_trigger = {
+		OR = {
+			e_north = { is_primary_holder_title = yes }
+			k_north = { is_primary_holder_title = yes }
+			capital_scope = { region = world_north }
+			culture_group = first_men
+		}
+	}
+	
+	option = { # I have restored the Skagosi to glory
+		name = EVTOPTAwildling.61
+		trigger = {
+			character = FROM
+		}
+		if = {
+			limit = { has_nickname = no }
+			give_nickname = nick_the_rebuilder
+		}
+		any_realm_lord = {
+			limit = { culture = skagosi }
+			opinion = {
+				who = ROOT
+				modifier = opinion_rebuilt_our_ships
+				years = 20
+			}
+		}
+		
+		primary_title = { save_event_target_as = bloodline_title } #check for new bloodline
+		set_character_flag = skagosi_special_bloodline
+		character_event = { id = traditional_claims.201 }
+	}
+	option = { # Once again we are the masters of the waves
+		name = EVTOPTBwildling.61
+		trigger = {
+			NOT = { character = FROM }
+			culture = skagosi
+		}
+	}
+	option = { # This is troubling news
+		name = EVTOPTCwildling.61
+		trigger = {
+			NOR = { 
+				character = FROM
+				culture = skagosi
+			}
+		}
+	}
+}
+# Desroyed
+narrative_event = {
+	id = wildling.62
+	title = EVTTITLEwildling.62
+	desc = EVTDESCwildling.62
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes
+	major = yes
+	
+	only_rulers = yes
+	
+	major_trigger = {
+		OR = {
+			e_north = { is_primary_holder_title = yes }
+			k_north = { is_primary_holder_title = yes }
+			capital_scope = { region = world_north }
+			culture_group = first_men
+		}
+	}
+	
+	option = { # Peace has been restored
+		name = EVTOPTAwildling.62
+		trigger = {
+			NOT = { culture = skagosi }
+		}
+		if = {
+			limit = { character = FROM }
+			any_realm_lord = {
+				limit = { culture = skagosi }
+				opinion = {
+					who = ROOT
+					modifier = opinion_destroyed_our_ships
+					years = 20
+				}
+			}
+		}
+	}
+	option = { # One day again we will rebuild
+		name = EVTOPTBwildling.62
+		trigger = {
+			culture = skagosi
+		}
+		opinion = {
+			who = FROM
+			modifier = opinion_destroyed_our_ships
+			years = 20
+		}
+	}
+}
+
+### Find Dark Sister Beyond the Wall
+long_character_event = {
+	id = wildling.63
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	desc = {
+		text = EVTDESCAwildling.63
+		trigger = { trait = nightswatch }
+	}
+	desc = {
+		text = EVTDESCBwildling.63
+		trigger = { trait = wildling }
+	}
+	
+	trigger = {
+		OR = { # Make it a bit more difficult to get
+			trait = nightswatch
+			trait = wildling
+		}
+		location = { has_province_flag = dark_sister_location }
+		NOT = { any_artifact = { has_artifact_flag = valyrian_steel } }
+	}
+
+	weight_multiplier = {
+		factor = 0.66
+		modifier = {
+			factor = 1.25
+			dynasty = 496
+		}
+		modifier = {
+			factor = 1.25
+			has_character_modifier = nw_ranger
+		}
+		modifier = {
+			factor = 1.25
+			primary_title = { title = d_nightswatch }
+		}
+		modifier = {
+			factor = 1.25
+			has_landed_title = k_beyond_wall
+		}
+	}
+	
+	option = {
+		name = EVTOPTAwildling.63
+		random_list = {
+			70 = {
+				long_character_event = { id = wildling.64 tooltip = TOOLTIPwildling.64 }
+			}
+			30 = {
+				character_event = { id = wildling.65 tooltip = TOOLTIPwildling.65 }
+			}
+		}
+	}
+	option = {
+		name = EVTOPTBwildling.63
+		prestige = -50
+	}
+}
+long_character_event = {
+	id = wildling.64
+	desc = EVTDESCwildling.64
+	picture = GFX_evt_valyrian_steel
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAwildling.64
+		add_artifact = darksister
+		new_artifact = { 
+			set_artifact_flag = heirloom_@PREV 
+			check_new_sword_heirloom_effect = yes #ensures traditional dynastys have claim no sword
+		}
+		prestige = 500
+		location = { clr_province_flag = dark_sister_location }
+	}
+}
+character_event = {
+	id = wildling.65
+	desc = EVTDESCwildling.65
+	picture = GFX_evt_death
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTAwildling.65
+		death = { death_reason = death_accident }
+	}
+}
+
+## Cannibal eat prisoner
+character_event = {
+	id = wildling.66
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	desc = {
+		text = EVTDESCwildling.66
+		trigger = {
+			can_usually_eat_people_trigger = yes
+		}
+	}
+	desc = {
+		text = EVTDESCwildling.66B
+		trigger = {
+			can_usually_eat_people_trigger = no
+		}
+	}
+	
+	option = {
+		name = EVTOPTAwildling.66  #Eat prisoner
+		hidden_tooltip = {
+			if = {
+				limit = { has_dlc = "Reapers" }
+				random_list = {
+					58 = { # Nothing happens
+						modifier = {
+							factor = 0
+							FROMFROM = { immortal = yes }
+						}
+					}
+					40 = { # Get sick
+						modifier = {
+							factor = 0
+							OR = {
+								immortal = yes
+								has_character_flag = demon_child
+								FROMFROM = { immortal = yes }
+								AND = {
+									FROMFROM = {
+										controls_religion = yes
+									}
+									NOT = { religion_group = FROMFROM }
+								}
+							}
+						}
+						random_list = {
+							50 = { # Food Poisoning
+								if = {
+									limit = {
+										NOR = {
+											num_of_symptoms = 1
+											is_ill = yes
+											has_character_flag = developing_illness
+											has_character_flag = disease_not_serious
+										}
+									}
+									set_character_flag = got_food_poisoning
+									set_character_flag = developing_illness
+									character_event = { id = RIP.5023 days = 5 }
+								}
+							}
+							25 = { # Diarrhea - Not Serious
+								if = {
+									limit = {
+										NOR = {
+											num_of_symptoms = 1
+											is_ill = yes
+											has_character_flag = developing_illness
+											has_character_flag = disease_not_serious
+										}
+									}
+									set_character_flag = disease_not_serious
+									character_event = { id = RIP.5002 days = 5 }
+									character_event = { id = RIP.11004 days = 10 random = 50 }
+								}
+							}
+							25 = { # Vomiting - Not Serious
+								if = {
+									limit = {
+										NOR = {
+											num_of_symptoms = 1
+											is_ill = yes
+											has_character_flag = developing_illness
+											has_character_flag = disease_not_serious
+										}
+									}
+									set_character_flag = disease_not_serious
+									character_event = { id = RIP.5003 days = 5 }
+									character_event = { id = RIP.11005 days = 10 random = 50 }
+								}
+							}
+						}
+					}
+					2 = { # Gain power!
+						modifier = {
+							factor = 0.05
+							NOT = { magic_returned_trigger = yes }
+						}
+						if = {
+							limit = {
+								FROMFROM = {
+									controls_religion = yes
+									religion = the_seven
+								}	
+								NOT = { religion_group = FROMFROM }
+							}
+							set_character_flag = pope_eater	
+						}
+						if = {
+							limit = {
+								FROMFROM = {
+									controls_religion = yes
+									OR = {
+										religion = rhllor
+										religion = bearded_priests
+										religion = many_faced_god
+									}
+								}
+								NOT = { religion_group = FROMFROM }
+							}
+							set_character_flag = fire_eater	
+						}					
+						character_event = { id = RIP.11510 }
+					}
+				}	
+			}	
+			if = {
+				limit = {
+					has_nickname = no
+					NOT = { can_usually_eat_people_trigger = yes }
+					NAND = { #Animals can only be cannibals of own kind
+						OR = {
+							is_animal_trigger = yes
+							FROMFROM = { is_animal_trigger = yes }
+						}	
+						FROMFROM = { NOT = { graphical_culture = ROOT } }
+					}
+				}
+				random_list = {
+					20 = { # Get nickname The Cannibal
+						give_nickname = nick_the_cannibal
+					}
+					15 = { # Get nickname The Dragon
+						give_nickname = nick_the_dragon
+					}
+					15 = { # Get nickname The Abomination
+						give_nickname = nick_the_abomination
+					}
+					10 = { # Get nickname The Monster
+						give_nickname = nick_the_monster
+					}
+					40 = { } # No nickname
+				}
+			}
+			FROMFROM = { save_event_target_as = kinslayer_target }
+			FROMFROM = {
+				if = {
+					limit = {
+						NOR = {
+							trait = lunatic
+							AND = { #Animals can only be cannibals of own kind
+								OR = {
+									is_animal_trigger = yes
+									FROMFROM = { is_animal_trigger = yes }
+								}	
+								FROMFROM = { NOT = { graphical_culture = ROOT } }
+							}
+						}
+					}
+					add_trait = lunatic
+				}
+				if = {
+					limit = {
+						NOR = {
+							has_character_modifier = crazy_cannibal
+							is_animal_trigger = yes
+						}
+					}
+					add_character_modifier = {
+						name = crazy_cannibal
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						NOR = {
+							trait = cannibal_trait
+							has_character_modifier = cannibal
+							AND = { #Animals can only be cannibals of own kind
+								OR = {
+									is_animal_trigger = yes
+									FROMFROM = { is_animal_trigger = yes }
+								}	
+								FROMFROM = { NOT = { graphical_culture = ROOT } }
+							}
+						}			
+					}
+					add_trait = cannibal_trait
+				}
+				add_kinslayer_trait_effect = yes
+			}
+			if = {
+				limit = { has_blood_magic_religion_trigger = yes }
+				FROMFROM = { increase_warlock_magic_sacrifice_effect = yes }
+			}
+		}	
+	}
+}
+#Inform eaten
+character_event = {
+	id = wildling.67
+	desc = EVTDESCwildling.67
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = {
+			text = EVTOPTAwildling.67
+			trigger = { NOT = { trait = cynical } }
+		}
+		name = {
+			text = EVTOPTBwildling.67
+			trigger = { trait = cynical }
+		}
+		death = {
+			death_reason = death_execution_eaten
+			killer = FROM
+		}
+	}
+}
+#Inform relative
+character_event = {
+	id = wildling.68
+	desc = EVTDESCwildling.68
+	picture = GFX_evt_wildlings
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = EVTOPTAwildling.68
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}
+}
+#Wildling Horde modifiers
+character_event = {
+	id = wildling.69
+
+	only_playable = yes
+	hide_window = yes
+	
+	trigger = {
+		trait = wildling
+		prestige = 100
+		NOT = { has_character_flag = wildling_horde_modifier }
+	}
+	
+	immediate = {
+		set_character_flag = wildling_horde_modifier
+		character_event = { id = wildling.70 days = 1 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = wildling.70
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		has_character_flag = wildling_horde_modifier
+	}
+	
+	immediate = {
+		remove_character_modifier = wildling_horde_20
+		remove_character_modifier = wildling_horde_18
+		remove_character_modifier = wildling_horde_16
+		remove_character_modifier = wildling_horde_14
+		remove_character_modifier = wildling_horde_12
+		remove_character_modifier = wildling_horde_10
+		remove_character_modifier = wildling_horde_8
+		remove_character_modifier = wildling_horde_6
+		remove_character_modifier = wildling_horde_4
+		remove_character_modifier = wildling_horde_3
+		remove_character_modifier = wildling_horde_2
+		remove_character_modifier = wildling_horde_1
+		if = {
+			limit = {
+				OR = {
+					NOT = { trait = wildling }
+					NOT = { prestige = 99 }
+					is_ruler = no
+				}
+			}
+			clear_delayed_event = { id = wildling.70 }
+			clr_character_flag = wildling_horde_modifier			
+			break = yes
+		}
+		character_event = { id = wildling.70 days = 90 } #check modifier tri-monthly		
+		if = {
+			limit = { prestige = 2000 }
+			add_character_modifier = { name = wildling_horde_20 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1800 }
+			add_character_modifier = { name = wildling_horde_18 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1600 }
+			add_character_modifier = { name = wildling_horde_16 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1400 }
+			add_character_modifier = { name = wildling_horde_14 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1200 }
+			add_character_modifier = { name = wildling_horde_12 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 1000 }
+			add_character_modifier = { name = wildling_horde_10 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 800 }
+			add_character_modifier = { name = wildling_horde_8 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 600 }
+			add_character_modifier = { name = wildling_horde_6 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 400 }
+			add_character_modifier = { name = wildling_horde_4 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 300 }
+			add_character_modifier = { name = wildling_horde_3 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 200 }
+			add_character_modifier = { name = wildling_horde_2 duration = -1 }
+			break = yes
+		}
+		if = {
+			limit = { prestige = 100 }
+			add_character_modifier = { name = wildling_horde_1 duration = -1 }
+			break = yes
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}

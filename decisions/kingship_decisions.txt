@@ -1,0 +1,1242 @@
+decisions = {
+	create_e_north = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			has_landed_title = k_north
+			NOT = { e_north = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war	
+				has_character_modifier = indep_faction_won					
+			}
+		}
+		allow = {
+			primary_title = { title = k_north }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_north } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_north = {
+				gain_title = ROOT	
+				copy_title_laws = k_north
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_north
+				hidden_tooltip = {
+					k_north = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_north
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_north = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier	
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	create_e_riverlands = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {		
+			tier = KING
+			has_landed_title = k_riverlands
+			NOT = { e_riverlands = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war	
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_riverlands }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_riverlands } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_riverlands = {
+				gain_title = ROOT
+				copy_title_laws = k_riverlands
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_riverlands
+				hidden_tooltip = {
+					k_riverlands = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_riverlands
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_riverlands = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+				factor = 10000
+		}		
+	}
+	create_e_vale = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {
+			tier = KING
+			has_landed_title = k_vale
+			NOT = { e_vale = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war		
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_vale }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_vale } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_vale = {
+				gain_title = ROOT
+				copy_title_laws = k_vale
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_vale
+				hidden_tooltip = {
+					k_vale = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_vale
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_vale = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+				factor = 10000
+		}		
+	}
+	create_e_westerlands = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {
+			tier = KING
+			has_landed_title = k_westerlands
+			NOT = { e_westerlands = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war		
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_westerlands }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_westerlands } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_westerlands = {
+				gain_title = ROOT
+				copy_title_laws = k_westerlands
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_westerlands
+				hidden_tooltip = {
+					k_westerlands = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_westerlands
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_westerlands = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	create_e_stormlands = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			has_landed_title = k_stormlands
+			NOT = { e_stormlands = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war	
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_stormlands }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_stormlands } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_stormlands = {
+				gain_title = ROOT
+				copy_title_laws = k_stormlands
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_stormlands
+				hidden_tooltip = {
+					k_stormlands = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_stormlands
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_stormlands = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	create_e_reach = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			has_landed_title = k_reach
+			NOT = { e_reach = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war	
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_reach }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_reach } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_reach = {
+				gain_title = ROOT
+				copy_title_laws = k_reach
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_reach
+				hidden_tooltip = {
+					k_reach = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_reach
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_reach = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	create_e_dorne = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			has_landed_title = k_dorne
+			NOT = { e_dorne = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war		
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_dorne }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_dorne } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_dorne = {
+				gain_title = ROOT
+				copy_title_laws = k_dorne
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_dorne
+				hidden_tooltip = {
+					k_dorne = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_dorne
+					}
+					character_event = { id = diplomatic.50 days = 1 }
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_dorne = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	
+	create_e_iron_isles = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			has_landed_title = k_iron_isles
+			NOT = { e_iron_isles = { has_holder = yes } }
+			liege = { character = ROOT }
+			OR = {
+				AND = {	
+					war = no 
+					NOT = { has_character_flag = joined_independance_war }
+					NOT = { has_character_flag = post_civil_war_wars }
+					NOT = { has_character_flag = supporting_king }
+					NOT = { has_character_flag = neutral }
+					NOT = { has_character_flag = against_king }
+					NOT = { trait = rebel_leader }
+					
+					NOT = { has_character_flag = no_kingship }
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				has_character_modifier = indep_war
+				has_character_modifier = indep_faction_won				
+			}
+		}
+		allow = {
+			primary_title = { title = k_iron_isles }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = e_iron_isles } }
+			set_character_flag = changing_westerosi_kingdom_tier #to stop other maintenance triggering
+			e_iron_isles = {
+				gain_title = ROOT
+				copy_title_laws = k_iron_isles
+				clr_title_flag = indep_war
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+				#succession = feudal_elective
+			}
+			# crownlaw_title = {
+				# add_law_w_cooldown = centralization_0
+			# }
+			custom_tooltip = {
+				text = TOOLTIPcreate_e_iron_isles
+				hidden_tooltip = {
+					k_iron_isles = {
+						destroy_landed_title = THIS
+						de_jure_liege = e_iron_isles
+					}
+					character_event = { id = diplomatic.50 days = 1 }					
+				}	
+			}	
+			if = { 	
+				limit = { war = yes }
+				set_character_flag = indep_war
+				e_iron_isles = { set_title_flag = indep_war }
+			}
+			clr_character_flag = changing_westerosi_kingdom_tier
+			if = {
+				limit = {
+					has_character_modifier = granted_royal_privilege_modifier
+				}
+				remove_character_modifier = granted_royal_privilege_modifier
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	
+	create_k_beyond_wall = {
+		is_high_prio = yes
+		only_independent = yes
+		potential = {			
+			is_ruler = yes
+			trait = wildling
+			k_beyond_wall = { has_holder = no }			
+			NOT = { higher_tier_than = DUKE }
+		}
+		
+		allow = {	
+			custom_tooltip = {
+				text = TOOLTIPINDEPENDENTCONDITION
+				hidden_tooltip = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+			}
+			prestige = 750
+			trait = wildling
+			custom_tooltip = {
+				text = TOOLTIPISHIGHLORDTIER
+				tier = DUKE
+			}
+			war = no
+			demesne_size = 1
+			num_of_count_titles_in_realm = 10
+			prisoner = no
+			is_incapable = no
+			capital_scope = { region = world_beyond_the_wall }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			hidden_tooltip = { activate_title = { status = yes title = k_beyond_wall } }
+			prestige = -100
+			primary_title = {
+				show_scope_change = no
+				k_beyond_wall = {
+					hidden_tooltip = { 
+						copy_title_laws = PREV
+					}
+					gain_title = ROOT				
+					ROOT = {
+						recalc_succession = yes
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								picture = GFX_evt_coronation
+							}	
+						}
+					}
+					e_rebels = {
+						persistent_event_target:chronicle_player = {
+							if = {
+								limit = { 
+									NOT = { character = ROOT }
+									OR = {							
+										dynasty = ROOT
+										is_liege_or_above = ROOT
+										capital_scope = { region = world_westeros }
+									}
+								}
+								chronicle = {
+									entry = CHRONICLE_CREATE_KINGDOM
+									portrait = [Root.GetID]
+								}	
+							}
+						}
+					}	
+				}
+			}	
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+		
+		ai_will_do = {
+			factor = 100000
+		}
+	}
+
+	# create_k_beyond_wall_NW = {
+		# is_high_prio = yes
+		# potential = {			
+			# is_ruler = yes
+			# trait = nightswatch
+			# has_landed_title = d_the_wall
+			# k_beyond_wall = { has_holder = no }
+			# liege = { character = ROOT }
+			# NOT = { higher_tier_than = DUKE }
+			# AND = {
+				# trait = dishonorable1
+				# trait = ambitious
+				# trait = ruthless
+				# trait = proud
+			# }
+		# }
+		
+		# allow = {	
+			# prestige = 500
+			# trait = nightswatch
+			# tier = DUKE
+			# war = no
+		# }
+		
+		# effect = {
+			# prestige = -100
+			# k_beyond_wall = {
+				# gain_title = ROOT
+			# }
+			# set_character_flag = oathbreaker
+		# }
+		
+		# ai_will_do = {
+			# factor = 100
+		# }
+	# }
+
+	create_k_stepstones = {
+		is_high_prio = yes
+		only_independent = yes
+		icon_religion = pirate
+		
+		potential = {
+			is_ruler = yes
+			religion = pirate
+			k_stepstones = { has_holder = no }	
+			capital_scope = { region = world_stepstones }			
+			NOT = { higher_tier_than = DUKE }
+		}
+		
+		allow = {	
+			custom_tooltip = {
+				text = TOOLTIPINDEPENDENTCONDITION
+				hidden_tooltip = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+			}
+			prestige = 500
+			trait = pirate
+			custom_tooltip = {
+				text = TOOLTIPISHIGHLORDTIER
+				tier = DUKE
+			}	
+			war = no
+			demesne_size = 1		
+			NOT = { is_inaccessible_trigger = yes }
+			prisoner = no
+			is_incapable = no
+			is_adult = yes
+			custom_tooltip = {
+				text = TOOLTIPdefeated_pirate
+				hidden_tooltip = { NOT = { has_character_modifier = defeated_pirate } }
+			}
+		}
+		
+		effect = {
+			prestige = -100
+			hidden_tooltip = {
+				activate_title = { status = yes title = k_stepstones } 
+				primary_title = { save_event_target_as = old_primary_title }
+			}
+			k_stepstones = {
+				gain_title = ROOT
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { 
+								NOT = { character = ROOT }
+								OR = {							
+									dynasty = ROOT
+									is_liege_or_above = ROOT
+									capital_scope = { region = world_westeros }
+								}
+							}
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+		
+		ai_will_do = {
+			factor = 100000
+		}
+	}
+	create_k_basilisk_isles = {
+		is_high_prio = yes
+		only_independent = yes
+		icon_religion = corsair
+		
+		potential = {
+			is_ruler = yes
+			religion = corsair
+			k_basilisk_isles = { has_holder = no }
+			capital_scope = { region = world_basilisk_isles }			
+			NOT = { higher_tier_than = DUKE }
+		}
+		
+		allow = {
+			custom_tooltip = {
+				text = TOOLTIPINDEPENDENTCONDITION
+				hidden_tooltip = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+			}
+			prestige = 500
+			trait = pirate
+			custom_tooltip = {
+				text = TOOLTIPISHIGHLORDTIER
+				tier = DUKE
+			}
+			war = no
+			demesne_size = 1		
+			NOT = { is_inaccessible_trigger = yes }
+			prisoner = no
+			is_incapable = no
+			is_adult = yes
+			custom_tooltip = {
+				text = TOOLTIPdefeated_pirate
+				hidden_tooltip = { NOT = { has_character_modifier = defeated_pirate } }
+			}
+		}
+		
+		effect = {
+			prestige = -100
+			hidden_tooltip = { activate_title = { status = yes title = k_basilisk_isles } }
+			k_basilisk_isles = {
+				gain_title = ROOT
+				ROOT = {
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_CREATE_KINGDOM
+							picture = GFX_evt_coronation
+						}	
+					}
+				}
+				e_rebels = {
+					persistent_event_target:chronicle_player = {
+						if = {
+							limit = { NOT = { character = ROOT } }
+							chronicle = {
+								entry = CHRONICLE_CREATE_KINGDOM
+								portrait = [Root.GetID]
+							}	
+						}
+					}
+				}	
+			}
+			hidden_tooltip = { character_event = { id = dynamic_coa.1 days = 1 } } #check coas
+		}
+		
+		ai_will_do = {
+			factor = 100000
+		}
+	}
+	
+	adopt_royal_style = {
+		is_high_prio = yes	
+		only_independent = yes
+		potential = {	
+			tier = KING
+			government = feudal_government_LP
+			primary_title = {
+				is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+				NAND = {
+					has_title_flag = valyria_colony
+					ROOT = { top_liege = { is_valyrian_freehold_trigger = yes } }
+				}
+				NOR = { #these have equivalent empire title
+					title = k_north
+					title = k_riverlands
+					title = k_vale
+					title = k_westerlands
+					title = k_reach
+					title = k_stormlands
+					title = k_dorne
+					title = k_iron_isles
+				}
+			}
+			NOT = { trait = nightswatch }
+			NOT = { trait = kingsguard }
+			NOT = { culture_group = winter_group }	
+			NOT = { culture_group = unoccupied_group }
+			
+			liege_before_war = { character = ROOT }
+			custom_tooltip = {
+				text = TOOLTIPINDEPENDENTCONDITION
+				hidden_tooltip = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+			}
+		}
+		allow = {
+		}
+		effect = {		
+			hidden_tooltip = { 
+				any_demesne_title = {
+					limit = {
+						tier = KING
+						controls_religion = no
+						is_landless_type_title = no
+						is_variable_equal = { which = "lord_paramount_status" value = 1 } #1 = lord paramount, 2 = interregnum
+						NAND = {
+							has_title_flag = valyria_colony
+							ROOT = { top_liege = { is_valyrian_freehold_trigger = yes } }
+						}
+					}
+					set_variable = { which = "lord_paramount_status" value = 0 } #1 = lord paramount, 2 = interregnum
+					add_law = privilege_vassal_king				
+				}	
+				character_event = { id = dynamic_coa.1 days = 1 } #check coas
+			} 
+			set_government_type = feudal_government
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 10000
+		}		
+	}
+	
+	sisterman_lady_of_the_waves = {
+		is_high_prio = yes
+		only_independent = yes
+		
+		potential = {
+			is_ruler = yes
+			culture = sisterman
+			NOR = { 
+				religion = lady_of_the_waves 
+				religion = lady_of_the_waves_reformed
+			}
+			demesne_size = 1
+			NOT = { trait = nightswatch }
+		}
+		
+		allow = {
+			custom_tooltip = {
+				text = TOOLTIPISHIGHLORDTIERORGREATER
+				higher_tier_than = DUKE
+			}
+			custom_tooltip = {
+				text = TOOLTIPINDEPENDENTCONDITION
+				hidden_tooltip = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+			}
+			prestige = 500
+			is_adult = yes
+			prisoner = no
+			is_incapable = no
+			NOT = { is_inaccessible_trigger = yes }
+			war = no
+			NOT = { trait = zealous }
+			NOT = { trait = just }
+			NOT = { trait = liberator }			
+		}
+		
+		effect = {
+			if = {
+				limit = { 
+					NOT = { trait = zealous } 
+					NOT = { trait = cynical }
+				}
+				random = {
+					chance = 50
+					add_sympathy_trait_effect = yes	
+				}	
+			}
+			if = {
+				limit = { trait = cynical }
+				add_sympathy_trait_effect = yes	
+			}
+			prestige = -250
+			piety = -250
+			religion = lady_of_the_waves
+			character_event = { id = pirate.10 }
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.01
+			}	
+				
+			modifier = {
+				factor = 0
+				OR = {
+					trait = honorable
+					trait = kind
+					trait = charitable
+					trait = content
+				}	
+			}
+			modifier = {
+				factor = 4
+				trait = cynical
+			}
+			modifier = {
+				factor = 4
+				trait = lunatic
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = greedy
+			}
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = ambitious
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				martial = 14
+			}
+			modifier = {
+				factor = 1.5
+				martial = 17
+			}
+			modifier = {
+				factor = 1.5
+				martial = 20
+			}
+			modifier = {
+				factor = 0.33
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.5
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 0.5
+				OR = {
+					is_ill = yes
+					has_severe_disability_trigger = yes
+				}
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { martial = 8 }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { martial = 5 }
+			}
+			modifier = {
+				factor = 0.66
+				NOT = { martial = 2 }
+			}
+		}
+	}
+}

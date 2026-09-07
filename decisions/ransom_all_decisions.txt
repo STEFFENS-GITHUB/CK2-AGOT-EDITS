@@ -1,0 +1,49 @@
+targetted_decisions = {
+	ransom_all = {
+		ai_target_filter = none
+		filter = self
+		ai = no
+		is_high_prio = yes
+		diplomacy_icon = GFX_RANSOM_CHARACTER_INTERACTION_icon
+		potential = {
+			ai = no
+			is_ruler = yes		
+			any_courtier = {
+				count = 2
+				OR = {
+					is_ruler = yes
+					NOT = { liege = { character = ROOT } }
+				}	
+				host = { character = ROOT }
+				prisoner = yes
+			}
+		}
+			
+		allow = {
+			NOT = { has_character_modifier = ransom_timer }			
+		}
+			
+		effect = {
+			any_courtier = {
+				limit = {
+					OR = {
+						is_ruler = yes
+						NOT = { liege = { character = ROOT } }
+					}
+					host = { character = ROOT }
+					prisoner = yes
+				}
+				character_event = { id = ransom.0 days = 2 tooltip = ransom_all_tooltip }
+			}		
+			add_character_modifier = {
+				name = ransom_timer
+				duration = 25
+				hidden = yes
+			}
+		}
+			
+		ai_will_do = {
+			factor = 0
+		}
+	}		
+}

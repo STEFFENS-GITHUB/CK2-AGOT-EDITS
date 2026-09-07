@@ -1,0 +1,3647 @@
+########################################
+###Written by Ogaburan aka Ran Miller###
+########################################
+
+###################################
+###########Re-Education############
+namespace = reeducation
+###################################
+
+#reeducation.1 - Time for child to recieve some propper education.
+#reeducation.2 - Chooses Education. (Generic)
+#reeducation.3 - Child Notification. (Courtier Edcucation)
+#reeducation.4 - Child Notification. (Steward Education)
+#reeducation.5 - Child Notification. (Martial Education)
+#reeducation.6 - Child Notification. (No Education)
+#reeducation.7 - Getting Educated as a Courtier.
+#reeducation.8 - Getting Educated as a Steward.
+#reeducation.9 - Getting a Martial Education.
+#reeducation.10 - Getting no education.
+###Bonding
+#reeducation.11 - Grew up together.
+#reeducation.12 - Grew up together. (Notitification)
+###Conclave
+#reeducation.20 - Choose level of education to go with focus
+###Prodigy
+#reeducation.23 - Child is a prodigy
+#reeducation.23 - Prodigy stat boost
+
+#########
+
+#reeducation.1 - Time for child to recieve some propper education.
+character_event = {
+	id = reeducation.199
+	
+	min_age = 5
+	max_age = 12
+
+	is_triggered_only = yes
+	hide_window = yes
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		NOT = { has_character_modifier = court_education }
+		NOT = { has_character_modifier = martial_education }
+		NOT = { has_character_modifier = steward_education }
+		NOT = { has_character_modifier = maester_education }
+		NOT = { has_character_modifier = no_education }
+		NOT_mythical_creature_trigger = yes
+		NOT = { has_game_rule = { name = education_costs value = vanilla } }
+	}
+	
+	immediate = {
+		character_event = { id = reeducation.1 }
+	}
+	
+	option = {
+		name = "OK"
+	}
+}	
+character_event = {
+	id = reeducation.1
+	desc = "EVTDESCreeducation.1" #Time for me to recieve some propper education.
+	picture = "GFX_oil_rik"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { 
+				liege = {
+					any_child = {
+						OR = {
+							character = ROOT
+							is_parent_of = ROOT
+						}
+					}
+				}	
+			}
+			random = {
+				chance = 5
+				add_character_modifier = {
+					name = challenged_child
+					duration = 4380
+					hidden = yes
+				}
+			}
+		}
+		
+		###If at the start of the game, sometimes pick random education straight away
+		if = {
+			limit = { 
+				NOT = { has_dlc = "Zeus" }
+				age = 9
+				NOT = { total_years_played = 1 }
+			}
+			random_list = {
+				10 = { 
+					modifier = {
+						factor = 2
+						diplomacy = 5
+					}
+					modifier = {
+						factor = 2
+						diplomacy = 8
+					}
+					modifier = {
+						factor = 2
+						intrigue = 5
+					}
+					modifier = {
+						factor = 2
+						intrigue = 8
+					}
+					modifier = {
+						factor = 3.5
+						is_female = yes
+					}		
+					modifier = {
+						factor = 0.5
+						is_female = yes
+						OR = {
+							culture_group = dornish
+							AND = {
+								is_ruler = yes
+								culture = northman
+							}
+						}
+					}
+					modifier = {
+						factor = 0.3
+						is_female = yes
+						female_warrior_culture_trigger = yes
+					}
+					modifier = {
+						factor = 5
+						is_female = no
+						female_warrior_culture_trigger = yes
+					}
+					add_character_modifier = { name = court_education duration = -1 } 
+				}
+				10 = { 					
+					modifier = {
+						factor = 3
+						OR = {
+							culture_group = iron_isles_culture
+							trait = wildling
+							trait = pirate
+						}
+					}
+					modifier = {
+						factor = 2
+						trait = squire
+					}
+					modifier = {
+						factor = 1.5
+						trait = poor_warrior
+					}
+					modifier = {
+						factor = 2
+						trait = trained_warrior
+					}
+					modifier = {
+						factor = 4
+						OR = {
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+					}
+					modifier = {
+						factor = 2
+						martial = 5
+					}
+					modifier = {
+						factor = 2
+						martial = 8
+					}
+					modifier = {
+						factor = 0.3
+						is_female = yes
+					}
+					modifier = {
+						factor = 2
+						is_female = yes
+						OR = {
+							culture_group = dornish
+							AND = {
+								tier = count
+								culture = northman
+							}
+						}
+					}
+					modifier = {
+						factor = 0.1
+						is_female = no
+						female_warrior_culture_trigger = yes
+					}
+					modifier = {
+						factor = 10
+						is_female = yes
+						female_warrior_culture_trigger = yes
+					}
+					add_character_modifier = { name = martial_education duration = -1 } 
+				}
+				10 = { 
+					modifier = {
+						factor = 2
+						stewardship = 5
+					}
+					modifier = {
+						factor = 2
+						stewardship = 8
+					}
+					modifier = {
+						factor = 0.3
+						is_female = yes
+						female_warrior_culture_trigger = yes
+					}
+					modifier = {
+						factor = 5
+						is_female = no
+						female_warrior_culture_trigger = yes
+					}
+					add_character_modifier = { name = steward_education duration = -1 }
+				}
+				10 = { 					
+					###Child###
+					###Pro###
+					modifier = {
+						factor = 10
+						NOT = { is_ruler = yes  }
+						liege = {
+							NOT = { dynasty = ROOT }
+							NOT = { is_close_relative = ROOT }
+						}	
+					}
+					modifier = {
+						factor = 2
+						trait = bastard
+					}
+					###Con###
+					modifier = {
+						factor = 0.25
+						is_primary_heir = yes
+					}
+					add_character_modifier = { name = no_education duration = -1 } 
+				}
+			}
+			break = yes
+		}
+		
+		###If slave, owner chooses
+		if = {
+			limit = { trait = slave }
+			
+			liege = { #check if liege is owner
+				if = {
+					limit = { NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_my_slave } } }
+					if = {
+						limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_my_owner } }
+						opinion = { who = ROOT modifier = opinion_my_slave }
+					}
+					if = { #if not, move them to owner
+						limit = { NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_my_owner } } }
+						slave_owner = {
+							limit = {
+								is_ruler = yes
+								is_alive = yes
+								OR = {
+									has_opinion_modifier = { who = ROOT modifier = opinion_my_slave }
+									reverse_has_opinion_modifier = { who = ROOT modifier = opinion_my_owner }
+								}	
+							}	
+							reverse_opinion = { who = ROOT modifier = opinion_my_owner }
+							opinion = { who = ROOT modifier = opinion_my_slave }
+							ROOT = { move_character = PREV }	
+						}
+					}
+				}
+			}
+			liege = {	
+				if = {
+					limit = { has_opinion_modifier = { who = ROOT modifier = opinion_my_slave } }
+					save_event_target_as = educator
+					break = yes
+				}	
+			}			
+		}
+		
+		#Parents Unlanded
+		if = {
+			limit = {
+				father_even_if_dead = { 
+					OR = {
+						is_alive = no
+						is_ruler = no 
+						always = no
+					}	
+				}	
+				mother_even_if_dead = { 
+					OR = {
+						is_alive = no
+						is_ruler = no 
+						always = no
+					}	
+				}
+			}
+			#Grandparents, if liege
+			if = {
+				limit = { father_even_if_dead = { father = { is_alive = yes is_ruler = yes is_liege_of = ROOT is_incapable = no } } }
+				father_even_if_dead = {
+					father = {
+						save_event_target_as = educator
+						break = yes
+					}
+				}
+			}
+			if = {
+				limit = { mother_even_if_dead = { father = { is_alive = yes is_ruler = yes is_liege_of = ROOT is_incapable = no } } }
+				mother_even_if_dead = {
+					father = {
+						save_event_target_as = educator
+						break = yes
+					}
+				}
+			}	
+			if = {
+				limit = { father_even_if_dead = { mother = { is_alive = yes is_ruler = yes is_liege_of = ROOT is_incapable = no } } }
+				father_even_if_dead = {
+					mother = {
+						save_event_target_as = educator
+						break = yes
+					}
+				}
+			}
+			if = {
+				limit = { mother_even_if_dead = { mother = { is_alive = yes is_ruler = yes is_liege_of = ROOT is_incapable = no } } }
+				mother_even_if_dead = {
+					mother = {
+						save_event_target_as = educator
+						break = yes
+					}
+				}
+			}
+			#Regent
+			if = {
+				limit = {
+					is_ruler = yes
+					has_regent = yes
+				}
+				regent = { save_event_target_as = educator break = yes }
+			}
+		}
+		
+		#Parents
+		if = {
+			limit = {
+				father = {
+					is_alive = yes
+					is_incapable = no
+					NAND = { #Mother has priority if higher rank
+						NOT = { is_liege_of = ROOT }
+						ROOT = {
+							mother = {
+								is_alive = yes
+								is_incapable = no
+								OR = {
+									higher_tier_than = PREVPREV
+									AND = {
+										tier = PREVPREV
+										is_liege_of = ROOT
+									}
+								}	
+							}
+						}	
+					}
+				}	
+			}
+			father = { save_event_target_as = educator break = yes }
+		}	
+		#Mother
+		if = {
+			limit = {
+				mother = {
+					is_alive = yes
+					is_incapable = no
+				}	
+			}
+			mother = { save_event_target_as = educator break = yes }
+		}
+		#Regent
+		if = {
+			limit = {
+				is_ruler = yes
+				has_regent = yes	
+			}
+			regent = { save_event_target_as = educator break = yes }
+		}
+		#Random Relative
+		random_dynasty_member = {
+			limit = {
+				is_close_relative = ROOT
+				is_female = no
+				age = 16
+				is_alive = yes
+				is_incapable = no
+				NOT = { trait = bastard }	
+			}	
+			save_event_target_as = educator
+			break = yes
+		}
+		#Liege's Regent
+		if = {
+			limit = {
+				NOT = { tier = BARON }
+				liege = { has_regent = yes }	
+			}
+			liege = { regent = { save_event_target_as = educator break = yes } }
+		}
+		#Liege
+		if = {
+			limit = {
+				NOT = { tier = BARON }
+				liege = {
+					age = 16
+					is_alive = yes
+					is_incapable = no
+				}	
+			}
+			liege = { save_event_target_as = educator break = yes }
+		}		
+		#Self
+		save_event_target_as = educator
+	}
+	
+	option = {
+		name = "OK"
+		event_target:educator = {
+			if = {
+				limit = { NOT = { has_dlc = "Zeus" } }
+				character_event = {
+					id = reeducation.2
+					tooltip = EVTTOOLTIPreeducation.2
+					days = 1
+				}
+			}	
+			if = { #Go straight to cost in conclave
+				limit = { has_dlc = "Zeus" }
+				if = { #If child is landed and not educator's child (or they are unlanded), child pays
+					limit = {
+						ROOT = { 
+							is_ruler = yes 
+							NOT = { trait = slave }
+						}
+						OR = {
+							is_ruler = no
+							NOT = { 
+								OR = {
+									is_parent_of = ROOT
+									is_grandparent_of = ROOT
+								}	
+							}
+						}	
+					}
+					ROOT = { 
+						character_event = { 
+							id = reeducation.1599
+							tooltip = TOOLTIPreeducation_cost 
+							days = 1
+						}
+						clear_event_target = educator
+					}
+					break = yes
+				}	
+				character_event = { #Else educator pays
+					id = reeducation.1599
+					tooltip = TOOLTIPreeducation_cost 
+					days = 1
+				}				
+			}	
+		}
+		clear_event_target = educator
+	}
+}
+
+#reeducation.2 - Chooses Education. (Generic) <--- AKA Mother of all events!
+character_event = {
+	id = reeducation.2
+	desc = "EVTDESCreeducation.2" #Chooses Education. (Generic) <--- AKA Mother of all events!
+	picture = "GFX_tutors"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = { #If child is landed and not your child (or you are unlanded), they pay
+			limit = {
+				FROM = { 
+					is_ruler = yes 
+					NOT = { trait = slave }
+				}
+				OR = {
+					is_ruler = no
+					NOT = { 
+						OR = {
+							is_parent_of = FROM
+							any_child = { is_parent_of = FROM }
+						}	
+					}
+				}	
+			}
+			FROM = { 
+				set_character_flag = pays_for_education
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTAreeducation.2" #Choose the Courtier Edcucation
+		trigger = { NOT = { culture = dothraki } NOT = { culture = jogos_nhai } }
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = court_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.3
+				tooltip = EVTTOOLTIPreeducation.3 
+			}
+		}
+		if = { #Else you pay
+			limit = {
+				FROM = { 
+					NOT = { has_character_flag = pays_for_education }
+				}
+			}
+			character_event = { id = reeducation.15 tooltip = TOOLTIPreeducation_cost }
+		}
+		if = { #If child is landed and not your child (or you are unlanded), they pay
+			limit = {
+				FROM = { 
+					has_character_flag = pays_for_education
+				}
+			}
+			FROM = { 
+				character_event = { id = reeducation.15 days = 1 tooltip = TOOLTIPreeducation_cost }
+				clr_character_flag = pays_for_education
+			}
+		}
+		ai_chance = {
+			factor = 1
+			
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 2
+				OR = {
+					trait = flamboyant_schemer
+					trait = intricate_webweaver
+					trait = elusive_shadow
+					trait = underhanded_rogue
+					trait = charismatic_negotiator
+					trait = grey_eminence
+				}
+			}
+			modifier = {
+				factor = 1.5
+				trait = poet
+			}
+			modifier = {
+				factor = 1.5
+				trait = scholar
+			}
+			modifier = {
+				factor = 2
+				is_patrician = yes
+			}
+			
+			###Con###
+			modifier = {
+				factor = 0.5
+				OR = {
+					trait = impaler
+					trait = duelist
+					trait = hunter
+				}
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 6 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { intrigue = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { intrigue = 6 }
+			}
+			#Sexism
+			modifier = {
+				factor = 3.5
+				FROM = { is_female = yes }
+				NOT = { culture = sarnorian }
+			}		
+			modifier = {
+				factor = 0.5
+				FROM = { is_female = yes }
+				OR = {
+					culture_group = dornish
+					AND = {
+						is_ruler = yes
+						culture = northman
+					}
+				}
+			}
+			modifier = {
+				factor = 0.3
+				FROM = { is_female = yes }
+				female_warrior_culture_trigger = yes
+			}
+			modifier = {
+				factor = 5
+				FROM = { is_female = no }
+				female_warrior_culture_trigger = yes
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { diplomacy = 2 } }
+			}
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { intrigue = 2 } }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBreeducation.2" #Choose the Steward Education
+		trigger = { NOT = { culture = dothraki } NOT = { culture = jogos_nhai } }
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = steward_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.4
+				tooltip = EVTTOOLTIPreeducation.4
+			}
+		}
+		if = { #Else you pay
+			limit = {
+				FROM = { 
+					NOT = { has_character_flag = pays_for_education }
+				}
+			}
+			character_event = { id = reeducation.15 tooltip = TOOLTIPreeducation_cost }
+		}
+		if = { #If child is landed and not your child (or you are unlanded), they pay
+			limit = {
+				FROM = { 
+					has_character_flag = pays_for_education
+				}
+			}
+			FROM = { 
+				character_event = { id = reeducation.15 days = 1 tooltip = TOOLTIPreeducation_cost }
+				clr_character_flag = pays_for_education
+			}
+		}
+		ai_chance = {
+			factor = 1
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 1.5
+				trait = gardener
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					trait = indulgent_wastrel
+					trait = thrifty_clerk
+					trait = fortune_builder
+					trait = midas_touched
+					trait = greedy
+				}
+			}
+			modifier = {
+				factor = 3
+				is_patrician = yes
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.3
+				FROM = { is_female = yes }
+				female_warrior_culture_trigger = yes
+			}
+			modifier = {
+				factor = 5
+				FROM = { is_female = no }
+				female_warrior_culture_trigger = yes
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 2
+				FROM = { stewardship = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { stewardship = 6 }
+			}
+			
+			###Con###
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { stewardship = 2 } }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCreeducation.2" #Choose the Martial Education
+		trigger = { NOT = { culture = dothraki } NOT = { culture = jogos_nhai } }	
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = martial_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.5
+				tooltip = EVTTOOLTIPreeducation.5
+			}
+		}
+		if = { #Else you pay
+			limit = {
+				FROM = { 
+					NOT = { has_character_flag = pays_for_education }
+				}
+			}
+			character_event = { id = reeducation.15 tooltip = TOOLTIPreeducation_cost }
+		}
+		if = { #If child is landed and not your child (or you are unlanded), they pay
+			limit = {
+				FROM = { 
+					has_character_flag = pays_for_education
+				}
+			}
+			FROM = { 
+				character_event = { id = reeducation.15 days = 1 tooltip = TOOLTIPreeducation_cost }
+				clr_character_flag = pays_for_education
+			}
+		}
+		ai_chance = {
+			factor = 1
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 3
+				OR = {
+					culture_group = iron_isles_culture
+					trait = wildling
+					trait = pirate
+				}
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = cruel
+					trait = impaler
+					trait = duelist
+					trait = hunter
+					trait = proud
+				}
+			}
+			modifier = {
+				factor = 2
+				OR = {				
+					trait = tough_soldier
+					trait = skilled_tactician
+					trait = brilliant_strategist
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.8
+				trait = poet
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 1.5
+				OR = {
+					FROM = {is_strong_trigger = yes}
+					FROM = {trait = brave}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { martial = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { martial = 6 }
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.5
+				OR = {
+					FROM = {trait = clubfooted}
+					FROM = {trait = hunchback}
+					FROM = {trait = dwarf}
+					FROM = {is_weak_trigger = yes}
+					FROM = {is_crippled_trigger = yes}
+				}
+			}
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { martial = 2 } }
+			}
+			#Sexism
+			modifier = {
+				factor = 0.3
+				FROM = { is_female = yes }
+				NOT = { culture = sarnorian }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_female = yes }
+				OR = {
+					culture_group = dornish
+					AND = {
+						tier = count
+						culture = northman
+					}
+				}
+			}
+			modifier = {
+				factor = 0.1
+				FROM = { is_female = no }
+				female_warrior_culture_trigger = yes
+			}
+			modifier = {
+				factor = 10
+				FROM = { is_female = yes }
+				female_warrior_culture_trigger = yes
+			}
+		}
+	}
+	###Dothraki Options
+	option = {
+		name = "EVTOPTEreeducation.2" #Choose the Courtier Edcucation
+		trigger = { 
+			OR = {
+				culture = jogos_nhai
+				culture = dothraki 
+			}	
+		} 
+		ai_chance = {
+			factor = 1		
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 2
+				OR = {
+					trait = flamboyant_schemer
+					trait = intricate_webweaver
+					trait = elusive_shadow
+					trait = underhanded_rogue
+					trait = charismatic_negotiator
+					trait = grey_eminence
+				}
+			}
+			modifier = {
+				factor = 1.5
+				trait = poet
+			}
+			modifier = {
+				factor = 1.5
+				trait = scholar
+			}		
+			###Con###
+			modifier = {
+				factor = 0.5
+				OR = {
+					trait = impaler
+					trait = duelist
+					trait = hunter
+				}
+			}		
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { diplomacy = 6 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { intrigue = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { intrigue = 6 }
+			}
+			#Sexism
+			modifier = {
+				factor = 8
+				FROM = { is_female = yes }
+				NOT = { culture = sarnorian }
+			}
+			###Con###
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { diplomacy = 2 } }
+			}
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { intrigue = 2 } }
+			}
+		}		
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = court_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.3
+				tooltip = EVTTOOLTIPreeducation.3DOTH
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTFreeducation.2" #Choose the Steward Education
+		trigger = { 
+			OR = {
+				culture = jogos_nhai
+				culture = dothraki 
+			}	
+		} 
+		if = { #Else you pay
+			limit = {
+				FROM = { 
+					NOT = { has_character_flag = pays_for_education }
+				}
+			}
+			character_event = { id = reeducation.15 tooltip = TOOLTIPreeducation_cost }
+		}
+		if = { #If child is landed and not your child (or you are unlanded), they pay
+			limit = {
+				FROM = { 
+					has_character_flag = pays_for_education
+				}
+			}
+			FROM = { 
+				character_event = { id = reeducation.15 days = 1 tooltip = TOOLTIPreeducation_cost }
+				clr_character_flag = pays_for_education
+			}
+		}
+		
+		ai_chance = {
+			factor = 0.1
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 1.5
+				trait = gardener
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					trait = indulgent_wastrel
+					trait = thrifty_clerk
+					trait = fortune_builder
+					trait = midas_touched
+					trait = greedy
+				}
+			}
+			modifier = {
+				factor = 3
+				is_patrician = yes
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.1
+				FROM = { 
+					is_ruler = no
+					NOT = { is_close_relative = ROOT } 
+				}	
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 2
+				FROM = { stewardship = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { stewardship = 6 }
+			}
+			
+			###Con###
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { stewardship = 2 } }
+			}
+		}
+		
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = steward_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.4
+				tooltip = EVTTOOLTIPreeducation.4DOTH
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTGreeducation.2" #Choose the Martial Education
+		trigger = { 
+			OR = {
+				culture = jogos_nhai
+				culture = dothraki 
+			}	
+		}  
+		ai_chance = {
+			factor = 1
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = cruel
+					trait = impaler
+					trait = duelist
+					trait = hunter
+					trait = proud
+				}
+			}
+			modifier = {
+				factor = 2
+				OR = {				
+					trait = tough_soldier
+					trait = skilled_tactician
+					trait = brilliant_strategist
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.8
+				trait = poet
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 1.5
+				OR = {
+					FROM = {is_strong_trigger = yes}
+					FROM = {trait = brave}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { martial = 4 }
+			}
+			modifier = {
+				factor = 2
+				FROM = { martial = 6 }
+			}
+
+			###Con###
+			modifier = {
+				factor = 0.5
+				OR = {
+					FROM = {trait = clubfooted}
+					FROM = {trait = hunchback}
+					FROM = {trait = dwarf}
+					FROM = {is_weak_trigger = yes}
+					FROM = {is_crippled_trigger = yes}
+				}
+			}
+			modifier = {
+				factor = 0.6
+				FROM = { NOT = { martial = 2 } }
+			}
+			#Sexism
+			modifier = {
+				factor = 8
+				FROM = { is_female = no }
+			}
+		}	
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = martial_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.5
+				tooltip = EVTTOOLTIPreeducation.5DOTH
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTDreeducation.2" #Choose the No Education
+		trigger = { NOT = { culture = dothraki } NOT = { culture = jogos_nhai }	}
+		ai_chance = {
+			factor = 0.2
+			
+			###Educator###
+			###Pro###
+			modifier = {
+				factor = 2
+				OR = {
+					is_dumb_trigger = yes
+					trait = imbecile
+					trait = greedy
+					trait = slothful
+				}
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { wealth = 0 }
+			}
+			
+			###Con###
+			modifier = {
+				factor = 0.25
+				FROM = { is_close_relative = ROOT }
+				trait = familyperson		
+			}
+			
+			###Child###
+			###Pro###
+			modifier = {
+				factor = 10
+				FROM = { 
+					NOT = { is_ruler = yes  }
+				}
+				NOT = { dynasty = ROOT }
+				NOT = { is_close_relative = ROOT }
+			}
+			modifier = {
+				factor = 10
+				FROM = { trait = imbecile }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = bastard }
+				NOT = { dynasty = FROM }
+			}
+			###Con###
+			modifier = {
+				factor = 0.5
+				current_heir = { character = FROM }
+			}
+		}
+		
+		FROM = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = no_education
+					duration = -1
+				}
+			}
+			character_event = {
+				id = reeducation.6
+				tooltip = EVTTOOLTIPreeducation.6
+			}
+		}
+	}
+}
+
+#reeducation.3 - Child Notification. (Courtier Edcucation)
+character_event = {
+	id = reeducation.3
+	desc = "EVTDESCreeducation.3" #Child Notification. (Courtier Edcucation)
+	picture = "GFX_sansa"
+	
+	is_triggered_only = yes
+	
+	option = {name = "OK"}
+}
+
+#reeducation.4 - Child Notification. (Steward Education)
+character_event = {
+	id = reeducation.4
+	desc = "EVTDESCreeducation.4" #Child Notification. (Steward Education)
+	picture = "GFX_crassen"
+	
+	is_triggered_only = yes
+	
+	option = {name = "OK"}
+}
+
+#reeducation.5 - Child Notification. (Martial Education)
+character_event = {
+	id = reeducation.5
+	desc = "EVTDESCreeducation.5" #Child Notification. (Martial Education)
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	
+	option = {name = "OK"}
+}
+
+#reeducation.6 - Child Notification. (No Education)
+character_event = {
+	id = reeducation.6
+	desc = "EVTDESCreeducation.6" #Child Notification. (No Education)
+	picture = "GFX_evt_noble_in_castle"
+	
+	is_triggered_only = yes
+	
+	option = {name = "OK"}
+}
+
+#reeducation.7 - Getting Educated as a Courtier.
+character_event = {
+	id = reeducation.7
+	desc = "EVTDESCreeducation.7" #Getting Educated as a Courtier.
+	picture = "GFX_sansa"
+	
+	is_triggered_only = yes
+	min_age = 15
+	max_age = 17
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		has_character_modifier = court_education
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = prodigy_child }
+			random = { # Prodigy boost
+				chance = 75
+				modifier = {
+					factor = 2
+					NOT = { learning = 8 }
+				}
+				modifier = {
+					factor = 1
+					learning = 8
+				}
+				modifier = {
+					factor = 0.75
+					learning = 10
+				}
+				modifier = {
+					factor = 0.5
+					learning = 12
+				}
+				modifier = {
+					factor = 0
+					learning = 14
+				}
+				change_learning = 2
+				log = "reeducation.7: [Root.GetTitledName] recieved a learning boost!"
+			}
+			change_diplomacy = 1
+			change_intrigue = 1
+			clr_character_flag = prodigy_child
+		}
+		get_education_level_effect = yes
+		random_list = {
+			50 = { set_character_flag = diplomacy_edu }
+			50 = { set_character_flag = intrigue_edu }
+		}
+	}
+	
+	option = {
+		name = "Ok"
+		hidden_tooltip = {
+			remove_trait = amateurish_plotter
+			remove_trait = flamboyant_schemer
+			remove_trait = intricate_webweaver
+			remove_trait = elusive_shadow
+			remove_trait = naive_appeaser
+			remove_trait = underhanded_rogue
+			remove_trait = charismatic_negotiator
+			remove_trait = grey_eminence
+			remove_trait = indulgent_wastrel
+			remove_trait = thrifty_clerk
+			remove_trait = fortune_builder
+			remove_trait = midas_touched
+			remove_trait = misguided_warrior
+			remove_trait = tough_soldier
+			remove_trait = skilled_tactician
+			remove_trait = brilliant_strategist
+			remove_trait = detached_priest
+			remove_trait = martial_cleric
+			remove_trait = scholarly_theologian
+			remove_trait = mastermind_theologian
+			remove_character_modifier = court_education
+		}
+		if = {
+			limit = { has_character_flag = diplomacy_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = naive_appeaser
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = underhanded_rogue
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = charismatic_negotiator
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = grey_eminence
+				clr_character_flag = education_outcome_level_4
+			}
+			clr_character_flag = diplomacy_edu
+		}
+		if = {
+			limit = { has_character_flag = intrigue_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = amateurish_plotter
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = flamboyant_schemer
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = intricate_webweaver
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = elusive_shadow
+				clr_character_flag = education_outcome_level_4
+			}
+			clr_character_flag = intrigue_edu
+		}
+		clr_character_flag = made_new_friends
+		hidden_tooltip = { # Remove learning modifiers
+			remove_character_modifier = education_high
+			remove_character_modifier = education_medium
+			remove_character_modifier = education_low
+			remove_character_modifier = education_almost_nothing
+		}
+	}
+}
+
+#reeducation.8 - Getting Educated as a Steward.
+character_event = {
+	id = reeducation.8
+	desc = "EVTDESCreeducation.8" #Getting Educated as a Steward.
+	picture = "GFX_crassen"
+	
+	is_triggered_only = yes
+	min_age = 15
+	max_age = 17
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		has_character_modifier = steward_education
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = prodigy_child }
+			random = { # Prodigy boost
+				chance = 75
+				modifier = {
+					factor = 2
+					NOT = { learning = 8 }
+				}
+				modifier = {
+					factor = 1
+					learning = 8
+				}
+				modifier = {
+					factor = 0.75
+					learning = 10
+				}
+				modifier = {
+					factor = 0.5
+					learning = 12
+				}
+				modifier = {
+					factor = 0
+					learning = 14
+				}
+				change_learning = 2
+				log = "reeducation.8: [Root.GetTitledName] recieved a learning boost!"
+			}
+			change_stewardship = 2
+			clr_character_flag = prodigy_child
+		}
+		get_education_level_effect = yes
+	}
+	
+	option = {
+		name = "Ok"
+		hidden_tooltip = {
+			remove_trait = amateurish_plotter
+			remove_trait = flamboyant_schemer
+			remove_trait = intricate_webweaver
+			remove_trait = elusive_shadow
+			remove_trait = naive_appeaser
+			remove_trait = underhanded_rogue
+			remove_trait = charismatic_negotiator
+			remove_trait = grey_eminence
+			remove_trait = indulgent_wastrel
+			remove_trait = thrifty_clerk
+			remove_trait = fortune_builder
+			remove_trait = midas_touched
+			remove_trait = misguided_warrior
+			remove_trait = tough_soldier
+			remove_trait = skilled_tactician
+			remove_trait = brilliant_strategist
+			remove_trait = detached_priest
+			remove_trait = martial_cleric
+			remove_trait = scholarly_theologian
+			remove_trait = mastermind_theologian
+			remove_character_modifier = steward_education
+		}
+		if = {
+			limit = { 
+				has_character_flag = education_outcome_level_1
+			}
+			add_trait = indulgent_wastrel
+			clr_character_flag = education_outcome_level_1
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_2
+			}
+			add_trait = thrifty_clerk
+			clr_character_flag = education_outcome_level_2
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_3
+			}
+			add_trait = fortune_builder
+			clr_character_flag = education_outcome_level_3
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_4
+			}
+			add_trait = midas_touched
+			clr_character_flag = education_outcome_level_4
+		}
+		clr_character_flag = made_new_friends
+		hidden_tooltip = { # Remove learning modifiers
+			remove_character_modifier = education_high
+			remove_character_modifier = education_medium
+			remove_character_modifier = education_low
+			remove_character_modifier = education_almost_nothing
+		}
+	}
+}
+
+#reeducation.9 - Getting a Martial Education.
+character_event = {
+	id = reeducation.9
+	desc = "EVTDESCreeducation.9" #Getting a Martial Education.
+	picture = "GFX_smith"
+	
+	is_triggered_only = yes
+	min_age = 15
+	max_age = 17
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		has_character_modifier = martial_education
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = prodigy_child }
+			random = { # Prodigy boost
+				chance = 75
+				modifier = {
+					factor = 2
+					NOT = { learning = 8 }
+				}
+				modifier = {
+					factor = 1
+					learning = 8
+				}
+				modifier = {
+					factor = 0.75
+					learning = 10
+				}
+				modifier = {
+					factor = 0.5
+					learning = 12
+				}
+				modifier = {
+					factor = 0
+					learning = 14
+				}
+				change_learning = 2
+				log = "reeducation.9: [Root.GetTitledName] recieved a learning boost!"
+			}
+			change_martial = 2
+			clr_character_flag = prodigy_child
+		}
+		get_education_level_effect = yes
+	}
+	
+	option = {
+		name = "Ok"
+		hidden_tooltip = {
+			remove_trait = amateurish_plotter
+			remove_trait = flamboyant_schemer
+			remove_trait = intricate_webweaver
+			remove_trait = elusive_shadow
+			remove_trait = naive_appeaser
+			remove_trait = underhanded_rogue
+			remove_trait = charismatic_negotiator
+			remove_trait = grey_eminence
+			remove_trait = indulgent_wastrel
+			remove_trait = thrifty_clerk
+			remove_trait = fortune_builder
+			remove_trait = midas_touched
+			remove_trait = misguided_warrior
+			remove_trait = tough_soldier
+			remove_trait = skilled_tactician
+			remove_trait = brilliant_strategist
+			remove_trait = detached_priest
+			remove_trait = martial_cleric
+			remove_trait = scholarly_theologian
+			remove_trait = mastermind_theologian
+			remove_character_modifier = martial_education
+		}
+		if = {
+			limit = { 
+				has_character_flag = education_outcome_level_1
+			}
+			add_trait = misguided_warrior
+			clr_character_flag = education_outcome_level_1
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_2
+			}
+			add_trait = tough_soldier
+			clr_character_flag = education_outcome_level_2
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_3
+			}
+			add_trait = skilled_tactician
+			clr_character_flag = education_outcome_level_3
+		}
+		if = {
+			limit = {
+				has_character_flag = education_outcome_level_4
+			}
+			add_trait = brilliant_strategist
+			clr_character_flag = education_outcome_level_4
+		}
+		###Swordfights###
+		if = {
+			limit = { trait = skilled_warrior }
+			random = {
+				chance = 2
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = master_warrior }
+			}	
+		}
+		if = {
+			limit = { trait = trained_warrior }
+			random = {
+				chance = 10
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = skilled_warrior }
+			}	
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			random = {
+				chance = 20
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = trained_warrior }
+			}	
+		}
+		if = {
+			limit = {
+				NOT = { trait = poor_warrior }
+				NOT = { trait = trained_warrior }
+				NOT = { trait = skilled_warrior }
+				NOT = { trait = master_warrior }
+			}
+			random = {
+				chance = 40
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}	
+		}
+		##Buff for AI due to incompetence
+		if = {
+			limit = {
+				ai = yes
+				OR = {
+					is_ruler = yes
+					liege = { ai = yes }
+				}	
+				NOT = { father = { ai = no } }
+				NOT = { mother= { ai = no } }
+				NOT = { father_even_if_dead = { father = { ai = no } } }
+				NOT = { mother_even_if_dead = { mother = { ai = no } } }
+			}
+			if = {
+				limit = { trait = skilled_warrior }
+				random = {
+					chance = 10
+					add_trait = master_warrior
+					hidden_tooltip = { remove_trait = skilled_warrior }
+				}
+			}
+			if = {
+				limit = { trait = trained_warrior }
+				hidden_tooltip = { remove_trait = trained_warrior }
+				random = {
+					chance = 75
+					add_trait = skilled_warrior
+					hidden_tooltip = { remove_trait = trained_warrior }
+				}	
+			}
+			if = {
+				limit = { trait = poor_warrior }
+				hidden_tooltip = { remove_trait = poor_warrior }
+				add_trait = trained_warrior
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							trait = poor_warrior
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}	
+					}
+				}
+				add_trait = poor_warrior
+			}
+		}		
+		###Leadership traits###
+		hidden_tooltip = {
+			add_education_leadership_traits_effect = yes
+		}
+		clr_character_flag = made_new_friends
+		hidden_tooltip = { # Remove learning modifiers
+			remove_character_modifier = education_high
+			remove_character_modifier = education_medium
+			remove_character_modifier = education_low
+			remove_character_modifier = education_almost_nothing
+		}
+	}
+}
+
+#reeducation.10 - Getting no education.
+character_event = {
+	id = reeducation.10
+	desc = "EVTDESCreeducation.10" #Getting no education.
+	picture = "GFX_evt_noble_in_castle"
+
+	is_triggered_only = yes
+	min_age = 15
+	max_age = 17
+	lacks_dlc = "Zeus"
+	
+	trigger = {
+		has_character_modifier = no_education
+		NOT_mythical_creature_trigger = yes
+	}
+	
+	immediate = {
+		if = {
+			limit = { has_character_flag = prodigy_child }
+			random = { # Prodigy boost
+				chance = 75
+				modifier = {
+					factor = 2
+					NOT = { learning = 8 }
+				}
+				modifier = {
+					factor = 1
+					learning = 8
+				}
+				modifier = {
+					factor = 0.75
+					learning = 10
+				}
+				modifier = {
+					factor = 0.5
+					learning = 12
+				}
+				modifier = {
+					factor = 0
+					learning = 14
+				}
+				change_learning = 2
+				log = "reeducation.10: [Root.GetTitledName] recieved a learning boost!"
+			}
+			random_list = {
+				1 = { change_diplomacy = 2 }
+				1 = { change_intrigue = 2 }
+				1 = { change_martial = 2 }
+				1 = { change_stewardship = 2 }
+			}
+			clr_character_flag = prodigy_child
+		}
+		get_education_level_effect = yes
+		if = { #with no education chance of losing a level
+			limit = { NOT = { has_character_flag = education_outcome_level_1 } }
+			random = {
+				chance = 40
+				decrease_education_level_effect = yes
+			}
+		}	
+		random_list = {
+			50 = { set_character_flag = diplomacy_edu }
+			50 = { set_character_flag = intrigue_edu }
+			50 = { set_character_flag = stewardship_edu }
+			50 = { set_character_flag = martial_edu }
+		}
+	}
+
+	option = {
+		name = "Ok"
+		hidden_tooltip = {
+			remove_trait = amateurish_plotter
+			remove_trait = flamboyant_schemer
+			remove_trait = intricate_webweaver
+			remove_trait = elusive_shadow
+			remove_trait = naive_appeaser
+			remove_trait = underhanded_rogue
+			remove_trait = charismatic_negotiator
+			remove_trait = grey_eminence
+			remove_trait = indulgent_wastrel
+			remove_trait = thrifty_clerk
+			remove_trait = fortune_builder
+			remove_trait = midas_touched
+			remove_trait = misguided_warrior
+			remove_trait = tough_soldier
+			remove_trait = skilled_tactician
+			remove_trait = brilliant_strategist
+			remove_trait = detached_priest
+			remove_trait = martial_cleric
+			remove_trait = scholarly_theologian
+			remove_trait = mastermind_theologian
+			remove_character_modifier = no_education
+		}
+		if = {
+			limit = { has_character_flag = diplomacy_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = naive_appeaser
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = underhanded_rogue
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = charismatic_negotiator
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = grey_eminence
+				clr_character_flag = education_outcome_level_4
+			}
+			clr_character_flag = diplomacy_edu
+		}
+		if = {
+			limit = { has_character_flag = intrigue_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = amateurish_plotter
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = flamboyant_schemer
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = intricate_webweaver
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = elusive_shadow
+				clr_character_flag = education_outcome_level_4
+			}
+			clr_character_flag = intrigue_edu
+		}
+		if = {
+			limit = { has_character_flag = stewardship_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = indulgent_wastrel
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = thrifty_clerk
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = fortune_builder
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = midas_touched
+				clr_character_flag = education_outcome_level_4
+			}
+		}
+		if = {
+			limit = { has_character_flag = martial_edu }
+			if = {
+				limit = { 
+					has_character_flag = education_outcome_level_1
+				}
+				add_trait = misguided_warrior
+				clr_character_flag = education_outcome_level_1
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_2
+				}
+				add_trait = tough_soldier
+				clr_character_flag = education_outcome_level_2
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_3
+				}
+				add_trait = skilled_tactician
+				clr_character_flag = education_outcome_level_3
+			}
+			if = {
+				limit = {
+					has_character_flag = education_outcome_level_4
+				}
+				add_trait = brilliant_strategist
+				clr_character_flag = education_outcome_level_4
+			}
+			###Leadership traits###
+			hidden_tooltip = {
+				add_education_leadership_traits_effect = yes
+			}
+		}
+		clr_character_flag = made_new_friends
+		hidden_tooltip = { # Remove learning modifiers
+			remove_character_modifier = education_high
+			remove_character_modifier = education_medium
+			remove_character_modifier = education_low
+			remove_character_modifier = education_almost_nothing
+		}
+	}
+}
+
+#reeducation.11 - Grew up together.
+character_event = {
+	id = reeducation.11
+	desc = "EVTDESCreeducation.11" 
+	picture = "GFX_oil_rik"
+	
+	is_triggered_only = yes
+	min_age = 9
+	max_age = 15
+	capable_only = yes
+	
+	trigger = {
+		NOT = { has_character_flag = made_new_friends }
+		NOT = { trait = selfish }
+		NOT_mythical_creature_trigger = yes
+		located_in_active_region_trigger = yes #optimisation	
+	}
+	
+	immediate = {
+		set_character_flag = made_new_friends
+	}
+	
+	option = {
+		name = "Ok" #I grew up with them!
+		location = {
+			any_province_character = {
+				limit = {
+					NOT = { character = ROOT }
+					prisoner = no
+					at_location = ROOT
+					age = 6
+					NOT = { age = 18 }
+					NOT = { age_diff = { who = ROOT years = 5 } }
+					is_married = no
+					NOT_mythical_creature_trigger = yes
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_grew_up_together } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_grew_up_together } }
+					NOT = { is_rival = ROOT }
+				}
+				opinion = {
+					modifier = opinion_grew_up_together
+					who = ROOT
+					years = 100
+				}				
+				hidden_tooltip = {
+					#character_event = { id = reeducation.12 } #Notitification.
+					reverse_opinion = {
+						modifier = opinion_grew_up_together
+						who = ROOT
+						years = 100
+					}
+				}
+			}
+		}
+	}
+}
+
+#reeducation.12 - Grew up together. (Notitification)
+# character_event = {
+	# id = reeducation.12
+	# desc = "EVTDESCreeducation.12"  
+	# picture = "GFX_oil_rik"
+	
+	# is_triggered_only = yes
+	
+	# option = { 
+		# name = "Ok"
+		# reverse_opinion = {
+			# modifier = opinion_grew_up_together
+			# who = FROM
+			# years = 100
+		# }
+	# }
+# }
+# Make sure child is in FROMFROM scope in conclave
+character_event = {
+	id = reeducation.1599
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		character_event = { id = reeducation.15 }
+	}
+}	
+# Choose cost of education
+character_event = {
+	id = reeducation.15
+	desc = EVTDESCreeducation.15
+	picture = GFX_tutors
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { has_game_rule = { name = education_costs value = none } } }
+	
+	option = { # Spend High
+		name = EVTOPTAreeducation.15
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0
+				OR = {
+					trait = greedy
+					AND = {
+						NOT = { scaled_wealth = 1 }
+						NOT = { wealth = 250 }
+					}	
+					NOT = { wealth = 40 }
+				}	
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					trait = charitable
+					trait = diligent
+					wealth = 500
+				}	
+			}
+			modifier = {
+				factor = 0
+				FROMFROM = { 
+					NOR = {
+						is_child_of = ROOT
+						sibling = ROOT
+						father_even_if_dead = { is_child_of = ROOT }
+						mother_even_if_dead = { is_child_of = ROOT }
+						is_married = ROOT
+					}	
+				}	
+			}
+		}
+		if = {
+			limit = { 
+				FROMFROM = { 
+					NOR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -250
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -1
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -40
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -125
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.5
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -20
+					}
+				}				
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -75
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.3
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -12
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -35
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.15
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -6
+					}
+				}			
+			}
+		}	
+		if = {
+			limit = { 
+				FROMFROM = { 
+					OR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -400
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -1.6
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -64
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -200
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.8
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -32
+					}
+				}				
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -125
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.5
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -20
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -60
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.25
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -10
+					}
+				}			
+			}
+		}	
+		FROMFROM = {
+			add_character_modifier = {
+				name = education_high
+				duration = -1
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPreeducation.15A
+		}
+	}
+	option = { # Spend Medium
+		name = EVTOPTBreeducation.15
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				OR = {
+					trait = greedy
+					AND = {
+						NOT = { scaled_wealth = 0.5 }
+						NOT = { wealth = 125 }
+					}
+					NOT = { wealth = 20 }					
+				}	
+			}
+			modifier = {
+				factor = 0
+				FROMFROM = { 
+					NOR = {
+						is_close_relative = ROOT
+						dynasty = ROOT
+						is_ruler = yes
+						is_married = ROOT
+					}	
+				}	
+			}
+		}
+		if = {
+			limit = { 
+				FROMFROM = { 
+					NOR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -125
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.5
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -20
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -60
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.25
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -10
+					}
+				}		
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -35
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.15
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -6
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -15
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.075
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -3
+					}
+				}				
+			}
+		}	
+		if = {
+			limit = { 
+				FROMFROM = { 
+					OR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -200
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.8
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -32
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -100
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.4
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -16
+					}
+				}			
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -60
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.25
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -10
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -30
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.125
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -5
+					}
+				}			
+			}
+		}	
+		FROMFROM = {
+			add_character_modifier = {
+				name = education_medium
+				duration = -1
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPreeducation.15A
+		}
+	}
+	option = { # Spend Low
+		name = EVTOPTCreeducation.15
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = greedy
+					AND = {
+						NOT = { scaled_wealth = 0.25 }
+						NOT = { wealth = 60 }
+					}
+					NOT = { wealth = 10 }
+				}	
+			}
+			modifier = {
+				factor = 0
+				wealth = 500
+			}
+			modifier = {
+				factor = 0.25
+				FROMFROM = { 
+					NOR = {
+						is_close_relative = ROOT
+						dynasty = ROOT
+						is_ruler = yes
+						is_married = ROOT
+					}	
+				}	
+			}
+		}
+		if = {
+			limit = { 
+				FROMFROM = { 
+					NOR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -60
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.25
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -10
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -30
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.125
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -5
+					}
+				}			
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -15
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.075
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -3
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -7
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.04
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -2
+					}
+				}			
+			}
+		}	
+		if = {
+			limit = { 
+				FROMFROM = { 
+					OR = { 
+						has_character_modifier = martial_education 
+						has_focus = focus_ed_martial
+					}
+				} 
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						NOT = { trait = slave }
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -100
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.4
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -16
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -50
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.2
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -8
+					}
+				}				
+			}
+			if = {
+				limit = { 
+					FROMFROM = {
+						trait = slave
+					}
+				}
+				if = {
+					limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -30
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.125
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -5
+					}
+				}
+				if = {
+					limit = { has_game_rule = { name = education_costs value = low } }
+					if = {
+						limit = { yearly_income = 250 }
+						wealth = -15
+					}
+					if = {
+						limit = { 
+							NOT = { yearly_income = 250 } 
+							yearly_income = 40
+						}
+						scaled_wealth = -0.06
+					}
+					if = {
+						limit = { NOT = { yearly_income = 40 } }
+						wealth = -3
+					}
+				}			
+			}
+		}
+		FROMFROM = {
+			tooltip = {
+				add_character_modifier = {
+					name = education_low
+					duration = -1
+				}
+			}	
+		}
+		custom_tooltip = {
+			text = TOOLTIPreeducation.15A
+		}
+	}
+	option = { # Spend almost nothing
+		name = EVTOPTDreeducation.15
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = greedy
+					AND = {
+						NOT = { scaled_wealth = 0.125 }
+						NOT = { wealth = 30 }
+					}
+					NOT = { wealth = 0 }
+				}	
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = charitable
+					trait = diligent
+					scaled_wealth = 0.5
+					wealth = 250
+				}	
+				FROMFROM = { 
+					OR = {
+						is_close_relative = ROOT
+						dynasty = ROOT
+						is_ruler = yes
+						is_married = ROOT
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { #If in Conclave and child is an un-related, unlanded courtier, then no cost for this tier
+				NAND = {
+					is_ruler = yes
+					has_dlc = "Zeus"
+					FROMFROM = {
+						NOT = { trait = slave }
+						is_ruler = no
+						NOR = {
+							is_close_relative = ROOT
+							dynasty = ROOT
+							is_married = ROOT
+							real_father = { character = ROOT }
+						}
+					}
+				}	
+			}
+			if = {
+				limit = { 
+					FROMFROM = { 
+						NOR = { 
+							has_character_modifier = martial_education 
+							has_focus = focus_ed_martial
+						}
+					} 
+				}
+				if = {
+					limit = { 
+						FROMFROM = {
+							NOT = { trait = slave }
+						}
+					}
+					if = {
+						limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -30
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.125
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -5
+						}
+					}
+					if = {
+						limit = { has_game_rule = { name = education_costs value = low } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -15
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.06
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -3
+						}
+					}			
+				}
+				if = {
+					limit = { 
+						FROMFROM = {
+							trait = slave
+						}
+					}
+					if = {
+						limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -10
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.0375
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -1
+						}
+					}
+					if = {
+						limit = { has_game_rule = { name = education_costs value = low } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -5
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.02
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -1
+						}
+					}				
+				}
+			}	
+			if = {
+				limit = { 
+					FROMFROM = { 
+						OR = { 
+							has_character_modifier = martial_education 
+							has_focus = focus_ed_martial
+						}
+					} 
+				}
+				if = {
+					limit = { 
+						FROMFROM = {
+							NOT = { trait = slave }
+						}
+					}
+					if = {
+						limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -50
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.2
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -8
+						}
+					}
+					if = {
+						limit = { has_game_rule = { name = education_costs value = low } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -25
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.1
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -4
+						}
+					}					
+				}
+				if = {
+					limit = { 
+						FROMFROM = {
+							trait = slave
+						}
+					}
+					if = {
+						limit = { NOT = { has_game_rule = { name = education_costs value = low } } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -15
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.0625
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -2
+						}
+					}
+					if = {
+						limit = { has_game_rule = { name = education_costs value = low } }
+						if = {
+							limit = { yearly_income = 250 }
+							wealth = -8
+						}
+						if = {
+							limit = { 
+								NOT = { yearly_income = 250 } 
+								yearly_income = 40
+							}
+							scaled_wealth = -0.03
+						}
+						if = {
+							limit = { NOT = { yearly_income = 40 } }
+							wealth = -1
+						}
+					}				
+				}
+			}
+		}
+		FROMFROM = {
+			add_character_modifier = {
+				name = education_almost_nothing
+				duration = -1
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPreeducation.15A
+		}
+	}
+}
+
+###Conclave
+# Choose level of education to go with focus
+character_event = {
+	id = reeducation.20
+
+	is_triggered_only = yes
+	hide_window = yes
+	has_dlc = "Zeus"
+	
+	trigger = {	
+		NOT = { has_character_modifier = maester_education }
+		NOT_mythical_creature_trigger = yes
+		NOT = { culture = dothraki } 
+		NOT = { culture = jogos_nhai }
+		NOT = { has_game_rule = { name = education_costs value = vanilla } }
+	}
+	
+	immediate = {
+		character_event = { id = reeducation.1 days = 7 } #Allow time for focus to be set
+	}
+	
+	option = {
+		name = "OK"
+	}
+}
+# Distribute level of education for conclave users
+character_event = {
+	id = reeducation.22
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		age = 12
+		NOT = { age = 16 }
+		NOR = {
+			has_character_modifier = education_almost_nothing
+			has_character_modifier = education_low
+			has_character_modifier = education_medium
+			has_character_modifier = education_high
+		}
+		NOT = { has_game_rule = { name = education_costs value = none } }
+		NOT = { has_game_rule = { name = education_costs value = vanilla } }
+	}
+	
+	immediate = {  
+		remove_trait = amateurish_plotter
+		remove_trait = flamboyant_schemer
+		remove_trait = intricate_webweaver
+		remove_trait = elusive_shadow
+		remove_trait = naive_appeaser
+		remove_trait = underhanded_rogue
+		remove_trait = charismatic_negotiator
+		remove_trait = grey_eminence
+		remove_trait = indulgent_wastrel
+		remove_trait = thrifty_clerk
+		remove_trait = fortune_builder
+		remove_trait = midas_touched
+		remove_trait = misguided_warrior
+		remove_trait = tough_soldier
+		remove_trait = skilled_tactician
+		remove_trait = brilliant_strategist
+		remove_trait = detached_priest
+		remove_trait = martial_cleric
+		remove_trait = scholarly_theologian
+		remove_trait = mastermind_theologian
+		if = {
+			limit = { has_character_modifier = maester_education }
+			add_character_modifier = {
+				name = education_medium
+				duration = -1
+			}
+			break = yes
+		}
+		if = {
+			limit = { is_landed = yes }
+			if = {
+				limit = {
+					OR = {
+						tier = baron
+						tier = count
+					}
+				}
+				add_character_modifier = {
+					name = education_almost_nothing
+					duration = -1
+				}
+				break = yes
+			}
+			if = {
+				limit = {
+					tier = duke
+				}
+				# add_character_modifier = {
+					# name = education_low
+					# duration = -1
+				# }
+				break = yes
+			}
+			if = {
+				limit = {
+					tier = king
+				}
+				add_character_modifier = {
+					name = education_medium
+					duration = -1
+				}
+				break = yes
+			}
+			if = {
+				limit = {
+					tier = emperor
+				}
+				add_character_modifier = {
+					name = education_high
+					duration = -1
+				}
+				break = yes
+			}
+		}
+		if = {
+			limit = { is_landed = no }
+			if = {
+				limit = {
+					liege = { 
+						OR = {
+							tier = baron
+							tier = count
+						}
+					}
+				}
+				add_character_modifier = {
+					name = education_almost_nothing
+					duration = -1
+				}
+				break = yes
+			}
+			if = {
+				limit = {
+					liege = { tier = duke }
+				}
+				# add_character_modifier = {
+					# name = education_low
+					# duration = -1
+				# }
+				break = yes
+			}
+			if = {
+				limit = {
+					liege = { tier = king	}
+				}
+				add_character_modifier = {
+					name = education_medium
+					duration = -1
+				}
+				break = yes
+			}
+			if = {
+				limit = {
+					liege = { tier = emperor }
+				}
+				add_character_modifier = {
+					name = education_high
+					duration = -1
+				}
+				break = yes
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+### Prodigy events ###
+### Events to boost a childs learning and stats so as to have some super characters like historical ones
+# Child is a prodigy
+character_event = {
+	id = reeducation.23
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		NOT_mythical_creature_trigger = yes 
+		NOR = {
+			trait = imbecile
+			trait = slow
+			trait = dull
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1.5
+		modifier = {
+			factor = 3
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 6
+			trait = genius
+		}
+	}
+	
+	immediate = {
+		set_character_flag = prodigy_child
+		change_learning = 2
+		character_event = { id = reeducation.24 days = 600 random = 130 } # Boost at age 14
+		log = "reeducation.23: [Root.GetTitledName] is a childhood prodigy!"
+	}
+}
+# Learning boost at 14
+character_event = {
+	id = reeducation.24
+	is_triggered_only = yes
+	hide_window = yes
+	has_character_flag = prodigy_child
+	immediate = {
+		random = { 
+			chance = 75
+			modifier = {
+				factor = 2
+				NOT = { learning = 8 }
+			}
+			modifier = {
+				factor = 1
+				learning = 8
+			}
+			modifier = {
+				factor = 0.75
+				learning = 10
+			}
+			modifier = {
+				factor = 0.5
+				learning = 12
+			}
+			modifier = {
+				factor = 0
+				learning = 14
+			}
+			change_learning = 2
+			#log = "reeducation.24: [Root.GetTitledName] recieved a learning boost!"
+		}
+		if = {
+			limit = { NOT = { has_dlc = Zeus } }
+			trigger_switch = {
+				on_trigger = has_character_modifier
+				court_education		= { change_diplomacy = 1 change_intrigue = 1 }
+				martial_education	= { change_martial = 2 }
+				steward_education	= { change_stewardship = 2 }
+			}
+		}
+		if = {
+			limit = { has_dlc = Zeus }
+			trigger_switch = {
+				on_trigger = has_focus
+				focus_ed_diplomacy	 = { change_diplomacy = 2 }
+				focus_ed_martial	 = { change_martial = 2 }
+				focus_ed_stewardship = { change_stewardship = 2 }
+				focus_ed_intrigue	 = { change_intrigue = 2 }
+				focus_ed_learning	 = { change_learning = 2 }
+			}
+		}
+		# Another boost on education being determined
+	}
+}
+# Find better guardian
+character_event = {
+	id = reeducation.25
+	
+	is_triggered_only = yes
+	hide_window = yes
+	max_age = 13
+	
+	trigger = {
+		OR = {
+			age = 12
+			NOT = { age = 8 }
+		}
+		OR = {
+			AND = {
+				higher_tier_than = COUNT
+				ai = yes
+			}
+			AND = {
+				is_ruler = no
+				liege = { 
+					higher_tier_than = COUNT 
+					OR = {
+						current_heir = { character = ROOT }
+						any_child_even_if_dead = {
+							OR = {
+								character = ROOT
+								is_parent_of = ROOT
+							}
+						}
+					}
+					ai = yes
+				}						
+			}
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { is_ruler = yes }
+			save_event_target_as = liege
+		}
+		if = {
+			limit = { is_ruler = no }
+			liege = { save_event_target_as = liege }
+		}
+		event_target:liege = {
+			any_courtier = { #mark all valid guardians
+				limit = {		
+					is_adult = yes
+					prisoner = no
+					is_incapable = no
+					NOT_mythical_creature_trigger = yes
+					NOT = {
+						any_ward = {
+							is_alive = yes
+							count = 2
+						}
+					}
+					NOT = { is_inaccessible_trigger = yes }
+					OR = { #culture consideration
+						culture_group = PREV
+						PREV = {
+							NOR = {
+								trait = proud
+								trait = paranoid
+								trait = wroth
+							}
+						}
+						PREV = {
+							NOT = { has_game_rule = { name = high_valyrian_cull value = off } }
+							true_valyrian_culture_trigger = yes
+						}
+					}
+					OR = { #religion consideration
+						religion = PREV
+						PREV = { NOT = { trait = zealous } }
+					}
+					NOT = { is_rival = PREV }
+				}
+				set_character_flag = valid_guardian
+			}
+			#find good guardian according to stats/education type
+			random_courtier = {
+				limit = {
+					has_character_flag = valid_guardian
+					OR = {
+						AND = {
+							ROOT = { 
+								OR = {
+									NOT = { age = 12 } 
+									has_character_modifier = no_education
+								}	
+							}
+							OR = {
+								martial = 18
+								trait = master_warrior
+								diplomacy = 18
+								intrigue = 18
+								stewardship = 18
+								learning = 18
+							}
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_martial
+									has_character_modifier = martial_education
+								}
+							}
+							OR = {
+								martial = 18
+								trait = master_warrior
+							}							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_diplomacy }
+							diplomacy = 18						
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_intrigue }
+							intrigue = 18							
+						}
+						AND = {
+							ROOT = { has_character_modifier = court_education }
+							OR = {
+								intrigue = 18
+								diplomacy = 18
+							}	
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_stewardship
+									has_character_modifier = steward_education
+								}
+							}
+							stewardship = 18							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_learning }
+							learning = 18							
+						}
+						AND = { #try to get sword of the morning
+							ROOT = {
+								dynasty = 16
+								is_female = no
+								OR = {
+									trait = trained_warrior
+									trait = skilled_warrior
+								}
+							}
+							OR = {							
+								trait = skilled_warrior
+								trait = master_warrior
+							}						
+						}
+					}						
+				}
+				ROOT = { set_guardian = PREV }	
+				opinion = { who = PREV modifier = opinion_entrusted_ward }
+				break = yes
+			}
+			random_courtier = {
+				limit = {
+					has_character_flag = valid_guardian
+					OR = {
+						AND = {
+							ROOT = { 
+								OR = {
+									NOT = { age = 12 } 
+									has_character_modifier = no_education
+								}	
+							}
+							OR = {
+								martial = 15
+								diplomacy = 15
+								intrigue = 15
+								stewardship = 15
+								learning = 15
+							}
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_martial
+									has_character_modifier = martial_education
+								}
+							}
+							martial = 15							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_diplomacy }
+							diplomacy = 15							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_intrigue }
+							intrigue = 15							
+						}
+						AND = {
+							ROOT = { has_character_modifier = court_education }
+							OR = {
+								intrigue = 15
+								diplomacy = 15	
+							}	
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_stewardship
+									has_character_modifier = steward_education
+								}
+							}
+							stewardship = 15							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_learning }
+							learning = 15							
+						}
+					}						
+				}
+				ROOT = { set_guardian = PREV }	
+				opinion = { who = PREV modifier = opinion_entrusted_ward }
+				break = yes
+			}
+			random_courtier = {
+				limit = {
+					has_character_flag = valid_guardian
+					OR = {
+						AND = {
+							ROOT = { 
+								OR = {
+									NOT = { age = 12 } 
+									has_character_modifier = no_education
+								}	
+							}
+							OR = {
+								martial = 12
+								trait = skilled_warrior
+								diplomacy = 12
+								intrigue = 12
+								stewardship = 12
+								learning = 12
+							}
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_martial
+									has_character_modifier = martial_education
+								}
+							}
+							OR = {
+								martial = 12
+								trait = skilled_warrior
+							}							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_diplomacy }
+							diplomacy = 12						
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_intrigue }
+							intrigue = 12							
+						}
+						AND = {
+							ROOT = { has_character_modifier = court_education }
+							OR = {
+								intrigue = 12
+								diplomacy = 12	
+							}	
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_stewardship
+									has_character_modifier = steward_education
+								}
+							}
+							stewardship = 12							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_learning }
+							learning = 12							
+						}
+					}						
+				}
+				ROOT = { set_guardian = PREV }	
+				opinion = { who = PREV modifier = opinion_entrusted_ward }
+				break = yes
+			}
+			random_courtier = {
+				limit = {
+					has_character_flag = valid_guardian
+					learning = 7
+					OR = {
+						AND = {
+							ROOT = { 
+								OR = {
+									NOT = { age = 12 } 
+									has_character_modifier = no_education
+								}	
+							}
+							OR = {
+								martial = 10
+								diplomacy = 10
+								intrigue = 10
+								stewardship = 10
+								learning = 10
+							}
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_martial
+									has_character_modifier = martial_education
+								}
+							}
+							martial = 10							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_diplomacy }
+							diplomacy = 10					
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_intrigue }
+							intrigue = 10							
+						}
+						AND = {
+							ROOT = { has_character_modifier = court_education }
+							OR = {
+								intrigue = 10
+								diplomacy = 10
+							}	
+						}
+						AND = {
+							ROOT = {
+								OR = {
+									has_focus = focus_ed_stewardship
+									has_character_modifier = steward_education
+								}
+							}
+							stewardship = 10							
+						}
+						AND = {
+							ROOT = { has_focus = focus_ed_learning }
+							learning = 10							
+						}
+					}						
+				}
+				ROOT = { set_guardian = PREV }	
+				opinion = { who = PREV modifier = opinion_entrusted_ward }
+				break = yes
+			}
+		}
+	}
+	after = {
+		event_target:liege = {
+			any_courtier = {
+				limit = {		
+					has_character_flag = valid_guardian
+				}
+				clr_character_flag = valid_guardian
+			}
+		}	
+	}
+}

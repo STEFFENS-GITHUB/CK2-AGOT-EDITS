@@ -1,0 +1,302 @@
+###########################################
+#
+# Campaign Events
+#
+# ID 6900-6999 is reserved
+#
+###########################################
+#
+# Written by Johan Andersson
+
+#Become friendly with a fellow vassal when both at same location and we got same liege
+character_event = {
+	id = 6900
+	desc = EVTDESC6900
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	capable_only = yes
+	prisoner = no
+	in_command = yes
+	
+	trigger = {
+		independent = no
+		NOT = { trait = shy }
+		liege = {
+			any_courtier_or_vassal = {
+				NOT = { character = ROOT }
+				same_liege = ROOT
+				in_command = yes
+				at_location = ROOT
+				NOT = { war_with = ROOT }
+				NOT = { trait = shy }
+				opinion = { who = ROOT value = -25 }
+				reverse_opinion = { who = ROOT value = -25 }
+				NOT = { trait = dragon }
+				NOT = { is_friend = ROOT }
+				NOT = { is_rival = ROOT }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 10
+			NOT = { num_of_friends = 1 }
+		}
+		modifier = {
+			factor = 2
+			trait = gregarious
+		}
+		modifier = {
+			factor = 0.5
+			trait = shy
+		}
+		modifier = {
+			factor = 0.5
+			trait = rude
+		}
+		modifier = {
+			factor = 1.25
+			trait = brave
+		}
+	}
+	
+	immediate = {
+		liege = {
+			random_courtier_or_vassal = {
+				limit = {
+					NOT = { character = ROOT }
+					same_liege = ROOT
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { trait = shy }
+					opinion = { who = ROOT value = -25 }
+					reverse_opinion = { who = ROOT value = -25 }
+					NOT = { trait = dragon }
+					NOT = { is_friend = ROOT }
+					NOT = { is_rival = ROOT }
+				}
+				save_event_target_as = campaign_friend_6900
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6900
+		event_target:campaign_friend_6900 = {
+			#clr_character_flag = campaign_friend
+			
+			add_friend = ROOT
+			hidden_tooltip = {
+				character_event = { id = 6901 }
+			}
+		}
+	}
+}
+
+#Brother in arms!
+character_event = {
+	id = 6901
+	desc = EVTDESC6901
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6901
+		add_friend = FROM		
+	}
+}
+
+#Save someone's life at the battlefield...  become very good friend.
+character_event = {
+	id = 6910
+	desc = EVTDESC6910
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+
+	immediate = {
+		liege = {
+			random_courtier_or_vassal = {
+				limit = {
+					NOT = { character = ROOT }
+					same_liege = ROOT
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					opinion = { who = ROOT value = -25 }
+					reverse_opinion = { who = ROOT value = -25 }
+					NOT = { is_friend = ROOT }
+					NOT = { is_rival = ROOT }
+					prisoner = no
+				}
+				save_event_target_as = campaign_friend_6910
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6910
+		event_target:campaign_friend_6910 = {
+			prestige = 5
+			
+			opinion = {
+				modifier = saved_on_battlefield
+				who = ROOT
+				years = 100
+			}
+			hidden_tooltip = {
+				character_event = { id = 6911 }
+			}
+			if = {
+				limit = {
+					has_dlc = "Zeus"
+				}
+				reverse_add_favor = ROOT
+			}
+			ROOT = {
+				if = {
+					limit = { ai = no }
+					chronicle = {
+						entry = CHRONICLE_BATTLEFIELD_FRIEND
+						portrait = [Prev.GetID]
+					}	
+				}
+			}
+		}
+	}
+}
+
+#Saved a new friend
+character_event = {
+	id = 6911
+	desc = EVTDESC6911
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6911
+		add_trait_silently_wounded_effect = yes
+		reverse_opinion = {
+			modifier = saved_him_on_battlefield
+			who = FROM
+			years = 100
+		}
+		tooltip = {
+			if = {
+				limit = {
+					has_dlc = "Zeus"
+				}
+				reverse_add_favor = FROM
+			}
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_BATTLEFIELD_FRIEND_FROM
+				portrait = [From.GetID]
+			}	
+		}		
+	}
+}
+
+#Become rival with a fellow vassal when both at same location and we got same liege
+character_event = {
+	id = 6920
+	desc = EVTDESC6920
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	capable_only = yes	
+	prisoner = no
+	in_command = yes
+	
+	trigger = {
+		independent = no
+		liege = {
+			any_courtier_or_vassal = {
+				NOT = { character = ROOT }
+				same_liege = ROOT
+				in_command = yes
+				at_location = ROOT
+				NOT = { war_with = ROOT }
+				NOT = { opinion = { who = ROOT value = 0 } }
+				NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				NOT = { is_friend = ROOT }
+				NOT = { is_rival = ROOT }
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 10
+			NOT = { num_of_rivals = 1 }
+		}
+		modifier = {
+			factor = 1.25
+			trait = deceitful
+		}
+		modifier = {
+			factor = 1.25
+			trait = wroth
+		}
+		modifier = {
+			factor = 1.25
+			trait = stubborn
+		}		
+	}
+	immediate = {
+		liege = {
+			random_courtier_or_vassal = {
+				limit = {
+					NOT = { character = ROOT }
+					same_liege = ROOT
+					in_command = yes
+					at_location = ROOT
+					NOT = { war_with = ROOT }
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { reverse_opinion = { who = ROOT value = 0 } }
+					NOT = { is_friend = ROOT }
+					NOT = { is_rival = ROOT }
+				}
+				save_event_target_as = campaign_friend_6920
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA6920
+		event_target:campaign_friend_6920 = {
+			#clr_character_flag = campaign_friend
+			
+			add_rival = ROOT
+			hidden_tooltip = {
+				character_event = { id = 6921 }
+			}
+		}	
+	}
+}
+
+#Gained a rival
+character_event = {
+	id = 6921
+	desc = EVTDESC6921
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA6921
+		add_rival = FROM		
+	}
+}

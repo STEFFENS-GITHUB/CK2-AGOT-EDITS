@@ -1,0 +1,553 @@
+targetted_decisions = {
+	bring_dragon_to_court = {
+		only_playable = yes
+		filter = realm
+		ai_target_filter = realm
+
+		from_potential = {
+			trait = dragon_rider
+			ai = yes
+			any_friend = {
+				trait = dragon
+			}
+		}
+		potential = {
+			trait = dragon
+			is_alive = yes
+			FROM = {  
+				NOT = {
+					is_liege_of = ROOT 
+				}
+			}
+		}
+		allow = {
+			is_friend = FROM
+		}
+		effect = {
+			ROOT = { move_character = FROM }
+		}
+		revoke_allowed = {
+			always = no #Not used in vanilla
+		}
+		ai_will_do = {
+			factor = 2
+		}
+	}
+	grant_family_dragon_status = {
+		filter = sub_realm
+		ai_target_filter = self
+		from_potential = {
+			ai = no
+			prisoner = no
+			age = 14
+			OR = {
+				has_law = dragon_tamer_1
+				has_law = dragon_tamer_2
+			}
+		}
+
+		potential = {
+			is_lowborn = no
+			age = 14
+			NOT = { has_dynasty_flag = dragon_riders }
+			FROM = { NOT = { dynasty = ROOT } }
+		}
+
+		allow = {
+			ROOT = {
+				prisoner = no
+			}
+		}
+
+		effect = {
+			FROM = { character_event = { id = dragon_tamers.8 } }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	steal_dragon_egg = {
+		filter = sub_realm
+		ai_target_filter = self
+		from_potential = {
+			ai = no
+			prisoner = no
+			age = 14
+			NOT = { trait = incapable }
+			NOT = { trait = infirm }
+		}
+
+		potential = {
+			has_artifact = dragon_egg
+			NOT = { trait = dragon }
+			is_alive = yes
+		}
+
+		allow = {
+			FROM = {
+				prisoner = no
+			}
+		}
+
+		effect = {
+			FROM = { character_event = { id = dragon_tamers.3 } }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	steal_dragon = {
+		filter = all
+		ai_target_filter = self
+		is_high_prio = yes
+
+		from_potential = {
+			ai = no
+			prisoner = no
+			age = 14
+			NOT = { in_battle = yes }
+			NOT = { trait = incapable }
+			NOT = { trait = infirm }
+			NOT = { trait = wounded }
+			NOT = { trait = maimed }
+			NOT = { trait = crippled }
+			is_ill = no
+			NOT = { has_character_flag = stealing_dragon }
+			OR = {
+				NOT = {has_character_flag = ran_from_dragon}
+				had_character_flag = { flag = ran_from_dragon days = 500}
+			}
+		}
+
+		potential = {
+			trait = dragon
+			is_alive = yes
+			at_location = FROM
+			NOT = { any_friend = { trait = dragon_rider } }
+			NOT = { has_character_flag = dragon_stolen }
+		}
+
+		allow = {
+			FROM = { at_location = ROOT }
+		}
+
+		effect = {
+			ROOT = { move_character = FROM }
+			ROOT = { add_friend = FROM }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	revoke_dragon = {
+		filter = realm
+		ai_target_filter = realm
+		is_high_prio = yes
+
+		from_potential = {
+			ai = no
+			prisoner = no
+			age = 14
+			NOT = { in_battle = yes }
+			NOT = { trait = incapable }
+			NOT = { trait = infirm }
+		}
+
+		potential = {
+			is_alive = yes
+			any_friend = {
+				trait = dragon
+			}
+			OR = {
+				AND = {
+					is_ruler = yes
+					any_liege = { character = FROM }
+				}
+				AND = {
+					is_ruler = no
+					employer = {
+						any_liege = { character = FROM }
+					}
+				}
+				AND = {
+					is_ruler = no
+					employer = { character = FROM }
+				}
+			}
+			FROM = {
+				primary_title = {
+					OR = {
+						AND = {
+							has_law = dragon_tamer_1
+							ROOT = {
+								NOR = {
+									has_minor_title = title_dragon_tamer
+									higher_real_tier_than = BARON
+								}
+							}
+						}
+						AND = {
+							has_law = dragon_tamer_2
+							ROOT = {
+								NOT = {
+									dynasty = FROM
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		allow = {
+			FROM = {
+				prisoner = no
+			}
+		}
+
+		effect = {
+			ROOT = {
+				any_friend = {
+					limit = {
+						trait = dragon
+					}
+					remove_friend = ROOT
+				}
+				remove_trait = dragon_rider
+			}
+		}
+	}
+
+	gift_dragon = {
+		filter = all
+		ai_target_filter = self
+
+		from_potential = {
+			ai = no
+			prisoner = no
+			age = 14
+			any_friend = { trait = dragon }
+			NOT = { in_battle = yes }
+			NOT = { has_character_flag = gifting_dragon }
+		}
+
+		potential = {
+			is_alive = yes
+			NOT = { trait = incapable }
+			NOT = { trait = infirm }
+			NOT = { trait = wounded }
+			NOT = { trait = maimed }
+			NOT = { trait = crippled }
+			NOT = { trait = dragon }
+			NOT = { any_friend = { trait = dragon } }
+		}
+
+		allow = {
+			ROOT = {
+				OR = {
+					any_friend = { character = FROM }
+					father = { character = FROM }
+					mother = { character = FROM }
+					any_dynasty_member = { character = FROM }
+					any_child = { character = FROM }
+					guardian = { character = FROM }
+				}
+				NOT = { in_battle = yes }
+				NOT = { trait = incapable }
+				NOT = { trait = infirm }
+				NOT = { trait = wounded }
+				NOT = { trait = maimed }
+				NOT = { trait = crippled }
+				is_ill = no
+			}
+		}
+
+		effect = {
+			hidden_tooltip = {
+				FROM = {
+					set_character_flag = gifting_dragon
+				}
+			}
+			FROM = { character_event = { id = dragon_tamers.2 } }
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	teach_dragon = {
+		filter = court
+		ai_target_filter = court
+
+		from_potential = {
+			higher_tier_than = BARON
+			prisoner = no
+			age = 14
+			NOT = { in_battle = yes }
+			NOT = { trait = incapable }
+		}
+		potential = {
+			is_alive = yes
+			age = 3
+			NOT = { age = 30 }
+			NOT = { trait = dragon_rider }
+			OR = {
+				father = { character = FROM }
+				mother = { character = FROM }
+				any_dynasty_member = { character = FROM }
+				any_friend = { character = FROM }
+				any_spouse = { character = FROM }
+				any_lover = { character = FROM }
+				guardian = { character = FROM } 
+			}
+		}
+		allow = {
+			OR = {
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_harrenhal
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_harrenhal
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_dragonpit
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_dragonpit
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_dragonstone
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_dragonstone
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_citadel
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_citadel
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_fof
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_fof
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_summerhall
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_summerhall
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_eggs
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_eggs
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_old_ghis
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_old_ghis
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_volantis
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_volantis
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_smoking_sea
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_smoking_sea
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_asshai
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_asshai
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_dynamic
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_dynamic
+						}
+					}
+				}
+				AND = {
+					FROM = {
+						has_character_flag = dragon_intel_rebirth
+					}
+					NOT = {
+						ROOT = {
+							has_character_flag = dragon_intel_rebirth
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			FROM = { character_event = { id = dragon_tamers.4 } }
+			FROM = {
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_harrenhal
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_harrenhal
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_dragonpit
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_dragonpit
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_dragonstone
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_dragonstone
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_citadel
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_citadel
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_fof
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_fof
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_summerhall
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_summerhall
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_eggs
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_eggs
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_old_ghis
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_old_ghis
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_volantis
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_volantis
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_smoking_sea
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_smoking_sea
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_asshai
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_asshai
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_dynamic
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_dynamic
+					}
+				}
+				IF = {
+					limit = {
+						has_character_flag = dragon_intel_rebirth
+					}
+					ROOT = {
+						set_character_flag = dragon_intel_rebirth
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

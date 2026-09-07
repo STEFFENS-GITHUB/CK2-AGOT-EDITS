@@ -1,0 +1,331 @@
+########################################################
+# MINOR TITLES
+# Characters can have any number of these
+########################################################
+#	grant_limit: Max number of holders.
+#	realm_in_name: Append the name of the country after the title (Queen [of Sweden])
+#	allowed_to_hold: conditions for the character to hold the title
+#	allowed_to_grant: conditions for a ruler to grant the title
+#	regent: This is the title for regents (not really "minor")
+#	gain_effect: fires when the title is granted
+#	lose_effect: fires when a title is lost through most causes
+#	retire_effect: fires when a title is lost due to the character stepping down
+#	death_effect: fires when a title is lost due to the character dying
+#	message: should fire a message to the its owner when set
+#	The other fields are all character modifiers.
+
+warden_north = {
+	dignity = 0.5
+	grant_limit = 1
+	opinion_effect = 1
+	show_as_title = no
+	
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {		
+		OR = {
+			has_landed_title = k_north
+			has_character_flag = warden_of_the_north
+			liege = { has_character_flag = warden_north_self_assign }
+		}		
+		liege = {
+			NOT = { trait = civil_war }
+			#has_global_flag = scenario_initialised
+			NOT = { has_character_flag = mega_war_wardens_reset }
+		}
+	}
+	allowed_to_grant = {
+		has_landed_title = e_iron_throne	
+	}
+	ai_will_do = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { has_landed_title = k_north }
+				is_adult = no
+				trait = incapable
+				NOT = { reverse_opinion = { who = FROM value = 0 } }
+			}
+		}
+	}
+	
+	gain_effect = {
+		set_character_flag = warden_of_the_north
+		FROM = { clr_character_flag = warden_north_self_assign }
+		if = {
+			limit = { NOT = { has_landed_title = k_north } }
+			opinion = {
+				who = FROM
+				modifier = opinion_warden_north
+				years = 100
+			}	
+		}	
+		if = {
+			limit = { has_landed_title = k_north } 
+			remove_opinion = {
+				who = FROM
+				modifier = opinion_denied_traditional_title
+			}	
+		}	
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MINOR_TITLE_WARDEN_NORTH
+				portrait = [From.GetID]
+			}
+		}
+	}
+	
+	lose_effect = {
+		remove_opinion = {
+			who = FROM
+			modifier = opinion_warden_north
+		}		
+	}
+	death_effect = {
+		e_iron_throne = { holder_scope = { character_event = { id = warden.1 days = 3 } } }
+	}
+
+	message = no
+	
+}
+warden_east = {
+	dignity = 0.5
+	grant_limit = 1
+	opinion_effect = 1
+	show_as_title = no
+	
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {		
+		OR = {
+			has_landed_title = k_vale
+			has_character_flag = warden_of_the_east
+			liege = { has_character_flag = warden_east_self_assign }
+		}		
+		liege = {
+			NOT = { trait = civil_war }
+			#has_global_flag = scenario_initialised
+			NOT = { has_character_flag = mega_war_wardens_reset }
+		}
+	}
+	allowed_to_grant = {
+		has_landed_title = e_iron_throne	
+	}
+	ai_will_do = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { has_landed_title = k_vale }
+				is_adult = no
+				trait = incapable
+				NOT = { reverse_opinion = { who = FROM value = 0 } }
+			}
+		}
+	}
+	
+	gain_effect = {
+		set_character_flag = warden_of_the_east
+		FROM = { clr_character_flag = warden_east_self_assign }
+		if = {
+			limit = { NOT = { has_landed_title = k_vale } }
+			opinion = {
+				who = FROM
+				modifier = opinion_warden_east
+				years = 100
+			}
+			
+		}	
+		if = {
+			limit = { has_landed_title = k_vale } 
+			remove_opinion = {
+				who = FROM
+				modifier = opinion_denied_traditional_title
+			}	
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MINOR_TITLE_WARDEN_EAST
+				portrait = [From.GetID]
+			}
+		}		
+	}
+	
+	lose_effect = {
+		remove_opinion = {
+			who = FROM
+			modifier = opinion_warden_east
+		}
+	}
+	
+	death_effect = {
+		e_iron_throne = { holder_scope = { character_event = { id = warden.1 days = 3 } } }
+	}
+
+	message = no
+	
+}
+warden_west = {
+	dignity = 0.5
+	grant_limit = 1
+	opinion_effect = 1
+	show_as_title = no
+	
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {		
+		OR = {
+			has_landed_title = k_westerlands
+			has_character_flag = warden_of_the_west
+			liege = { has_character_flag = warden_west_self_assign }
+		}		
+		liege = {
+			NOT = { trait = civil_war }
+			#has_global_flag = scenario_initialised
+			NOT = { has_character_flag = mega_war_wardens_reset }
+		}
+	}
+	allowed_to_grant = {
+		has_landed_title = e_iron_throne	
+	}
+	ai_will_do = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { has_landed_title = k_westerlands }
+				is_adult = no
+				trait = incapable
+				NOT = { reverse_opinion = { who = FROM value = 0 } }
+			}
+		}
+	}
+	
+	gain_effect = {
+		set_character_flag = warden_of_the_west
+		FROM = { clr_character_flag = warden_west_self_assign }
+		if = {
+			limit = { NOT = { has_landed_title = k_westerlands } }
+			opinion = {
+				who = FROM
+				modifier = opinion_warden_west
+				years = 100
+			}
+			
+		}	
+		if = {
+			limit = { has_landed_title = k_westerlands } 
+			remove_opinion = {
+				who = FROM
+				modifier = opinion_denied_traditional_title
+			}	
+		}	
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MINOR_TITLE_WARDEN_WEST
+				portrait = [From.GetID]
+			}
+		}
+	}
+	
+	lose_effect = {
+		remove_opinion = {
+			who = FROM
+			modifier = opinion_warden_west
+		}
+	}
+	
+	death_effect = {
+		e_iron_throne = { holder_scope = { character_event = { id = warden.1 days = 3 } } }
+	}
+
+	message = no
+	
+}
+warden_south = {
+	dignity = 0.5
+	grant_limit = 1
+	opinion_effect = 1
+	show_as_title = no
+	
+	monthly_prestige = 0.25
+	
+	allowed_to_hold = {		
+		OR = {
+			has_landed_title = k_reach
+			has_character_flag = warden_of_the_south
+			liege = { has_character_flag = warden_south_self_assign }
+		}	
+		liege = {
+			NOT = { trait = civil_war }
+			#has_global_flag = scenario_initialised
+			NOT = { has_character_flag = mega_war_wardens_reset }
+		}
+	}
+	allowed_to_grant = {
+		has_landed_title = e_iron_throne	
+	}
+	ai_will_do = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			OR = {
+				NOT = { has_landed_title = k_reach }
+				is_adult = no
+				trait = incapable
+				NOT = { reverse_opinion = { who = FROM value = 0 } }
+			}
+		}
+	}
+	
+	gain_effect = {
+		set_character_flag = warden_of_the_south
+		FROM = { clr_character_flag = warden_south_self_assign }
+		if = {
+			limit = { NOT = { has_landed_title = k_reach } }
+			opinion = {
+				who = FROM
+				modifier = opinion_warden_south
+				years = 100
+			}
+			
+		}	
+		if = {
+			limit = { has_landed_title = k_reach } 
+			remove_opinion = {
+				who = FROM
+				modifier = opinion_denied_traditional_title
+			}	
+		}	
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MINOR_TITLE_WARDEN_SOUTH
+				portrait = [From.GetID]
+			}
+		}
+	}
+	
+	lose_effect = {
+		remove_opinion = {
+			who = FROM
+			modifier = opinion_warden_south
+		}
+	}
+	
+	death_effect = {
+		e_iron_throne = { holder_scope = { character_event = { id = warden.1 days = 3 } } }
+	}
+
+	message = no
+	
+}
+
+
+
+
+

@@ -1,0 +1,5473 @@
+##############################
+# SPYMASTER
+#
+# Job: action_uncover_plots
+# 	929: Plot Uncovered
+# 	930: Reveal new succession law
+# 	931: The Spymaster is attacked by a Noble's thugs (Gets away, Is wounded, Is maimed, Is killed)
+#
+# Job: action_study_technology
+# 	932: The Spymaster studies foreign technology
+# 	933: The Spymaster is discovered by the local count - chance of imprisonment
+#
+# Job: action_organize_spies
+# 	935: Find homosexual
+# 	936: Corruption
+#
+##############################
+
+
+##############################
+# SPYMASTER
+# JOB: action_uncover_plots
+##############################
+
+# 929: Plot Uncovered
+character_event = {
+	id = 929
+	title = "EVTNAME929"
+	desc = "EVTDESC929"
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		OR = {	
+			has_job_action = action_uncover_plots
+			has_job_action = action_uncover_plots_offmap
+			AND = {
+				has_job_title = job_castellan
+				OR = {
+					has_job_action = action_oversee_province
+					has_job_action = action_oversee_province_nomadic
+				}	
+			}	
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		OR = {
+			NOT = { has_character_flag = job_action_sabotage }
+			had_character_flag = {
+				flag = job_action_sabotage
+				days = 1825
+			}	
+		}	
+		# location = {
+			# any_province_character = {
+				# NOT = { is_liege_of = ROOT }
+				# NOT = { character = ROOT }
+				# OR = {
+					# has_plot = plot_weaken_lord_paramount		
+					# has_plot = plot_gain_liege_title				
+					# has_plot = plot_gain_fellow_vassal_title		
+					# has_plot = plot_gain_vassal_title
+					# #has_plot = plot_gain_crownlander_vassal
+					# has_plot = plot_kill_character
+					# has_plot = plot_kill_spouse
+					# has_plot = plot_weaken_fellow_vassal
+					# has_plot = plot_rescue_prisoner
+					# #has_plot = plot_buy_loyalty
+					# has_plot = plot_kidnap_character
+					# has_plot = plot_kidnap_liege
+					# has_plot = plot_instigate_revolt
+					# has_plot = plot_fabricate_treason
+					# #has_plot = plot_kill_dragon
+				# }
+			# }
+		# }
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+	
+		modifier = {
+			factor = 2
+			has_job_title = job_castellan
+		}	
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 10
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 11
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 12
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 13
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 14
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 16
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 18
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 20
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 22
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 24
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 26
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 28
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA929"
+		tooltip = {
+			random = {
+				chance = 33
+				custom_tooltip = { text = TOOLTIP929 }
+			}
+		}	
+		hidden_tooltip = {
+			liege = { save_event_target_as = spymaster_liege }
+			if = {
+				limit = { #On map action
+					liege = { ai = no } #ai tends to spy on illogical places, so apply off map target rules
+					has_job_action = action_uncover_plots 
+				} 
+				location = {
+					random_province_character = {
+						limit = {							
+							OR = {
+								has_plot = plot_weaken_lord_paramount		
+								has_plot = plot_gain_liege_title				
+								has_plot = plot_gain_fellow_vassal_title			
+								has_plot = plot_gain_vassal_title
+								#has_plot = plot_gain_crownlander_vassal
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+								has_plot = plot_weaken_fellow_vassal
+								has_plot = plot_rescue_prisoner
+								#has_plot = plot_buy_loyalty
+								has_plot = plot_kidnap_character
+								has_plot = plot_kidnap_liege
+								has_plot = plot_instigate_revolt
+								has_plot = plot_fabricate_treason
+								#has_plot = plot_kill_dragon
+							}
+							NOT = { plot_is_known_by = event_target:spymaster_liege }
+							NOT = { is_liege_of = ROOT }
+							NOT = { character = ROOT }
+							NOT = { has_character_modifier = plot_uncovered }
+						}
+						character_event = { id = 20290 }
+					}
+				}
+			}	
+			else = { #find plotter in realm			
+				top_liege = {
+					random_realm_character = {
+						limit = {							
+							OR = {
+								has_plot = plot_weaken_lord_paramount		
+								has_plot = plot_gain_liege_title				
+								has_plot = plot_gain_fellow_vassal_title			
+								has_plot = plot_gain_vassal_title
+								#has_plot = plot_gain_crownlander_vassal
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+								has_plot = plot_weaken_fellow_vassal
+								has_plot = plot_rescue_prisoner
+								#has_plot = plot_buy_loyalty
+								has_plot = plot_kidnap_character
+								has_plot = plot_kidnap_liege
+								has_plot = plot_instigate_revolt
+								has_plot = plot_fabricate_treason
+								#has_plot = plot_kill_dragon
+							}
+							OR = {
+								liege = { character = event_target:spymaster_liege }
+								is_close_relative = event_target:spymaster_liege
+								is_married = event_target:spymaster_liege
+								same_liege = event_target:spymaster_liege
+								is_rival = event_target:spymaster_liege
+								event_target:spymaster_liege = { plot_target_char = { character = PREVPREV } }
+								plot_target_char = { character = event_target:spymaster_liege }
+								plot_target_char = { is_close_relative = event_target:spymaster_liege }
+								plot_target_char = { character = ROOT }
+							}
+							NOT = { plot_is_known_by = event_target:spymaster_liege }
+							NOT = { is_liege_of = ROOT }
+							NOT = { character = ROOT }
+							NOT = { has_character_modifier = plot_uncovered }
+						}
+						character_event = { id = 20290 }
+					}
+				}
+			}	
+		}
+	}
+}
+
+# 20290 - The plotter is informed
+character_event = {
+	id = 20290
+	desc = "EVTDESC20290"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		add_character_modifier = { name = plot_uncovered duration = 365 hidden = yes } #cooldown
+	}
+	
+	option = {
+		name = "EVTOPTA20290"
+		ai_chance = {
+			factor = 50
+		}
+		if = {
+			limit = { has_character_flag = bought_councillor_reveal }
+			reveal_plot = FROM
+			hidden_tooltip = { FROM = { character_event = { id = plot_event.312 days = 1 } } }
+			clr_character_flag = bought_councillor_reveal
+		}	
+		else = {
+			random = {
+				chance = 33
+				reveal_plot = FROM
+				hidden_tooltip = { FROM = { character_event = { id = 20294 days = 1 } } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20290"
+		trigger = { 
+			intrigue = 12
+			attribute_diff = { character = ROOT_FROM attribute = intrigue value = 3 }
+			NOT = { trait = honorable }
+			NOT = { trait = honest }
+		}
+		tooltip_info = intrigue
+		ai_chance = {
+			factor = 50
+
+			modifier = {
+				factor = 0
+				OR = {
+					trait = kind
+					AND = {
+						OR = {
+							trait = kingsguard
+							trait = nightswatch
+						}
+						NOT = { trait = ruthless }
+					}	
+				}
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					OR = {
+						is_child_of = ROOT # Not my own children
+						is_grandchild_of = ROOT
+						has_blood_oath_with = ROOT				
+						is_lover = ROOT
+						is_friend = ROOT
+					}
+				}	
+			}
+			
+			modifier = { #motives
+				factor = 0
+				NOR = {
+					#Must eliminate threat of exposure
+					trait = ruthless
+					trait = cruel
+					trait = diligent
+					trait = deceitful
+					
+					# Rivals
+					is_foe = FROM	
+									
+					# Kill a kinslayer if im kin
+					AND = {
+						NOT = { dynasty = 0 }
+						dynasty = FROM
+						FROM = { is_any_kinslayer_trigger = yes }
+						NOT = { has_cutthroat_religion_trigger = yes }
+					}
+					
+					# A lover of spouse...
+					AND = {
+						OR = {
+							trait = envious
+							trait = proud
+							trait = just
+							NOT = { opinion = { who = FROM value = 0 } }
+						}
+						any_spouse = { is_lover = FROM }				
+					}
+					
+					#Same liege...
+					AND = {
+						same_liege = FROM
+						OR = {
+							AND = { # Heathen advisers to liege
+								NOT = { religion_group = FROM }
+								FROM = { 
+									OR = {
+										is_voter = yes
+										is_councillor = yes
+									}
+								}
+								trait = zealous
+							}
+							# Go nuts...
+							trait = lunatic
+							trait = possessed
+						}					
+					}	
+					
+					# Liege...
+					AND = {
+						liege = { character = FROM }
+						OR = {
+							AND = { #Heathen
+								NOT = { religion_group = FROM }
+								NOT = { trait = cynical }
+								OR = {
+									trait = zealous
+									has_landed_title = k_the_most_devout
+									has_opinion_modifier = { who = FROM modifier = opinion_religion_threatened }
+								}							
+							}
+							FROM = { #Tyrant
+								check_variable = { which = "tyrant" value = 14.9 }
+								NOT = { trait = tyrannical_stain }
+							}
+						}	
+					}
+										
+					# Threats and enemies
+					reverse_has_opinion_modifier = { who = FROM modifier = opinion_claimant_adventure_target }
+					AND = {
+						is_ruler = yes
+						war_with = FROM			
+						OR = {
+							is_primary_war_attacker = yes
+							is_primary_war_defender = yes
+							liege = { character = PREV }
+						}
+						FROM = {
+							is_adult = yes
+							NOT = { trait = incapable }
+							OR = {
+								is_primary_war_attacker = yes
+								is_primary_war_defender = yes
+							}
+						}
+					}
+
+					# Night's Watch broke vows
+					AND = {
+						trait = nightswatch
+						FROM = {
+							OR = {
+								has_landed_title = k_nightswatch
+								has_character_modifier = NW_broken_vows
+							}
+						}
+					}
+					
+					# Titles/Family concerns
+					AND = {
+						OR = {
+							trait = envious
+							trait = ambitious
+							trait = greedy
+							trait = selfish
+							trait = proud
+							AND = {
+								trait = familyperson
+								NOT = { is_close_relative = FROM }
+							}
+							NOT = { opinion = { who = FROM value = 0 } }
+						}
+						OR = {
+							AND = {
+								OR = {
+									any_pretender_title = { # Get rid of the current ruler or heir if I'm a pretender
+										OR = {
+											current_heir = { character = FROM }
+											holder_scope = { character = FROM }
+										}
+									}
+									any_heir_title = { # Kill a ruler if I'm the heir
+										holder_scope = { character = FROM }
+										NOT = { has_law = succ_appointment }
+									}
+								}							
+								OR = {
+									NOT = { trait = just }
+									OR = {
+										has_opinion_modifier = { who = FROM modifier = opinion_usurped_title }
+										any_pretender_title = {
+											current_heir = { character = FROM }
+											holder_scope = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_usurped_title } }
+										}
+									}	
+								}
+							}
+							any_child = { # Gets rid of obstacles in the way of a child's succession
+								OR = {
+									any_pretender_title = {
+										current_heir = { character = FROM }
+									}
+									any_heir_title = {
+										holder_scope = { character = FROM }
+									}
+								}
+								OR = {
+									PREV = { NOT = { trait = just } }
+									any_pretender_title = {
+										current_heir = { character = FROM }
+										holder_scope = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_usurped_title } }
+									}
+									has_opinion_modifier = { who = FROM modifier = opinion_usurped_title }
+								}
+							}
+							any_spouse = {	# Gets rid of obstacles in the way of a spouse's succession
+								OR = {
+									any_pretender_title = { # Get rid of the current heir to a title the character's spouse is a pretender to
+										current_heir = { character = FROM }
+									}
+									any_heir_title = { # Get rid of a ruler the spouse is heir to
+										holder_scope = { character = FROM }
+									}
+								}	
+								OR = {
+									PREV = { NOT = { trait = just } }
+									any_pretender_title = {
+										current_heir = { character = FROM }
+										holder_scope = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_usurped_title } }
+									}
+									has_opinion_modifier = { who = FROM modifier = opinion_usurped_title }
+								}
+							}
+							FROM = { #Is married/betrothed to me/relative and is a douche
+								is_ruler = yes
+								is_female = no
+								OR = {
+									any_spouse = {
+										OR = {
+											character = FROM
+											is_close_relative = FROM
+										}
+										NOT = { opinion = { who = PREV value = 0 } }
+									}
+									betrothed = {
+										OR = {
+											character = FROM
+											is_close_relative = FROM
+										}
+										NOT = { opinion = { who = PREV value = 0 } }
+									}
+								}
+								NOT = { reverse_opinion = { who = PREV value = 0 } }
+								OR = {
+									trait = cruel
+									trait = lunatic
+									trait = impaler
+									trait = arbitrary
+								}
+							}
+						}	
+					}
+								
+					AND = { #These motives are invalid for just characters
+						NOT = { trait = just }
+						OR = {
+							trait = ruthless
+							trait = ambitious
+							trait = proud
+							trait = greedy
+							trait = envious
+							trait = selfish
+							trait = arbitrary
+						}
+						OR = {
+							# Claimant, kill competent holder				
+							FROM = {
+								is_ruler = yes
+								any_demesne_title = { 
+									FROM = { has_claim = PREV }
+								}
+								NOT = { trait = incapable }
+								age = 16
+								NOT = { trait = bastard }
+								NOT = { trait = lunatic }
+								NOT = { check_variable = { which = "tyrant" value = 9.9 } }
+								martial = 8
+								stewardship = 8
+								diplomacy = 8
+								intrigue = 8
+								NOT = { has_character_modifier = suspected_bastard }								
+							}						
+							# Councillors whose jobs I want
+							AND = {
+								same_liege = FROM
+								OR = {
+									AND = {
+										FROM = { has_job_title = job_castellan }
+										has_ambition = obj_become_castellan
+									}
+									AND = {
+										FROM = { has_job_title = job_chancellor }
+										has_ambition = obj_become_chancellor
+									}
+									AND = {
+										FROM = { has_job_title = job_marshal }
+										has_ambition = obj_become_marshal
+									}
+									AND = {
+										FROM = { has_job_title = job_treasurer }
+										has_ambition = obj_become_treasurer
+									}
+									AND = {
+										FROM = { has_job_title = job_spymaster }
+										has_ambition = obj_become_spymaster
+									}
+								}										
+							}
+							# I want to be regent
+							AND = {
+								has_ambition = obj_become_regent
+								has_minor_title = title_appointed_regent
+								FROM = { 
+									is_liege_of = PREV
+									current_heir = {
+										OR = {
+											trait = incapable
+											NOT = { age = 16 }
+										}
+									}
+								}
+							}
+							# Powerful and ambitious pretenders
+							FROM = {
+								OR = {
+									any_pretender_title = {
+										OR = {
+											holder_scope = { character = FROM }
+											current_heir = { character = FROM }
+										}
+									}
+									any_claim = {
+										OR = {
+											holder_scope = { character = FROM }
+											current_heir = { character = FROM }
+										}
+									}
+								}	
+								# Must actually be a threat, at least in theory
+								is_adult = yes
+								NOT = { trait = incapable }
+								OR = {
+									intrigue = 14
+									martial = 14
+									trait = dragon_rider
+									AND = {
+										liege = { character = FROM }
+										relative_power_to_liege = 0.33
+									}
+								}
+								OR = {
+									trait = ambitious
+									trait = proud
+									trait = envious
+									trait = ruthless
+								}
+							}
+						}
+					}						
+				}
+			}
+			modifier = {
+				factor = 0
+				pacifist = yes
+				NOT = { trait = cynical }
+			}
+			
+			modifier = {
+				factor = 0.01
+				trait = content
+				NOT = { trait = lunatic } 
+				NOT = { trait = possessed }
+			}
+			
+			modifier = {
+				factor = 0.01			
+				# Kinslaying is generally discouraged
+				OR = {
+					AND = {
+						NOT = { dynasty = 0 }
+						dynasty = FROM
+					}	
+					is_close_relative = FROM
+				}	
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cruel }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+		
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = { #non trusting kin will really try to kill kinslayers
+				factor = 10
+				NOT = { dynasty = 0 }
+				dynasty = FROM 
+				NOT = { trait = trusting }
+				FROM = { is_any_kinslayer_trigger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2.0
+				trait = cruel
+			}
+			modifier = {
+				factor = 2.0
+				trait = deceitful
+			}
+			modifier = {
+				factor = 3.0
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 0.6
+				opinion = { who = FROM value = 90 }
+			}
+			modifier = {
+				factor = 0.7
+				opinion = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 70 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 0.8
+				opinion = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -9 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -29 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.25
+				NOT = { opinion = { who = FROM value = -69 } }
+			}
+			modifier = {
+				factor = 1.35
+				NOT = { opinion = { who = FROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.45
+				NOT = { opinion = { who = FROM value = -89 } }
+			}
+			modifier = {
+				factor = 1.6
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			
+			#Enemies
+			modifier = {
+				factor = 10
+				is_foe = FROM
+			}
+			
+			# People with ambitions should always target the natural obstacles to those ambitions
+			modifier = {
+				factor = 10
+				FROM = {
+					same_liege = ROOT
+					is_councillor = yes
+					OR = {
+						AND = {
+							has_job_title = job_castellan				
+							ROOT = { has_ambition = obj_become_castellan }
+						}
+						AND = {
+							has_job_title = job_chancellor
+							ROOT = { has_ambition = obj_become_chancellor }
+						}
+						AND = {
+							has_job_title = job_marshal
+							ROOT = { has_ambition = obj_become_marshal }
+						}
+						AND = {
+							has_job_title = job_treasurer
+							ROOT = { has_ambition = obj_become_treasurer }
+						}
+						AND = {
+							has_job_title = job_spymaster
+							ROOT = { has_ambition = obj_become_spymaster }
+						}
+					}	
+				}	
+			}
+			modifier = {
+				factor = 10
+				has_ambition = obj_become_heir
+				any_pretender_title = { 
+					OR = {
+						current_heir = { character = FROM }
+						holder_scope = { character = FROM }
+					}
+				}			
+			}
+			modifier = {
+				factor = 10
+				has_ambition = obj_become_king
+				OR = {
+					any_pretender_title = {
+						tier = EMPEROR
+						OR = {
+							current_heir = { character = FROM }
+							holder_scope = { character = FROM }
+						}
+					}
+					any_heir_title = {
+						tier = EMPEROR
+						holder_scope = { character = FROM }
+					}
+					FROM = {
+						is_ruler = yes
+						any_demesne_title = { 
+							tier = EMPEROR
+							FROM = { has_claim = PREV }
+						}
+						NOT = { trait = incapable }
+						age = 16
+						NOT = { trait = bastard }
+						NOT = { trait = lunatic }
+						NOT = { check_variable = { which = "tyrant" value = 9.9 } }
+						martial = 8
+						stewardship = 8
+						diplomacy = 8
+						intrigue = 8
+						NOT = { has_character_modifier = suspected_bastard }
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ambition = obj_become_lord_paramount
+				OR = {
+					any_pretender_title = {
+						higher_tier_than = PREV
+						OR = {
+							current_heir = { character = FROM }
+							holder_scope = { character = FROM }
+						}
+					}
+					any_heir_title = {
+						higher_tier_than = PREV
+						holder_scope = { character = FROM }
+					}
+					FROM = {
+						is_ruler = yes
+						any_demesne_title = { 
+							higher_tier_than = PREVPREV
+							FROM = { has_claim = PREV }
+						}
+						NOT = { trait = incapable }
+						age = 16
+						NOT = { trait = bastard }
+						NOT = { trait = lunatic }
+						NOT = { check_variable = { which = "tyrant" value = 9.9 } }
+						martial = 8
+						stewardship = 8
+						diplomacy = 8
+						intrigue = 8
+						NOT = { has_character_modifier = suspected_bastard }
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ambition = obj_wants_landed_title
+				OR = {
+					any_pretender_title = {
+						OR = {
+							current_heir = { character = FROM }
+							holder_scope = { character = FROM }
+						}
+					}
+					any_heir_title = { holder_scope = { character = FROM } }
+				}
+			}
+			modifier = {
+				factor = 10
+				has_ambition = obj_bloodline_iron_throne
+				e_iron_throne = {
+					OR = {
+						current_heir = { character = FROM }
+						holder_scope = { character = FROM }
+					}
+				}
+				OR = {
+					any_pretender_title = { title = e_iron_throne }
+					any_spouse = {
+						any_pretender_title = { title = e_iron_throne }
+					}
+					any_dynasty_member = {
+						any_pretender_title = { title = e_iron_throne }
+					}
+					e_iron_throne = {					
+						holder_scope = { character = FROM }
+						current_heir = {
+							OR = {
+								character = PREVPREV
+								is_married = PREVPREV
+								dynasty = PREVPREV
+							}
+						}	
+					}
+				}
+			}
+			
+			modifier = {
+				factor = 10		
+				trait = nightswatch
+				FROM = {
+					OR = {
+						has_landed_title = k_nightswatch
+						has_character_modifier = NW_broken_vows
+					}
+				}	
+			}
+		}
+		random_list = {
+			40 = {
+				modifier = {
+					factor = 1.5
+					attribute_diff = {
+						character = ROOT_FROM
+						attribute = intrigue
+						value = 6
+					}
+				}
+				modifier = {
+					factor = 1.5
+					attribute_diff = {
+						character = ROOT_FROM
+						attribute = intrigue
+						value = 9
+					}
+				}
+				modifier = {
+					factor = 1.5
+					attribute_diff = {
+						character = ROOT_FROM
+						attribute = intrigue
+						value = 12
+					}
+				}
+				FROM = {
+					set_character_flag = was_murdered_by_plot
+					ROOT_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+					death = {
+						death_reason = death_murder_unknown
+						killer = ROOT
+					}
+				}	
+				if = {
+					limit = { has_character_flag = bought_councillor_reveal }
+					hidden_tooltip = { event_target:plot_target = { character_event = { id = plot_event.312 } } }
+					clr_character_flag = bought_councillor_reveal
+				}
+			}
+			60 = {
+				if = {
+					limit = { has_character_flag = bought_councillor_reveal }
+					FROM = { character_event = { id = plot_event.314 days = 1 } }
+					clr_character_flag = bought_councillor_reveal
+				}
+				else = {
+					FROM = { character_event = { id = 20291 days = 1 } }
+				}	
+			}
+		}
+	}
+}
+
+# 20291 - Assassination attempt on the spymaster fails
+character_event = {
+	id = 20291
+	desc = "EVTDESC20291"
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20291"
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		FROM = { reveal_plot = ROOT }
+		liege = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = ROOT
+				years = 3
+			}
+		}
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20292 } }
+		}
+	}
+}
+
+#20292 - Spymaster informs liege about assassination attempt and plot
+letter_event = {
+	id = 20292
+	desc = "EVTDESC20292"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20292"
+		FROMFROM = {
+			reveal_plot = ROOT
+			character_event = { id = 20293 }
+		}
+		if = { #ai imprison chance
+			limit = { 
+				ai = yes
+				is_vassal_or_below = FROMFROM 
+			}
+			FROMFROM = { save_event_target_as = imprison_target }
+			character_event = { id = imprisoned.1 days = 4 }
+		}
+	}
+}
+
+#20293 - Liege writes to plotter
+character_event = {
+	id = 20293
+	desc = "EVTDESC20293"
+	picture = GFX_evt_recieve_letter
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20293"
+		FROM = {
+			opinion = {
+				modifier = scheming_bastard
+				who = ROOT
+				years = 10
+			}
+		}
+		FROMFROM = {
+			opinion = {
+				modifier = attempted_murder
+				who = ROOT
+				years = 10
+			}
+		}
+	}
+}
+
+# 20291 - Spymaster discovers plot
+character_event = {
+	id = 20294
+	desc = "EVTDESC20294"
+	picture = GFX_evt_shadow
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20291"
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		FROM = { 
+			reveal_plot = ROOT 
+		}
+		liege = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = ROOT
+				years = 3
+			}
+		}	
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20295 } }
+		}
+	}
+}
+
+#20292 - Spymaster informs liege about plot
+letter_event = {
+	id = 20295
+	desc = "EVTDESC20295"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20295"
+		show_portrait = FROMFROM
+		FROMFROM = {
+			reveal_plot = ROOT
+			character_event = { id = 20296 }
+		}
+		if = { #ai imprison chance
+			limit = { 
+				ai = yes
+				is_vassal_or_below = FROMFROM 
+			}
+			FROMFROM = { save_event_target_as = imprison_target }
+			character_event = { id = imprisoned.1 days = 4 }
+		}
+	}
+}
+#Inform target plot discovered
+character_event = {
+	id = 20296
+	desc = "EVTDESC20296"
+	picture = GFX_evt_recieve_letter
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20296"
+		show_portrait = FROMFROM
+	}
+}
+# 931: The Spymaster is attacked by a Noble's thugs (Gets away, Is wounded, Is maimed, Is killed)
+character_event = {
+	id = 931
+	title = "EVTNAME931"
+	desc = "EVTDESC931"
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_intrigue
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		OR = {	
+			has_job_action = action_uncover_plots
+			has_job_action = action_uncover_plots_offmap
+			has_job_action = action_oversee_province
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		OR = {
+			NOT = { has_character_flag = job_action_sabotage }
+			had_character_flag = {
+				flag = job_action_sabotage
+				days = 1825
+			}	
+		}
+	}
+		
+	immediate = {
+		liege = { save_event_target_as = spymaster_liege }
+		if = { #On map
+			limit = { has_job_action = action_uncover_plots }
+			location = {
+				random_province_lord = {
+					limit = {
+						OR = {
+							has_plot = plot_weaken_lord_paramount		
+							has_plot = plot_gain_liege_title				
+							has_plot = plot_gain_fellow_vassal_title		
+							has_plot = plot_gain_vassal_title
+							#has_plot = plot_gain_crownlander_vassal
+							has_plot = plot_kill_character
+							has_plot = plot_kill_spouse
+							has_plot = plot_weaken_fellow_vassal
+							has_plot = plot_rescue_prisoner
+							#has_plot = plot_buy_loyalty
+							has_plot = plot_kidnap_character
+							has_plot = plot_kidnap_liege
+							has_plot = plot_instigate_revolt
+							has_plot = plot_fabricate_treason
+							#has_plot = plot_kill_dragon
+						}
+						NOT = { plot_is_known_by = event_target:spymaster_liege }
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+					}
+					save_event_target_as = killer_target
+				}		
+			}
+		}	
+		else = { #Offmap			
+			top_liege = {
+				random_realm_lord = {
+					limit = {					
+						OR = {
+							has_plot = plot_weaken_lord_paramount		
+							has_plot = plot_gain_liege_title				
+							has_plot = plot_gain_fellow_vassal_title			
+							has_plot = plot_gain_vassal_title
+							#has_plot = plot_gain_crownlander_vassal
+							has_plot = plot_kill_character
+							has_plot = plot_kill_spouse
+							has_plot = plot_weaken_fellow_vassal
+							has_plot = plot_rescue_prisoner
+							#has_plot = plot_buy_loyalty
+							has_plot = plot_kidnap_character
+							has_plot = plot_kidnap_liege
+							has_plot = plot_instigate_revolt
+							has_plot = plot_fabricate_treason
+							#has_plot = plot_kill_dragon
+						}
+						OR = {
+							liege = { character = event_target:spymaster_liege }
+							is_close_relative = event_target:spymaster_liege
+							is_married = event_target:spymaster_liege
+							same_liege = event_target:spymaster_liege
+							is_rival = event_target:spymaster_liege
+							event_target:spymaster_liege = { plot_target_char = { character = PREVPREV } }
+							plot_target_char = { character = event_target:spymaster_liege }
+							plot_target_char = { character = ROOT }
+						}
+						NOT = { plot_is_known_by = event_target:spymaster_liege }
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+					}
+					save_event_target_as = killer_target
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+
+		modifier = {
+			factor = 2
+			has_job_title = job_castellan
+		}			
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 10
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 11
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 12
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 13
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA902"
+		trigger = {
+			event_target:killer_target = { always = yes }
+			NOT = { trait = trained_warrior }
+			NOT = { trait = skilled_warrior }
+			NOT = { trait = master_warrior }
+			is_smart_incl_genius_trigger = no
+			NOT = { intrigue = 14 }
+		}
+		random_list = {
+			25 = { character_event = { id = 20310 tooltip = "EVTTOOLTIP20310" } }
+			50 = { character_event = { id = 20311 tooltip = "EVTTOOLTIP20311" } }
+			25 = {
+				hidden_tooltip = {
+					if = { limit = { has_job_title = job_spymaster }
+						liege = { character_event = { id = 20313 } }
+					}
+					if = { limit = { has_job_title = job_castellan }
+						liege = { character_event = { id = 20613} }
+					}
+				}
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_unknown_butchered
+					killer = event_target:killer_target
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTA902"
+		#tooltip_info = martial
+		trigger = {
+			event_target:killer_target = { always = yes }
+			OR = {
+				trait = trained_warrior
+				is_smart_trigger = yes
+				intrigue = 14
+			}
+			NOT = { trait = skilled_warrior }
+			NOT = { trait = master_warrior }
+			NOT = { trait = genius }
+			NOT = { intrigue = 18 }
+		}
+		random_list = {
+			35 = { character_event = { id = 20310 tooltip = "EVTTOOLTIP20310" } }
+			50 = { character_event = { id = 20311 tooltip = "EVTTOOLTIP20311" } }
+			15 = {
+				hidden_tooltip = {
+					if = { limit = { has_job_title = job_spymaster }
+						liege = { character_event = { id = 20313 } }
+					}
+					if = { limit = { has_job_title = job_castellan }
+						liege = { character_event = { id = 20613} }
+					}
+				}
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_unknown_butchered
+					killer = event_target:killer_target
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTA902"
+		#tooltip_info = martial
+		trigger = {
+			event_target:killer_target = { always = yes }
+			OR = {
+				trait = skilled_warrior
+				trait = master_warrior
+				trait = genius
+				intrigue = 18
+			}
+		}
+		random_list = {
+			50 = { character_event = { id = 20310 tooltip = "EVTTOOLTIP20310" } }
+			40 = { character_event = { id = 20311 tooltip = "EVTTOOLTIP20311" } }
+			10 = {
+				hidden_tooltip = {
+					liege = { character_event = { id = 20313 } }
+				}
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_unknown_butchered
+					killer = event_target:killer_target
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTB902"
+		#tooltip_info = martial
+		trigger = {
+			NOT = { event_target:killer_target = { always = yes } }
+		}
+	}
+}
+
+# 20310: Spymaster gets away
+character_event = {
+	id = 20310
+	desc = "EVTDESC20310"
+	picture = GFX_evt_courier
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20310"
+		prestige = -10
+	}
+}
+
+# 20311: Spymaster gets wounded
+character_event = {
+	id = 20311
+	desc = "EVTDESC20311"
+	picture = GFX_evt_illness
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20311"
+		add_trait_silently_wounded_effect = yes
+		liege = { letter_event = { id = 20312 tooltip = "EVTTOOLTIP20022" } }
+	}
+}
+
+# 20312: Inform the Liege about wounding
+letter_event = {
+	id = 20312
+	desc = "EVTDESC20312"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20312"
+		prestige = -10
+	}
+}
+
+# 20313: Inform the Liege about death
+character_event = {
+	id = 20313
+	desc = "EVTDESC20313"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20313"
+		prestige = -15
+	}
+}
+
+### 9000: Faction Prevention - Spymaster finds Faction Member
+character_event = {
+	id = 9000
+	title = "EVTNAME9000"
+	desc = "EVTDESC9000"
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		OR = {
+			has_job_action = action_uncover_plots
+			has_job_action = action_uncover_plots_offmap
+		}
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		months = 110
+		
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 10
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 11
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 12
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 13
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 16
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_job_action = action_uncover_plots_offmap } }
+			if = {
+				limit = {
+					location = {
+						owner = {
+							same_liege = ROOT
+							independent = no
+							NOT = { is_liege_of = ROOT }
+							NOT = { character = ROOT }
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } }
+							NOT = { reverse_has_opinion_modifier = { who = liege modifier = opinion_delined_faction_scheme } }	
+							NOT = { has_character_flag = faction_member }
+							age = 16
+							prisoner = no
+							higher_tier_than = BARON
+							NOT = { in_faction = faction_liege_loyalist }
+							NOT = {
+								AND = {
+									liege = { tier = EMPEROR }
+									in_faction = faction_crown_loyalist
+								}
+							}
+						}
+					}
+				}
+				location = { 
+					owner = { 
+						save_event_target_as = faction_member 
+						break = yes
+					} 
+				}			
+			}
+			if = {
+				limit = {
+					location = {
+						owner = {
+							liege = { same_liege = ROOT }
+							independent = no
+							NOT = { is_liege_of = ROOT }
+							NOT = { character = ROOT }
+							liege = {
+								independent = no
+								NOT = { is_liege_of = ROOT }
+								NOT = { character = ROOT }
+								NOT = { trait = incapable }
+								NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } }
+								NOT = { reverse_has_opinion_modifier = { who = liege modifier = opinion_delined_faction_scheme } }	
+								NOT = { has_character_flag = faction_member }
+								age = 16
+								prisoner = no
+								higher_tier_than = BARON
+								NOT = { in_faction = faction_liege_loyalist }
+								NOT = {
+									AND = {
+										liege = { tier = EMPEROR }
+										in_faction = faction_crown_loyalist
+									}
+								}
+							}
+						}
+					}	
+				}
+				location = { 
+					owner = { liege = { save_event_target_as = faction_member break = yes } }
+				}
+				
+			}
+		}	
+		#Off map job
+		liege = {
+			random_vassal = {
+				limit = {
+					OR = {
+						in_faction = yes 
+						leads_faction = yes 
+					}
+					relative_power_to_liege = 0.75
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					OR = {
+						in_faction = yes 
+						leads_faction = yes 
+					}
+					relative_power_to_liege = 0.5
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					OR = {
+						in_faction = yes 
+						leads_faction = yes 
+					}
+					relative_power_to_liege = 0.25
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					OR = {
+						in_faction = yes 
+						leads_faction = yes 
+					}
+					relative_power_to_liege = 0.1
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					OR = {
+						in_faction = yes 
+						leads_faction = yes 
+					}
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					relative_power_to_liege = 0.25
+					NOT = { opinion = { who = PREV value = 0 } }
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					relative_power_to_liege = 0.1
+					NOT = { opinion = { who = PREV value = 0 } }
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					NOT = { opinion = { who = PREV value = 0 } }
+					
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }	
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+			random_vassal = {
+				limit = {
+					NOT = { character = ROOT }
+					NOT = { trait = incapable }
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_refused_faction_scheme } }
+					NOT = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_delined_faction_scheme } }					
+					NOT = { has_character_flag = faction_member }
+					age = 16
+					prisoner = no
+					higher_tier_than = BARON
+					NOT = { in_faction = faction_liege_loyalist }
+					NOT = {
+						AND = {
+							liege = { tier = EMPEROR }
+							in_faction = faction_crown_loyalist
+						}
+					}
+				}
+				save_event_target_as = faction_member
+				break = yes
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTA9000"
+		if = {
+			limit = { event_target:faction_member = { always = yes } }
+			liege = { character_event = { id = 9001 tooltip = EVTTOOLTIP9001 } }
+			hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		}	
+	}
+}
+
+# Liege is informed
+letter_event = {
+	id = 9001
+	desc = "EVTDESC9001"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = FROM
+				years = 3
+			}
+		}
+	}
+	
+	option = { # Blackmail
+		name = "EVTOPTA9001"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 8
+				trait = ruthless
+			}
+			modifier = {
+				factor = 8
+				trait = deceitful
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.1
+				trait = honest
+			}
+			modifier = {
+				factor = 0.25
+				trait = kind
+			}
+		}
+		trigger = {
+			event_target:faction_member = {
+				OR = {
+					trait = homosexual
+					trait = impaler
+					trait = lustful
+					trait = drunkard
+					trait = hedonist
+					trait = syphilitic
+				}
+			}
+		}
+		event_target:faction_member = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9002 days = 7 tooltip = EVTTOOLTIP9002 }
+		}	
+	}
+	option = { # Legalism
+		name = "EVTOPTB9001"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 8
+				trait = just
+			}
+			modifier = {
+				factor = 8
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.1
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.1
+				trait = humble
+			}
+		}
+		trigger = {
+			event_target:faction_member = {
+				OR = {
+					trait = just
+					trait = honest
+					trait = honorable
+					trait = content
+					trait = kind
+				}
+			}
+		}
+		event_target:faction_member = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9005 days = 7 tooltip = EVTTOOLTIP9005 }
+		}	
+	}
+	option = { # Threaten
+		name = "EVTOPTC9001"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 8
+				trait = wroth
+			}
+			modifier = {
+				factor = 8
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0.1
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.1
+				trait = patient
+			}
+			modifier = {
+				factor = 0.1
+				trait = kind
+			}
+		}
+		trigger = {
+			event_target:faction_member = {
+				OR = {
+					trait = craven
+					trait = paranoid
+					trait = cynical
+					trait = humble
+					trait = slothful
+				}
+			}
+		}
+		event_target:faction_member = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9008 days = 7 tooltip = EVTTOOLTIP9008 }
+		}	
+	}
+	option = { # Do Nothing
+		name = "EVTOPTE9001"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 15
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				trait = brave
+			}
+		}
+		event_target:faction_member = {
+			hidden_tooltip = {
+				reverse_opinion = { who = ROOT modifier = opinion_delined_faction_scheme months = 60 }
+			}
+		}
+		clear_event_target = faction_member
+	}
+	option = { # Fly on dragon to intimidate
+		name = "EVTOPTF9001"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 8
+				trait = wroth
+			}
+			modifier = {
+				factor = 8
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0.25
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.25
+				trait = patient
+			}
+			modifier = {
+				factor = 0.25
+				trait = kind
+			}
+		}
+		trigger = {
+			trait = dragon_rider
+			any_friend = {
+				trait = dragon
+				martial = 20
+				NOT = { trait = maimed_dragon }
+			}
+			NOT = { has_severe_disability_trigger = yes }
+			event_target:faction_member = {
+				NAND = {
+					trait = dragon_rider
+					any_friend = {
+						trait = dragon
+						NOT = { trait = maimed_dragon }
+						OR = {
+							martial = 70
+							ROOT = {
+								NOT = {
+									any_friend = {
+										trait = dragon
+										attribute_diff = { character = PREVPREV attribute = martial value = 20 }
+									}
+								}
+							}
+						}	
+					}
+				}
+			}
+		}
+		tooltip_info = dragon_rider
+		scaled_wealth = { value = -0.1 min = -10 max = -40 }
+		event_target:faction_member = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9011 days = 1 tooltip = EVTTOOLTIP9011 }
+		}	
+	}
+	option = { # Ask Nicely
+		name = "EVTOPTD9001"
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 10
+				trait = patient
+			}
+			modifier = {
+				factor = 10
+				trait = kind
+			}
+			modifier = {
+				factor = 6
+				trait = honorable
+			}
+			modifier = {
+				factor = 0.1
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.1
+				trait = proud
+			}
+		}
+		trigger = {
+			event_target:faction_member = { always = yes }
+		}
+		event_target:faction_member = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9003 days = 7 tooltip = EVTTOOLTIP9023 }
+		}	
+	}
+}
+
+# Faction Member Confronted: Blackmail
+letter_event = {
+	id = 9002
+	desc = "EVTDESC9002"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		liege = { character = FROM }
+	}
+	
+	option = { # Agree (Homosexual)
+		name = "EVTOPTA9002"
+		tooltip_info = homosexual
+		trigger = { trait = homosexual }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	option = { # Agree (Impaler)
+		name = "EVTOPTB9002"
+		tooltip_info = impaler
+		trigger = { trait = impaler }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	option = { # Agree (Lustful)
+		name = "EVTOPTC9002"
+		tooltip_info = lustful
+		trigger = { trait = lustful }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	option = { # Agree (Drunkard)
+		name = "EVTOPTD9002"
+		tooltip_info = drunkard
+		trigger = { trait = drunkard }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	option = { # Agree (Hedonist)
+		name = "EVTOPTE9002"
+		tooltip_info = hedonist
+		trigger = { trait = hedonist }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	option = { # Agree (Syphilis)
+		name = "EVTOPTF9002"
+		tooltip_info = syphilitic
+		trigger = { trait = syphilitic }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9004 }
+			}
+		}
+	}
+	
+	option = { # Never!
+		name = "EVTOPTB9003"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		prestige = -50
+		piety = -50
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9006 }
+			}
+		}
+	}
+}
+
+# Faction Member Confronted: Ask Nicely
+letter_event = {
+	id = 9003
+	desc = "EVTDESC9003"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		liege = { character = FROM }
+	}
+	
+	option = { # Agree
+		name = "EVTOPTA9003"
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	option = { # Never!
+		name = "EVTOPTB9003"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 100 }
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9006 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Blackmail
+letter_event = {
+	id = 9004
+	desc = "EVTDESC9004"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9004"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_leaving_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = leaving_faction }
+	}
+}
+
+# Faction Member Confronted: Legalism
+letter_event = {
+	id = 9005
+	desc = "EVTDESC9005"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		liege = { character = FROM }
+	}
+	
+	option = { # Agree (Just)
+		name = "EVTOPTA9005"
+		tooltip_info = just
+		trigger = { trait = just }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	option = { # Agree (Honest)
+		name = "EVTOPTB9005"
+		tooltip_info = honest
+		trigger = { trait = honest }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	option = { # Agree (honorable)
+		name = "EVTOPTC9005"
+		tooltip_info = honorable
+		trigger = { trait = honorable }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	option = { # Agree (Content)
+		name = "EVTOPTD9005"
+		tooltip_info = content
+		trigger = { trait = content }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	option = { # Agree (Kind)
+		name = "EVTOPTE9005"
+		tooltip_info = kind
+		trigger = { trait = kind }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9007 }
+			}
+		}
+	}
+	
+	option = { # Never!
+		name = "EVTOPTB9003"
+		trigger = { NOT = { trait = just } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 25
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9006 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Failed Request
+letter_event = {
+	id = 9006
+	desc = "EVTDESC9006"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9006"
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Legalism
+letter_event = {
+	id = 9007
+	desc = "EVTDESC9007"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9007"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_leaving_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = leaving_faction }
+	}
+}
+
+# Faction Member Confronted: Threaten
+letter_event = {
+	id = 9008
+	desc = "EVTDESC9008"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = { # Agree (Craven)
+		name = "EVTOPTA9008"
+		tooltip_info = craven
+		trigger = { trait = craven }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9010 }
+			}
+		}
+	}
+	option = { # Agree (Paranoid)
+		name = "EVTOPTB9008"
+		tooltip_info = paranoid
+		trigger = { trait = paranoid }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9010 }
+			}
+		}
+	}
+	option = { # Agree (Cynical)
+		name = "EVTOPTC9008"
+		tooltip_info = cynical
+		trigger = { trait = cynical }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9010 }
+			}
+		}
+	}
+	option = { # Agree (Humble)
+		name = "EVTOPTD9008"
+		tooltip_info = humble
+		trigger = { trait = humble }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9010 }
+			}
+		}
+	}
+	option = { # Agree (Slothful)
+		name = "EVTOPTE9008"
+		tooltip_info = slothful
+		trigger = { trait = slothful }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9010 }
+			}
+		}
+	}
+	
+	option = { # Never!
+		name = "EVTOPTB9003"
+		trigger = { NOT = { trait = craven } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 25
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9006 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Threat
+letter_event = {
+	id = 9010
+	desc = "EVTDESC9010"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9010"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_leaving_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = leaving_faction }
+	}
+}
+
+
+# Faction Member Confronted: Dragon
+character_event = {
+	id = 9011
+	desc = "EVTDESC9011"
+	picture = GFX_evt_dragon_riding_3
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = {
+			random_friend = {
+				limit = {
+					trait = dragon
+					martial = 20
+					NOT = { trait = maimed_dragon }
+				}	
+				save_event_target_as = FROMs_dragon
+			}
+		}
+	}
+	
+	option = { # Agree (Craven)
+		name = "EVTOPTA9011"
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9012 }
+			}
+		}
+	}
+
+	option = { # Never!
+		name = "EVTOPTB9011"
+		trigger = { NOT = { trait = craven } }
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = stressed } 
+				NOT = { trait = brave }
+			}
+			random = {
+				chance = 25
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9013 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Dragon
+character_event = {
+	id = 9012
+	desc = "EVTDESC9012"
+	picture = GFX_evt_dragon_riding_3
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9012"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_leaving_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = leaving_faction }
+	}
+}
+# Liege Informed: Failed Request (dragon)
+character_event = {
+	id = 9013
+	desc = "EVTDESC9013"
+	picture = GFX_evt_dragon_riding_3
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9013"
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+	}
+}
+
+### 9020: Faction Recruitment - Spymaster finds Faction Member
+character_event = {
+	id = 9020
+	title = "EVTNAME9020"
+	desc = "EVTDESC9020"
+	picture = GFX_evt_council
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		OR = {
+			has_job_action = action_uncover_plots
+			has_job_action = action_uncover_plots_offmap
+		}	
+		NOT = { is_inaccessible_trigger = yes }
+		liege = { 
+			OR = {
+				in_faction = yes 
+				leads_faction = yes 
+			}	
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 110
+		
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 10
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 11
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 12
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 13
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 16
+		}
+	}
+	
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_job_action = action_uncover_plots_offmap } }
+			if = {
+				limit = {
+					location = {
+						owner = {
+							ROOT = {
+								liege = {
+									same_liege = PREVPREV
+								}
+							}
+							ai = yes
+							independent = no
+							NOT = { is_liege_of = ROOT }
+							NOT = { character = ROOT }
+							NOT = { trait = incapable }
+							NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+							ROOT = {
+								liege = {
+									NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+									NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+								}
+							}
+							NOT = { has_character_flag = faction_recruit }
+							NOR = { 
+								in_faction = yes
+								leads_faction = yes								
+							}
+							age = 16
+							prisoner = no
+							higher_tier_than = BARON
+						}
+					}
+				}
+				location = { 
+					owner = { 
+						save_event_target_as = faction_recruit 
+						break = yes
+					}
+				}				
+			}
+		}	
+		#Off map job
+		liege = {
+			liege = {
+				random_vassal = {
+					limit = {
+						relative_power_to_liege = 0.75
+						
+						ai = yes
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						NOT = { trait = incapable }
+						NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+						NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_refused_faction_scheme } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+						NOT = { has_character_flag = faction_recruit }
+						NOR = { 
+							in_faction = yes
+							leads_faction = yes								
+						}
+						age = 16
+						prisoner = no
+						higher_tier_than = BARON
+					}
+					save_event_target_as = faction_recruit
+					break = yes
+				}
+				random_vassal = {
+					limit = {
+						relative_power_to_liege = 0.5
+						
+						ai = yes
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						NOT = { trait = incapable }
+						NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+						NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_refused_faction_scheme } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+						NOT = { has_character_flag = faction_recruit }
+						NOR = { 
+							in_faction = yes
+							leads_faction = yes								
+						}
+						age = 16
+						prisoner = no
+						higher_tier_than = BARON
+					}
+					save_event_target_as = faction_recruit
+					break = yes
+				}
+				random_vassal = {
+					limit = {
+						relative_power_to_liege = 0.25
+						
+						ai = yes
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						NOT = { trait = incapable }
+						NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+						NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_refused_faction_scheme } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+						NOT = { has_character_flag = faction_recruit }
+						NOR = { 
+							in_faction = yes
+							leads_faction = yes								
+						}
+						age = 16
+						prisoner = no
+						higher_tier_than = BARON
+					}
+					save_event_target_as = faction_recruit
+					break = yes
+				}
+				random_vassal = {
+					limit = {
+						relative_power_to_liege = 0.1
+						
+						ai = yes
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						NOT = { trait = incapable }
+						NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+						NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_refused_faction_scheme } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+						NOT = { has_character_flag = faction_recruit }
+						NOR = { 
+							in_faction = yes
+							leads_faction = yes								
+						}
+						age = 16
+						prisoner = no
+						higher_tier_than = BARON
+					}
+					save_event_target_as = faction_recruit
+					break = yes
+				}
+				random_vassal = {
+					limit = {
+						ai = yes
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						NOT = { trait = incapable }
+						NOT = { has_opinion_modifier = { who = liege modifier = opinion_coerced_into_leaving_faction } } #To avoid weirdness
+						NOT = { has_opinion_modifier = { who = PREVPREV modifier = opinion_coerced_into_joining_faction } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_refused_faction_scheme } }
+						NOT = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_delined_faction_scheme } }	
+						NOT = { has_character_flag = faction_recruit }
+						NOR = { 
+							in_faction = yes
+							leads_faction = yes								
+						}
+						age = 16
+						prisoner = no
+						higher_tier_than = BARON
+					}
+					save_event_target_as = faction_recruit
+					break = yes
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTA9020"
+		if = {
+			limit = { event_target:faction_recruit = { always = yes } }
+			liege = { character_event = { id = 9021 tooltip = EVTTOOLTIP9001 } }
+			hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		}	
+	}
+}
+
+# Liege is informed
+letter_event = {
+	id = 9021
+	desc = "EVTDESC9021"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = FROM
+				years = 3
+			}
+		}
+	}
+	
+	option = { # Blackmail
+		name = "EVTOPTA9021"
+		trigger = {
+			event_target:faction_recruit = {
+				OR = {
+					trait = homosexual
+					trait = impaler
+					trait = lustful
+					trait = drunkard
+					trait = hedonist
+					trait = syphilitic
+				}
+			}
+		}
+		event_target:faction_recruit = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9022 days = 7 tooltip = EVTTOOLTIP9022 }
+		}
+	}
+	option = { # Threaten
+		name = "EVTOPTC9021"
+		trigger = {
+			event_target:faction_recruit = {
+				OR = {
+					trait = craven
+					trait = paranoid
+					trait = cynical
+					trait = humble
+					trait = slothful
+				}
+			}
+		}
+		event_target:faction_recruit = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9028 days = 7 tooltip = EVTTOOLTIP9028 }
+		}
+	}
+	option = { # Ask nicely
+		name = "EVTOPTD9001"
+		trigger = {
+			event_target:faction_recruit = {
+				NOT = {
+					OR = {
+						trait = craven
+						trait = paranoid
+						trait = cynical
+						trait = humble
+						trait = slothful
+						trait = homosexual
+						trait = impaler
+						trait = lustful
+						trait = drunkard
+						trait = hedonist
+						trait = syphilitic
+					}
+				}
+			}
+		}
+		event_target:faction_recruit = {
+			tooltip = { show_portrait = yes }
+			character_event = { id = 9023 days = 7 tooltip = EVTTOOLTIP9023 }
+		}
+	}
+	option = { # Do Nothing
+		name = "EVTOPTD9021"
+		event_target:faction_recruit = {
+			hidden_tooltip = {
+				reverse_opinion = { who = ROOT modifier = opinion_delined_faction_scheme months = 60 }
+			}
+		}
+		clear_event_target = faction_recruit
+	}
+}
+
+# Faction Member Confronted: Blackmail
+letter_event = {
+	id = 9022
+	desc = "EVTDESC9002"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		same_liege = FROM
+		FROM = { is_ruler = yes }
+	}
+	
+	option = { # Agree (Homosexual)
+		name = "EVTOPTA9002"
+		tooltip_info = homosexual
+		trigger = { trait = homosexual }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Agree (Impaler)
+		name = "EVTOPTB9002"
+		tooltip_info = impaler
+		trigger = { trait = impaler }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Agree (Lustful)
+		name = "EVTOPTC9002"
+		tooltip_info = lustful
+		trigger = { trait = lustful }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Agree (Drunkard)
+		name = "EVTOPTD9002"
+		tooltip_info = drunkard
+		trigger = { trait = drunkard }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Agree (Hedonist)
+		name = "EVTOPTE9002"
+		tooltip_info = hedonist
+		trigger = { trait = hedonist }
+		ai_chance = {
+			factor = 80
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Agree (Syphilis)
+		name = "EVTOPTF9002"
+		tooltip_info = syphilitic
+		trigger = { trait = syphilitic }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9024 }
+			}
+		}
+	}
+	option = { # Never!
+		name = "EVTOPTA9004"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		prestige = -50
+		piety = -50
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9026 }
+			}
+		}
+	}
+}
+
+# Faction Member Confronted: Ask Nicely (AI Only)
+letter_event = {
+	id = 9023
+	desc = "EVTDESC9003"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		same_liege = FROM
+		FROM = { is_ruler = yes }
+	}
+	
+	option = { # Agree
+		name = "EVTOPTA9004"
+		ai_chance = {
+			factor = 50
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9027 }
+			}
+		}
+	}
+	option = { # Never!
+		name = "EVTOPTA9004"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 25 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 75 }
+			}
+			modifier = {
+				factor = 0.5
+				opinion = { who = FROM value = 100 }
+			}
+			
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9026 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Request
+letter_event = {
+	id = 9027
+	desc = "EVTDESC9027"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9004"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_joining_faction
+				who = ROOT
+			}		
+		}		
+		custom_tooltip = { 
+			text = joining_faction 
+			hidden_tooltip = {
+				FROM_joins_ROOTS_factions_effect = yes
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Blackmail
+letter_event = {
+	id = 9024
+	desc = "EVTDESC9024"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9004"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_joining_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { 
+			text = joining_faction 
+			hidden_tooltip = {
+				FROM_joins_ROOTS_factions_effect = yes
+			}
+		}
+	}
+}
+
+# Liege Informed: Failed Request
+letter_event = {
+	id = 9026
+	desc = "EVTDESC9026"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9006"
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+	}
+}
+
+# Faction Member Confronted: Threaten
+letter_event = {
+	id = 9028
+	desc = "EVTDESC9008"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		same_liege = FROM
+		FROM = { is_ruler = yes }
+	}
+	
+	option = { # Agree (Craven)
+		name = "EVTOPTA9008"
+		tooltip_info = craven
+		trigger = { trait = craven }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9030 }
+			}
+		}
+	}
+	option = { # Agree (Paranoid)
+		name = "EVTOPTB9008"
+		tooltip_info = paranoid
+		trigger = { trait = paranoid }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9030 }
+			}
+		}
+	}
+	option = { # Agree (Cynical)
+		name = "EVTOPTC9008"
+		tooltip_info = cynical
+		trigger = { trait = cynical }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9030 }
+			}
+		}
+	}
+	option = { # Agree (Humble)
+		name = "EVTOPTD9008"
+		tooltip_info = humble
+		trigger = { trait = humble }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9030 }
+			}
+		}
+	}
+	option = { # Agree (Slothful)
+		name = "EVTOPTE9008"
+		tooltip_info = slothful
+		trigger = { trait = slothful }
+		ai_chance = {
+			factor = 80
+		}	
+		FROM = {
+			opinion = {
+				modifier = opinion_pleased
+				who = ROOT
+				years = 2
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9004 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9030 }
+			}
+		}
+	}
+	option = { # Never!
+		name = "EVTOPTA9004"
+		trigger = { NOT = { trait = craven } }
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0.33
+				trait = humble
+			}
+			modifier = {
+				factor = 0.33
+				trait = craven
+			}
+			modifier = {
+				factor = 0.33
+				trait = patient
+			}
+			modifier = {
+				factor = 0.33
+				trait = content
+			}
+			modifier = {
+				factor = 0.33
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 25
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_refused_faction_scheme
+				who = ROOT
+			}
+		}
+		custom_tooltip = { text = EVTTOOLTIP9003 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 9006 }
+			}
+		}
+	}
+}
+
+# Liege Informed: Successful Threat
+letter_event = {
+	id = 9030
+	desc = "EVTDESC9030"
+	picture = GFX_evt_council
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA9030"
+		FROM = {
+			opinion = {
+				modifier = opinion_coerced_into_joining_faction
+				who = ROOT
+			}
+		}
+		custom_tooltip = { 
+			text = joining_faction 
+			hidden_tooltip = {
+				FROM_joins_ROOTS_factions_effect = yes
+			}
+		}
+	}
+}
+
+##############################
+# SPYMASTER
+# JOB: action_study_technology
+##############################
+
+# 932: The Spymaster studies foreign technology
+#character_event = {
+#	id = 932
+#	title = "EVTNAME932"
+#	desc = "EVTDESC932"
+#	picture = GFX_evt_library
+#	border = GFX_event_normal_frame_intrigue
+#	
+#	capable_only = yes
+#	prisoner = no
+#	
+#	trigger = {
+#		has_job_action = action_study_technology
+#		location = { has_higher_tech_than = ROOT }
+#	}
+#	
+#	mean_time_to_happen = {
+#		months = 480
+#		
+#		modifier = {
+#			factor = 1.25
+#			NOT = { intrigue = 2 }
+#		}
+#		modifier = {
+#			factor = 1.25
+#			NOT = { intrigue = 3 }
+#		}
+#		modifier = {
+#			factor = 1.25
+#			NOT = { intrigue = 4 }
+#		}
+#		modifier = {
+#			factor = 1.25
+#			NOT = { intrigue = 5 }
+#		}
+#		modifier = {
+#			factor = 0.75
+#			intrigue = 10
+#		}
+#		modifier = {
+#			factor = 0.75
+#			intrigue = 11
+#		}
+#		modifier = {
+#			factor = 0.75
+#			intrigue = 12
+#		}
+#		modifier = {
+#			factor = 0.75
+#			intrigue = 13
+#		}
+#		modifier = {
+#			factor = 2
+#			has_character_flag = job_action_sabotage
+#			NOT = {
+#				had_character_flag = {
+#					flag = job_action_sabotage
+#					days = 1825
+#				}
+#			}	
+#		}
+#	}
+#
+#	option = {
+#		name = "EVTOPTA932"
+#		liege = { letter_event = { id = 20320 tooltip = "EVTTOOLTIP20320" } }
+#	}
+#}
+
+# # The Spymaster informs his liege of the success
+# letter_event = {
+	# id = 20320
+	# desc = "EVTDESC20320"
+	# border = GFX_event_letter_frame_intrigue
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTA20320"
+		# FROM = {
+			# location = {
+				# steal_random_tech = ROOT
+			# }
+		# }
+	# }
+# }
+
+# 933: The Spymaster is discovered by the local count - chance of imprisonment
+character_event = {
+	id = 933
+	title = "EVTNAME933"
+	desc = "EVTDESC933"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		OR = {
+			has_job_action = action_study_technology
+			has_job_action = action_sabotage_province
+		}
+		NOT = { is_inaccessible_trigger = yes }
+		#location = { has_higher_tech_than = ROOT }
+		location = {
+			any_province_lord = {
+				NOT = { is_liege_of = ROOT }
+				NOT = { character = ROOT }
+				OR = {
+					intrigue = 10
+					job_spymaster = {
+						intrigue = 10
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 120
+		
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 10
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 11
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 12
+		}
+		modifier = {
+			factor = 1.25
+			intrigue = 13
+		}
+	}
+
+	option = {
+		name = "EVTOPTA933"
+		location = {
+			random_province_lord = {
+				limit = {
+					NOT = { is_liege_of = ROOT }
+					NOT = { character = ROOT }
+					job_spymaster = {
+						intrigue = 10
+					}
+				}
+				character_event = { id = 20330 days = 2 tooltip = "EVTTOOLTIP20330" }
+			}
+		}
+	}
+}
+
+#20330: Local noble reacts
+character_event = {
+	id = 20330
+	desc = "EVTDESC20330"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVOPTA20330"
+		ai_chance = { factor = 75 }
+		trigger = { FROM = { NOT = { has_character_flag = job_action_sabotage } } }
+		FROM = {
+			imprison = ROOT
+			liege = {
+				letter_event = { id = 20331 tooltip = "EVTTOOLTIP20331" }
+				opinion = {
+					modifier = opinion_furious
+					who = ROOT
+					years = 2
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVOPTB20330"
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				FROM = { has_character_flag = spymaster_found_spying }
+			}
+		}
+		prestige = 15
+		FROM = {
+			set_character_flag = spymaster_found_spying
+			letter_event = { id = 20332 tooltip = "EVTTOOLTIP20332" }
+		}
+	}
+}
+
+#20331: Liege get the news - Chancellor Imprisoned
+letter_event = {
+	id = 20331
+	desc = "EVTDESC20331"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20331"
+		FROM = {
+			opinion = {
+				modifier = opinion_dishonorable_scum
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+#20332: Spymaster get the news: is free to go
+letter_event = {
+	id = 20332
+	desc = "EVTDESC20332"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20332"
+		reverse_opinion = {
+			modifier = opinion_grateful
+			who = FROM
+			years = 5
+		}
+	}
+}
+
+
+##############################
+# SPYMASTER
+# JOB: action_organize_spies
+##############################
+
+# 935: Vicious Rumors Spread
+character_event = {
+	id = 935
+	title = "EVTNAME935"
+	desc = "EVTDESC935"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		has_job_action = action_organize_spies
+		NOT = { is_inaccessible_trigger = yes }
+		location = {
+			any_province_lord = {
+				NOT = { is_liege_of = ROOT }
+				NOT = { character = ROOT }
+				trait = homosexual
+				is_female = no
+				ROOT = {
+					liege = {
+						NOT = { opinion = { who = PREVPREV value = 0 } }
+					}
+				}
+				num_of_vassals = 1
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+		
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 10
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 11
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 12
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 13
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 14
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 16
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 18
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 20
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 22
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 24
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 26
+		}
+		modifier = {
+			factor = 0.9
+			intrigue = 28
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = job_action_sabotage
+			NOT = {
+				had_character_flag = {
+					flag = job_action_sabotage
+					days = 1825
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA935"
+		hidden_tooltip = {
+			location = {
+				random_province_lord = {
+					limit = {
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						ROOT = {
+							liege = {
+								NOT = { opinion = { who = PREVPREV value = 0 } }
+							}
+						}
+						trait = homosexual
+						is_female = no
+						num_of_vassals = 1
+					}
+					save_event_target_as = vicious_rumor_target
+					set_character_flag = vicious_rumor
+				}
+			}
+			liege = { letter_event = { id = 20350 days = 1 } }
+		}
+	}
+}
+
+# 20350 - Liege is informed
+letter_event = {
+	id = 20350
+	desc = "EVTDESC20350"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20350"
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = honest
+			}
+			modifier = {
+				factor = 0.1
+				trait = just
+			}
+			modifier = {
+				factor = 5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 5
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20351 days = 1 }
+			}
+			opinion = {
+				modifier = opinion_service_rendered
+				who = FROM
+				years = 3
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20350"
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = honest
+			}
+			modifier = {
+				factor = 0.1
+				trait = just
+			}
+			modifier = {
+				factor = 5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 5
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20352 days = 1 }
+			}
+			opinion = {
+				modifier = opinion_service_rendered
+				who = FROM
+				years = 3
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTC20350"
+		ai_chance = { factor = 10 }
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20353 days = 1 }
+			}
+		}
+	}
+}
+
+#20351 - Blackmail him
+character_event = {
+	id = 20351
+	desc = "EVTDESC20351"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = { event_target:vicious_rumor_target = { is_alive = yes } }
+	
+	option = {
+		name = "EVTOPTA20351"
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		hidden_tooltip = {
+			event_target:vicious_rumor_target = {
+				set_character_flag = vicious_rumor_blackmail
+				character_event = { id = 20354 days = 1 }
+			}
+		}
+	}
+}
+
+#20352 - Spread rumors
+character_event = {
+	id = 20352
+	desc = "EVTDESC20352"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = { event_target:vicious_rumor_target = { is_alive = yes } }
+	
+	option = {
+		name = "EVTOPTA20352"
+		hidden_tooltip = { change_variable = { which = "services_rendered" value = 1 } }
+		hidden_tooltip = {
+			event_target:vicious_rumor_target = {
+				set_character_flag = vicious_rumor_spread
+				character_event = { id = 20355 days = 1 }
+			}
+		}
+	}
+}
+
+#20353 - Do nothing
+character_event = {
+	id = 20353
+	desc = "EVTDESC20353"
+	picture = GFX_evt_throne_room
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = { event_target:vicious_rumor_target = { is_alive = yes } }
+	
+	option = {
+		name = "EVTOPTA20353"
+		hidden_tooltip = {
+			event_target:vicious_rumor_target = {
+				clr_character_flag = vicious_rumor
+			}
+		}
+	}
+}
+
+#20354 - The noble responds to blackmail
+character_event = {
+	id = 20354
+	desc = "EVTDESC20354"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20354"
+		ai_chance = { factor = 40 }
+		FROM = {
+			liege = {
+				ROOT = {
+					tooltip = {
+						transfer_scaled_wealth = {
+							to = FROM
+							value = 0.25
+							min = 10
+							max = 100
+						}
+					}
+				}	
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20359 days = 1 }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20354"
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 3.0
+				OR = {
+					trait = wroth
+					trait = paranoid
+				}
+			}
+		}
+		random_list = {
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_attacked
+					character_event = { id = 20356 days = 1 tooltip = "EVTTOOLTIPSPYMASTERATTACK" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20364 days = 1 }
+				}
+			}
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_killed
+					character_event = { id = 20356 days = 1 tooltip = "EVTTOOLTIPSPYMASTERKILLED" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20365 days = 1 }
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTC20354"
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 3.0
+				OR = {
+					trait = proud
+					trait = honest
+					trait = brave
+				}
+			}
+		}
+		prestige = 25
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20361 days = 1 }
+			}
+		}
+	}
+}
+
+#20355 - The noble responds to rumor
+character_event = {
+	id = 20355
+	desc = "EVTDESC20355"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20355"
+		random_list = {
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_attacked
+					character_event = { id = 20356 days = 1 tooltip = "EVTTOOLTIPSPYMASTERATTACK" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20364 days = 1 }
+				}
+			}
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_killed
+					character_event = { id = 20356 days = 1 tooltip = "EVTTOOLTIPSPYMASTERKILLED" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20365 days = 1 }
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20355"
+		prestige = 25
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20361 days = 1 }
+			}
+		}
+	}
+}
+
+#20364 - Spymaster gets away
+character_event = {
+	id = 20364
+	desc = "EVTDESC20364"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20364"
+		prestige = -10
+	}
+}
+
+#20365 - Spymaster is killed
+character_event = {
+	id = 20365
+	desc = "EVTDESC20365"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"
+	}
+}
+
+#20356 - Spymaster is attacked
+character_event = {
+	id = 20356
+	desc = "EVTDESC20356"
+	picture = GFX_evt_peasants
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA20356"
+		trigger = { has_character_flag = spymaster_attacked }
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20357 days = 1 } }
+		}
+		clr_character_flag = spymaster_attacked
+	}
+	option = {
+		name = "EVTOPTB20356"
+		trigger = { has_character_flag = spymaster_killed }
+		hidden_tooltip = {
+			liege = { character_event = { id = 20358 } }
+		}
+		clr_character_flag = spymaster_killed	
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = {
+			death_reason = death_murder_unknown_butchered
+			killer = FROM
+		}
+	}
+}
+
+#20357 - Inform the Liege about attack
+letter_event = {
+	id = 20357
+	desc = "EVTDESC20357"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20357"
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					character_event = { id = 20363 days = 1 }
+				}
+			}
+		}
+	}
+}
+
+#20358 - Inform the Liege about death
+character_event = {
+	id = 20358
+	desc = "EVTDESC20358"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20358"
+		opinion = {
+			who = FROMFROM
+			modifier = suspect_of_murder
+			months = 60
+		}					
+		prestige = -15
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					clr_character_flag = vicious_rumor
+				}
+			}
+		}
+	}
+}
+
+#20359 - Blackmail succeeds
+character_event = {
+	id = 20359
+	desc = "EVTDESC20359"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20359"
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20360 days = 1 } }
+		}
+	}
+}
+
+#20360 - Liege is informed that blackmail succeeded
+letter_event = {
+	id = 20360
+	desc = "EVTDESC20360"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"
+		FROMFROM = {
+			transfer_scaled_wealth = {
+				to = ROOT
+				value = 0.25
+				min = 10
+				max = 100
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					clr_character_flag = vicious_rumor
+					clr_character_flag = vicious_rumor_blackmail
+				}
+			}
+		}
+	}
+}
+
+#20361 - The noble does not care about the rumor
+character_event = {
+	id = 20361
+	desc = "EVTDESC20361"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20361"
+		hidden_tooltip = {
+			liege = {
+				letter_event = { id = 20362 days = 1 }
+			}
+		}
+	}
+}
+
+#20362 - Inform the liege that the noble does not care about the rumor
+letter_event = {
+	id = 20362
+	desc = "EVTDESC20362"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20362"
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					character_event = { id = 20363 days = 1 }
+				}
+			}
+		}
+	}
+}
+
+#20363 - The noble is informed that the rumor has been spread
+character_event = {
+	id = 20363
+	desc = "EVTDESC20363"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			any_vassal = {
+				limit = {
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { trait = homosexual }
+				}
+				set_character_flag = opinion_liege_homosexual
+			}
+			any_courtier = {
+				limit = {
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { trait = homosexual }
+				}
+				set_character_flag = opinion_liege_homosexual
+			}		
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA20363"
+		any_vassal = {
+			limit = {
+				has_character_flag = opinion_liege_homosexual
+			}
+			opinion = {
+				modifier = opinion_homosexual
+				who = ROOT
+				years = 2
+			}
+			clr_character_flag = opinion_liege_homosexual
+		}
+		any_courtier = {
+			limit = {
+				has_character_flag = opinion_liege_homosexual
+			}
+			opinion = {
+				modifier = opinion_homosexual
+				who = ROOT
+				years = 2
+			}
+			clr_character_flag = opinion_liege_homosexual
+		}
+	}
+}
+
+# 936: Corruption Uncovered
+character_event = {
+	id = 936
+	title = "EVTNAME936"
+	desc = "EVTDESC936"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	capable_only = yes
+	prisoner = no
+	has_job_title = yes
+	
+	trigger = {
+		has_job_action = action_organize_spies
+		NOT = { is_inaccessible_trigger = yes }
+		location = {
+			any_province_lord = {
+				NOT = { is_liege_of = ROOT }
+				NOT = { character = ROOT }
+				ROOT = {
+					liege = {
+						NOT = { opinion = { who = PREVPREV value = 0 } }
+						same_realm = PREVPREV
+					}
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+		
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 2 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 3 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { intrigue = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 10
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 11
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 12
+		}
+		modifier = {
+			factor = 0.75
+			intrigue = 13
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = job_action_sabotage
+			NOT = {
+				had_character_flag = {
+					flag = job_action_sabotage
+					days = 1825
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA936"
+		hidden_tooltip = {
+			location = {
+				random_province_lord = {
+					limit = {
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						ROOT = {
+							liege = {
+								NOT = { opinion = { who = PREVPREV value = 0 } }
+								same_realm = PREVPREV
+							}
+						}
+					}
+					set_character_flag = corrupt_nobel
+				}
+			}
+			liege = { letter_event = { id = 20370 days = 1 } }
+			change_variable = { which = "services_rendered" value = 1 }
+		}
+	}
+}
+
+#20370 - Liege is informed
+letter_event = {
+	id = 20370
+	desc = "EVTDESC20370"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20370"
+		ai_chance = { 
+			factor = 90
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = honest
+			}
+			modifier = {
+				factor = 0.1
+				trait = just
+			}
+			modifier = {
+				factor = 5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 5
+				trait = deceitful
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20371 days = 1 }
+			}
+		}
+		hidden_tooltip = {
+			opinion = {
+				modifier = opinion_service_rendered
+				who = FROM
+				years = 3
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20370"
+		ai_chance = { 
+			factor = 10
+		}
+		hidden_tooltip = {
+			FROM = {
+				character_event = { id = 20372 days = 1 }
+			}
+		}
+	}
+}
+
+#20371 - Accuse him
+character_event = {
+	id = 20371
+	desc = "EVTDESC20371"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20371"
+		hidden_tooltip = {
+			location = {
+				random_province_lord = {
+					limit = {
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						ROOT = {
+							liege = {
+								NOT = { opinion = { who = PREVPREV value = 0 } }
+								same_realm = PREVPREV
+							}
+						}
+					}
+					set_character_flag = corrupt_nobel_accused
+					character_event = { id = 20373 days = 1 }
+				}
+			}
+			change_variable = { which = "services_rendered" value = 1 }
+		}
+	}
+}
+
+#20372 - Do nothing
+character_event = {
+	id = 20372
+	desc = "EVTDESC20372"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20372"
+		hidden_tooltip = {
+			location = {
+				random_province_lord = {
+					limit = {
+						NOT = { is_liege_of = ROOT }
+						NOT = { character = ROOT }
+						ROOT = {
+							liege = {
+								NOT = { opinion = { who = PREVPREV value = 0 } }
+								same_realm = PREVPREV
+							}
+						}
+					}
+					clr_character_flag = corrupt_nobel
+				}
+			}
+		}
+	}
+}
+
+#20373 - The noble responds to accusation
+character_event = {
+	id = 20373
+	desc = "EVTDESC20373"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20373"
+		random_list = {
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_attacked
+					character_event = { id = 20376 days = 1 tooltip = "EVTTOOLTIPSPYMASTERATTACK" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20374 days = 1 }
+				}
+			}
+			50 = {
+				FROM = {
+					set_character_flag = spymaster_killed
+					character_event = { id = 20376 days = 1 tooltip = "EVTTOOLTIPSPYMASTERKILLED" }
+				}
+				hidden_tooltip = {
+					character_event = { id = 20375 days = 1 }
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB20373"
+		prestige = -25
+		FROM = {
+			liege = {
+				ROOT = {
+					tooltip = {
+						transfer_scaled_wealth = {
+							to = FROM
+							value = 0.25
+							min = 10
+							max = 100
+						}
+					}
+				}	
+			}
+		}
+		clr_character_flag = corrupt_nobel
+		hidden_tooltip = {
+			FROM = {
+				letter_event = { id = 20379 days = 1 }
+			}
+		}
+	}
+}
+
+#20374 - Spymaster gets away
+character_event = {
+	id = 20374
+	desc = "EVTDESC20374"
+	picture = GFX_evt_spymaster
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20364"
+		prestige = -10
+	}
+}
+
+#20375 - Spymaster is killed
+character_event = {
+	id = 20375
+	desc = "EVTDESC20375"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EXCELLENT"
+		FROMFROM = { save_event_target_as = kinslayer_target } #check for kinslayer
+		add_kinslayer_trait_effect = yes
+	}
+}
+
+#20376 - Spymaster is attacked
+character_event = {
+	id = 20376
+	desc = "EVTDESC20376"
+	picture = GFX_evt_melee
+	border = GFX_event_normal_frame_intrigue
+
+	hide_from = yes
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTA20376"
+		trigger = { has_character_flag = spymaster_attacked }
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20377 days = 1 } }
+		}
+		clr_character_flag = spymaster_attacked
+	}
+	option = {
+		name = "EVTOPTB20376"
+		trigger = { has_character_flag = spymaster_killed }
+		hidden_tooltip = {
+			liege = { character_event = { id = 20378 } }
+		}
+		clr_character_flag = spymaster_killed
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = {
+			death_reason = death_murder_unknown_butchered
+			killer = FROM
+		}	
+	}
+}
+
+#20377 - Inform the Liege about attack
+letter_event = {
+	id = 20377
+	desc = "EVTDESC20377"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20377"
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					character_event = { id = 203779 days = 1 }
+				}
+			}
+		}
+	}
+}
+#20363 - The noble is informed that the rumor has been spread
+character_event = {
+	id = 203779
+	desc = "EVTDESC203779"
+	picture = GFX_evt_whispers
+	border = GFX_event_normal_frame_intrigue
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			any_vassal = {
+				limit = {
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { trait = arbitrary }
+					is_adult = yes
+					NOT = { trait = incapable }
+				}
+				set_character_flag = opinion_liege_corruption
+			}
+			any_courtier = {
+				limit = {
+					NOT = { opinion = { who = ROOT value = 0 } }
+					NOT = { trait = arbitrary }
+					is_adult = yes
+					NOT = { trait = incapable }
+				}
+				set_character_flag = opinion_liege_corruption
+			}		
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA20363"
+		any_vassal = {
+			limit = {
+				has_character_flag = opinion_liege_corruption
+			}
+			opinion = {
+				modifier = opinion_corrupt
+				who = ROOT
+				years = 2
+			}
+			clr_character_flag = opinion_liege_corruption
+		}
+		any_courtier = {
+			limit = {
+				has_character_flag = opinion_liege_corruption
+			}
+			opinion = {
+				modifier = opinion_corrupt
+				who = ROOT
+				years = 2
+			}
+			clr_character_flag = opinion_liege_corruption
+		}
+	}
+}
+
+#20378 - Inform the Liege about death
+character_event = {
+	id = 20378
+	desc = "EVTDESC20378"
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_intrigue
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20378"
+		prestige = -15
+		if = {
+			limit = {
+				OR = {
+					is_child_of = FROM
+					is_parent_of = FROM
+					is_close_relative = FROM
+					is_married = FROM
+					any_friend = { character = FROM }
+					is_lover = FROM
+				}
+			}
+			opinion = {
+				who = FROMFROM
+				modifier = opinion_vengeance
+			}				
+		}
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						is_child_of = FROM
+						is_parent_of = FROM
+						is_close_relative = FROM
+						is_married = FROM
+						any_friend = { character = FROM }
+						is_lover = FROM
+					}
+				}	
+			}
+			opinion = {
+				who = FROMFROM
+				modifier = killed_vassal
+				months = 60
+			}					
+		}
+		tooltip = {
+			FROM = {		
+				death = {
+					death_reason = death_murder
+					killer = FROMFROM
+				}
+			}
+		}	
+		hidden_tooltip = {
+			FROM = {
+				FROM = {
+					clr_character_flag = corrupt_nobel
+				}
+			}
+		}
+	}
+}
+
+#20379 - Noble confess to spymaster
+letter_event = {
+	id = 20379
+	desc = "EVTDESC20379"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA20379"
+		hidden_tooltip = {
+			liege = { letter_event = { id = 20369 days = 1 } }
+		}
+	}
+}
+
+#20369 - Spymaster report to liege about confession
+letter_event = {
+	id = 20369
+	desc = "EVTDESC20369"
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"
+		FROMFROM = {
+			transfer_scaled_wealth = {
+				to = ROOT
+				value = 0.25
+				min = 10
+				max = 100
+			}
+		}
+	}
+}

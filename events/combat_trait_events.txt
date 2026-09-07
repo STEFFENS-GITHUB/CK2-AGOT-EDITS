@@ -1,0 +1,1118 @@
+###################################
+######Combat Trait Events##########
+namespace = combat_trait
+###################################
+
+###Credits to Galla (Greg) for coming up with 99% of these;
+#combat_trait.1 - Learning the sword from your guardian. (lvl-1)
+#5550114 - Maintenance, Dealing with multiple combat skill traits. [Disabled]
+###Oga Stuff###
+#combat_trait.2 - Guardian Notification. (For all lvl's)
+###Descision stuff
+#5550106 - Notify Father - Maimed
+#5550107 - Notify Son - Maimed
+#combat_trait.3 - Notify Father - Wounded
+#combat_trait.4 - Notify Son - Wounded
+#combat_trait.5 - Notify Father - Trained
+#combat_trait.6 - Notify Son - Trained
+###Demotions
+#combat_trait.7 - Getting old.
+#5550113 - Guardian Notification - Trained by Marshal - (For all lvls)
+
+##################################
+
+#combat_trait.1 - Learning the sword from your guardian
+character_event = {
+	id = combat_trait.1
+	desc = "EVTDESCcombat_trait.1"
+	picture = GFX_evt_child_sword
+	
+	min_age = 6
+	max_age = 16
+	capable_only = yes
+	is_sick = no
+	#prisoner = no
+
+	trigger = {
+		educator = {
+			OR = {
+				trait = misguided_warrior
+				trait = tough_soldier
+				trait = skilled_tactician
+				trait = brilliant_strategist
+				
+				trait = poor_warrior
+				trait = trained_warrior
+				trait = skilled_warrior
+				trait = master_warrior
+			}
+		}
+		NOT = { trait = master_warrior }
+		OR = { #must be at least 9 to become trained
+			age = 9
+			NOT = { trait = poor_warrior }
+		}
+		OR = { #must be at least 11 to become skilled
+			age = 11
+			NOT = { trait = trained_warrior }
+		}
+		OR = { #must be at least 13 to become formidable
+			age = 13
+			NOT = { trait = skilled_warrior }
+		}
+		NOT = { has_severe_disability_trigger = yes }
+		NOR = {
+			has_character_modifier = the_oubliette
+			has_character_modifier = the_dungeon
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 30
+		
+		modifier = {
+			factor = 2.5
+			trait = poor_warrior
+		}
+		modifier = {
+			factor = 6.5
+			trait = trained_warrior
+		}
+		modifier = {
+			factor = 10
+			trait = skilled_warrior
+		}
+			
+		modifier = {
+			factor = 1.5
+			prisoner = yes #in house arrest
+		}
+
+		# Mentor Effects
+		modifier = {
+			factor = 0.85
+			NOT = {
+				OR = {
+					trait = poor_warrior
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}	
+			educator = {
+				OR = {
+					trait = poor_warrior
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.85
+			trait = poor_warrior
+			educator = {
+				OR = {
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.85
+			trait = trained_warrior
+			educator = {
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.85
+			trait = skilled_warrior
+			educator = { trait = master_warrior }	
+		}
+		modifier = {
+			factor = 0.9
+			educator = {
+				OR = {
+					trait = diligent
+					trait = ambitious
+				}
+			}	
+		}
+		modifier = {
+			factor = 1.1
+			educator = {
+				OR = {
+					trait = slothful
+					trait = content
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.9
+			educator = { trait = duelist }
+		}
+
+		# Personality Effects
+		#Good
+		modifier = {
+			factor = 0.85
+			OR = {
+				trait = diligent
+				trait = brave
+				trait = ambitious
+				trait = rowdy
+				trait = willful
+				trait = conscientious
+			}
+		}
+		#Bad
+		modifier = {
+			factor = 1.35
+			OR = {
+				trait = slothful
+				trait = craven
+				trait = content
+				trait = timid
+				trait = indolent
+			}
+		}		
+		
+		# Intelligence Effects
+		#Good
+		modifier = {
+			factor = 0.85
+			trait = genius
+		}
+		modifier = {
+			factor = 0.9
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.9
+			trait = duelist
+		}
+		
+		#Bad
+		modifier = {
+			factor = 1.2
+			is_dumb_trigger = yes
+		}
+		modifier = {
+			factor = 1.35
+			trait = imbecile
+		}
+		
+		# Physical Effects
+		#Good
+		modifier = {
+			factor = 0.85
+			is_strong_trigger = yes
+		}
+		modifier = {
+			factor = 0.9
+			trait = tall
+		}
+		#Bad
+		modifier = {
+			factor = 1.35
+			is_weak_trigger = yes
+		}
+		modifier = {
+			factor = 2.5
+			OR = {
+				trait = clubfooted
+				trait = hunchback
+				trait = dwarf
+			}	
+		}
+		modifier = {
+			factor = 4
+			trait = inbred
+		}
+		modifier = {
+			factor = 5
+			trait = blinded
+		}
+		modifier = {
+			factor = 5
+			is_crippled_trigger = yes
+		}
+		modifier = {
+			factor = 4
+			is_maimed_trigger = yes
+		}
+		modifier = {
+			factor = 2.5
+			trait = disfigured_AGOT
+		}
+		modifier = {
+			factor = 2
+			trait = wounded
+		}
+		modifier = {
+			factor = 2
+			trait = stressed
+		}
+		modifier = {
+			factor = 2
+			trait = depressed
+		}
+		
+		#Sexism
+		modifier = {
+			factor = 1.4
+			is_female = yes
+			educator = {
+				NOT = {
+					OR = {
+						trait = wildling
+						culture = moon_clansman
+						female_warrior_culture_trigger = yes
+						culture = sarnorian
+					}
+				}	
+			}	
+		}
+		modifier = {
+			factor = 1.4
+			is_female = no
+			educator = {
+				female_warrior_culture_trigger = yes
+			}	
+		}
+		modifier = {
+			factor = 0.85
+			is_female = yes
+			educator = {
+				OR = {
+					culture_group = dornish
+					culture_group = first_men
+					culture = skagosi
+				}
+			}	
+		}	
+
+		#Cultural effects
+		modifier = {
+			factor = 0.9
+			culture = summer_islander
+		}	
+		modifier = {
+			factor = 3
+			pacifist = yes
+		}
+		modifier = { #give daynes boost to formidable
+			factor = 0.75
+			dynasty = 16
+			trait = skilled_warrior
+		}
+	}
+
+	option = {
+		name = "EVTOPTAcombat_trait.1" # Stick 'em with the pointy end!
+		hidden_tooltip = { educator = { character_event = { id = combat_trait.2 } } } #Guardian Notification.
+		tooltip = {
+			if = {
+				limit = { trait = skilled_warrior }
+				hidden_tooltip = { remove_trait = skilled_warrior }
+				add_trait = master_warrior
+			}	
+			if = {
+				limit = { trait = trained_warrior }
+				hidden_tooltip = { remove_trait = trained_warrior }
+				add_trait = skilled_warrior
+			}
+			if = {
+				limit = { trait = poor_warrior }
+				hidden_tooltip = { remove_trait = poor_warrior }
+				add_trait = trained_warrior
+			}
+			if = {
+				limit = { 
+					NOT = {
+						OR = {
+							trait = poor_warrior
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}
+					}
+				}
+				add_trait = poor_warrior
+			}
+		}	
+	}
+}
+
+#combat_trait.2 - Guardian Notification. (For all lvls)
+character_event = {
+	id = combat_trait.2
+	desc = "EVTDESCcombat_trait.2" #I have increased my wards fighting skills.
+	picture = "GFX_knights"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "OK"
+		FROM = {
+			if = {
+				limit = { trait = skilled_warrior }
+				hidden_tooltip = { remove_trait = skilled_warrior }
+				add_trait = master_warrior
+			}	
+			if = {
+				limit = { trait = trained_warrior }
+				hidden_tooltip = { remove_trait = trained_warrior }
+				add_trait = skilled_warrior
+			}
+			if = {
+				limit = { trait = poor_warrior }
+				hidden_tooltip = { remove_trait = poor_warrior }
+				add_trait = trained_warrior
+			}
+			if = {
+				limit = { 
+					NOT = {
+						OR = {
+							trait = poor_warrior
+							trait = trained_warrior
+							trait = skilled_warrior
+							trait = master_warrior
+						}
+					}
+				}
+				add_trait = poor_warrior
+			}
+		}
+	}
+}
+
+#5550114 - Maintenance, Dealing with multiple combat skill traits.
+#character_event = {
+#	id = 5550114
+#	name = "Maintenance"
+#
+#	trigger = {
+#		trait = master_warrior
+#		OR = {
+#			trait = trained_warrior
+#			trait = skilled_warrior
+#			trait = poor_warrior
+#		}
+#	}
+#
+#	mean_time_to_happen = { days = 1 }
+#
+#	option = {
+#		name = "Just so."
+#		remove_trait = poor_warrior
+#		remove_trait = trained_warrior
+#		remove_trait = skilled_warrior
+#	}
+#}
+
+#5550106 - Notify Father - Maimed
+#character_event = {
+#	id = 5550106
+#	desc = "EVTDESC5550106"
+#	picture = "GFX_knights"
+#	is_triggered_only = yes
+#	option = { name = "Poks!" }
+#}
+
+#5550107 - Notify Son - Maimed
+#character_event = {
+#	id = 5550107
+#	desc = "EVTDESC5550107"
+#	picture = "GFX_knights"
+#	is_triggered_only = yes
+#	option = { name = "Poks!" }
+#}
+
+#combat_trait.3 - Notify Father - Failed
+character_event = {
+	id = combat_trait.3
+	desc = "EVTDESCcombat_trait.3"
+	picture = "GFX_knights"
+	is_triggered_only = yes
+	
+	option = {
+		name = EVT_OPT_combat_trait.3_ambitious
+		trigger = {  has_character_flag = training_ambitious }
+		FROM = { add_trait = ambitious }
+		clr_character_flag = training_ambitious
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_slothful
+		trigger = { has_character_flag = training_slothful }
+		FROM = { add_trait = slothful }
+		clr_character_flag = training_slothful
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_brave
+		trigger = { has_character_flag = training_brave }
+		FROM = { add_trait = brave }
+		clr_character_flag = training_brave
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_ruthless
+		trigger = { has_character_flag = training_ruthless }
+		FROM = { add_trait = ruthless }
+		clr_character_flag = training_ruthless
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_intrigue
+		trigger = { has_character_flag = training_intrigue }
+		FROM = { change_intrigue = 1 }
+		clr_character_flag = training_intrigue
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_maimed
+		trigger = { has_character_flag = training_maimed }
+		FROM = { 
+			hidden_tooltip = { remove_trait = wounded }
+			add_maimed_trait_effect = yes 
+		}
+		clr_character_flag = training_maimed
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_wounded
+		trigger = { has_character_flag = training_wounded }
+		FROM = { add_trait_silently_wounded_effect = yes }
+		clr_character_flag = training_wounded
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_diligent
+		trigger = { has_character_flag = training_diligent }
+		FROM = { add_trait = diligent }
+		clr_character_flag = training_diligent
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_no_progress
+		trigger = { has_character_flag = training_no_progress }
+		clr_character_flag = training_no_progress
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_homosexual
+		trigger = { has_character_flag = training_homosexual }
+		FROM = { add_trait = homosexual }
+		clr_character_flag = training_homosexual
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.3_stewardship
+		trigger = { has_character_flag = training_stewardship }
+		FROM = { change_stewardship = 1 }
+		clr_character_flag = training_stewardship
+		prestige = -20
+		#clr_character_flag = training_son
+	}
+}
+
+#combat_trait.4 - Notify Son - Failed
+character_event = {
+	id = combat_trait.4
+	desc = "EVTDESCcombat_trait.4"
+	picture = "GFX_knights"
+	is_triggered_only = yes
+	
+	option = {
+		name = EVT_OPT_combat_trait.4
+		prestige = -40
+	}
+}
+
+#combat_trait.5 - Notify Father - Trained
+character_event = {
+	id = combat_trait.5
+	desc = "EVTDESCcombat_trait.5"
+	picture = "GFX_knight"
+	is_triggered_only = yes
+	
+	option = {
+		name = EVT_OPT_combat_trait.5_ruthless
+		trigger = { has_character_flag = training_ruthless }
+		FROM = { add_trait = ruthless }
+		clr_character_flag = training_ruthless
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_brave
+		trigger = { has_character_flag = training_brave }
+		FROM = { add_trait = brave }
+		clr_character_flag = training_brave
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_wroth
+		trigger = { has_character_flag = training_wroth }
+		FROM = { add_trait = wroth }
+		clr_character_flag = training_wroth
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_martial
+		trigger = { has_character_flag = training_martial }
+		FROM = { change_martial = 1 }
+		clr_character_flag = training_martial
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_cruel
+		trigger = { has_character_flag = training_cruel }
+		FROM = { add_trait = cruel }
+		clr_character_flag = training_cruel
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_nothing
+		trigger = { has_character_flag = training_nothing }
+		FROM = { tooltip = { show_portrait = yes } }
+		clr_character_flag = training_nothing
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_lustful_man
+		trigger = {
+			has_character_flag = training_lustful
+			FROM = { is_female = no }
+		}
+		FROM = { add_trait = lustful }
+		clr_character_flag = training_lustful
+		#clr_character_flag = training_son
+	}
+	option = {
+		name = EVT_OPT_combat_trait.5_lustful_woman
+		trigger = {
+			has_character_flag = training_lustful
+			FROM = { is_female = yes }
+		}
+		FROM = { add_trait = lustful }
+		clr_character_flag = training_lustful
+		#clr_character_flag = training_son
+	}
+}
+
+#combat_trait.6 - Notify Son - Trainded
+character_event = {
+	id = combat_trait.6
+	desc = "EVTDESCcombat_trait.6"
+	picture = "GFX_knight"
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAcombat_trait.6"	
+		if = {
+			limit = { trait = trained_warrior }
+			hidden_tooltip = { remove_trait = trained_warrior }
+			add_trait = skilled_warrior
+		}
+		if = {
+			limit = { trait = poor_warrior }
+			hidden_tooltip = { remove_trait = poor_warrior }
+			add_trait = trained_warrior
+		}
+		if = {
+			limit = { 
+				NOT = {
+					OR = {
+						trait = poor_warrior
+						trait = trained_warrior
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}
+			}
+			add_trait = poor_warrior
+		}
+	}
+}
+
+###Demotions###
+#combat_trait.7 - Getting old.
+# character_event = {
+	# id = combat_trait.7
+	# desc = "EVTDESCcombat_trait.7"
+	# picture = GFX_old_squire
+	
+	# min_age = 45
+
+	# trigger = {
+		# OR = {
+			# trait = poor_warrior
+			# trait = trained_warrior
+			# trait = skilled_warrior
+			# trait = master_warrior
+		# }
+		# NOT = { has_character_flag = demoted }
+	# }
+
+	# mean_time_to_happen = {
+		# months = 240
+		
+		# modifier = {
+			# factor = 0.5
+			# age = 55
+		# }
+		
+		# # Personality Effects
+		# #Good
+		# modifier = {
+			# factor = 1.5
+			# OR = {
+				# trait = diligent
+				# trait = brave
+			# }
+		# }
+		# #Bad
+		# modifier = {
+			# factor = 0.66
+			# trait = slothful
+		# }
+		
+		# # Physical Effects
+		# #Good
+		# modifier = {
+			# factor = 1.5
+			# health = 10
+		# }
+		# modifier = {
+			# factor = 1.5
+			# health = 9
+		# }
+		# modifier = {
+			# factor = 1.5
+			# health = 8
+		# }
+		# modifier = {
+			# factor = 1.5
+			# health = 7
+		# }
+		# modifier = {
+			# factor = 1.5
+			# health = 6
+		# }
+		# #Bad
+		# modifier = {
+			# factor = 0.75
+			# NOT = { health = 4 }
+		# }
+		# modifier = {
+			# factor = 0.66
+			# NOT = { health = 3 }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# NOT = { health = 2 }
+		# }
+		# modifier = {
+			# factor = 0.5
+			# NOT = { health = 1 }
+		# }
+	# }
+	
+	# immediate = {
+		# #Check for Rhllor magic
+		# if = {
+			# limit = { 
+				# religion = rhllor 
+				# OR = {
+					# trait = resurrected_by_rhllor
+					# AND = {
+						# OR = { 	
+							# trait = favored_by_rhllor
+							# trait = chosen_by_rhllor				
+						# }
+						# OR = {
+							# check_variable = { which = "red_god_magic" value = 1 }
+							# magic_returned_trigger = yes
+						# }
+					# }
+				# }	
+			# }
+			# random = {
+				# chance = 10
+				# modifier = {
+					# factor = 2
+					# trait = resurrected_by_rhllor
+				# }
+				# modifier = {
+					# factor = 2
+					# trait = chosen_by_rhllor
+				# }
+				# modifier = {
+					# factor = 2
+					# magic_returned_trigger = yes
+				# }
+				# modifier = {
+					# factor = 2
+					# check_variable = { which = "red_god_magic" value = 1 }
+				# }
+				# set_character_flag = rhllor_resurrected
+			# }
+		# }
+	# }
+
+	# option = {
+		# name = "EVTOPTAcombat_trait.7"
+		# trigger = { NOT = { has_character_flag = rhllor_resurrected } }
+		# set_character_flag = demoted
+		# if = {
+			# limit = { trait = poor_warrior }
+			# remove_trait = poor_warrior			
+		# }
+		# if = {
+			# limit = { trait = trained_warrior }
+			# remove_trait = trained_warrior
+			# add_trait = poor_warrior
+		# }
+		# if = {
+			# limit = { trait = skilled_warrior }
+			# remove_trait = skilled_warrior
+			# add_trait = trained_warrior
+		# }
+		# if = {
+			# limit = { trait = master_warrior }
+			# remove_trait = master_warrior
+			# add_trait = skilled_warrior
+		# }		
+	# }	
+	# option = {
+		# name = "EVTOPTBcombat_trait.7"
+		# trigger = { has_character_flag = rhllor_resurrected }
+		# clr_character_flag = rhllor_resurrected	
+		# job_spiritual = {
+			# custom_tooltip = {
+				# text = TOOLTIPcombat_trait.7RHLLOR
+			# }
+		# }	
+		# if = {
+			# limit = { check_variable = { which = "red_god_magic" value = 0.9 } }
+			# change_variable = { which = "red_god_magic" value = -1 }
+		# }
+		# random_list = {
+			# 100 = { }
+			# 10 = {
+				# if = { 
+					# limit = { NOT = { trait = fire_obsessed } }
+					# add_trait = fire_obsessed
+					# hidden_tooltip = { character_event = { id = trait_notification.2 } }
+				# }
+			# }
+			# 15 = {
+				# if = { 
+					# limit = { NOT = { trait = zealous } }
+					# if = {
+						# limit = { trait = cynical }
+						# remove_trait = cynical
+					# }
+					# add_trait = zealous
+					# hidden_tooltip = { character_event = { id = 38269 }  }
+				# }
+			# }
+			# 5 = {
+				# if = { 
+					# limit = { NOT = { trait = lunatic } }
+					# add_trait = lunatic 
+					# hidden_tooltip = { character_event = { id = 38304 }  }
+				# }
+			# }
+		# }
+	# }	
+# }
+#5550113 - Guardian Notification - Trained by Marshal - (For all lvls)
+# character_event = {
+	# id = 5550113
+	# desc = "EVTDESC5550113" #The Master at Arms has increased my wards fighting skills.
+	# picture = "GFX_knights"
+	
+	# is_triggered_only = yes
+	
+	# option = { name = "Ok" }
+# }
+
+#Distribute combat traits at the start of the game
+character_event = {
+	id = combat_trait.8
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_rulers = yes
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = { year = 8280 } #later years are already accurate	
+				is_female = no
+				no_warrior_trigger = yes
+				NOT = { trait = incapable }
+				NOT = { is_crippled_trigger = yes }
+				NOT = { trait = infirm }
+				NOT = { trait = maester }
+				NOT = { trait = archmaester }
+				NOT = { trait = septon }
+				NOT = { trait = red_priest }	
+				NOT = { dynasty = 496 }
+				NOT = { dynasty = 59 }	
+			}
+			if = {
+				limit = {	
+					NOR = {
+						trait = poor_warrior
+						trait = trained_warrior
+						trait = skilled_warrior
+						trait = master_warrior
+					}					
+					age = 10									
+				}
+				random_list = {
+					10 = { add_trait = skilled_warrior }
+					40 = { add_trait = trained_warrior }
+					40 = { add_trait = poor_warrior }
+					10 = { 
+						modifier = {
+							factor = 10
+							NOT = { age = 16 }
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_knighthood_religion_trigger = yes
+					NOT = { trait = knight }
+					NOT = { trait = squire }	
+					age = 16
+				}
+				knight_character_effect = yes
+			}
+		}	
+		any_vassal = {
+			limit = { 
+				tier = BARON
+				is_feudal = yes
+				is_female = no
+				NOR = {
+					trait = poor_warrior
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				NOT = { trait = incapable }
+				NOT = { is_crippled_trigger = yes }
+				NOT = { trait = infirm }
+				age = 10
+				
+				OR = {
+					NOT = { father_even_if_dead = { always = yes } }
+					NOT = { year = 8280 } #later years are already accurate		
+				}
+			}
+			if = { #spread random seed
+				limit = { 
+					NOT = { age = 16 }
+				}
+				character_event = { id = combat_trait.9 }
+			}
+			if = {
+				limit = {					
+					age = 16
+					NOT = { age = 32 } 
+				}
+				character_event = { id = combat_trait.9 days = 1 }
+			}
+			if = {
+				limit = {					
+					age = 32
+					NOT = { age = 48 } 
+				}
+				character_event = { id = combat_trait.9 days = 2 }
+			}
+			if = {
+				limit = {					
+					age = 48
+				}
+				character_event = { id = combat_trait.9 days = 3 }
+			}
+		}
+		any_courtier = {
+			limit = { 
+				is_ruler = no
+				is_female = no
+				no_warrior_trigger = yes
+				NOR = {
+					trait = poor_warrior
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				NOT = { trait = incapable }
+				NOT = { is_crippled_trigger = yes }
+				NOT = { trait = infirm }
+				NOT = { trait = maester }
+				NOT = { trait = archmaester }
+				NOT = { trait = septon }
+				NOT = { trait = red_priest }
+				NOT = { trait = dragon }
+				is_priest = no
+				age = 10
+				
+				OR = {
+					NOT = { father_even_if_dead = { always = yes } }
+					NOT = { year = 8280 } #later years are already accurate		
+				}
+				NOT = { dynasty = 496 }
+				NOT = { dynasty = 59 }
+			}
+			if = { #spread random seed
+				limit = { 
+					NOT = { age = 16 }
+				}
+				character_event = { id = combat_trait.9 }
+			}
+			if = {
+				limit = {					
+					age = 16
+					NOT = { age = 32 } 
+				}
+				character_event = { id = combat_trait.9 days = 1 }
+			}
+			if = {
+				limit = {					
+					age = 32
+					NOT = { age = 48 } 
+				}
+				character_event = { id = combat_trait.9 days = 2 }
+			}
+			if = {
+				limit = {					
+					age = 48
+				}
+				character_event = { id = combat_trait.9 days = 3 }
+			}
+		}
+	}
+
+	option = {
+		name = OK	
+	}	
+}
+character_event = { 
+	id = combat_trait.9
+
+	is_triggered_only = yes
+	
+	option = {
+		name = NONE
+		ai_chance = { 
+			factor = 10 
+			modifier = {
+				factor = 10
+				NOT = { age = 16 }
+			}
+		}
+		if = {
+			limit = {
+				has_knighthood_religion_trigger = yes
+				NOT = { trait = knight }
+				NOT = { trait = squire }
+				age = 16
+			}
+			random = {
+				chance = 20
+				modifier = {
+					factor = 2
+					liege = { is_close_relative = ROOT }
+				}
+				knight_character_effect = yes
+			}	
+		}
+	}
+	option = {
+		name = POOR
+		ai_chance = { factor = 40 }
+		add_trait = poor_warrior
+		if = {
+			limit = {
+				has_knighthood_religion_trigger = yes
+				NOT = { trait = knight }
+				NOT = { trait = squire }
+				age = 16
+			}
+			random = {
+				chance = 25
+				modifier = {
+					factor = 2
+					liege = { is_close_relative = ROOT }
+				}
+				knight_character_effect = yes
+			}	
+		}
+	}	
+	option = {
+		name = TRAINED
+		ai_chance = { factor = 40 }
+		add_trait = trained_warrior
+		if = {
+			limit = {
+				has_knighthood_religion_trigger = yes
+				NOT = { trait = knight }
+				NOT = { trait = squire }
+				age = 16
+			}
+			random = {
+				chance = 50
+				modifier = {
+					factor = 2
+					liege = { is_close_relative = ROOT }
+				}
+				knight_character_effect = yes
+			}	
+		}
+	}
+	option = {
+		name = SKILLED
+		ai_chance = { factor = 10 }
+		add_trait = skilled_warrior
+		if = {
+			limit = {
+				has_knighthood_religion_trigger = yes
+				NOT = { trait = knight }
+				NOT = { trait = squire }
+				age = 16
+			}
+			random = {
+				chance = 80
+				modifier = {
+					factor = 2
+					liege = { is_close_relative = ROOT }
+				}				
+				knight_character_effect = yes
+			}	
+		}
+	}
+}

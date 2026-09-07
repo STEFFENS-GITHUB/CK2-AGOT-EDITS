@@ -1,0 +1,980 @@
+# Targetted decisions are possible vs _all_ other characters and shown are in the Diplomacy View, not the Intrigue View. The taker is in the FROM scope.
+#
+# filter = [self/court/home_court/vassals/sub_realm/realm/dynasty/all] ('self' MUST be set for decisions targetting only the taker, the other filter types can be set to lessen CPU load)
+# ai_target_filter = [self/court/home_court/vassals/sub_realm/realm/dynasty/all] (which characters for which the AI evaluates the decision.)
+#	court: all characters in the AI's host court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	home_court: all characters in the AI's home court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	vassals: direct vassal rulers of the AI's employer
+#	sub_realm: all characters below the AI's employer
+#	realm: all characters in the same top realm as the AI
+#	dynasty: all members of the same dynasty
+#	all: all living characters (Avoid if possible. VERY CPU-HEAVY!)
+#	
+
+targetted_decisions = {
+
+	redgod_heal_basic = { 
+		ai_target_filter = home_court
+		filter = realm
+		is_high_prio = yes
+		only_playable = yes
+		diplomacy_icon = GFX_decision_rhllor
+		
+		from_potential = {
+			is_ruler = yes
+			religion = rhllor		
+			OR = { 	
+				trait = favored_by_rhllor
+				trait = chosen_by_rhllor
+			}
+			is_devil_worshiper_trigger = no
+			OR = {
+				ai = no
+				check_variable = { which = "red_god_magic" value = 1 }
+			}
+		}
+
+		potential = {
+			NOT = { character = FROM }
+			NOT = { trait = dragon }
+			OR = { 
+				is_liege_or_above = FROM
+				same_liege = FROM
+				dynasty = FROM
+				is_close_relative = FROM
+			}
+			OR = {
+				is_ill = yes
+				trait = wounded
+				trait = depressed				
+				trait = stressed
+				trait = lovers_pox
+			}
+		}
+					
+		allow = { 		
+			FROM = {
+				check_variable = { which = "red_god_magic" value = 1 }
+				job_spiritual = { trait = red_priest }
+				OR = { 	
+					trait = favored_by_rhllor
+					trait = chosen_by_rhllor
+				}
+				NOT = { is_inaccessible_trigger = yes }
+				conditional_tooltip = {
+					trigger = { ai = no }
+					in_command = no
+				}	
+			}
+			conditional_tooltip = { #allow to heal fellow councillors
+				trigger = {
+					NAND = {
+						same_liege = FROM
+						is_voter = yes
+						in_command = no					
+						FROM = {
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							in_command = no
+						}
+					}
+				}
+				at_location = FROM
+			}	
+			NOT = { has_character_modifier = redgod_healing_timer }
+			NOT = { is_inaccessible_trigger = yes } 
+			OR = {
+				is_adult = yes
+				religion = rhllor
+			}
+		}
+				
+		effect = {
+			hidden_tooltip = {
+				FROM = {
+					job_spiritual = {
+						save_event_target_as = red_priest
+					}
+				}	
+				add_character_modifier = {
+					name = redgod_healing_timer
+					duration = 365
+				}
+			}
+			if = {
+				limit = {
+					religion = rhllor
+				}
+				FROM = {
+					change_variable = { which = "red_god_magic" value = -1 }
+					job_spiritual = {
+						random_list = {
+							100 = {
+								custom_tooltip = {
+									text = TOOLTIPredgod_heal_basicSUCCESS
+									hidden_tooltip = {
+										hidden_tooltip = { FROM = { character_event = { id = red_priest.30 } } }
+									}
+								}
+								modifier = {
+									factor = 0.25
+									NOT = { magic_returned_trigger = yes }
+								}
+								modifier = {
+									factor = 2
+									FROM = { trait = chosen_by_rhllor }
+								}
+								modifier = {
+									factor = 2
+									trait = chosen_by_rhllor
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { learning = 4 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { learning = 8 }
+								}
+								modifier = {
+									factor = 1.5
+									learning = 12
+								}
+								modifier = {
+									factor = 1.5
+									learning = 16
+								}
+								modifier = {
+									factor = 1.5
+									learning = 20
+								}
+								
+								modifier = {
+									factor = 0.66
+									NOT = { intrigue = 4 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { intrigue = 8 }
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 12
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 16
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 20
+								}
+								
+								modifier = {
+									factor = 0.66
+									NOT = { piety = 0 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { piety = 50 }
+								}
+								modifier = {
+									factor = 1.5
+									piety = 150
+								}
+								modifier = {
+									factor = 1.5
+									piety = 250
+								}
+								modifier = {
+									factor = 1.5
+									piety = 400
+								}
+								modifier = {
+									factor = 1.5
+									piety = 600
+								}	
+							}
+							50 = {
+								custom_tooltip = {
+									text = TOOLTIPredgod_heal_basicFAIL
+									hidden_tooltip = {
+										hidden_tooltip = { FROM = { character_event = { id = red_priest.31 } } }
+									}
+								}	
+							}
+						}
+					}
+				}				
+			}
+			if = {
+				limit = { 
+					NOT = { religion = rhllor }
+				}
+				character_event = { id = red_priest.13 tooltip = TOOLTIPREDGODHEALCONVERT }
+			} 
+		}			
+		ai_will_do = { 
+			factor = 1
+			modifier = {
+				factor = 0.1 # Slow it down a bit
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					trait = resurrected_by_rhllor
+					NOT = { check_variable = { which = "red_god_magic" value = 5.1 } }
+				}	
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = slave
+					NOT = { reverse_opinion = { who = FROM value = 0 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 2
+				is_ruler = yes
+			}
+			modifier = {
+				factor = 3
+				reverse_opinion = { who = FROM value = 50 }
+			}
+		} 
+	}
+	redgod_heal_chosen = { 
+		ai_target_filter = home_court
+		filter = realm
+		is_high_prio = yes
+		only_playable = yes
+		diplomacy_icon = GFX_decision_rhllor
+		
+		from_potential = {
+			is_ruler = yes
+			religion = rhllor
+			trait = chosen_by_rhllor
+			is_devil_worshiper_trigger = no
+			OR = {
+				ai = no
+				check_variable = { which = "red_god_magic" value = 2 }
+			}
+		}
+
+		potential = {
+			NOT = { character = FROM }
+			NOT = { trait = dragon }
+			OR = { 
+				is_liege_or_above = FROM
+				same_liege = FROM
+				dynasty = FROM
+				is_close_relative = FROM
+			}
+			OR = {
+				trait = clubfooted
+				trait = harelip
+				trait = hunchback
+				trait = lisp 
+				trait = stutter
+				trait = ugly
+				trait = slow 
+				trait = imbecile
+				trait = weak 
+				trait = inbred
+				trait = crippled
+				trait = disfigured_AGOT				
+				trait = maimed
+				trait = infirm
+				trait = incapable
+				trait = possessed
+				#trait = lunatic
+				trait = blinded_age
+				
+				trait = disfigured
+				trait = mangled
+				trait = severely_injured
+				trait = burned
+			}
+		}
+					
+		allow = { 		
+			FROM = {
+				check_variable = { which = "red_god_magic" value = 2 }
+				job_spiritual = { trait = red_priest }
+				trait = chosen_by_rhllor
+				NOT = { is_inaccessible_trigger = yes }
+				conditional_tooltip = {
+					trigger = { ai = no }
+					in_command = no
+				}	
+			}
+			conditional_tooltip = { #allow to heal fellow councillors
+				trigger = {
+					NAND = {
+						same_liege = FROM
+						is_voter = yes
+						in_command = no					
+						FROM = {
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}	
+							in_command = no
+						}
+					}
+				}
+				at_location = FROM
+			}		
+			NOT = { has_character_modifier = redgod_healing_timer }
+			NOT = { is_inaccessible_trigger = yes } 
+			OR = {
+				is_adult = yes
+				religion = rhllor
+			}
+		}
+				
+		effect = {
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = redgod_healing_timer
+					duration = 365
+				}
+				FROM = {
+					job_spiritual = {
+						save_event_target_as = red_priest
+					}
+				}	
+			}
+			if = {
+				limit = {
+					religion = rhllor
+				}
+				FROM = {
+					change_variable = { which = "red_god_magic" value = -2 }
+					job_spiritual = {
+						random_list = {
+							100 = {
+								custom_tooltip = {
+									text = TOOLTIPredgod_heal_basicSUCCESS
+									hidden_tooltip = {
+										hidden_tooltip = { FROM = { character_event = { id = red_priest.34 } } }
+									}
+								}
+								modifier = {
+									factor = 0.25
+									NOT = { magic_returned_trigger = yes }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { learning = 4 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { learning = 8 }
+								}
+								modifier = {
+									factor = 1.5
+									learning = 12
+								}
+								modifier = {
+									factor = 1.5
+									learning = 16
+								}
+								modifier = {
+									factor = 1.5
+									learning = 20
+								}
+								
+								modifier = {
+									factor = 0.66
+									NOT = { intrigue = 4 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { intrigue = 8 }
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 12
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 16
+								}
+								modifier = {
+									factor = 1.5
+									intrigue = 20
+								}
+								
+								modifier = {
+									factor = 0.66
+									NOT = { piety = 0 }
+								}
+								modifier = {
+									factor = 0.66
+									NOT = { piety = 50 }
+								}
+								modifier = {
+									factor = 1.5
+									piety = 150
+								}
+								modifier = {
+									factor = 1.5
+									piety = 250
+								}
+								modifier = {
+									factor = 1.5
+									piety = 400
+								}
+								modifier = {
+									factor = 1.5
+									piety = 600
+								}	
+							}
+							50 = {
+								custom_tooltip = {
+									text = TOOLTIPredgod_heal_basicFAIL
+									hidden_tooltip = {
+										hidden_tooltip = { FROM = { character_event = { id = red_priest.35 } } }
+									}
+								}	
+							}
+						}
+					}
+				}				
+			}
+			if = {
+				limit = { 
+					NOT = { religion = rhllor }
+				}
+				character_event = { id = red_priest.14 tooltip = TOOLTIPREDGODHEALCONVERT }
+			}  
+		}			
+		ai_will_do = { 
+			factor = 1
+			modifier = {
+				factor = 0.1 # Slow it down a bit
+			}
+			
+			modifier = {
+				factor = 0
+				FROM = {
+					trait = resurrected_by_rhllor
+					NOT = { check_variable = { which = "red_god_magic" value = 5.1 } }
+				}	
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = slave
+					NOT = { reverse_opinion = { who = FROM value = 0 } }
+				}
+			}
+			modifier = {
+				factor = 4
+				is_close_relative = FROM
+			}
+			modifier = {
+				factor = 2
+				is_ruler = yes
+			}
+			modifier = {
+				factor = 3
+				reverse_opinion = { who = FROM value = 50 }
+			}
+		}
+	}
+	redgod_heal_basic_self = { 
+		ai_target_filter = self	
+		filter = self
+		is_high_prio = yes
+		only_playable = yes
+		diplomacy_icon = GFX_decision_rhllor
+		
+		potential = {
+			is_ruler = yes
+			religion = rhllor
+			OR = { 	
+				trait = favored_by_rhllor
+				trait = chosen_by_rhllor
+			}
+			OR = {
+				is_ill = yes
+				trait = wounded
+				trait = depressed				
+				trait = stressed
+				trait = lovers_pox
+			}
+			is_devil_worshiper_trigger = no
+		}
+					
+		allow = {
+			check_variable = { which = "red_god_magic" value = 1 }
+			job_spiritual = { trait = red_priest }
+			NOT = { has_character_modifier = redgod_healing_timer }
+			OR = { 	
+				trait = favored_by_rhllor
+				trait = chosen_by_rhllor
+			}
+		}
+				
+		effect = {
+			change_variable = { which = "red_god_magic" value = -1 }
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = redgod_healing_timer
+					duration = 365
+				}
+			}
+			job_spiritual = {
+				save_event_target_as = red_priest
+				random_list = {
+					100 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicSUCCESS
+							hidden_tooltip = {
+								hidden_tooltip = { ROOT = { character_event = { id = red_priest.26 } } }
+							}
+						}
+						modifier = {
+							factor = 0.25
+							NOT = { magic_returned_trigger = yes }
+						}
+						modifier = {
+							factor = 2
+							ROOT = { trait = chosen_by_rhllor }
+						}
+						modifier = {
+							factor = 2
+							trait = chosen_by_rhllor
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							learning = 12
+						}
+						modifier = {
+							factor = 1.5
+							learning = 16
+						}
+						modifier = {
+							factor = 1.5
+							learning = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 12
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 16
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 0 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 50 }
+						}
+						modifier = {
+							factor = 1.5
+							piety = 150
+						}
+						modifier = {
+							factor = 1.5
+							piety = 250
+						}
+						modifier = {
+							factor = 1.5
+							piety = 400
+						}
+						modifier = {
+							factor = 1.5
+							piety = 600
+						}	
+					}
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicFAIL
+							hidden_tooltip = {
+								hidden_tooltip = { ROOT = { character_event = { id = red_priest.27 } } }
+							}
+						}	
+					}
+				}
+			}
+			
+		}			
+		ai_will_do = {
+			factor = 0.75
+			modifier = {
+				factor = 0
+				trait = resurrected_by_rhllor
+				NOT = { check_variable = { which = "red_god_magic" value = 5.1 } }
+			}
+		} 
+	}
+	redgod_heal_chosen_self = { 
+		ai_target_filter = self	
+		filter = self
+		is_high_prio = yes
+		only_playable = yes
+		diplomacy_icon = GFX_decision_rhllor
+		
+		potential = {
+			is_ruler = yes
+			religion = rhllor			
+			trait = chosen_by_rhllor
+			OR = {
+				trait = clubfooted
+				trait = harelip
+				trait = hunchback
+				trait = lisp 
+				trait = stutter
+				trait = ugly
+				trait = slow 
+				trait = imbecile
+				trait = weak 
+				trait = inbred
+				trait = crippled
+				trait = disfigured_AGOT				
+				trait = maimed
+				trait = infirm
+				trait = incapable
+				trait = possessed
+				#trait = lunatic
+				trait = blinded_age
+			
+				trait = disfigured
+				trait = mangled
+				trait = severely_injured
+				trait = burned
+			}
+			is_devil_worshiper_trigger = no
+		}
+					
+		allow = {
+			check_variable = { which = "red_god_magic" value = 2 }
+			job_spiritual = { trait = red_priest }
+			NOT = { has_character_modifier = redgod_healing_timer }
+			trait = chosen_by_rhllor
+		}
+				
+		effect = {
+			change_variable = { which = "red_god_magic" value = -2 }
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = redgod_healing_timer
+					duration = 365
+				}
+			}
+			job_spiritual = {
+				save_event_target_as = red_priest
+				random_list = {
+					100 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicSUCCESS
+							hidden_tooltip = {
+								hidden_tooltip = { ROOT = { character_event = { id = red_priest.28 } } }
+							}
+						}
+						modifier = {
+							factor = 0.25
+							NOT = { magic_returned_trigger = yes }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							learning = 12
+						}
+						modifier = {
+							factor = 1.5
+							learning = 16
+						}
+						modifier = {
+							factor = 1.5
+							learning = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 12
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 16
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 0 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 50 }
+						}
+						modifier = {
+							factor = 1.5
+							piety = 150
+						}
+						modifier = {
+							factor = 1.5
+							piety = 250
+						}
+						modifier = {
+							factor = 1.5
+							piety = 400
+						}
+						modifier = {
+							factor = 1.5
+							piety = 600
+						}	
+					}
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_heal_basicFAIL
+							hidden_tooltip = {
+								hidden_tooltip = { ROOT = { character_event = { id = red_priest.29 } } }
+							}
+						}	
+					}
+				}
+			}
+		}			
+		ai_will_do = {
+			factor = 0.75
+			modifier = {
+				factor = 0
+				trait = resurrected_by_rhllor
+				NOT = { check_variable = { which = "red_god_magic" value = 5.1 } }
+			}
+		}
+	}
+}
+
+decisions = { ##self protection
+
+	redgod_reveal_plots = { #reveal plots
+		is_high_prio = yes
+		only_playable = yes
+		potential = {
+			is_ruler = yes
+			religion = rhllor
+			OR = {
+				ai = no
+				check_variable = { which = "red_god_magic" value = 0.5 }
+			}
+			is_devil_worshiper_trigger = no
+		}
+		allow = {
+			check_variable = { which = "red_god_magic" value = 0.5 }
+			custom_tooltip = {
+				text = TOOLTIPredgod_reveal_plots
+				hidden_tooltip = {
+					OR = {
+						any_unknown_plotter = { 
+							plot_target_char = { always = yes }
+							NOT = { has_plot = plot_rescue_prisoner }
+							NOT = { plot_is_known_by = ROOT }
+							NOT = { character = ROOT }
+						}
+						any_spouse = {
+							any_unknown_plotter = {
+								plot_target_char = { always = yes }
+								NOT = { has_plot = plot_rescue_prisoner }
+								NOT = { plot_is_known_by = ROOT }
+								NOT = { character = ROOT }
+							}
+						}
+						any_close_relative = {
+							OR = {
+								dynasty = ROOT
+								is_child_of = ROOT
+								is_grandchild_of = ROOT
+								is_parent_of = ROOT
+								is_grandparent_of = ROOT
+								sibling = ROOT							
+							}
+							any_unknown_plotter = {
+								plot_target_char = { always = yes }
+								NOT = { has_plot = plot_rescue_prisoner }
+								NOT = { plot_is_known_by = ROOT }
+								NOT = { character = ROOT }
+							}
+						}
+					}
+				}	
+			}	
+			job_spiritual = { trait = red_priest }
+			NOT = { has_character_modifier = redgod_reveal_plots_timer }
+		}
+				
+		effect = {
+			change_variable = { which = "red_god_magic" value = -0.5 }
+			job_spiritual = {
+				save_event_target_as = red_priest
+				random_list = {
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_reveal_plotsSUCCESS
+							hidden_tooltip = { ROOT = { character_event = { id = red_priest.23 } } }
+						}
+						modifier = {
+							factor = 0.25
+							NOT = { magic_returned_trigger = yes }
+						}
+						modifier = {
+							factor = 3
+							ROOT = { trait = chosen_by_rhllor }
+						}
+						modifier = {
+							factor = 2
+							ROOT = { trait = favored_by_rhllor }
+						}
+						modifier = {
+							factor = 3
+							trait = chosen_by_rhllor
+						}
+						modifier = {
+							factor = 2
+							trait = favored_by_rhllor
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { learning = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							learning = 12
+						}
+						modifier = {
+							factor = 1.5
+							learning = 16
+						}
+						modifier = {
+							factor = 1.5
+							learning = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 4 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { intrigue = 8 }
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 12
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 16
+						}
+						modifier = {
+							factor = 1.5
+							intrigue = 20
+						}
+						
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 0 }
+						}
+						modifier = {
+							factor = 0.66
+							NOT = { piety = 50 }
+						}
+						modifier = {
+							factor = 1.5
+							piety = 150
+						}
+						modifier = {
+							factor = 1.5
+							piety = 250
+						}
+						modifier = {
+							factor = 1.5
+							piety = 400
+						}
+						modifier = {
+							factor = 1.5
+							piety = 600
+						}	
+					}
+					50 = {
+						custom_tooltip = {
+							text = TOOLTIPredgod_reveal_plotsFAIL
+							hidden_tooltip = { ROOT = { character_event = { id = red_priest.24 } } }
+						}	
+					}
+				}
+			}
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = redgod_reveal_plots_timer
+					duration = 365
+				}
+			}
+		}		
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 0.3
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "red_god_magic" value = 2.5 } }
+			}
+		} 
+	}
+}

@@ -1,0 +1,2913 @@
+# New Faction Events
+
+namespace = faction_event_new
+#Claimant is invited to plotter's court
+letter_event = {
+	id = faction_event_new.1
+	desc = "EVTDESCfaction_event_new.1"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.1" #Yes	
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				NOT = { liege = { reverse_opinion = { who = PREV value = 0 } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { liege = { reverse_opinion = { who = PREV value = -25 } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { liege = { reverse_opinion = { who = PREV value = -50 } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { liege = { reverse_opinion = { who = PREV value = -75 } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { liege = { reverse_opinion = { who = PREV value = -99 } } }
+			}
+		}
+		FROM = { 
+			letter_event = { id = faction_event_new.2 days = 4 }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBfaction_event_new.2" #No
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				liege = { reverse_opinion = { who = PREV value = 25 } } 
+			}
+			modifier = {
+				factor = 2
+				liege = { reverse_opinion = { who = PREV value = 50 } } 
+			}
+			modifier = {
+				factor = 2
+				liege = { reverse_opinion = { who = PREV value = 75 } } 
+			}
+			modifier = {
+				factor = 2
+				liege = { reverse_opinion = { who = PREV value = 100 } } 
+			}
+		}
+		FROM = { 
+			letter_event = { id = faction_event_new.3 days = 4 }
+		}		
+	}
+}	
+#Accepts invitation
+letter_event = {
+	id = faction_event_new.2
+	desc = "EVTDESCfaction_event_new.2"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		leads_faction = faction_claimant			
+		supported_claimant = { 
+			character = FROM
+			is_ruler = no 
+			NOT = { liege = { character = ROOT } }
+		}
+	}
+
+	option = {
+		name = "EVTOPTAfaction_event_new.2" #Yes	
+		FROM = { 
+			hidden_tooltip = { liege = { character_event = { id = faction_event_new.2099 } } }
+			set_character_flag = invited_faction_claimant #used to check for player trying to invite them to court
+			move_character = ROOT 
+			opinion = { who = ROOT modifier = opinion_supporting_claim months = 60 }
+		}
+	}
+}	
+character_event = { #inform old host
+	id = faction_event_new.2099
+	desc = "EVTDESCfaction_event_new.2099"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.2099"
+		FROM = { show_portrait = yes }
+	}
+}	
+#Rejects invitation
+letter_event = {
+	id = faction_event_new.3
+	desc = "EVTDESCfaction_event_new.3"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.3" #Yes	
+		set_character_flag = claimant_rejects_invite
+	}
+}	
+#Inform claimant kidnapped
+character_event = {
+	id = faction_event_new.4
+	desc = "EVTDESCfaction_event_new.4"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.4" #Yes	
+		FROM = { character_event = { id = faction_event_new.7 days = 7 } }
+	}
+}	
+#Inform kidnap failed
+character_event = {
+	id = faction_event_new.5
+	desc = "EVTDESCfaction_event_new.5"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.5" #Yes	
+	}
+}
+#Inform kidnap discovered
+character_event = {
+	id = faction_event_new.6
+	desc = "EVTDESCfaction_event_new.6"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.6" #Yes	
+		FROM = { character_event = { id = faction_event_new.8 days = 7 } }
+		liege = { character_event = { id = faction_event_new.9 days = 7 } }
+	}
+}
+#Inform  plotter claimant kidnapped
+character_event = {
+	id = faction_event_new.7
+	desc = "EVTDESCfaction_event_new.7"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.7" #Yes	
+		FROM = { move_character = ROOT }
+		FROM = {
+			imprison = ROOT
+			hidden_tooltip = {
+				remove_character_modifier = the_dungeon
+				add_character_modifier = { 
+					name = house_arrest
+					duration = -1
+				}
+			}
+			opinion = {
+				who = ROOT
+				modifier = kidnapped_me
+				years = 5
+			}	
+		}
+	}
+}	
+#Inform  plotter discovered
+character_event = {
+	id = faction_event_new.8
+	desc = "EVTDESCfaction_event_new.8"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.8" #Yes	
+		set_character_flag = kidnapped_failed
+		FROM = {
+			opinion = {
+				who = ROOT
+				modifier = attempted_kidnapping
+				years = 5
+			}
+		}
+		liege = {
+			opinion = {
+				who = ROOT
+				modifier = attempted_kidnapping
+				years = 5
+			}
+		}
+	}
+}	
+#Inform target discovered
+character_event = {
+	id = faction_event_new.9
+	desc = "EVTDESCfaction_event_new.9"
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.9" #Yes			
+		FROM = { tooltip = { show_portrait = yes } }
+	}
+}
+###Liege is informed faction defects to the enemy
+letter_event = {
+	id = faction_event_new.10
+	desc = "EVTDESCfaction_event_new.10"
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.10" #Yes
+		FROM = {
+			FROM = { 
+				hidden_tooltip = {
+					any_demesne_title = {
+						limit = { 
+							higher_tier_than = baron
+							NOT = {
+								OR = {
+									has_de_jure_pretension = ROOT 
+									dejure_liege_title = { has_de_jure_pretension = ROOT }
+									dejure_liege_title = { dejure_liege_title = { has_de_jure_pretension = ROOT } }
+								}	
+							}
+						}	
+						add_pressed_claim = ROOT 
+					}	
+				}				
+				any_faction_backer = {
+					tooltip = { show_portrait = yes }
+				}
+				any_faction_backer = {
+					hidden_tooltip = {
+						any_demesne_title = {
+							limit = { 
+								higher_tier_than = baron
+								NOT = {
+									OR = {
+										has_de_jure_pretension = ROOT 
+										dejure_liege_title = { has_de_jure_pretension = ROOT }
+										dejure_liege_title = { dejure_liege_title = { has_de_jure_pretension = ROOT } }
+									}	
+								}
+							}	
+							add_pressed_claim = ROOT 
+						}		
+					}
+				}
+				set_defacto_liege = PREV
+				reverse_opinion = { who = PREV modifier = opinion_defected_to_me }
+				set_character_flag = indep_plot_defected
+				hidden_tooltip = {
+					ROOT = {
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_INDEP_FACTION_DEFECT_A
+								portrait = [Prev.GetID]
+							}
+						}	
+					}
+					if = {
+						limit = { ai = no }
+						chronicle = {
+							entry = CHRONICLE_INDEP_FACTION_DEFECT_B
+							portrait = [Prev.GetID]
+						}
+					}
+					clr_character_flag = inherit_war
+					clr_character_flag = supporting_king 
+					clr_character_flag = neutral
+					clr_character_flag = against_king 
+					clr_character_flag = against_liege
+					clr_character_flag = rebel_leader
+					clr_character_flag = independant
+					clr_character_flag = join_independance_asked
+					clr_character_flag = no_kingship
+					clr_character_flag = mega_war_decision_cooldown
+					remove_trait = rebel_leader
+					any_demesne_title = {
+						limit = { 
+							NOT = { tier = BARON } 
+							NOT = { tier = EMPEROR }
+						}
+						set_variable = { which = "de_facto_empire" value = 0 }
+					}
+					any_demesne_title = {
+						limit = { 
+							NOT = { tier = BARON } 
+							lower_tier_than = KING
+						}
+						set_variable = { which = "de_facto_kingdom" value = 0 }
+					}
+					if = {
+						limit = { liege = { tier = EMPEROR } }
+						set_character_flag = supporting_king 
+					}
+				}
+			}
+		}	
+	}
+}
+###faction baccker is informed faction defects to the enemy
+letter_event = {
+	id = faction_event_new.11
+	desc = "EVTDESCfaction_event_new.11"
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.11" #Yes
+		liege = {
+			random_playable_ruler = {
+				limit = {
+					NOT = { character = ROOT }	
+					higher_tier_than = ROOT
+					is_primary_war_attacker = yes 
+					any_war = {
+						attacker = { character = PREVPREV }
+						defender = {
+							any_vassal = { character = ROOT }
+						}
+						OR = {
+							using_cb = dragon_conquest
+							using_cb = claim
+							using_cb = claim_all
+							#using_cb = succession
+							#using_cb = invasion_ironborn
+							using_cb = invasion
+							using_cb = dejure_kingdom_claim_EMP
+							using_cb = invasion_ambition
+						}
+					}
+				}
+				ROOT = { 
+					set_defacto_liege = PREV 
+					hidden_tooltip = {
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_INDEP_FACTION_DEFECT_C
+								portrait = [Prev.GetID]
+							}
+						}
+						clr_character_flag = inherit_war
+						clr_character_flag = supporting_king 
+						clr_character_flag = neutral
+						clr_character_flag = against_king 
+						clr_character_flag = against_liege
+						clr_character_flag = rebel_leader
+						clr_character_flag = independant
+						clr_character_flag = join_independance_asked
+						clr_character_flag = no_kingship
+						clr_character_flag = mega_war_decision_cooldown
+						remove_trait = rebel_leader
+						any_demesne_title = {
+							limit = { 
+								NOT = { tier = BARON } 
+								NOT = { tier = EMPEROR }
+							}
+							set_variable = { which = "de_facto_empire" value = 0 }
+						}
+						any_demesne_title = {
+							limit = { 
+								NOT = { tier = BARON } 
+								lower_tier_than = KING
+							}
+							set_variable = { which = "de_facto_kingdom" value = 0 }
+						}
+						if = {
+							limit = { liege = { tier = EMPEROR } }
+							set_character_flag = supporting_king 
+						}
+					}
+				}
+			}
+		}
+	}
+}
+###enemy is informed faction defects to them
+letter_event = {
+	id = faction_event_new.12
+	desc = "EVTDESCfaction_event_new.12"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaction_event_new.12" #Yes
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_INDEP_FACTION_DEFECT_D
+				portrait = [From.GetID]
+			}
+		}
+		FROM = {
+			if = {
+				limit = { 
+					ROOT = { tier = EMPEROR }
+				}
+				set_character_flag = helped_king_LP
+			}	
+			liege = { 
+				letter_event = { id = faction_event_new.10 days = 1 tooltip = TOOLTIPfaction_event_new.10 } 
+			}			
+			any_faction_backer = { tooltip = { show_portrait = yes } }
+		}		
+	}
+}
+###Faction Leader Changes
+character_event = {
+	id = faction_event_new.50
+	desc = "EVTDESCfaction_event_new.50"
+	picture = GFX_evt_council
+	
+	only_playable = yes
+	
+	trigger = {	
+		OR = {
+			leads_faction = faction_succ_seniority
+			leads_faction = faction_succ_primogeniture
+			#leads_faction = faction_succ_gavelkind
+			leads_faction = faction_succ_feudal_elective
+			leads_faction = faction_lower_crown_authority
+			leads_faction = faction_independence
+			leads_faction = faction_claimant 
+			leads_faction = faction_depose_liege
+			leads_faction = faction_republic
+			leads_faction = faction_increase_council_power
+		}
+		NOT = { tier = KING }
+		OR = {
+			NOT = { tier = DUKE }
+			NOT ={
+				OR = {
+					liege = { current_heir = { character = ROOT } }
+					relative_power_to_liege = 0.15
+				}	
+			}	
+		}
+		any_faction_backer = {		
+			higher_tier_than = ROOT
+			OR = {
+				relative_power = { who = ROOT power = 1.1 }
+				diplomacy = 10
+				trait = dragon_rider
+			}
+			NOT = { trait = content }
+			prisoner = no		
+			NOT = { liege = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } } }
+			NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_coerced_into_joining_faction } }
+			OR = {	
+				NOT = { has_landed_title = k_the_most_devout }
+				crownlaw_title = {
+					OR = {
+						has_law = investiture_law_2
+						has_law = investiture_law_3
+					}
+				}
+			}
+			NOT = { trait = incapable }
+			#ai = yes
+			OR = {
+				AND = {
+					ROOT = { leads_faction = faction_succ_seniority }
+					in_faction = faction_succ_seniority
+				}
+				AND = {
+					ROOT = { leads_faction = faction_succ_primogeniture }
+					in_faction = faction_succ_primogeniture
+				}
+				# AND = {
+					# ROOT = { leads_faction = faction_succ_gavelkind }
+					# in_faction = faction_succ_gavelkind
+				# }
+				AND = {
+					ROOT = { leads_faction = faction_succ_feudal_elective}
+					in_faction = faction_succ_feudal_elective
+				}
+				AND = {
+					ROOT = { leads_faction = faction_lower_crown_authority }
+					in_faction = faction_lower_crown_authority
+				}
+				AND = {
+					ROOT = { leads_faction = faction_independence }
+					in_faction = faction_independence
+				}
+				AND = {
+					ROOT = { leads_faction = faction_claimant  }
+					in_faction = faction_claimant 
+				}
+				AND = {
+					ROOT = { leads_faction = faction_depose_liege }
+					in_faction = faction_depose_liege
+				}
+				AND = {
+					ROOT = { leads_faction = faction_republic }
+					in_faction = faction_republic
+				}
+				AND = {
+					ROOT = { leads_faction = faction_increase_council_power }
+					in_faction = faction_increase_council_power
+				}
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 3
+		modifier = {
+			factor = 0.01
+			trait = incapable
+		}
+		modifier = {
+			factor = 0.5
+			is_ill = yes
+		}
+		modifier = {
+			factor = 10
+			leads_faction = faction_claimant
+			supported_claimant = { character = ROOT }
+		}
+		modifier = {
+			factor = 10
+			trait = dragon_rider
+		}
+		modifier = {
+			factor = 1.5
+			tier = DUKE
+		}
+		modifier = {
+			factor = 0.5
+			tier = COUNT
+			any_faction_backer = {
+				tier = KING
+				ai = yes		
+				NOT = { trait = content }
+			}
+		}
+		modifier = {
+			factor = 0.25
+			any_faction_backer = {
+				relative_power = { who = ROOT power = 3 }
+				ai = yes		
+				NOT = { trait = content }
+			}
+		}
+		modifier = {
+			factor = 2
+			liege = { is_close_relative = ROOT }
+		}
+		modifier = {
+			factor = 2
+			trait = authoritative	
+		}
+		modifier = {
+			factor = 2
+			trait = gregarious	
+		}
+		modifier = {
+			factor = 0.5
+			trait = shy
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { diplomacy = 2 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { diplomacy = 5 }
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { diplomacy = 8 }
+		}
+		modifier = {
+			factor = 1.5
+			diplomacy = 13
+		}
+		modifier = {
+			factor = 1.5
+			diplomacy = 16 
+		}
+		modifier = {
+			factor = 1.5
+			diplomacy = 19
+		}
+		modifier = {
+			factor = 1.5
+			diplomacy = 22
+		}
+	}
+
+	option = {
+		name = "EVTOPTAfaction_event_new.50" 
+		liege = {
+			random_vassal = {
+				limit = {
+					#ai = yes
+					higher_tier_than = ROOT
+					OR = {
+						relative_power = { who = ROOT power = 1.1 }
+						diplomacy = 10
+						trait = dragon_rider
+					}
+					NOT = { trait = content }
+					prisoner = no		
+					NOT = { has_opinion_modifier = { who = PREV modifier = opinion_coerced_into_leaving_faction } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_coerced_into_joining_faction } }
+					OR = {	
+						NOT = { has_landed_title = k_the_most_devout }
+						crownlaw_title = {
+							OR = {
+								has_law = investiture_law_2
+								has_law = investiture_law_3
+							}
+						}
+					}
+					NOT = { trait = incapable }
+					#ai = yes
+					OR = {
+						AND = {
+							ROOT = { leads_faction = faction_succ_seniority }
+							in_faction = faction_succ_seniority
+						}
+						AND = {
+							ROOT = { leads_faction = faction_succ_primogeniture }
+							in_faction = faction_succ_primogeniture
+						}
+						# AND = {
+							# ROOT = { leads_faction = faction_succ_gavelkind }
+							# in_faction = faction_succ_gavelkind
+						# }
+						AND = {
+							ROOT = { leads_faction = faction_succ_feudal_elective}
+							in_faction = faction_succ_feudal_elective
+						}
+						AND = {
+							ROOT = { leads_faction = faction_lower_crown_authority }
+							in_faction = faction_lower_crown_authority
+						}
+						AND = {
+							ROOT = { leads_faction = faction_independence }
+							in_faction = faction_independence
+						}
+						AND = {
+							ROOT = { leads_faction = faction_claimant  }
+							in_faction = faction_claimant 
+						}
+						AND = {
+							ROOT = { leads_faction = faction_depose_liege }
+							in_faction = faction_depose_liege
+						}
+						AND = {
+							ROOT = { leads_faction = faction_republic }
+							in_faction = faction_republic
+						}
+						AND = {
+							ROOT = { leads_faction = faction_increase_council_power }
+							in_faction = faction_increase_council_power
+						}
+					}				
+				}
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.51 }
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_succ_seniority }
+						in_faction = faction_succ_seniority
+					}
+					custom_tooltip = { text = TOOLTIPfaction_succ_seniorityNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_succ_seniority 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_succ_seniority_member
+								leave_faction = faction_succ_seniority 						
+							}
+							leave_faction = faction_succ_seniority 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_succ_seniority_member }
+								join_faction = {
+									faction = faction_succ_seniority 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_succ_seniority_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_succ_seniority 
+								faction_leader = PREV
+							}
+						}
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_succ_primogeniture }
+						in_faction = faction_succ_primogeniture
+					}
+					custom_tooltip = { text = TOOLTIPfaction_succ_primogenitureNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_succ_primogeniture 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_succ_primogeniture_member
+								leave_faction = faction_succ_primogeniture 						
+							}
+							leave_faction = faction_succ_primogeniture 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_succ_primogeniture_member }
+								join_faction = {
+									faction = faction_succ_primogeniture 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_succ_primogeniture_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_succ_primogeniture 
+								faction_leader = PREV
+							}
+						}	
+					}	
+				}	
+				# if = {
+					# limit = {
+						# ROOT = { leads_faction = faction_succ_gavelkind }
+						# in_faction = faction_succ_gavelkind
+					# }
+					# custom_tooltip = { text = TOOLTIPfaction_succ_gavelkindNEW }
+					# hidden_tooltip = {
+						# add_character_modifier = { name = faction_succ_gavelkind_leader duration = 10 hidden = yes }
+						# ROOT = { 						
+							# any_faction_backer = { 
+								# limit = { 
+									# in_faction = faction_succ_gavelkind 
+									# NOT = { character = PREVPREV }
+								# }	
+								# add_character_modifier = { name = faction_succ_gavelkind_member duration = 10 hidden = yes }
+							# } 
+							# add_character_modifier = { name = faction_succ_gavelkind_member duration = 10 hidden = yes }
+						# }	
+					# }	
+				# }
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_succ_feudal_elective }
+						in_faction = faction_succ_feudal_elective
+					}
+					custom_tooltip = { text = TOOLTIPfaction_succ_feudal_electiveNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_succ_feudal_elective 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_succ_feudal_elective_member
+								leave_faction = faction_succ_feudal_elective 						
+							}
+							leave_faction = faction_succ_feudal_elective 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_succ_feudal_elective_member }
+								join_faction = {
+									faction = faction_succ_feudal_elective 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_succ_feudal_elective_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_succ_feudal_elective 
+								faction_leader = PREV
+							}
+						}	
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_lower_crown_authority }
+						in_faction = faction_lower_crown_authority
+					}
+					custom_tooltip = { text = TOOLTIPfaction_lower_crown_authorityNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_lower_crown_authority 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_lower_crown_authority_member
+								leave_faction = faction_lower_crown_authority 						
+							}
+							leave_faction = faction_lower_crown_authority 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_lower_crown_authority_member }
+								join_faction = {
+									faction = faction_lower_crown_authority 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_lower_crown_authority_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_lower_crown_authority 
+								faction_leader = PREV
+							}
+						}
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_independence }
+						in_faction = faction_independence
+					}
+					custom_tooltip = { text = TOOLTIPfaction_independenceNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_independence 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_independence_member
+								leave_faction = faction_independence 						
+							}
+							leave_faction = faction_independence 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_independence_member }
+								join_faction = {
+									faction = faction_independence 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_independence_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_independence 
+								faction_leader = PREV
+							}
+						}
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_claimant }
+						in_faction = faction_claimant
+					}
+					custom_tooltip = { text = TOOLTIPfaction_claimantNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_claimant 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_claimant_member
+								leave_faction = faction_claimant 						
+							}
+							leave_faction = faction_claimant 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_claimant_member }
+								join_faction = {
+									faction = faction_claimant 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_claimant_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_claimant 
+								faction_leader = PREV
+							}
+						}
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_depose_liege }
+						in_faction = faction_depose_liege
+					}
+					custom_tooltip = { text = TOOLTIPfaction_depose_liegeNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_depose_liege 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_depose_liege_member
+								leave_faction = faction_depose_liege 						
+							}
+							leave_faction = faction_depose_liege 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_depose_liege_member }
+								join_faction = {
+									faction = faction_depose_liege 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_depose_liege_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_depose_liege 
+								faction_leader = PREV
+							}
+						}	
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_republic }
+						in_faction = faction_republic
+					}
+					custom_tooltip = { text = TOOLTIPfaction_republicNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_republic 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_republic_member
+								leave_faction = faction_republic 						
+							}
+							leave_faction = faction_republic 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_republic_member }
+								join_faction = {
+									faction = faction_republic 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_republic_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_republic 
+								faction_leader = PREV
+							}
+						}	
+					}	
+				}
+				if = {
+					limit = {
+						ROOT = { leads_faction = faction_increase_council_power }
+						in_faction = faction_increase_council_power
+					}
+					custom_tooltip = { text = TOOLTIPffaction_increase_council_powerNEW }
+					hidden_tooltip = {
+						ROOT = { 							
+							any_faction_backer = { 
+								limit = { 
+									in_faction = faction_increase_council_power 
+									NOT = { character = PREVPREV }
+								}	
+								set_character_flag = faction_increase_council_power_member
+								leave_faction = faction_increase_council_power 						
+							}
+							leave_faction = faction_increase_council_power 							
+						}	
+						liege = {
+							any_vassal = {
+								limit = { has_character_flag = faction_increase_council_power_member }
+								join_faction = {
+									faction = faction_increase_council_power 
+									faction_leader = PREVPREV
+								}
+								clr_character_flag = faction_increase_council_power_member
+							}
+						}
+						ROOT = {
+							join_faction = {
+								faction = faction_increase_council_power 
+								faction_leader = PREV
+							}
+						}
+					}	
+				}
+			}
+		}
+	}
+}
+character_event = {
+	id = faction_event_new.51
+	desc = "EVTDESCfaction_event_new.51"
+	picture = GFX_evt_council
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfaction_event_new.51"
+		custom_tooltip = { text = TOOLTIPfaction_event_new.51 }
+	}
+}	
+
+# Ultimatum - Republic (AGOT)
+letter_event = {
+	id = faction_event_new.60
+	desc = "EVTDESCfaction_event_new.60"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		FROM = { in_faction = faction_republic }
+	}
+	
+	immediate = {
+		FROM = { 
+			diplomatic_immunity = yes 
+			any_faction_backer = {
+				faction = faction_republic
+				diplomatic_immunity = yes
+			}
+		}
+		if = { #disallow raising of levies whilst demand is considered
+			limit = { tier = EMPEROR }
+			add_character_modifier = {
+				name = mega_war_no_levies
+				duration = 14
+				hidden = yes
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTA8000"
+		ai_chance = {
+			factor = 10
+			
+			modifier = {
+				factor = 0
+				OR = {
+					FROM = { NOT = { faction_power = { faction = faction_republic power = 0.6 } } }
+					AND = {
+						FROM = { NOT = { faction_power = { faction = faction_republic power = 1.5 } } }
+						OR = {
+							trait = dragon_rider
+							trait = brave
+							trait = ambitious
+							trait = proud
+						}
+					}
+					#strong loyalists
+					AND = {
+						tier = EMPEROR
+						any_vassal = { faction_power = { faction = faction_crown_loyalist power = 0.75 } }
+					}
+					AND = {
+						NOT = { tier = EMPEROR }
+						any_vassal = { faction_power = { faction = faction_liege_loyalist power = 0.75 } }
+					}
+					#Can request aid from liege
+					liege = { NOT = { character = ROOT } }	
+				}	
+			}	
+		}
+		faction_republic = {
+			custom_tooltip = {
+				text = TOOLTIPfaction_republicCHANGE
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_FACTION_REPUBLIC_CONCEDE
+					portrait = [From.GetID]
+				}
+			}
+			any_player = {
+				limit = {
+					OR = {
+						is_liege_or_above = ROOT
+						is_liege_of = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						has_non_aggression_pact_with = ROOT
+						is_allied_with = ROOT
+						war_with = ROOT
+						has_opinion_modifier = { who = ROOT modifier = opinion_fought_for_claimant }
+					}
+					NOT = { character = ROOT }
+					NOR = {
+						character = FROM
+						FROM = { any_faction_backer = { character = PREVPREV } }
+					}				
+				}
+				letter_event = { id = faction_event_new.64 }
+			}
+			FROM = {
+				any_faction_backer = {
+					faction = faction_republic
+					letter_event = { id = faction_event_new.63 }
+					diplomatic_immunity = no
+				}
+				letter_event = { id = faction_event_new.62 }
+				diplomatic_immunity = no
+			}
+		}
+		change_variable = { which = fear_actions value = -15 }
+		hidden_tooltip = { remove_character_modifier = mega_war_no_levies }
+	}
+	option = {
+		name = "EVTOPTB8000"
+		ai_chance = {
+			factor = 90
+			modifier = {
+				factor = 0.01
+				FROM = { faction_power = { faction = faction_republic power = 1.5 } }
+				OR = {
+					trait = craven
+					trait = content
+				}
+				NOR = {
+					trait = dragon_rider
+					trait = brave
+					trait = ambitious
+					trait = proud
+				}
+			}
+			
+			modifier = {
+				factor = 4
+				trait = dragon_rider
+			}
+			modifier = {
+				factor = 4 #Can request aid from liege
+				liege = {
+					NOT = { character = ROOT }
+					OR = {
+						opinion = { who = ROOT value = 20 }
+						dynasty = ROOT
+						is_married = ROOT
+						primary_title = { has_law = diplomacy_voting_power_1 } #The council votes
+						trait = just
+						FROM = { #aggressive expansion
+							relative_power = { who = ROOT power = 1.5 }
+							any_claim = { holder_scope = { character = ROOT } }
+						}
+					}	
+				}
+			}
+			modifier = {
+				factor = 4 #Has powerful ally
+				any_allied_character = {
+					is_ruler = yes
+					relative_power = { who = ROOT power = 1.5 }
+					OR = {
+						same_liege = ROOT
+						independent = yes
+					}
+				}
+			}
+			# Account for relative faction power
+			modifier = {
+				factor = 0.8
+				FROM = { faction_power = { faction = faction_republic power = 1.0 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { faction_power = { faction = faction_republic power = 1.25 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { faction_power = { faction = faction_republic power = 1.5 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { faction_power = { faction = faction_republic power = 1.75 } }
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { faction_power = { faction = faction_republic power = 2.0 } }
+			}
+			
+			#Traits
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+			modifier = {
+				factor = 1.5
+				trait = proud
+			}		
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				trait = envious
+			}
+			modifier = {
+				factor = 1.25
+				trait = greedy
+			}			
+			modifier = {
+				factor = 0.8
+				trait = humble
+			}
+			modifier = {
+				factor = 0.66
+				trait = craven
+			}
+			modifier = {
+				factor = 0.66
+				trait = content
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = {
+					FROM = { faction_power = { faction = faction_republic power = 1.0 } }
+				}
+				random = {
+					chance = 25
+					character_event = { id = 45002 days = 120 } # Loyalists flock to the liege's banner
+				}
+			}
+		}
+		FROM = {
+			letter_event = { id = faction_event_new.65 days = 3 tooltip = "EVTTOOLTIP8100" }
+			tooltip = {
+				any_faction_backer = {
+					faction = faction_republic
+				}
+			}
+			hidden_tooltip = {
+				if = {
+					limit = {
+						NOT = { faction_power = { faction = faction_republic power = 0.75 } }
+					}
+					random_list = {
+						50 = {
+						}
+						30 = {
+							character_event = { id = 45000 days = 17 } # A great number of rebels flock to the revolter's banner
+						}
+						20 = {
+							character_event = { id = 45004 days = 17 } # Rebels flock to the revolter's banner
+						}
+					}
+				}
+				if = {
+					limit = {
+						faction_power = { faction = faction_republic power = 0.75 }
+						NOT = { faction_power = { faction = faction_republic power = 1.5 } }
+					}
+					random_list = {
+						75 = {
+						}
+						5 = {
+							character_event = { id = 45000 days = 17 } # A great number of rebels flock to the revolter's banner
+						}
+						20 = {
+							character_event = { id = 45004 days = 17 } # Rebels flock to the revolter's banner
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# Demand accepted - Republic
+letter_event = {
+	id = faction_event_new.62
+	desc = "EVTDESCfaction_event_new.62"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EXCELLENT"	
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_FACTION_REPUBLIC_CONCEDE_B
+				portrait = [From.GetID]
+			}
+		}
+		faction_republic = { 
+			custom_tooltip = {
+				text = FACTION_REPUBLIC_SUCCESS			
+			}
+			#save_event_target_as = faction_republic_title
+			set_title_flag = faction_republic_title
+		}
+		hidden_tooltip = {
+			any_faction_backer = { #Merchant Republic Backers auto added
+				faction = faction_republic
+				set_character_flag = faction_republic_backer
+			}
+			character_event = { id = faction_event_new.66 }
+		}	
+	}
+}
+# Inform faction backer - Republic
+letter_event = {
+	id = faction_event_new.63
+	desc = "EVTDESCfaction_event_new.63"
+	
+	show_from_from = yes
+	
+	is_triggered_only = yes
+	ai = no
+	
+	option = {
+		name = "GOOD"
+		chronicle = {
+			entry = CHRONICLE_FACTION_REPUBLIC_CONCEDE_C
+			portrait = [From.GetID]
+		}
+	}
+}
+# Inform other vassals - Republic
+letter_event = {
+	id = faction_event_new.64
+	desc = "EVTDESCfaction_event_new.64"
+	
+	picture = GFX_evt_emissary
+	border = GFX_event_letter_frame_intrigue
+	
+	is_triggered_only = yes
+	ai = no
+	
+	option = {
+		name = "I_SEE"
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+		chronicle = {
+			entry = CHRONICLE_FACTION_REPUBLIC_CONCEDE_C
+			portrait = [From.GetID]
+		}
+	}
+}
+
+# Demand rejected - Republic
+letter_event = {
+	id = faction_event_new.65
+	desc = "EVTDESC8100"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA8100"		
+		faction_republic = {
+			reverse_war = {
+				target = ROOT
+				casus_belli = faction_republic_war_cb
+				faction = faction_republic
+			}
+		}	
+		hidden_tooltip = { FROM = { remove_character_modifier = mega_war_no_levies } }
+	}
+}
+# The republic is established, ROOT is usurper, FROMFROM is old holder
+character_event = {
+	id = faction_event_new.66
+	desc = "EVTDESCfaction_event_new.66"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#Determine new republic capital
+		FROMFROM = { #Either ROOT or FROM have traditional capital?
+			random_demesne_title = {
+				limit = { has_title_flag = faction_republic_title }			
+				if = { #Take kings landing from Iron Throne
+					limit = { 
+						title = e_iron_throne 
+						NOT = { has_global_flag = KL_not_capital }
+						226 = { has_province_flag = kings_landing_established }
+						holder_scope = { has_landed_title = c_kings_landing }
+					}
+					ROOT = { set_character_flag = usurp_kings_landing }
+				}
+				capital_scope = {
+					ROOT_FROMFROM = {
+						capital_scope = {
+							if = {
+								limit = { 
+									port = yes
+									province_id = PREVPREV 
+								}
+								ROOT = { set_character_flag = usurp_capital }
+							}				
+						}
+					}
+					ROOT = {
+						capital_scope = {
+							if = {
+								limit = {
+									port = yes
+									province_id = PREVPREV 
+								}
+								ROOT = { set_character_flag = keep_capital }
+							}				
+						}
+					}
+				}	
+			}
+		}	
+		if = { #If FROMFROM capital is port take that
+			limit = {
+				NOT = { has_character_flag = usurp_capital }
+				NOT = { has_character_flag = keep_capital }
+				NOT = { has_character_flag = usurp_kings_landing }
+				capital_scope = { port = no }
+				FROMFROM = { capital_scope = { port = yes } }
+			}
+			set_character_flag = usurp_capital
+		}
+		clr_character_flag = keep_capital
+		#Determine new republic patricians
+		if = { #Check if merchant republic is possible
+			limit = {
+				NOT = { any_liege = { is_republic = yes } }
+				OR = {
+					capital_scope = { port = yes }
+					FROMFROM = { capital_scope = { port = yes } }
+					has_character_flag = usurp_kings_landing
+				}
+			}
+			if = {
+				limit = { is_merchant_republic = no } #Merchant Republic leader directly usurps title
+				#Re-absorb king tier vassals
+				if = {
+					limit = { FROMFROM = { tier = EMPEROR } }
+					any_independent_ruler = {
+						limit = {
+							tier = KING
+							is_nomadic = no
+							NOT = { has_character_flag = independant }
+							NOT = { has_character_flag = joined_independance_war }
+							war = no
+							primary_title = { 					
+								FROMFROM = {
+									any_demesne_title = {
+										tier = EMPEROR
+										is_variable_equal = { which = "de_facto_empire" which = PREVPREV }
+									}
+								}
+								check_variable = { which = "de_facto_empire" value = 0.9 }
+							}
+							NOT = { any_opinion_modifier_target = { reverse_has_opinion_modifier = { who = PREV modifier = opinion_granted_independence } } }
+						}
+						set_defacto_liege = FROMFROM
+						character_event = { id = mega_wars.9 }
+					}
+				}	
+				FROMFROM = {
+					any_vassal = { #Merchant Republic Backers auto added
+						limit = {
+							is_merchant_republic = yes
+							has_character_flag = faction_republic_backer
+						}
+						set_character_flag = republic_faction_patrician
+						any_vassal = {
+							limit = { is_patrician = yes }
+							set_character_flag = republic_faction_patrician
+						}
+						ROOT = { set_character_flag = merchant_republic_backer }
+					}
+					if = { #if no merchant republic backer, find upto 4 fellow backers to be patricians
+						limit = { ROOT = { NOT = { has_character_flag = merchant_republic_backer } } }
+						while = {
+							limit = {
+								NOT = {
+									any_vassal = {
+										count = 4
+										has_character_flag = republic_faction_patrician
+									}
+								}
+							}
+							count = 4
+							random_vassal = {
+								limit = { 
+									NOT = { character = ROOT }
+									tier = KING
+									has_character_flag = faction_republic_backer 
+									NOT = { has_character_flag = republic_faction_patrician }
+									is_theocracy = no
+								}
+								set_character_flag = republic_faction_patrician
+							}
+						}
+						while = {
+							limit = {
+								NOT = {
+									any_vassal = {
+										count = 4
+										has_character_flag = republic_faction_patrician
+									}
+								}
+							}
+							count = 4
+							random_vassal = {
+								limit = { 
+									NOT = { character = ROOT }
+									has_character_flag = faction_republic_backer 
+									NOT = { has_character_flag = republic_faction_patrician }
+									is_theocracy = no
+								}
+								set_character_flag = republic_faction_patrician
+							}
+						}
+						any_realm_lord = {
+							clr_character_flag = faction_republic_backer 
+						}
+					}
+				}	
+			}	
+		}
+		clr_character_flag = merchant_republic_backer
+	}
+	
+	option = { #Merchant Republic
+		name = "EVTOPTAfaction_event_new.66"
+		trigger = {
+			NAND = {
+				ai = no	
+				NOT = { has_dlc = "The Republic" }
+			}
+			OR = {
+				is_merchant_republic = yes
+				capital_scope = { port = yes }
+				FROMFROM = { capital_scope = { port = yes } }
+				has_character_flag = usurp_kings_landing
+			}
+			NOT = {
+				any_liege = {
+					NOT = { character = FROMFROM }
+					is_republic = yes
+				}
+			}
+		}
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				culture_group = iron_isles_culture	
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					any_vassal = { 
+						is_merchant_republic = yes 
+						NOT = { has_character_flag = republic_faction_patrician }
+					}
+					FROMFROM = {
+						any_vassal = { 
+							is_merchant_republic = yes
+							NOT = { has_character_flag = republic_faction_patrician }
+							NOT = { character = ROOT }
+						}
+					}
+				}	
+			}
+			modifier = {
+				factor = 4
+				OR = {
+					culture = astapori
+					culture = meereenese
+					culture = asshai
+				}	
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					culture_group = andal
+					culture_group = first_men
+					culture_group = dornish
+				}	
+			}
+			modifier = {
+				factor = 0.5
+				FROMFROM = { tier = EMPEROR }
+			}
+			modifier = {
+				factor = 0.5
+				FROMFROM = { has_landed_title = e_iron_throne }
+			}
+		}
+		FROMFROM = { #Assume leadership of new republic			
+			any_demesne_title = { #mark other titles (they are sometimes usurped as well by the below script for some reason)
+				limit = { NOT = { has_title_flag = faction_republic_title } }
+				set_title_flag = do_not_usurp_title
+			}
+			random_demesne_title = {
+				limit = { has_title_flag = faction_republic_title }
+				usurp_title = ROOT
+				clr_title_flag = faction_republic_title
+				hidden_tooltip = {
+					if = {
+						limit = { has_dlc = "Zeus" }
+						add_law = law_voting_power_1
+						add_law = diplomacy_voting_power_1
+						add_law = titles_voting_power_1
+						add_law = justice_voting_power_1
+					}
+				}
+			}
+			ROOT = { #give back wrongly usurped titles
+				any_demesne_title = {
+					limit = { has_title_flag = do_not_usurp_title }
+					gain_title = ROOT_FROMFROM
+					clr_title_flag = do_not_usurp_title
+				}
+			}
+			any_demesne_title = {
+				limit = { has_title_flag = do_not_usurp_title }
+				clr_title_flag = do_not_usurp_title
+			}
+		}				
+		if = { #Take capital if needed
+			limit = { has_character_flag = usurp_kings_landing }
+			clr_character_flag = usurp_kings_landing
+			c_kings_landing = { usurp_title = ROOT }
+			d_kings_landing = { 
+				if = {
+					limit = { holder_scope = { character = FROMFROM } }
+					usurp_title = ROOT 
+				}	
+			}
+			k_crownlands = { 
+				if = {
+					limit = { holder_scope = { character = FROMFROM } }
+					usurp_title = ROOT 
+				}	
+			}
+			hidden_tooltip = {
+				226 = {
+					ROOT = {
+						random_demesne_title = {
+							limit = {
+								tier = BARON
+								location = { province_id = PREVPREVPREV }									
+							}
+							ROOT = { capital = PREV }
+						}
+					}
+				}
+			}
+		}	
+		if = { #Take capital if needed
+			limit = { has_character_flag = usurp_capital }
+			FROMFROM = {
+				capital_scope = {					
+					if = { #If already own barony in this county, merely change capital
+						limit = { any_province_holding = { holder_scope = { character = ROOT } NOT = { holding_type = trade_post } } }
+						random_province_holding = {
+							limit = { is_capital = yes }
+							save_event_target_as = FROMFROMs_capital
+						}
+					}
+					county = {
+						dejure_liege_title = {
+							dejure_liege_title = {
+								if = {
+									limit = { 
+										holder_scope = { character = ROOT_FROMFROM } 
+										NOT = { has_title_flag = faction_republic_title }
+										controls_religion = no
+									}
+									usurp_title = ROOT
+								}
+							}
+							if = {
+								limit = { 
+									holder_scope = { character = ROOT_FROMFROM } 
+									NOT = { has_title_flag = faction_republic_title }
+									controls_religion = no
+								}
+								usurp_title = ROOT
+							}	
+						}
+						usurp_title = ROOT
+					}	
+					hidden_tooltip = { #change capital
+						ROOT = {
+							random_demesne_title = {
+								limit = {
+									tier = BARON
+									is_capital = yes
+									location = { province_id = PREVPREVPREV }			
+									NOT = { title = event_target:FROMFROMs_capital }
+								}
+								ROOT = { capital = PREV }
+							}
+							random_demesne_title = {
+								limit = {
+									tier = BARON									
+									location = { province_id = PREVPREVPREV }	
+									NOT = { title = event_target:FROMFROMs_capital }									
+								}
+								make_capital_holding = yes
+								ROOT = { capital = PREV }
+							}
+							event_target:FROMFROMs_capital = { gain_title = ROOT_FROMFROM }
+							if = {
+								limit = { NOT = { capital_holding = { holding_type = city } } }
+								random_demesne_title = {
+									limit = {
+										tier = BARON
+										holding_type = city
+										location = { province_id = PREVPREVPREV }									
+									}
+									make_capital_holding = yes
+									ROOT = { capital = PREV }
+								}
+							}	
+						}					
+					}					
+				}
+			}
+			clr_character_flag = usurp_capital
+		}
+		#Any other merchant republics can fight for indepedence
+		any_realm_lord = {
+			limit = {
+				is_merchant_republic = yes
+				NOT = { character = ROOT }
+				NOT = { has_character_flag = republic_faction_patrician }
+			}
+			hidden_tooltip = { set_defacto_liege = THIS }
+			character_event = { id = faction_event_new.68 tooltip = TOOLTIPfaction_event_new.68 }
+		}
+		#change to republic
+		if = {
+			limit = {
+				higher_tier_than = DUKE
+				OR = {
+					culture = volantene
+					culture = eastern_valyrian
+					AND = {
+						culture_group = valyrian
+						primary_title = { title = k_volantis }
+					}
+				}	
+				OR = { #triarch elections do not happen in the revived freehold
+					NOT = { has_global_flag = revived_valyrian_freehold }
+					primary_title = { NOT = { title = e_new_valyria } }
+				}
+			}
+			set_government_type = triarch_merchant_republic_government
+			set_character_flag = volantene_election #If Triarchy no election for a year
+		}
+		else = {
+			set_government_type = merchant_republic_government
+		}
+		# if = {
+			# limit = { capital_holding = { NOT = { holding_type = city } } }
+			# random_demesne_title = {
+				# limit = {
+					# tier = BARON
+					# holding_type = city
+					# location = { ROOT = { capital_scope = { province_id = PREVPREV } } }
+				# }
+				# province_capital = yes
+				# ROOT = { capital = PREV }
+			# }
+			# random_realm_lord = {
+				# limit = {
+					# any_demesne_title = {
+						# tier = BARON
+						# holding_type = city
+						# location = { ROOT = { capital_scope = { province_id = PREVPREV } } }	
+					# }	
+				# }
+				# random_demesne_title = {
+					# limit = {
+						# tier = BARON
+						# holding_type = city
+						# location = { ROOT = { capital_scope = { province_id = PREVPREV } } }
+					# }	
+					# usurp_title = ROOT
+					# province_capital = yes
+					# ROOT = { capital = PREV }
+				# }
+			# }
+		# }	
+		# if = { #If still no city found convert random sub barony
+			# limit = { capital_holding = { NOT = { holding_type = city } } }
+			# random_realm_lord = {
+				# limit = {
+					# any_demesne_title = {
+						# tier = BARON
+						# holding_type = castle
+						# location = { ROOT = { capital_scope = { province_id = PREVPREV } } }	
+					# }	
+				# }
+				# random_demesne_title = {
+					# limit = {
+						# tier = BARON
+						# holding_type = castle
+						# location = { ROOT = { capital_scope = { province_id = PREVPREV } } }
+					# }	
+					# convert_to = CITY
+					# usurp_title = ROOT
+					# province_capital = yes
+					# ROOT = { capital = PREV }
+				# }
+			# }
+		# }	
+		hidden_tooltip = {
+			#Create new patricians
+			if = {
+				limit = { is_patrician = no }
+				create_family_palace = yes
+			}	
+			primary_title = {
+				add_law = succ_patrician_elective
+			}	
+			any_realm_lord = {
+				limit = { has_character_flag = republic_faction_patrician }
+				set_defacto_liege = ROOT
+				if = {
+					limit = { is_patrician = no }
+					create_family_palace = yes
+				}	
+				clr_character_flag = republic_faction_patrician
+			}
+			if = { #If less than 4 supporters deposed king can become patrician
+				limit = {
+					NOT = {
+						any_vassal = {
+							is_patrician = yes
+							count = 4
+						}
+					}
+					is_liege_of = FROMFROM
+				}
+				FROMFROM = { create_family_palace = yes }
+			}
+			character_event = { id = faction_event_new.67 } #If still not 5 patricians found, randomly add more
+			
+			clr_character_flag = faction_republic_ultimatum_taken	
+			clear_event_target = faction_republic_title
+			
+			character_event = { id = dynamic_coa.1 } #reset coas
+		}	
+	}
+	option = { #Oligarchy
+		name = "EVTOPTBfaction_event_new.66"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				OR = {
+					is_merchant_republic = yes
+					culture_group = free_cities
+					culture = eastern_valyrian
+				}	
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { is_merchant_republic = yes }
+				family_palace = { destroy_settlement = THIS }
+				any_vassal = {
+					limit = { is_patrician = yes }
+					family_palace = { destroy_settlement = THIS }
+					set_government_type = feudal_government
+					primary_title = { succession = seniority }
+					recalc_succession = yes	
+				}
+			}	
+		}	
+		FROMFROM = { #Assume leadership of new oligarchy
+			any_demesne_title = { #mark other titles (they are sometimes usurped as well by the below script for some reason)
+				limit = { NOT = { has_title_flag = faction_republic_title } }
+				set_title_flag = do_not_usurp_title
+			}
+			random_demesne_title = {
+				limit = { has_title_flag = faction_republic_title }
+				usurp_title = ROOT
+				clr_title_flag = faction_republic_title
+				hidden_tooltip = {
+					add_law = republic_law_oligarchy
+					if = {
+						limit = { has_dlc = "Zeus" }
+						add_law = law_voting_power_1
+						add_law = diplomacy_voting_power_1
+						add_law = titles_voting_power_1
+						add_law = justice_voting_power_1
+					}
+				}
+				add_law = noble_oligarchy_elective
+			}
+			ROOT = { #give back wrongly usurped titles
+				any_demesne_title = {
+					limit = { has_title_flag = do_not_usurp_title }
+					gain_title = ROOT_FROMFROM
+					clr_title_flag = do_not_usurp_title
+				}
+			}
+			any_demesne_title = {
+				limit = { has_title_flag = do_not_usurp_title }
+				clr_title_flag = do_not_usurp_title
+			}
+			##
+			
+			#Take capital
+			capital_scope = {
+				if = { #If already own barony in this county, merely change capital
+					limit = { any_province_holding = { holder_scope = { character = ROOT } NOT = { holding_type = trade_post } } }
+					random_province_holding = {
+						limit = { is_capital = yes }
+						save_event_target_as = FROMFROMs_capital
+					}
+				}
+				county = {
+					dejure_liege_title = {
+						dejure_liege_title = {
+							if = {
+								limit = { holder_scope = { character = ROOT_FROMFROM } }
+								usurp_title = ROOT
+							}
+						}
+						if = {
+							limit = { holder_scope = { character = ROOT_FROMFROM } }
+							usurp_title = ROOT
+						}	
+					}
+					usurp_title = ROOT
+				}	
+				hidden_tooltip = { #change capital
+					ROOT = {
+						random_demesne_title = {
+							limit = {
+								tier = BARON
+								is_capital = yes
+								location = { province_id = PREVPREVPREV }			
+								NOT = { title = event_target:FROMFROMs_capital }
+							}
+							ROOT = { capital = PREV }
+						}
+						random_demesne_title = {
+							limit = {
+								tier = BARON									
+								location = { province_id = PREVPREVPREV }	
+								NOT = { title = event_target:FROMFROMs_capital }									
+							}
+							make_capital_holding = yes
+							ROOT = { capital = PREV }
+						}
+						event_target:FROMFROMs_capital = { gain_title = ROOT_FROMFROM }
+					}	
+				}					
+			}			
+		}
+		set_government_type = noble_oligarchy
+		recalc_succession = yes	
+	}	
+	after = {
+		clr_character_flag = usurp_capital
+		clr_character_flag = usurp_kings_landing
+		hidden_tooltip = {
+			character_event = { id = dynamic_coa.1 } #reset coas
+			any_realm_lord = {
+				limit = { 
+					has_character_flag = republic_faction_patrician
+				}
+				clr_character_flag = republic_faction_patrician
+			}
+		}
+	}
+}
+#If still not 5 patricians found, randomly add more
+character_event = {
+	id = faction_event_new.67
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { 
+		is_merchant_republic = yes 
+		NOT = {
+			any_vassal = {
+				is_patrician = yes
+				count = 4
+			}
+		}
+	}
+	
+	immediate = {
+		random_vassal = {
+			limit = { 
+				is_patrician = no
+				NOT = { any_dynasty_member = { is_patrician = yes } }
+				NOT = { dynasty = ROOT }
+				NOT = { dynasty = 0 }
+				is_theocracy = no
+				NOT = { is_military_command_trigger = yes }
+				is_female = no
+				can_press_claims_trigger = yes
+				
+				culture_group = ROOT
+				tier = KING
+				OR = {
+					ai = yes
+					has_dlc = "The Republic"
+				}
+			}
+			create_family_palace = yes
+			character_event = { id = REP.905 }
+			ROOT = { set_character_flag = new_patrician_found }
+		}
+		if = {
+			limit = { NOT = { has_character_flag = new_patrician_found } }
+			random_vassal = {
+				limit = { 
+					is_patrician = no
+					NOT = { any_dynasty_member = { is_patrician = yes } }
+					NOT = { dynasty = ROOT }
+					NOT = { dynasty = 0 }
+					is_theocracy = no
+					NOT = { is_military_command_trigger = yes }
+					is_female = no
+					can_press_claims_trigger = yes
+					
+					culture_group = ROOT
+					tier = DUKE
+					OR = {
+						ai = yes
+						has_dlc = "The Republic"
+					}
+				}
+				create_family_palace = yes
+				character_event = { id = REP.905 }
+				ROOT = { set_character_flag = new_patrician_found }
+			}
+			if = {
+				limit = { NOT = { has_character_flag = new_patrician_found } }
+				random_vassal = {
+					limit = { 
+						is_patrician = no
+						NOT = { any_dynasty_member = { is_patrician = yes } }
+						NOT = { dynasty = ROOT }
+						NOT = { dynasty = 0 }
+						is_theocracy = no
+						NOT = { is_military_command_trigger = yes }
+						is_female = no
+						can_press_claims_trigger = yes
+						
+						culture_group = ROOT
+						tier = COUNT
+						OR = {
+							ai = yes
+							has_dlc = "The Republic"
+						}
+					}
+					create_family_palace = yes
+					character_event = { id = REP.905 }
+					ROOT = { set_character_flag = new_patrician_found }
+				}
+				if = {
+					limit = { NOT = { has_character_flag = new_patrician_found } }
+					random_vassal = {
+						limit = { 
+							is_patrician = no
+							NOT = { any_dynasty_member = { is_patrician = yes } }
+							NOT = { dynasty = ROOT }
+							NOT = { dynasty = 0 }
+							is_theocracy = no
+							NOT = { is_military_command_trigger = yes }
+							is_female = no
+							can_press_claims_trigger = yes
+							
+							culture_group = ROOT
+							OR = {
+								ai = yes
+								has_dlc = "The Republic"
+							}
+						}
+						create_family_palace = yes
+						character_event = { id = REP.905 }
+						ROOT = { set_character_flag = new_patrician_found }
+					}
+				}
+			}
+		}
+		if = { #repeat if necessary
+			limit = { has_character_flag = new_patrician_found }
+			clr_character_flag = new_patrician_found
+			character_event = { id = faction_event_new.67 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}	
+}	
+
+# Rival republic established above existing merchant republic, declare independence
+character_event = {
+	id = faction_event_new.68
+	desc = "EVTDESCfaction_event_new.68"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfaction_event_new.68"
+		hidden_tooltip = { FROM = { character_event = { id = faction_event_new.69 } } }
+	}
+}
+character_event = {
+	id = faction_event_new.69
+	desc = "EVTDESCfaction_event_new.69"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfaction_event_new.69"
+		FROM = {
+			any_demesne_title = {
+				limit = {
+					tier = PREV
+					controls_religion = no
+					NOT = { 
+						dejure_liege_title = { 
+							OR = {
+								ROOT = { has_landed_title = PREV } 
+								dejure_liege_title = {
+									OR = {
+										ROOT = { has_landed_title = PREV } 
+										dejure_liege_title = { ROOT = { has_landed_title = PREV } }
+									}	
+								}
+							}	
+						}	
+					}
+				}
+				add_pressed_claim = ROOT
+			}
+		}
+	}
+}
+
+##Regent Claimant Coup
+character_event = {
+	id = faction_event_new.80
+	desc = "EVTDESCfaction_event_new.80"
+	picture = GFX_evt_throne_room
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROM = { 
+			diplomatic_immunity = yes 
+			any_faction_backer = {
+				faction = faction_claimant
+				diplomatic_immunity = yes
+			}
+		}
+	}
+
+	option = {	
+		name = "EVTOPTAEVTDESCfaction_event_new.80"
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_FACTION_CLAIMANT_COUP_A
+				portrait = [From.GetID]
+			}
+		}
+		hidden_tooltip = {
+			any_player = {
+				limit = {
+					OR = {
+						is_liege_or_above = ROOT
+						is_liege_of = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						has_non_aggression_pact_with = ROOT
+						is_allied_with = ROOT
+						war_with = ROOT
+						has_opinion_modifier = { who = ROOT modifier = opinion_fought_for_claimant }
+					}
+					NOT = { character = ROOT }
+					NOR = {
+						character = FROM
+						FROM = { any_faction_backer = { character = PREVPREV } }
+					}				
+				}
+				character_event = { id = faction_event_new.83 }
+			}
+			FROM = {
+				any_faction_backer = {
+					faction = faction_claimant
+					letter_event = { id = faction_event_new.82 }
+					diplomatic_immunity = no
+				}
+				letter_event = { id = faction_event_new.81 }
+				diplomatic_immunity = no
+			}
+		}
+	}
+}
+# Demand accepted - Install Claimant
+character_event = {
+	id = faction_event_new.81
+	desc = "EVTDESCfaction_event_new.81"
+	picture = GFX_evt_throne_room
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_FACTION_CLAIMANT_COUP_B
+				portrait = [From.GetID]
+			}
+		}
+		supported_claimant = {
+			opinion = {
+				modifier = opinion_very_grateful
+				who = ROOT
+				years = 10
+			}
+			reverse_opinion = {
+				modifier = opinion_fought_for_claimant
+				who = ROOT
+			}
+		}
+	}
+	
+	option = {
+		name = "EXCELLENT"
+		clr_character_flag = faction_claimant_ultimatum_taken
+		supported_claimant = {
+			hidden_tooltip = { #This stops wars to depose liege
+				add_character_modifier = {
+					name = installed_pretender
+					duration = 10
+					hidden = yes
+				}
+			}	
+			if = {
+				limit = {
+					prisoner = yes
+					host = { character = FROM  }
+				}
+				prisoner = no
+			}
+			if = {
+				limit = { #If patrician enforcing claim on republic hold election in their favour
+					is_patrician = yes
+					FROM = { is_merchant_republic = yes }
+					liege = { character = FROM }
+					ROOT = { supported_claimant_title = { is_primary_holder_title = yes } }			
+				}
+				hidden_tooltip = { 
+					prestige = 75000 
+					FROM = { character_event = { id = REP.903 tooltip = TOOLTIPREP.903 } }
+				}
+				ROOT = { set_character_flag = patrician_usurp }		
+			}
+			ROOT = {
+				supported_claimant_title = {
+					# If the claimant has the wrong government type, take care of that first.
+					if = {
+						limit = {
+							higher_tier_than = PREVPREV
+							holder_scope = {
+								OR = {
+									is_tribal = yes
+									is_feudal = yes
+									is_nomadic = yes
+								}	
+							}
+							ROOT = {
+								NOT = { has_character_flag = patrician_usurp }	
+								supported_claimant = {								
+									is_ruler = yes
+									OR = {
+										is_theocracy = yes
+										is_republic = yes
+									}
+								}
+							}
+						}
+						ROOT = { 
+							supported_claimant = {
+								hidden_tooltip = { #Universal on death/abdication event
+									if = {
+										limit = { any_artifact = { has_artifact_flag = valyrian_steel } }
+										set_character_flag = do_not_inherit_sword
+									}
+									set_character_flag = abdication
+									character_event = { id = 45341 } 
+									clr_character_flag = abdication
+									clr_character_flag = do_not_inherit_sword
+								}
+								abdicate = yes
+							} 
+						}
+					}
+					if = { 	
+						limit = {	
+							holder_scope = { has_character_flag = post_civil_war_wars }
+							#tier = KING
+						}
+						ROOT = { supported_claimant = { set_character_flag = post_civil_war_wars } }
+					}
+					if = { 	
+						limit = {	
+							holder_scope = { 
+								OR = {
+									has_character_flag = supporting_king 
+									has_character_flag = neutral 
+									has_character_flag = against_king 
+									has_character_flag = rebel_leader
+								}		
+							}
+							#tier = KING
+						}
+						ROOT = { supported_claimant = { set_character_flag = neutral } }
+					}
+					if = {
+						limit = { ROOT = { NOT = { has_character_flag = patrician_usurp } } }
+						usurp_title_plus_barony_if_unlanded_and_vassals = { target = PREVPREV type = claim }
+					}					
+					hidden_tooltip = {
+						if = {
+							limit = { holder_scope = { has_character_flag = neutral } }
+							holder_scope = { any_vassal = { set_character_flag = neutral } }
+						}
+						if = {
+							limit = { title = e_iron_throne } #Lose crownlands
+							holder_scope = { character_event = { id = maintenance.37 } } 
+						}						
+					}
+				}
+			}	
+			character_event = { id = maintenance.26 } #Vanilla bug resets laws, so fix empire tracker law and primogeniture
+			character_event = { id = maintenance.21 } #Take dejure vassals if King title usurped	
+			ROOT = { clr_character_flag = patrician_usurp }	
+			FROM = {
+				if = {
+					limit = {
+						is_ruler = no
+						is_close_relative = PREV
+						NOT = { age = 16 }
+					}
+					move_character = PREV
+				}
+			}
+		}
+		FROM = {
+			if = {
+				limit = {
+					trait = rebel_leader
+					e_iron_throne = {
+						holder_scope = { NOT = { war_with = PREVPREV } }
+					}
+				}
+				remove_trait = rebel_leader
+			}
+		}
+	}
+}
+# Inform faction backer - Claimant Installed
+letter_event = {
+	id = faction_event_new.82
+	desc = "EVTDESCfaction_event_new.82"
+	
+	border = GFX_event_letter_frame_intrigue
+	
+	show_from_from = yes	
+	is_triggered_only = yes
+	
+	immediate = {
+		supported_claimant = {
+			opinion = {
+				modifier = opinion_very_grateful
+				who = ROOT
+				years = 10
+			}
+			reverse_opinion = {
+				modifier = opinion_fought_for_claimant
+				who = ROOT
+			}
+		}
+	}
+	
+	option = {
+		name = "GOOD"
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_FACTION_CLAIMANT_COUP_C
+				portrait = [From.GetID]
+			}
+		}
+	}
+}
+
+# Inform other vassals - Claimant Installed
+letter_event = {
+	id = faction_event_new.83
+	desc = "EVTDESCfaction_event_new.83"
+	
+	border = GFX_event_letter_frame_intrigue
+	
+	show_from_from = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "I_SEE"
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_FACTION_CLAIMANT_COUP_C
+				portrait = [From.GetID]
+			}
+		}
+	}
+}
+
+#Ai evaluate loyalist faction membership
+character_event = {
+	id = faction_event_new.84
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_playable = yes
+	ai = yes
+	
+	trigger = {
+		OR = {
+			in_faction = faction_liege_loyalist
+			in_faction = faction_crown_loyalist
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { 
+				in_faction = faction_liege_loyalist
+				liege = { NOT = { reverse_opinion = { who = ROOT value = 30 } } }
+			}	
+			add_character_modifier = { 
+				name = reevaluate_loyalist_faction
+				duration = 10
+				hidden = yes
+			}	
+		}
+		if = {
+			limit = { 
+				in_faction = faction_crown_loyalist
+				top_liege = { NOT = { reverse_opinion = { who = ROOT value = 30 } } }
+			}	
+			add_character_modifier = { 
+				name = reevaluate_loyalist_faction
+				duration = 10
+				hidden = yes
+			}	
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+##Calculate Fear Level##
+# wining war/rebellion : +10
+# losing war/rebellion : -20
+# conceding to faction : -15
+# executing vassal : +10
+# executing vassal relative : +5
+# torturing vassal : +5
+# torturing vassal relative : +2
+# enslave vassal relative : +2
+# pardon/release vassal : -5
+# unjustly imprison vassal: +5
+
+character_event = { #yearly fear decay/check
+	id = faction_event_new.96
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_playable = yes
+	
+	trigger = { higher_tier_than = COUNT }
+	
+	immediate = {			
+		#decay on actions
+		multiply_variable = { which = fear_actions value = 0.9 } 
+		#fear by actions cannot be less than -50
+		if = { 
+			limit = { NOT = { check_variable = { which = fear_actions value = -50 } } }
+			set_variable = { which = fear_actions value = -50 }
+		}
+		character_event = { id = faction_event_new.90 }
+	}
+}	
+character_event = {
+	id = faction_event_new.90
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_playable = yes
+	
+	trigger = { higher_tier_than = COUNT }
+		
+	immediate = {		
+		#Add traits, prestige effects etc
+		set_variable = { which = fear which = fear_actions }
+		
+		#NOTE: If the fear value for a trait is changed/added, the corresponding fear_modifier in the trait entry should be updated
+		if = {
+			limit = { trait = incapable }
+			change_variable = { which = fear value = -50 }
+		}
+		if = {
+			limit = { trait = ruthless }
+			change_variable = { which = fear value = 20 }
+		}
+		if = {
+			limit = { trait = honorable }
+			change_variable = { which = fear value = -20 }
+		}
+		if = {
+			limit = { trait = cruel }
+			change_variable = { which = fear value = 20 }
+		}
+		if = {
+			limit = { trait = kind }
+			change_variable = { which = fear value = -20 }
+		}
+		if = {
+			limit = { trait = impaler }
+			change_variable = { which = fear value = 20 }
+		}
+		if = {
+			limit = { trait = authoritative }
+			change_variable = { which = fear value = 10 }
+		}
+		if = {
+			limit = { trait = wroth }
+			change_variable = { which = fear value = 10 }
+		}
+		if = {
+			limit = { trait = patient }
+			change_variable = { which = fear value = -10 }
+		}
+		if = {
+			limit = { trait = dragon_rider }
+			random_friend = {
+				limit = {
+					trait = dragon
+					NOT = { trait = maimed_dragon }
+				}
+				ROOT = { change_variable = { which = fear value = 5 } }
+				if = {
+					limit = { martial = 20 }
+					ROOT = { change_variable = { which = fear value = 10 } }
+				}
+				if = {
+					limit = { martial = 40 }
+					ROOT = { change_variable = { which = fear value = 15 } }
+				}
+				if = {
+					limit = { martial = 60 }
+					ROOT = { change_variable = { which = fear value = 15 } }
+				}
+				if = {
+					limit = { martial = 80 }
+					ROOT = { change_variable = { which = fear value = 15 } }
+				}
+				if = {
+					limit = { martial = 100 }
+					ROOT = { change_variable = { which = fear value = 15 } }
+				}
+			}
+		}
+		if = {
+			limit = { prestige = 5000 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 4000 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 3000 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 2500 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 2000 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 1500 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 1000 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 750 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { prestige = 500 }
+			change_variable = { which = fear value = 2 }
+		}
+		if = {
+			limit = { NOT = { prestige = 100 } }
+			change_variable = { which = fear value = -5 }
+		}
+		if = {
+			limit = { NOT = { prestige = 0 } }
+			change_variable = { which = fear value = -10 }
+		}
+		if = {
+			limit = { ruled_years = 25 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { ruled_years = 20 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { ruled_years = 15 }
+			change_variable = { which = fear value = 5 }
+		}
+		if = {
+			limit = { NOT = { ruled_years = 5 } }
+			change_variable = { which = fear value = -5 }
+		}
+		if = {
+			limit = { NOT = { ruled_years = 2 } }
+			change_variable = { which = fear value = -5 }
+		}
+		if = {
+			limit = { has_character_modifier = defeated_major_revolt }
+			change_variable = { which = fear value = 10 }
+		}
+		
+		#Add modifier
+		if = { 
+			limit = { check_variable = { which = fear value = 200 } }
+			remove_character_modifier = feared_1
+			remove_character_modifier = feared_2
+			remove_character_modifier = feared_3
+			remove_character_modifier = feared_4
+			if = {
+				limit = { NOT = { has_character_modifier = feared_5 } }
+				add_character_modifier = { name = feared_5 duration = -1 }
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.95 }
+				}
+			}
+			break = yes
+		}
+		if = {
+			limit = { check_variable = { which = fear value = 160 } }
+			remove_character_modifier = feared_1
+			remove_character_modifier = feared_2
+			remove_character_modifier = feared_3
+			remove_character_modifier = feared_5
+			if = {
+				limit = { NOT = { has_character_modifier = feared_4 } }
+				add_character_modifier = { name = feared_4 duration = -1 }
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.94 }
+				}
+			}
+			break = yes
+		}
+		if = {
+			limit = { check_variable = { which = fear value = 120 } }
+			remove_character_modifier = feared_1
+			remove_character_modifier = feared_2
+			remove_character_modifier = feared_4
+			remove_character_modifier = feared_5
+			if = {
+				limit = { NOT = { has_character_modifier = feared_3 } }
+				add_character_modifier = { name = feared_3 duration = -1 }
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.93 }
+				}
+			}
+			break = yes
+		}
+		if = {
+			limit = { check_variable = { which = fear value = 80 } }
+			remove_character_modifier = feared_1
+			remove_character_modifier = feared_3
+			remove_character_modifier = feared_4
+			remove_character_modifier = feared_5
+			if = {
+				limit = { NOT = { has_character_modifier = feared_2 } }
+				add_character_modifier = { name = feared_2 duration = -1 }
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.92 }
+				}
+			}
+			break = yes
+		}
+		if = {
+			limit = { check_variable = { which = fear value = 40 } }
+			remove_character_modifier = feared_2
+			remove_character_modifier = feared_3
+			remove_character_modifier = feared_4
+			remove_character_modifier = feared_5
+			if = {
+				limit = { NOT = { has_character_modifier = feared_1 } }
+				add_character_modifier = { name = feared_1 duration = -1 }
+				if = {
+					limit = { ai = no }
+					character_event = { id = faction_event_new.91 }
+				}
+			}
+			break = yes
+		}
+		remove_character_modifier = feared_1
+		remove_character_modifier = feared_2
+		remove_character_modifier = feared_3
+		remove_character_modifier = feared_4
+		remove_character_modifier = feared_5
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Inform player
+character_event = { #fear_1
+	id = faction_event_new.91
+	desc = EVTDESCfaction_event_new.91
+	
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	notification = yes
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #fear_2
+	id = faction_event_new.92
+	desc = EVTDESCfaction_event_new.92
+	
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	notification = yes
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #fear_3
+	id = faction_event_new.93
+	desc = EVTDESCfaction_event_new.93
+	
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	notification = yes
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #fear_4
+	id = faction_event_new.94
+	desc = EVTDESCfaction_event_new.94
+	
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	notification = yes
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #fear_5
+	id = faction_event_new.95
+	desc = EVTDESCfaction_event_new.95
+	
+	border = GFX_event_normal_frame_diplomacy
+
+	is_triggered_only = yes
+	
+	notification = yes
+
+	option = {
+		name = OK
+	}
+}
+#faction_event_new.96 taken

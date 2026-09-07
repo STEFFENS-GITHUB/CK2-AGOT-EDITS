@@ -1,0 +1,2439 @@
+###################################
+####Skinchanger Events#######
+namespace = skinchanger
+###################################
+
+###Getting the trait's.
+#skinchanger.1 - Child has green dreams.
+#skinchanger.2 - Guardian will decide what to do.
+#skinchanger.3 - Child Notification - Was told it was nonsense.
+#skinchanger.4 - Child Notification - Was encoraged.
+#skinchanger.6 - Child gets an animal companion in about 5 year. [wolf] 
+#skinchanger.7 - Child gets an animal companion in about 5 year. [crow]
+#skinchanger.8 - Child gets an animal companion in about 5 year. [eagle] 
+#skinchanger.9 - Child gets an animal companion in about 5 year. [shadowcat]
+#skinchanger.10 - Child gets an animal companion in about 5 year. [boar]
+#skinchanger.11 - Child gets an animal companion in about 5 year. [snowbear]
+#skinchanger.12 - Child gets an animal companion in about 5 year. [direwolf]
+#skinchanger.13 - Child gets an animal companion in about 5 year. [dog]
+#skinchanger.14 - Child gets an animal companion in about 5 year. [brownbear]
+#skinchanger.5 - Child Notification - Was explained about the old gods.
+
+###"Rasputin" inspired events.
+#skinchanger.15 - Suspected skinchanger spotted.
+#skinchanger.16 - Skinchanger brought before you
+#skinchanger.17 - Neighbour gets skinchanger. [AI only]
+#skinchanger.18 - Villagers plagued by a pack of wolves.
+#skinchanger.19 - Hunting for wolves. (As a Hunter)
+#skinchanger.20 - Hunting for wolves. (Not a Hunter)
+#skinchanger.21 - Hunting for wolves. (Sent your men)
+#skinchanger.22 - #Wolves go away.
+#skinchanger.23 - Skinchanger seduces ruler's spouse.
+#skinchanger.24 - Seduced by your spouse's skinchanger
+#skinchanger.25 - Skinchanger seduced your spouse!
+#skinchanger.26 - Skinchanger tried to seduce your spouse!
+#skinchanger.27 - You seduced your liege's spouse!
+#skinchanger.28 - You failed to seduce your liege's spouse!
+#skinchanger.29 - Your spouse found you and is angry with you!
+#skinchanger.30 - Your spouse found you and is angry with your lover!
+#skinchanger.31 - Your liege found you and is angry with your lover!
+#skinchanger.32 - Your liege found you and is angry with you!
+#skinchanger.33 - Your lover found you, but does nothing.
+#skinchanger.34 - Your liege found you, but does nothing.
+#skinchanger.35 - Your spouse found you by the stocks and is pleased
+
+###House Farwynd whale stuff by comradebot
+#skinchanger.36 - Child Notification - Was explained about the gift from the Drowned God.
+#skinchanger.37 - Child gets an animal companion in about 5 year. [sea lion]
+#skinchanger.38 - Child gets an animal companion in about 5 year. [whale]
+
+###House Westford dog stuff
+#skinchanger.39 - Child Notification - Was explained about the gift from the Drowned God.
+#skinchanger.40 - Child gets an animal companion in about 5 year. [dog]
+
+###################################
+
+#skinchanger.1 - Child has green dreams.
+character_event = {
+	id = skinchanger.1
+	desc = "EVTDESCskinchanger.1" #I have green dreams.
+	picture = "GFX_green_dream"
+	
+	is_triggered_only=yes
+	
+	min_age = 6
+	max_age = 16
+	
+	trigger = {
+		OR = {
+			is_old_gods_religion_trigger = yes
+			AND = {
+				religion_group = drowned_god_group
+				dynasty = 114
+			}
+			AND = {
+				religion_group = westerosi_religion
+				dynasty = 2158
+			}
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+			
+		modifier = {
+			factor = 25
+			has_character_modifier = wolf_child
+		}
+		modifier = {
+			factor = 8
+			culture_group = free_folk
+		}
+		modifier = {
+			factor = 5
+			trait = zealous
+		}
+		modifier = {
+			factor = 3
+			trait = greensight
+		}
+		modifier = {
+			factor = 2
+			trait = mystic
+		}
+		modifier = {
+			factor = 2
+			trait = gregarious
+		}
+		modifier = {
+			factor = 2
+			trait = brave
+		}
+		modifier = {
+			factor = 1.5
+			dynasty = 59
+		}
+		modifier = {
+			factor = 0.75
+			trait = shy
+		}
+		modifier = {
+			factor = 0.5
+			is_dumb_trigger = yes
+		}
+		modifier = {
+			factor = 0.25
+			trait = imbecile 
+		}
+	}
+
+	option = {
+		name = "EVTOPTAskinchanger.1" #I have green dreams
+		educator = {
+			character_event = {
+				id = skinchanger.2
+				tooltip = EVTTOOLTIPskinchanger.1
+			}
+		}
+	}
+}
+
+#skinchanger.2 - Guardian will decide what to do.
+character_event = {
+	id = skinchanger.2
+	desc = "EVTDESCskinchanger.2" #Ward has Green Dreams.
+	picture = "GFX_green_dream"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.2" #Nonsense
+		
+		ai_chance = {
+			factor = 2
+						
+			modifier = {
+				factor = 0
+				is_old_gods_religion_trigger = yes
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.33
+				is_old_gods_religion_trigger = yes
+				NOT = { trait = cynical }
+			}
+			modifier = {
+				factor = 3
+				NOT = { is_old_gods_religion_trigger = yes }
+				trait = zealous
+			}
+			
+			modifier = {
+				factor = 3
+				trait = cynical
+			}
+			modifier = {
+				factor = 3
+				OR = {
+					trait = scholar
+					trait = detached_priest
+					trait = martial_cleric
+					trait = scholarly_theologian
+					trait = mastermind_theologian
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				FROM = {
+					NOT = { trait = shy }
+					NOT = { trait = gregarious }
+					NOT = { trait = playful }
+					NOT = { trait = timid }
+					NOT = { personality_traits = 6 }
+				}	
+			}	
+			FROM = {			
+				random = {
+					chance = 50
+
+					add_trait = shy
+					hidden_tooltip = {
+						ROOT = {
+							character_event = {
+								id = 38163 #Notify
+							}
+						}
+						character_event = {
+							id = 38263 #Notify
+						}
+					}
+				}
+			}	
+		}
+		
+		FROM = { hidden_tooltip = {character_event = { id = skinchanger.3 } } }
+	}
+	
+	option = {
+		name = "EVTOPTBskinchanger.2" #Listen to him, encourage him.
+
+		ai_chance = {
+			factor = 2
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {FROM =  {change_diplomacy = 1}}
+			20 = {FROM =  {change_diplomacy = 2}}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {change_diplomacy = 1}
+			20 = {change_diplomacy = 2}
+		}
+		
+		FROM = {
+			add_character_modifier = {
+				name = suspected_skinchanger
+				duration = -1
+			}
+			hidden_tooltip = {
+				character_event = {id = skinchanger.4} #Notification
+				opinion = {
+					modifier = opinion_happy_with_guardian
+					who = ROOT
+					years = 2
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCskinchanger.2" #Recognise
+		
+		trigger = {
+			is_old_gods_religion_trigger = yes
+		}
+		
+		ai_chance = {
+			factor = 2
+			
+			modifier = {
+				factor = 5
+				OR = {
+					trait = mystic
+					trait = zealous
+					is_smart_incl_genius_trigger = yes
+					trait = greensight
+				}
+			}
+			modifier = {
+				factor = 0.1
+				trait = cynical
+			}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {FROM =  {change_learning = 1}}
+			20 = {FROM =  {change_learning = 2}}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {change_learning = 1}
+			20 = {change_learning = 2}
+		}
+		
+		FROM = {			
+			random = {
+				chance = 80
+
+				add_trait = greensight
+			}
+		}	
+		
+		FROM = {			
+			random = {
+				chance = 20
+
+				add_trait = mystic
+			}
+		}	
+		
+		FROM = {
+			hidden_tooltip = {character_event = { id = skinchanger.5 }}
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 2
+			}
+		}
+   }
+   option = {
+		name = "EVTOPTC320001" #Recognise	
+		trigger = {
+			religion_group = drowned_god_group
+		}	
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 5
+				OR = {
+					trait = mystic
+					trait = zealous
+					is_smart_incl_genius_trigger = yes
+					trait = greensight
+				}
+			}
+			modifier = {
+				factor = 0.1
+				trait = cynical
+			}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {FROM =  {change_learning = 1}}
+			20 = {FROM =  {change_learning = 2}}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {change_learning = 1}
+			20 = {change_learning = 2}
+		}
+		
+		FROM = {			
+			random = {
+				chance = 80
+
+				add_trait = greensight
+			}
+		}	
+		
+		FROM = {			
+			random = {
+				chance = 20
+
+				add_trait = mystic
+			}
+		}	
+		
+		FROM = {
+			hidden_tooltip = {character_event = { id = skinchanger.36 }}
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 2
+			}
+		}
+   }
+   option = {
+		name = "EVTOPTC321001" #Recognise	
+		trigger = {
+			religion_group = westerosi_religion
+			NOR = {
+				religion = old_gods_reformed
+				religion = old_gods
+			}	
+		}	
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 5
+				OR = {
+					trait = mystic
+					trait = zealous
+					is_smart_incl_genius_trigger = yes
+					trait = greensight
+				}
+			}
+			modifier = {
+				factor = 0.1
+				trait = cynical
+			}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {FROM =  {change_learning = 1}}
+			20 = {FROM =  {change_learning = 2}}
+		}
+		
+		random_list = {
+			40 = {}
+			40 = {change_learning = 1}
+			20 = {change_learning = 2}
+		}
+		
+		FROM = {			
+			random = {
+				chance = 80
+
+				add_trait = greensight
+			}
+		}	
+		
+		FROM = {			
+			random = {
+				chance = 20
+
+				add_trait = mystic
+			}
+		}	
+		
+		FROM = {
+			hidden_tooltip = {character_event = { id = skinchanger.39 }}
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 2
+			}
+		}
+   }
+}
+
+#skinchanger.3 - Child Notification - Was told it was nonsense.
+character_event = {
+	id = skinchanger.3
+	desc = "EVTDESCskinchanger.3" # Was told it was nonsense.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.3" #Disapointment
+	}
+}
+
+#skinchanger.4 - Child Notification - Was encoraged.
+character_event = {
+	id = skinchanger.4
+	desc = "EVTDESCskinchanger.4" #Was encoraged.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.4" #Generic Yey
+	}
+}
+
+#skinchanger.5 - Child Notification - Was explained about the old gods.
+character_event = {
+	id = skinchanger.5
+	desc = "EVTDESCskinchanger.5" #Was explained about the old gods.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.4" #Generic Yey
+	}
+}
+#Multi animal check
+character_event = {
+	id = skinchanger.699
+	
+	is_triggered_only = yes
+	hide_window = yes
+
+	immediate = {
+		if = {
+			limit = { NOT = { has_character_flag = multi_animal_skinchanger } }
+			random = { #1 in 10 skinchangers can have more than one animal
+				chance = 10
+				set_character_flag = multi_animal_skinchanger
+				set_variable = { which = "animal_companions" value = 0.1 }
+			}
+		}
+		if = {
+			limit = { has_character_flag = multi_animal_skinchanger }
+			change_variable = { which = "animal_companions" value = 1 }
+			#50% chance for each extra animal after 2, upto 6
+			if = { #6
+				limit = { check_variable = { which = "animal_companions" value = 6 } }
+				clr_character_flag = multi_animal_skinchanger
+			}
+			if = { #2-5
+				limit = { 
+					check_variable = { which = "animal_companions" value = 2 } 
+					NOT = { check_variable = { which = "animal_companions" value = 6 } }
+				}
+				random = {
+					chance = 50
+					clr_character_flag = multi_animal_skinchanger
+				}	
+			}
+		}
+		if = {
+			limit = { NOT = { has_character_flag = multi_animal_skinchanger } }
+			remove_character_modifier = suspected_skinchanger
+			set_variable = { which = "animal_companions" value = 0 }
+		}
+	}
+	
+	option = {
+		name = "OK"
+		
+	}
+}
+#skinchanger.6 - Child gets an animal companion in about 5 year. [wolf]
+character_event = {
+	id = skinchanger.6
+	desc = "EVTDESCskinchanger.6" #I befriend a wolf
+	picture = "GFX_wolf"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+	
+	trigger = { 	
+		has_character_modifier = suspected_skinchanger 
+		NOT = { trait = wolf }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.33
+			has_character_modifier = wolf_child
+		}
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 3
+			NOT = { is_old_gods_religion_trigger = yes }
+		}
+		modifier = {
+			factor = 3
+			location = { region = world_iron_isles }
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}				
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.6" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = wolf
+		}	
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.7 - Child gets an animal companion in about 5 year. [crow] 
+character_event = {
+	id = skinchanger.7
+	desc = "EVTDESCskinchanger.7" #I befriend a crow
+	picture = "GFX_crow"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+	
+	trigger = { 		
+		has_character_modifier = suspected_skinchanger 
+		NOT = { trait = crow }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		modifier = {
+			factor = 2
+			culture_group = free_folk
+		}
+		modifier = {
+			factor = 0.6
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.6
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 3
+			location = { region = world_iron_isles }
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.7" #Corn! Porn! Corn!
+		random = {
+			chance = 65
+			add_trait = crow
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.8 - Child gets an animal companion in about 5 year. [eagle] 
+character_event = {
+	id = skinchanger.8
+	desc = "EVTDESCskinchanger.8" #I befriend a eagle
+	picture = "GFX_skinchanger"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+	
+	trigger = { 
+		has_character_modifier = suspected_skinchanger 
+		NOT = { trait = eagle }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.6
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.6
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 3
+			location = { region = world_iron_isles }
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.8" #Corn! Porn! Corn!
+		random = {
+			chance = 65
+			add_trait = eagle
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.9 - Child gets an animal companion in about 5 year. [shadowcat]
+character_event = {
+	id = skinchanger.9
+	desc = "EVTDESCskinchanger.9" #I befriend a shadowcat
+	picture = "GFX_skinchanger"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_beyond_the_wall 
+				region = world_mountains_of_moon
+			}	
+		}
+		NOT = { trait = shadowcat }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.9" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = shadowcat
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.10 - Child gets an animal companion in about 5 year. [boar]
+character_event = {
+	id = skinchanger.10
+	desc = "EVTDESCskinchanger.10" #I befriend a boar
+	picture = "GFX_skinchanger"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_character_modifier = suspected_skinchanger 
+		NOT = { location = { region = world_iron_isles } }
+		NOT = { trait = boar }
+	}
+
+	mean_time_to_happen = {
+		months = 100
+		
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.10" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = boar
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.11 - Child gets an animal companion in about 5 year. [snowbear]
+character_event = {
+	id = skinchanger.11
+	desc = "EVTDESCskinchanger.11" #I befriend a snow bear
+	picture = "GFX_skinchanger"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_beyond_the_wall 
+				region = world_ibben
+			}
+		}
+		NOT = { trait = snowbear }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.11" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = snowbear
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.12 - Child gets an animal companion in about 5 year. [direwolf]
+character_event = {
+	id = skinchanger.12
+	desc = "EVTDESCskinchanger.12" #I befriend a direwolf
+	picture = "GFX_wolf"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_beyond_the_wall 
+				region = world_north
+				region = world_the_wall
+			}
+		}
+		NOT = { trait = direwolf }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+				
+		modifier = {
+			factor = 0.1
+			has_character_modifier = wolf_child
+		}
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 0.25
+			dynasty = 59
+		}
+		modifier = {
+			factor = 3
+			NOT = { is_old_gods_religion_trigger = yes }
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.12" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = direwolf
+			hidden_tooltip = { 
+				#Get direwolf name
+				e_rebels = {
+					create_random_steward = {
+						random_traits = yes
+						dynasty = none
+						female = random
+						culture = direwolf_culture
+						religion = ROOT
+					}
+					new_character = {
+						ROOT = { save_persistent_event_target = { name = direwolf_name scope = PREV } }
+						prompt_name = { #player can also rename
+							player = ROOT
+							type = NAME_DIREWOLF_MESSAGE
+							portrait = ROOT
+							culture = direwolf_culture
+						}
+						death = yes
+					}
+				}
+			} 
+		}
+		hidden_tooltip = { 
+			character_event = { id = skinchanger.699 } #Multi animal check
+		} 
+	}
+}
+
+#skinchanger.13 - Child gets an animal companion in about 5 year. [dog]
+character_event = {
+	id = skinchanger.13
+	desc = "EVTDESCskinchanger.13" #I befriend a dog
+	picture = "GFX_wolf"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = { 
+		has_character_modifier = suspected_skinchanger 
+		NOT = { trait = dog }
+	}
+
+	mean_time_to_happen = {
+		months = 100
+		
+		modifier = {
+			factor = 0.25
+			dynasty = 2158 #Westfords
+		}
+		modifier = {
+			factor = 0.8
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = content
+		}
+		modifier = {
+			factor = 0.6
+			trait = honest
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.13" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 85
+			add_trait = dog
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.14 - Child gets an animal companion in about 5 year. [brownbear]
+character_event = {
+	id = skinchanger.14
+	desc = "EVTDESCskinchanger.14" #I befriend a brown bear
+	picture = "GFX_skinchanger"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_beyond_the_wall 
+				region = world_north
+				region = world_vale
+				region = world_westerlands
+				region = world_norvos
+				region = world_braavos
+				region = world_andalos
+				region = world_qohor
+				region = world_north_valyria
+				region = world_bone_mountains
+			}
+		}
+		NOT = { trait = brownbear }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+				
+		modifier = {
+			factor = 0.2
+			location = { province_id = 33 }#Bear island
+		}
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.14" #Wana be my friend? Sniff Sniff
+		random = {
+			chance = 65
+			add_trait = brownbear
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.15 - Suspected skinchanger spotted.
+character_event = {
+	id = skinchanger.15
+	desc = "EVTDESCskinchanger.15" #Suspected skinchanger spotted.
+	picture = "GFX_evt_throne_room"
+	
+	min_age = 16
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	war = no
+	
+	trigger = {
+		capital_scope = {
+			OR = {
+				region = world_beyond_the_wall
+				region = world_the_wall
+				region = world_north
+			}
+		}
+		in_command = no	
+		NOT  = { has_character_flag = has_skinchenger_chain_already }
+	}
+	
+	mean_time_to_happen = {
+		months = 900
+		
+		modifier = {
+			factor = 5
+			capital_scope = { NOT = { region = world_beyond_the_wall } }
+		}
+		modifier = {
+			factor = 3
+			capital_scope = { 
+				NOT = { 
+					is_old_gods_religion_trigger = yes
+				} 
+			}
+		}
+	}
+	
+	immediate = { set_character_flag = has_skinchenger_chain_already }
+	
+	option = {
+		name = "EVTOPTAskinchanger.15"
+		hidden_tooltip = { character_event = { id = skinchanger.16 days = 12 random = 5 } }
+	}
+}
+
+# skinchanger.16 - Skinchanger brought before you
+character_event = {
+	id = skinchanger.16
+	desc = "EVTDESCskinchanger.16"
+	picture = "GFX_skinchanger"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		capital_scope = {
+			ROOT = {
+				random_list = {
+					50 = {
+						create_random_intriguer = {
+							random_traits = yes
+							trait = greensight
+							trait = zealous												
+							trait = quick
+							trait = weak		
+							female = no						
+							dynasty = none
+							religion = PREV
+							culture = PREV
+							historical = yes
+						}
+					}
+					50 = {
+						create_random_intriguer = {
+							random_traits = yes
+							trait = greensight
+							trait = zealous												
+							trait = quick
+							trait = weak		
+							female = yes				
+							dynasty = none
+							religion = PREV
+							culture = PREV
+							historical = yes
+						}
+					}
+				}
+				new_character = {				
+					give_nickname = nick_the_skinchanger
+					save_event_target_as = skinchanger
+					remove_trait = chaste
+					remove_trait = celibate
+					if = {
+						limit = {
+							NOT = { 
+								is_old_gods_religion_trigger = yes
+							} 
+						}
+						if = {
+							limit = { location = { region = world_beyond_the_wall } }
+							religion = beyond_wall_old_gods
+						}
+						if = {
+							limit = { location = { NOT = { region = world_beyond_the_wall } } }
+							religion = old_gods
+						}
+					}
+					random = {
+						chance = 33
+						add_trait = lustful
+					}
+					random = {
+						chance = 33
+						add_trait = mystic
+					}
+					random = {
+						chance = 33
+						add_trait = fair
+						remove_trait = ugly
+					}
+					random = {
+						chance = 20
+						add_trait = weak
+						remove_trait = strong
+					}
+					random_list = {
+						20 = { add_trait = crow }
+						20 = { add_trait = wolf }
+						20 = { add_trait = boar }
+						20 = { add_trait = eagle }
+						20 = { add_trait = shadowcat }
+					}
+				}
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.16" #Spare his life and hire him as a special advisor. <-- Adds a competend skinchager character to your court, with a high % of his seducing your wife.			
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.5
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				trait = mystic
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+				is_old_gods_religion_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+		}
+		event_target:skinchanger = {
+			move_character = ROOT
+			hidden_tooltip = { character_event = { id = skinchanger.23 days = 730 random = 250 } }#seduce lieges spouse
+		}
+	}
+	option = {
+		name = "EVTOPTBskinchanger.16" #Let him live, but banish him. <-- Adds a competend skinchager character as a rival to one of your neighbours courts.
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 2
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				trait = shy
+			}
+		}
+		random_demesne_province = {
+			limit = {
+				any_neighbor_province = {
+					any_province_lord = {
+						higher_tier_than = BARON
+						NOT = { character = ROOT }
+					}
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					any_province_lord = {
+						higher_tier_than = BARON
+						NOT = { character = ROOT }
+					}
+				}
+				random_province_lord = {
+					limit = {
+						higher_tier_than = BARON
+						NOT = { character = ROOT }
+					}				
+					event_target:skinchanger = { 
+						tooltip = { move_character = PREV }
+						add_rival = ROOT
+					}
+					hidden_tooltip = { character_event = { id = skinchanger.17 tooltip = EVTTOOLTIPskinchanger.17 } }#Gets a powerful skinchanger, who is a rival to you.
+				}
+			}
+		}
+		piety = -5
+		prestige = 5
+		hidden_tooltip = {
+			character_event = { id = skinchanger.18 days = 365 random = 100 } #Villagers plagued by a pack of wolves.
+		}	
+	}
+	option = {
+		name = "EVTOPTCskinchanger.16" #Order him executed.
+		trigger = { NOT = { trait = just } }
+		ai_chance = {
+			factor = 25
+			
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 5
+				trait = zealous
+				is_old_gods_religion_trigger = yes 
+			}
+			modifier = {
+				factor = 0
+				trait = zealous
+				is_old_gods_religion_trigger = yes 
+			}
+			modifier = {
+				factor = 0.5
+				trait = kind
+			}
+			modifier = {
+				factor = 0.5
+				trait = brave
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+		}
+		event_target:skinchanger = { 
+			tooltip = {
+				death = {
+					death_reason = death_execution
+					killer = ROOT
+				}
+			}
+			hidden_tooltip = { character_event = { id = skinchanger.1699 } } #ping event		
+		}
+		if = {
+			limit = { trait = mystic }
+			remove_trait = mystic
+		}
+		if = {
+			limit = { trait = zealous }
+			remove_trait = zealous
+		}
+		hidden_tooltip = {
+			character_event = { id = skinchanger.18 days = 365 } #Villagers plagued by a pack of wolves.
+		} 
+		piety = -25
+		prestige = 10
+		
+	}
+}
+character_event = { #skinchanger executed
+	id = skinchanger.1699
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		tooltip = {
+			death = {
+				death_reason = death_execution
+				killer = FROM
+			}
+		}
+		hidden_tooltip = { FROM = { character_event = { id = imprisoned.10 } } } #Select execution method	
+	}
+	
+	option = {
+		name = OK		
+	}
+}
+#skinchanger.17 - Neighbour gets skinchanger.
+character_event = {
+	id = skinchanger.17
+	desc = "EVTDESCskinchanger.17"
+	picture = GFX_skinchanger
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.17"
+		event_target:skinchanger = { move_character = ROOT }
+	}
+}
+
+#skinchanger.18 - Villagers plagued by a pack of wolves.
+character_event = {
+	id = skinchanger.18
+	desc = "EVTDESCskinchanger.18"
+	picture = "GFX_evt_throne_room"
+	
+	is_triggered_only = yes
+	
+	option = {
+		trigger = {
+			NOT = { trait = incapable }
+			prisoner = no
+		}
+		name = "EVTOPTAskinchanger.18" #Arrange a hunt.
+		capital_scope = {
+			add_province_modifier = {
+				name = plagued_by_wolfs
+				duration = 1095
+			}
+		}
+		scaled_wealth = { value = -0.5 min = -25 max = -100 }
+		prestige = 5
+		hidden_tooltip = { character_event = { id = skinchanger.22 days=120 random=30 } } #Hunting for wolves. (Sent your men)
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.25
+				trait = hunter
+			}
+			modifier = {
+				factor = 0.5
+				trait = brave
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBskinchanger.18" #Join a hunt.
+		trigger = {
+			prisoner = no
+			in_command = no
+			NOT = { is_weak_trigger = yes }
+			NOT = { trait = slothful }
+			NOT = { trait = craven }
+		}
+		capital_scope = {
+			add_province_modifier = {
+				name = plagued_by_wolfs
+				duration = 1095
+			}
+		}
+		scaled_wealth = { value = -0.5 min = -25 max = -100 }
+		prestige = 10
+		if = {
+			limit = { trait = hunter }
+			hidden_tooltip = { character_event = { id = skinchanger.19 days=40 random=30 } } #Hunting for wolves. (As a Hunter)		
+		}
+		if = {
+			limit = { NOT = { trait = hunter } }
+			hidden_tooltip = { character_event = { id = skinchanger.20 days=60 random=30 tooltip = EVTTOOLTIPskinchanger.19 } }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				trait = craven
+			}
+			modifier = {
+				factor = 0.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.5
+				is_ill = yes
+			}
+			modifier = {
+				factor = 0.5
+				trait = wounded
+			}
+			modifier = {
+				factor = 0.5
+				is_maimed_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCskinchanger.18" #Pesants problem.
+		trigger = {
+			NOT = { trait = just }
+		}
+		capital_scope = {
+			add_province_modifier = {
+				name = plagued_by_wolfs
+				duration = 1095
+			}
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.21 days = 280 random = 100 } } #random = 180 ?? #Wolves go away.
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.25
+				trait = just
+			}
+		}
+	}
+}
+
+#skinchanger.19 - Hunting for wolves. (As a Hunter)
+character_event = {
+	id = skinchanger.19
+	desc = "EVTDESCskinchanger.19"
+	picture = "GFX_wolf_attack"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.19"
+		random_demesne_province = {
+			limit = { has_province_modifier = plagued_by_wolfs }
+			remove_province_modifier = plagued_by_wolfs
+		}
+		prestige = 25
+	}
+}
+
+#skinchanger.20 - Hunting for wolves. (Not a Hunter)
+character_event = {
+	id = skinchanger.20
+	desc = "EVTDESCskinchanger.20"
+	picture = "GFX_wolf_attack"
+	
+	is_triggered_only=yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.20"
+		random_demesne_province = {
+			limit = { has_province_modifier = plagued_by_wolfs }
+			remove_province_modifier = plagued_by_wolfs
+		}
+		if = {
+			limit = {
+				NOT = { is_maimed_trigger = yes }
+				NOT = { trait = wounded }
+			}
+			random_list = {
+				5 = { 
+					add_maimed_trait_effect = yes
+				}
+				15 = { 
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = {
+						character_event = {
+							id = 38280 #Notify
+						}
+					}
+				}
+				80 = { }
+			}
+		}	
+		hunter_trait_chance_effect = yes
+	}
+}
+
+#skinchanger.21 - Hunting for wolves. (Sent your men)
+character_event = {
+	id = skinchanger.21
+	desc = "EVTDESCskinchanger.21"
+	picture = "GFX_wolf_attack"
+	
+	is_triggered_only=yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.21"
+		random_demesne_province = {
+			limit = { has_province_modifier = plagued_by_wolfs }
+			remove_province_modifier = plagued_by_wolfs
+		}
+	}
+}
+
+#skinchanger.22 - #Wolves go away.
+character_event = {
+	id = skinchanger.22
+	desc = "EVTDESCskinchanger.22"
+	picture = "GFX_wolf_attack"
+	
+	is_triggered_only=yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.22"
+		random_demesne_province = {
+			limit = { has_province_modifier = plagued_by_wolfs }
+			remove_province_modifier = plagued_by_wolfs
+		}
+	}
+}
+
+#skinchanger.23 - Skinchanger seduces ruler's spouse.
+character_event = {
+	id = skinchanger.23
+	desc = "EVTDESCskinchanger.23"
+	picture = "GFX_gentle_kiss"
+
+	is_triggered_only = yes
+	prisoner = no
+	capable_only = yes
+
+	trigger = {
+		has_nickname = nick_the_skinchanger
+		liege = { 
+			is_married = yes 
+			spouse = { root_attraction_trigger = yes }
+		}	
+		NOT = { num_of_lovers = 5 }
+		
+		# Don't make the attempt if the liege's spouse is too old, sick, or incapable
+		liege = {
+			spouse = {
+				age = 14
+				NOT = { age = 50 }
+				NOT = { is_ill = yes }
+				NOT = { has_severe_disability_trigger = yes }
+				NOT = { trait = eunuch }
+				prisoner = no
+			}
+		}
+		
+		# Is pretty much guaranteed to have this, but if it's lost this event should be stopped
+		OR = {
+			trait = lustful
+			NOR = {
+				trait = honorable
+				trait = honest
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.23"
+		liege = { spouse = { character_event = { id = skinchanger.24 tooltip = "EVTTOOLTIPskinchanger.24" } } }
+	}
+}
+
+character_event = {
+	id = skinchanger.24
+	desc = "EVTDESCskinchanger.24"
+	picture = GFX_skinchanger
+	
+	is_triggered_only = yes
+	
+	option = {
+		trigger = { NOT = { trait = celibate }	 }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0.25
+				has_lover = yes
+			}
+			modifier = {
+				factor = 0
+				trait = chaste
+			}		
+			modifier = {
+				factor = 2.5
+				trait = lustful
+			}
+			modifier = {
+				factor = 2
+				culture = summer_islander #promiscious
+			}
+			modifier = {
+				factor = 0.2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2.5
+				is_ruler = no
+				any_liege = { character = FROM }
+			}	
+			modifier = {
+				factor = 0.10
+				is_pregnant = yes
+			}
+			modifier = {
+				factor = 0.05
+				NOT = { FROM = { root_attraction_trigger = yes } }	
+			}
+			modifier = {
+				factor = 1.4
+				personal_opinion = { who = FROM value = 99 } 
+			}
+			modifier = {
+				factor = 1.4
+				personal_opinion = { who = FROM value = 74 } 
+			}
+			modifier = {
+				factor = 1.4
+				personal_opinion = { who = FROM value = 49 } 
+			}
+			modifier = {
+				factor = 1.4
+				personal_opinion = { who = FROM value = 24 } 
+			}	
+			
+			modifier = {
+				factor = 0.90
+				FROM = { trait = clubfooted  }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { trait = harelip   }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { trait = hunchback   }
+			}
+			modifier = {
+				factor = 0.95
+				FROM = { trait = lisp   }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { trait = stutter    }
+			}
+			modifier = {
+				factor = 0.65
+				FROM = { has_ugly_trait_trigger = yes    }
+			}
+			modifier = {
+				factor = 0.65
+				FROM = { trait = dwarf    }
+			}
+			modifier = {
+				factor = 0.55
+				FROM = { trait = imbecile    }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { is_weak_trigger = yes    }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { trait = wounded     }
+			}
+			modifier = {
+				factor = 0.85
+				FROM = { is_maimed_trigger = yes     }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { is_ill = yes } 
+			}
+			modifier = {
+				factor = 1.35
+				FROM = { is_strong_trigger = yes     }
+			}
+			modifier = {
+				factor = 1.15
+				FROM = { trait = genius     }
+			}
+			modifier = {
+				factor = 1.45
+				FROM = { has_fair_trait_trigger = yes     }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = tall  }
+			}	
+		}
+		
+		name = "EVTOPTAskinchanger.24"
+		
+		if = {
+			limit = { trait = lustful }
+			add_character_modifier = {
+				name = lustful_affair_timer
+				duration = 365
+				hidden = yes
+			}	
+		}
+		
+		if = {
+			limit = {
+				NOT = { trait = lustful } 
+				NOT = { trait = chaste } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = lustful
+				hidden_tooltip = {
+					character_event = {
+						id = 38272 #Notify
+					}
+				}
+			}
+		}
+		
+		add_lover = FROM
+		if = {
+			limit = {
+				is_female = yes
+				is_pregnant = no				
+				fertility = 0.1
+				NOT = { age = 40 }
+				FROM = { 
+					is_female = no
+					fertility = 0.1
+				}
+			}
+			random = {
+				chance = 50
+				FROM = { impregnate = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				is_female = no
+				fertility = 0.1
+				FROM = { 
+					is_female = yes 
+					NOT = { age = 40 }
+					fertility = 0.1
+					is_pregnant = no
+				}
+			}
+			random = {
+				chance = 50
+				impregnate = FROM
+			}
+		}
+		spouse = { character_event = { id = skinchanger.25 days = 1 tooltip = "EVTTOOLTIPskinchanger.25" } }
+		FROM = { character_event = { id = skinchanger.27 days = 1 tooltip = "EVTTOOLTIPskinchanger.27" } }
+		FROM = {
+			if = {
+				limit = { has_ambition = obj_make_the_eight }
+				hidden_tooltip = { character_event = { id = ambition.1 } }
+			}
+		}	
+	}
+	
+	option = {	
+		name = "EVTOPTBskinchanger.24"
+		trigger = { NOT = { trait = celibate }	 }
+		ai_chance = {
+			factor = 1
+			#too young
+			modifier = {
+				factor = 2
+				AND = {
+					FROM = { NOT = { age = 18  } }
+					age = 45
+				}
+			}
+			#too old
+			modifier = {
+				factor = 5
+				AND = {
+					FROM = {  age = 50   }
+					NOT = { age = 28 }
+				}
+			}
+			modifier = {
+				factor = 2
+				AND = {
+					FROM = {  age = 40   }
+					NOT = { age = 20 }
+				}
+			}
+			modifier = {
+				factor = 1.2
+				AND = {
+					FROM = {  age = 35   }
+					NOT = { age = 22 }
+				}
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { trait = shy     }
+			}
+			
+			modifier = {
+				factor = 1.35
+				NOT = { personal_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 1.75
+				NOT = { personal_opinion = { who = FROM value = -50 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = lustful } 
+				NOT = { trait = chaste } 
+				has_lover = no
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = chaste
+				hidden_tooltip = {
+					character_event = {
+						id = 38274 #Notify
+					}
+				}
+			}
+		}
+		
+		spouse = { character_event = { id = skinchanger.26 days = 1 tooltip = "EVTTOOLTIPskinchanger.26" } }
+		FROM = { character_event = { id = skinchanger.28 days = 1 tooltip = "EVTTOOLTIPskinchanger.28" } }
+	}
+	
+	option = {
+		trigger = { trait = celibate }
+		name = "EVTOPTCskinchanger.24"
+		spouse = { character_event = { id = skinchanger.26 days = 1 tooltip = "EVTTOOLTIPskinchanger.26" } }
+		FROM = { character_event = { id = skinchanger.28 days = 1 tooltip = "EVTTOOLTIPskinchanger.28" } }
+	}
+}
+
+character_event = {
+	id = skinchanger.25
+	desc = "EVTDESCskinchanger.25"
+	picture = "GFX_evt_lovers"
+	
+	is_triggered_only = yes
+	
+	
+	option = {
+		name = "EVTOPTAskinchanger.25" # Confront spouse
+		spouse = {
+			character_event = {
+				id = 64001
+				days = 2
+				tooltip = "EVTTOOLTIP64001"
+			}
+		}
+		hidden_tooltip = {
+			spouse = { character_event = {id = skinchanger.29 days = 1 } }
+			FROM = { FROM = { character_event = { id = skinchanger.31 days = 1 } } }
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0.5
+				trait = just
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 10 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 20 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 30 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 40 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 50 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 60 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 70 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 80 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 90 }
+			}
+			modifier = {
+				factor = 0.9
+				opinion = { who = spouse value = 100 }
+			}
+		}
+	}
+	
+	option = { # Confront skinchanger
+		name = "EVTOPTBskinchanger.25"
+		spouse = {
+			random_lover = {
+				character_event = {
+					id = 64002
+					tooltip = "EVTTOOLTIP64002"
+					days = 2
+				}
+			}
+		}
+		hidden_tooltip = {
+			spouse = { character_event = {id = skinchanger.30 days = 1 } }
+			FROM = { FROM = { character_event = { id = skinchanger.32 days = 1 } } }
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -9 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -19 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -29 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -39 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -49 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -59 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -69 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -79 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -89 } }
+			}
+			modifier = {
+				factor = 0.9
+				NOT = { opinion = { who = spouse value = -99 } }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCskinchanger.25" #Ignore it.
+		spouse = {
+			reverse_opinion = {
+				modifier = opinion_irritated
+				who = ROOT
+				years = 6
+			}
+		}
+		hidden_tooltip = {
+			spouse = { character_event = {id = skinchanger.33 days = 1 } }
+			FROM = { FROM = { character_event = { id = skinchanger.34 days = 1 } } }
+		}
+		prestige = -20
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0.5
+				trait = greedy
+			}
+			modifier = {
+				factor = 0.5
+				trait = envious
+			}
+			modifier = {
+				factor = 0.5
+				trait = lustful
+			}
+			modifier = {
+				factor = 0.5
+				trait = brave
+			}
+			modifier = {
+				factor = 0.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 0.5
+				trait = authoritative
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 4
+				trait = homosexual
+			}
+		}
+	}
+}
+
+character_event = {
+	id = skinchanger.26
+	desc = "EVTDESCskinchanger.26"
+	picture = "GFX_STARK"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.26"
+		opinion = { who = FROM modifier = opinion_very_grateful months = 240 }
+		FROM = { FROM = { add_rival = ROOT } }
+		hidden_tooltip = { FROM = { character_event = { id = skinchanger.35 days = 1 } } }
+	}
+}
+
+character_event = {
+	id = skinchanger.27
+	desc = "EVTDESCskinchanger.27"
+	picture = "GFX_gentle_kiss"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.27"
+		FROM = {
+			if = {
+				limit = { has_ambition = obj_make_the_eight }
+				hidden_tooltip = { character_event = { id = ambition.1 } }
+			}
+		}	
+	}
+}
+
+character_event = {
+	id = skinchanger.28
+	desc = "EVTDESCskinchanger.28"
+	picture = "GFX_STARK"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.28"
+		add_rival = FROM
+	}
+}
+
+character_event = {
+	id = skinchanger.29
+	desc = "EVTDESCskinchanger.29"
+	picture = "GFX_evt_quarrel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.29"
+	}
+}
+
+character_event = {
+	id = skinchanger.30
+	desc = "EVTDESCskinchanger.30"
+	picture = "GFX_evt_quarrel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.30"
+	}
+}
+
+character_event = {
+	id = skinchanger.31
+	desc = "EVTDESCskinchanger.31"
+	picture = "GFX_evt_quarrel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.31"
+	}
+}
+
+character_event = {
+	id = skinchanger.32
+	desc = "EVTDESCskinchanger.32"
+	picture = "GFX_evt_quarrel"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.32"
+	}
+}
+
+character_event = {
+	id = skinchanger.33
+	desc = "EVTDESCskinchanger.33"
+	picture = "GFX_evt_scandal"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.33"
+	}
+}
+
+character_event = {
+	id = skinchanger.34
+	desc = "EVTDESCskinchanger.34"
+	picture = "GFX_evt_scandal"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.29"
+	}
+}
+
+character_event = {
+	id = skinchanger.35
+	desc = "EVTDESCskinchanger.35"
+	picture = "GFX_STARK"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAskinchanger.35"
+	}
+}
+#Farwynd skinchangers
+#skinchanger.36 - Child Notification - Was explained about the gift from the Drowned God.
+character_event = {
+	id = skinchanger.36
+	desc = "EVTDESCskinchanger.36" #Was explained about the gift from the Drowned God.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA3200003" #Generic Yey
+	}
+}
+
+#skinchanger.37 - Child gets an animal companion in about 5 year. [sea lion]
+character_event = {
+	id = skinchanger.37
+	desc = "EVTDESCskinchanger.37" #I befriend a sea lion
+	#picture = "GFX_wolf"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = { 
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_iron_isles
+				region = world_ibben
+			}
+		}
+		NOT = { trait = sea_lion }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.6
+			trait = brave
+		}
+		modifier = {
+			factor = 0.8
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.8
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.37" #Wanna be my friend? Ort ort ort!			
+		random = {
+			chance = 80
+			add_trait = sea_lion	
+		}
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+
+#skinchanger.38 - Child gets an animal companion in about 5 year. [whale] 
+character_event = {
+	id = skinchanger.38
+	desc = "EVTDESCskinchanger.38" #I befriend a whale
+	#picture = "GFX_crow"
+	
+	min_age = 6
+	capable_only = yes
+	prisoner = no
+
+	trigger = { 
+		has_character_modifier = suspected_skinchanger 
+		location = {
+			OR = {
+				region = world_iron_isles
+				region = world_ibben
+			}
+		}
+		NOT = { trait = whale }
+	}
+
+	mean_time_to_happen = {
+		months = 60
+		
+		modifier = {
+			factor = 0.5
+			culture = ibbenese
+		}
+		modifier = {
+			factor = 0.6
+			is_smart_trigger = yes
+		}
+		modifier = {
+			factor = 0.6
+			trait = genius
+		}
+		modifier = {
+			factor = 0.5
+			trait = zealous
+		}
+		modifier = {
+			factor = 2
+			has_character_flag = multi_animal_skinchanger
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAskinchanger.38" #A whale of a tale!
+		random = {
+			chance = 80
+			add_trait = whale
+		}	
+		hidden_tooltip = { character_event = { id = skinchanger.699 } } #Multi animal check
+	}
+}
+#Westford skinchangers
+#skinchanger.39 - Child Notification - Was explained about the gift from the Old Ways.
+character_event = {
+	id = skinchanger.39
+	desc = "EVTDESCskinchanger.39" #Was explained about the gift from the Old Ways.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA3200003" #Generic Yey
+	}
+}
+
+# #skinchanger.40 - Child gets an animal companion in about 5 year. [dog]
+# character_event = {
+	# id = skinchanger.40
+	# desc = "EVTDESCskinchanger.40" #I befriend a dog
+	# #picture = "GFX_wolf"
+	
+	# min_age = 16
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = { 
+		# has_character_modifier = suspected_skinchanger 
+		# dynasty = 2158
+	# }
+
+	# mean_time_to_happen = {
+		# months = 60
+		# modifier = {
+			# factor = 0.6
+			# trait = brave
+		# }
+		# modifier = {
+			# factor = 0.8
+			# is_smart_trigger = yes
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = genius
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = just
+		# }
+		# modifier = {
+			# factor = 0.8
+			# trait = kind
+		# }
+	# }
+	
+	# option = {
+		# name = "EVTOPTAskinchanger.40" #Wanna be my friend? Ort ort ort!			
+		# random = {
+			# chance = 80
+
+			# add_trait = dog	
+		# }
+		# remove_character_modifier = suspected_skinchanger
+	# }
+# }

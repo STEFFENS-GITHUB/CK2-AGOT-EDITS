@@ -1,0 +1,300 @@
+plot_decisions = {
+	plot_replace_councillor_decision = {
+		is_high_prio = yes
+		potential = {
+			OR = {
+				has_plot = plot_replace_castellan
+				has_plot = plot_replace_chancellor
+				has_plot = plot_replace_marshal
+				has_plot = plot_replace_treasurer
+				has_plot = plot_replace_spymaster
+				has_plot = plot_replace_councillor
+			}	
+			NOT = { has_character_flag = flag_plot_replace_councillor_decision }
+		}
+		
+		allow = {
+			OR = {
+				custom_tooltip = {
+					text = plot_replace_councillor_decisionA
+					num_of_plot_backers = 1
+					any_plot_backer = { same_liege = ROOT }
+				}
+				num_of_plot_backers = 2
+				# custom_tooltip = {
+					# text = plot_replace_councillor_decisionB
+					# num_of_plot_backers = 2
+					# plot_target_char = { 
+						# is_ruler = yes
+						# is_councillor = no
+						# NOT = { is_voter = yes }
+					# }
+				# }
+				custom_tooltip = {
+					text = plot_replace_councillor_decisionC
+					among_most_powerful_vassals = 3		
+				}	
+			}	
+			plot_target_char = { NOT = { liege = { regent = { character = PREVPREV } } } }
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			#activate_plot = yes
+			set_character_flag = flag_plot_replace_councillor_decision
+			liege = { 
+				if = {
+					limit = { has_regent = no }
+					custom_tooltip = { text = "EVTTOOLTIPCOUNCILPLOT1" } 
+				}
+				if = {
+					limit = { has_regent = yes }
+					regent = { custom_tooltip = { text = "EVTTOOLTIPCOUNCILPLOT1B" } } 
+				}				
+			}
+			hidden_tooltip = {
+				liege = { character_event = { id = council_plot.199 days = 7 } }
+				any_plot_backer = { character_event = { id = council_plot.50 } }
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.4
+			}
+			modifier = {
+				factor = 0
+				NOR = { 
+					num_of_plot_backers = 2
+					plot_power = 0.75
+					higher_tier_than = COUNT
+					AND = {
+						tier = COUNT
+						liege = { tier = DUKE }
+					}
+					liege = { regent = { character = ROOT } }
+					any_plot_backer = {
+						same_liege = ROOT
+						liege = { regent = { character = PREVPREV } }
+					}
+					liege = { any_backed_character = { character = ROOT } }
+					among_most_powerful_vassals = 3	
+				}
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = { # If the regent is on board, go for it immediately
+				factor = 50000
+				OR = {
+					liege = { regent = { character = ROOT } }
+					any_plot_backer = {
+						same_liege = ROOT
+						liege = { regent = { character = PREVPREV } }
+					}
+				}
+			}		
+			modifier = { # Same if the ruler is on board
+				factor = 50000
+				liege = { any_backed_character = { character = ROOT } }
+			}		
+			modifier = {
+				factor = 0.1
+				NOT = { num_of_plot_backers = 1 }
+			}	
+			modifier = {
+				factor = 0.1
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { num_of_plot_backers = 2 }
+			}
+			modifier = {
+				factor = 0.1
+				NOT = { plot_power = 0.75 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { num_of_plot_backers = 3 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { num_of_plot_backers = 4 }
+			}
+			modifier = {
+				factor = 2
+				plot_power = 2
+			}
+			modifier = {
+				factor = 2
+				num_of_plot_backers = 6
+			}
+			modifier = {
+				factor = 2
+				among_most_powerful_vassals = 3
+			}
+		}
+	}
+	plot_council_triarch_appeal_decision = {
+		is_high_prio = yes
+		potential = {
+			OR = {
+				has_plot = plot_replace_castellan
+				has_plot = plot_replace_chancellor
+				has_plot = plot_replace_marshal
+				has_plot = plot_replace_treasurer
+				has_plot = plot_replace_spymaster
+				has_plot = plot_replace_councillor
+			}	
+			plot_target_char = {
+				liege = {
+					government = triarch_merchant_republic_government	
+				}	
+				NOT = { has_character_flag = triarch }
+				NOT = { has_minor_title = title_triarch }
+			}
+			NOT = { has_character_flag = flag_plot_council_triarch_appeal_decision }
+		}
+		
+		allow = {
+			OR = {
+				any_plot_backer = { has_minor_title = title_triarch }	
+				has_minor_title = title_triarch
+				has_character_flag = triarch
+				hidden_tooltip = { #If no triarchs support can ask a human Triarch
+					plot_target_char = {
+						liege = {
+							any_vassal = {
+								ai = no
+								has_minor_title = title_triarch
+								NOT = { character = ROOT }
+								NOT = { character = PREVPREV }		
+								NOT = { character = PREV }
+							}
+						}	
+					}
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }		
+		}
+		
+		effect = {
+			set_character_flag = flag_plot_council_triarch_appeal_decision
+			if = { #You and fellow Triarch agree, plot succeeds
+				limit = { 
+					OR = {
+						has_minor_title = title_triarch 
+						has_character_flag = triarch
+					}	
+					any_plot_backer = { has_minor_title = title_triarch }	
+				}				
+				if = {
+					limit = { has_plot = plot_replace_castellan }
+					tooltip = { give_job_title = job_castellan }
+				}
+				if = {
+					limit = { has_plot = plot_replace_chancellor }
+					tooltip = { give_job_title = job_chancellor }
+				}
+				if = {
+					limit = { has_plot = plot_replace_marshal }
+					tooltip = { give_job_title = job_marshal }
+				}
+				if = {
+					limit = { has_plot = plot_replace_treasurer }
+					tooltip = { give_job_title = job_treasurer }
+				}
+				if = {
+					limit = { has_plot = plot_replace_spymaster }
+					tooltip = { give_job_title = job_spymaster }
+				}
+				if = {
+					limit = { has_plot = plot_replace_councillor }
+					tooltip = { give_minor_title = title_councilmember_king }
+				}
+				plot_target_char = {
+					liege = { character_event = { id = volantis.113 tooltip = TOOLTIPvolantis.113 } } 
+				}
+			}
+			if = {
+				limit = { #Appeal to fellow Triarch
+					OR = {
+						has_minor_title = title_triarch 
+						has_character_flag = triarch
+					}
+					NOT = { any_plot_backer = { has_minor_title = title_triarch } }	
+				}
+				plot_target_char = {
+					liege = {
+						random_realm_character = {
+							limit = {
+								has_minor_title = title_triarch
+								NOT = { character = ROOT }
+								NOT = { character = PREVPREV }
+								NOT = { any_backed_character = { character = ROOT } }
+							}
+							letter_event = { id = volantis.110 days = 1 tooltip = TOOLTIPvolantis.110 } 
+						}
+					}	
+				}
+			}
+			if = { #Ask Triarch to appeal to his fellow Triarch
+				limit = { 
+					NOT = { 
+						OR = {
+							has_minor_title = title_triarch 
+							has_character_flag = triarch
+						} 
+					} 
+				}			
+				any_plot_backer = { 
+					limit = { has_minor_title = title_triarch }
+					character_event = { id = volantis.109 tooltip = "EVTTOOLTIPvolantis.109" days = 1 } 
+				}
+				hidden_tooltip = { character_event = { id = volantis.116 days = 3 } } #If both triarchs in in on plot inform
+			}	
+			if = { #If no triarchs support can ask a human Triarch
+				limit = { 
+					NOT = { 
+						OR = {
+							has_minor_title = title_triarch 
+							has_character_flag = triarch
+						} 
+					} 
+					NOT = { any_plot_backer = { has_minor_title = title_triarch } }	
+				}	
+				plot_target_char = {
+					liege = {
+						random_vassal = {
+							limit = {
+								ai = no
+								has_minor_title = title_triarch
+								NOT = { character = ROOT }
+								NOT = { character = PREVPREV }	
+								NOT = { character = PREV }
+							}	
+							character_event = { id = volantis.1099 tooltip = "TOOLTIPvolantis.110" days = 1 } 
+						}
+					}	
+				}				
+			}	
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}

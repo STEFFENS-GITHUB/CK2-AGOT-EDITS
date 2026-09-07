@@ -1,0 +1,3328 @@
+########################################
+###Written by Knuckey              ###
+########################################
+
+namespace = invasions
+
+######################################
+###Return of Aegon with Golden Company ###
+######################################
+narrative_event = {
+	id = invasions.1
+	title = "EVTNAMEinvasions.1"
+	desc = "EVTDESCinvasions.1"
+	picture = "GFX_evt_young_griff"
+	
+	major = yes
+	
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	min_age = 16
+	war = no
+	in_command = no
+	
+	trigger = {
+		has_landed_title = d_golden_company
+		NOT = { has_landed_title = e_iron_throne }
+		NOT = { has_global_flag = aegon_invasion }
+		NOT = { has_game_rule = { name = dod_spoiler_remover value = on } }
+		d_golden_company = { NOT = { has_raised_standing_troops = yes } } #is not hired
+		e_iron_throne = { 
+			has_holder = yes 
+			holder_scope = { NOT = { character = 125009 } }
+			holder_scope = { NOT = { any_spouse = { character = 125009 } } }
+			NOT = {
+				any_war = {
+					attacker = {
+						OR = {
+							character = 125009
+							supported_claimant = { character = 125009 }
+						}
+					}	
+				}
+			}
+		}			
+		c_125009 = {
+			is_alive = yes
+			age = 16
+			OR = {
+				character = ROOT
+				liege = { character = ROOT }
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		years = 40
+		
+		modifier = { #Prime claimant
+			factor = 0.33
+			c_125009 = {
+				age = 18					
+				prisoner = no
+				can_press_claims_trigger = yes		
+
+				NOT = { age = 40 }
+				is_incapable = no	
+				NOT = { has_severe_disability_trigger = yes }
+				is_ill = no
+				OR = {
+					martial = 10
+					diplomacy = 10
+					combat_rating = 60
+				}
+			}
+		}
+		modifier = { #iron throne losing war, great opportunity
+			factor = 0.1
+			e_iron_throne = { 
+				holder_scope = {
+					any_war = {
+						defender = { has_landed_title = e_iron_throne }
+						war_score = 50				
+					}
+				}	
+			}
+		}
+		modifier = {
+			factor = 0.33
+			e_iron_throne = { holder_scope = { trait = civil_war } }
+		}
+		modifier = {
+			factor = 0.33
+			e_iron_throne = { holder_scope = { has_regent = yes } }
+		}
+	}
+
+	option = {
+		name = "EVTOPTAinvasions.1" # Long live the King!	
+		trigger = { 
+			has_landed_title = d_golden_company 
+			NOT = { character = 125009 }
+		}
+		set_global_flag = aegon_invasion
+		random_courtier = {
+			limit = { character = 125009 }
+			save_event_target_as = young_griff
+			dynasty=497
+			e_iron_throne = {
+				add_claim = PREV
+			}
+			d_kings_landing = {
+				add_claim = PREV
+			}
+			c_kings_landing = {
+				add_claim = PREV
+			}
+			set_character_flag = war_for_iron_throne
+			character_event = { id = invasions.2 }			
+		}
+		character_event = { id = invasions.2 days = 1 }		
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.1" # Long live the King!	
+		trigger = { 
+			has_landed_title = d_golden_company 
+			character = 125009 
+		}
+		set_global_flag = aegon_invasion
+		save_event_target_as = young_griff
+		dynasty=497
+		e_iron_throne = {
+			add_claim = PREV
+		}
+		d_kings_landing = {
+			add_claim = PREV
+		}
+		c_kings_landing = {
+			add_claim = PREV
+		}
+		set_defacto_liege = THIS
+		set_character_flag = war_for_iron_throne
+		character_event = { id = invasions.2 days = 1 }	
+	}
+	
+	option = {
+		name = "EVTOPTBinvasions.1" # Long live the King!	
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company } 
+			NOT = { has_landed_title = e_iron_throne} 
+		}		
+		c_125009 = { tooltip = { show_portrait = yes } }		
+	}
+	
+	option = {
+		name = "EVTOPTCinvasions.1" # an unlikely story
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company } 
+			NOT = { has_landed_title = e_iron_throne} 
+		}	
+		c_125009 = { tooltip = { show_portrait = yes } }		
+	}
+	
+	option = {
+		name = "EVTOPTdinvasions.1" 
+		trigger = { has_landed_title = e_iron_throne } 		
+		c_125009 = { tooltip = { show_portrait = yes } }		
+		custom_tooltip = { text = TOOLTIPAEGONLANDS }
+	}
+
+}
+#Company/griff joins war
+character_event = {
+	id = invasions.2
+	desc = "EVTDESCinvasions.2"
+	picture = "GFX_evt_young_griff"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { character = 125009 }
+			#Find random province to land in
+			e_iron_throne = {
+				holder_scope = {
+					random_realm_province = {
+						limit = {
+							owner = { 
+								NOT = { any_liege = { tier = KING } }
+								NOT = { higher_tier_than = DUKE }
+							}	
+							port = yes
+							region = world_westeros
+							duchy = {
+								NOT = { title = d_dragonstone }
+								NOT = { title = d_kings_landing }
+								NOT = { title = d_rosby }
+								NOT = { title = d_hayford }
+								NOT = { title = d_stokeworth }
+								NOT = { title = d_kingswood }
+							}
+						}
+						save_event_target_as = landing_location
+					}
+					#backup options
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros_east
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+									NOT = { any_liege = { tier = KING } }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+									NOT = { any_liege = { tier = KING } }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = {
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_realm_province = {
+							limit = {
+								owner = { 
+									NOT = { any_liege = { tier = KING } }
+									NOT = { higher_tier_than = DUKE }
+								}	
+								port = yes
+								region = world_westeros
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+				}
+			}
+			# event_target:landing_location = {
+				# county = {
+					# holder_scope = { save_event_target_as = old_holder }
+					# usurp_title_plus_barony_if_unlanded = { target = ROOT type = invasion }
+					# hidden_tooltip = {
+						# add_pressed_claim = event_target:old_holder
+						# clear_event_target = old_holder
+					# }
+				# }
+			# }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.2" #
+		if = {
+			limit = { character = 125009 }
+			set_character_flag = claimant_adventurer
+			set_character_flag = young_griff_claimant
+			activate_title = { status = yes title = k_young_griffs_host }
+			k_young_griffs_host = {
+				gain_title = ROOT
+				set_preferred_capital = event_target:landing_location
+			}
+			set_defacto_liege = THIS
+			if = {
+				limit = { ai = yes }
+				add_trait = forbid_marriage
+			}
+			e_iron_throne = {
+				holder_scope = { #Call in claimant faction if possible
+					save_event_target_as = mega_war_liege
+					random_vassal = { 
+						limit = {
+							leads_faction = faction_claimant
+							supported_claimant = { character = ROOT }
+						}
+						any_faction_backer = {
+							faction = faction_claimant
+							if = {
+								limit = { ai = no }
+								letter_event = { id = TOG.1276 } 
+							}	
+							if = {
+								limit = { ai = yes }
+								letter_event = { id = TOG.1276 days = 1 } 
+							}
+						}
+						set_character_flag = faction_leader_1276
+						if = {
+							limit = { ai = no }
+							letter_event = { id = TOG.1276 } 
+						}	
+						if = {
+							limit = { ai = yes }
+							letter_event = { id = TOG.1276 days = 1 } 
+						}
+					} 	
+				}	
+				reverse_war = {
+					target = ROOT
+					casus_belli = claim_iron_throne_ACOK
+				}
+			}
+			set_global_flag = golden_company_in_invasion
+			#spawn golden company units
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			k_dorne = {
+				holder_scope = {
+					if = {
+						limit = {
+							dynasty = 1
+						}
+						ROOT = { save_event_target_as = potential_loyalty_target }
+						e_iron_throne = { holder_scope = { save_event_target_as = potential_loyalty_targets_enemy } }
+						character_event = { id = dynastic_loyalty.1 }					
+					}
+				}
+			}
+			e_iron_throne = { holder_scope = { save_event_target_as = previous_liege } }
+			character_event = { id = TOG.1378 } #acquire landless supporters
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						OR = {
+							is_married = no
+							ai = yes
+						}	
+						e_iron_throne = {
+							holder_scope = {
+								has_character_flag = daenerys_targaryen
+								is_married = no
+								is_betrothed = no
+							}
+						}
+					}
+					character_event = { id = invasions.100 days = 7 } #Offer to be consort in exchange for a dragon
+				}
+			}	
+			add_friend = 316 #JC
+			add_friend = 88149 #Rolly Duckfield
+			if = { #if landed in The Stormlands JC gets Griffin's Roost
+				limit = { 
+					event_target:landing_location = { region = world_stormlands }
+				}
+				random_friend = {
+					limit = {
+						character = 316 #JC
+					}	
+					c_griffins_roost = {
+						usurp_title_plus_barony_if_unlanded = { target = PREV type = claim }
+					}
+					set_defacto_liege = THIS
+					character_event = { id = invasions.2 days = 1 }
+					set_character_flag = against_king
+				}
+			}
+			any_friend = {
+				limit = { 
+					OR = {
+						character = 88149 #Rolly Duckfield
+						character = 316 #JC
+					}
+					is_ruler = no
+				}
+				move_character = ROOT
+			}
+			random_friend = {
+				limit = { character = 316 } #JC
+				character_event = { id = knight.19 days = 365 } #knighhood event
+			}
+			
+			#Opinions
+			e_iron_throne = {
+				holder_scope = {
+					if = {
+						limit = { character = 317 } #Robert
+						reverse_opinion = {
+							modifier = opinion_vengeance
+							who = ROOT
+						}
+					}
+					reverse_opinion = {
+						modifier = opinion_usurped_title
+						who = ROOT
+					}			
+				}
+			}
+			d_dragonstone = {
+				holder_scope = {
+					if = {
+						limit = { NOT = { dynasty = 496 } } #Stannis
+						reverse_opinion = {
+							modifier = opinion_usurped_title
+							who = ROOT
+						}
+					}	
+				}
+			}
+			k_westerlands = {
+				holder_scope = {
+					if = {
+						limit = { character = 190 } #Tywin
+						reverse_opinion = {
+							modifier = opinion_vengeance
+							who = ROOT
+						}
+						reverse_opinion = {
+							modifier = opinion_usurped_title
+							who = ROOT
+						}
+					}
+					random_dynasty_member = {
+						limit = { character = 3190 } #Jaime
+						reverse_opinion = {
+							modifier = opinion_vengeance
+							who = ROOT
+						}
+					}
+					random_realm_character = {
+						limit = { character = 1230 } #Gregor Clegane
+						reverse_opinion = {
+							modifier = opinion_vengeance
+							who = ROOT
+						}
+					}
+					random_realm_character = {
+						limit = { character = 207 } #Amory Lorch
+						reverse_opinion = {
+							modifier = opinion_vengeance
+							who = ROOT
+						}
+					}
+				}
+			}
+			k_north = {
+				holder_scope = {
+					if = {
+						limit = { character = 59 } #Ned
+						reverse_opinion = {
+							modifier = opinion_usurped_title
+							who = ROOT
+						}	
+					}	
+				}
+			}
+			k_vale = {
+				holder_scope = {
+					if = {
+						limit = { character = 94002 } #Jon Arryn
+						reverse_opinion = {
+							modifier = opinion_usurped_title
+							who = ROOT
+						}	
+					}	
+				}
+			}
+			k_riverlands = {
+				holder_scope = {
+					if = {
+						limit = { character = 159 } #Hoster Tully
+						reverse_opinion = {
+							modifier = opinion_usurped_title
+							who = ROOT
+						}	
+					}	
+				}
+			}
+		}	
+		if = {
+			limit = { NOT = { character = 125009 } }
+			event_target:young_griff = {
+				ROOT = {
+					join_attacker_wars = PREV
+				}
+			}
+		}	
+	}
+}
+#Blackfyre bestowed upon Aegon
+character_event = {
+	id = invasions.3
+	desc = "EVTDESCinvasions.3"
+	picture = "GFX_evt_young_griff"
+	
+	trigger = {
+		NOT = { 
+			any_character = {
+				is_alive = yes
+				has_artifact = blackfyre
+			}
+		}
+		OR = {
+			dynasty = 496
+			dynasty = 497
+		}
+	}
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAinvasions.3" #
+		add_artifact = blackfyre
+		new_artifact = { 
+			set_artifact_flag = heirloom_@PREV 
+			check_new_sword_heirloom_effect = yes #ensures traditional dynastys have claim no sword
+		}
+	}
+}
+#Young griff/Blackfyre invasion failed, restore lands
+character_event = {
+	id = invasions.30
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		any_demesne_title = {
+			limit = {
+				tier = COUNT
+				any_claimant = {
+					NOT = { dynasty = ROOT }
+					NOT = { e_iron_throne = { holder_scope = { war_with = PREVPREV } } }
+				}
+			}
+			random_character = {
+				limit = {
+					has_claim = PREV
+					NOT = { dynasty = ROOT }
+					NOT = { e_iron_throne = { holder_scope = { war_with = PREVPREV } } }
+				}
+				usurp_title_plus_barony_if_unlanded = { target = PREV type = claim }
+				if = {
+					limit = { NOT = { tier = EMPEROR } }
+					set_character_flag = neutral
+					set_defacto_liege = e_iron_throne
+				}			
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = invasions.31
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { 
+		NOT = { character = FROM }
+		character = FROMFROM
+	}
+	
+	immediate = {
+		FROM = {
+			any_demesne_title = { #Give any remaining titles to the iron throne
+				limit = { NOT = { title = d_golden_company } }
+				gain_title = ROOT
+			}
+			if = { #move to appropriate court
+				limit = { is_ruler = no }
+				if = {
+					limit = { 
+						character = 125009 #young griff
+						c_600000040 = { is_alive = yes is_ruler = yes } #Illyrio
+					} 
+					c_600000040 = { ROOT_FROM = { move_character = PREV } }
+					break = yes
+				}
+				if = {
+					limit = { d_golden_company = { has_holder = yes } } 
+					d_golden_company = { holder_scope = { ROOT_FROM = { move_character = PREV } } }
+					break = yes
+				}
+				if = {
+					limit = { NOT = { character = 125009 } }	#young griff
+					random_dynasty_member = {
+						limit = {
+							is_alive = yes
+							is_ruler = yes
+							NOT = { trait = nightswatch }
+						}
+						ROOT_FROM = { move_character = ROOT }
+						break = yes
+					}
+				}	
+				ROOT_FROM = { move_character = ROOT }
+			}
+		}	
+		hidden_tooltip = {
+			if = {
+				limit = { has_character_flag = stannis_capital_check }
+				#Check Stannis' capital
+				if = {
+					limit = { has_landed_title = b_the_nightfort }
+					b_the_nightfort = { ROOT = { capital = PREV } }
+				}
+				else = {
+					random_demesne_title = {
+						limit = { title = b_stone_drum }
+						ROOT = { capital = PREV }
+					}
+				}
+				clr_character_flag = stannis_capital_check
+			}	
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Offer to be Daenary's consort?
+character_event = {
+	id = invasions.100
+	desc = "EVTDESCinvasions.100"
+	picture = "GFX_valyria_dragon"
+	
+	is_triggered_only = yes
+	prisoner = no
+	
+	trigger = {
+		character = 125009
+		OR = {
+			is_married = no
+			ai = yes
+		}	
+		c_77041 = {
+			is_married = no
+			is_ruler = yes
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.100" #Yes
+		ai_chance = { 
+			factor = 50 
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		c_77041 = {
+			letter_event = { id = invasions.101 days = 3 tooltip=TOOLTIPinvasions.101 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBinvasions.100" #No
+		ai_chance = { 
+			factor = 50 
+			modifier = {
+				factor = 0
+				NOT = { has_landed_title = e_iron_throne }
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+}
+#Daenarys Responds
+letter_event = {
+	id = invasions.101
+	desc = "EVTDESCinvasions.101"
+	picture = "GFX_evt_young_griff"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAinvasions.101" #Yes
+		ai_chance = { factor = 80 }
+		FROM = {
+			hidden_tooltip = { letter_event = { id = invasions.102 } }
+			tooltip = { add_spouse_matrilineal = ROOT }
+			custom_tooltip = { text = TOOLTIPAEGONSHERITAGE }
+			ROOT = {
+				random_child = {
+					limit = {
+						NOT = { any_friend = { is_alive = yes } }
+						trait = dragon
+						is_alive = yes
+					}
+					tooltip = {
+						add_friend = FROM
+					}
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBinvasions.100" #No
+		ai_chance = { factor = 20 }
+		FROM = {
+			letter_event = { id = invasions.103 tooltip=TOOLTIPinvasions.102 }
+		}
+	}
+}
+#Inform accept
+letter_event = {
+	id = invasions.102
+	desc = "EVTDESCinvasions.102"
+	picture = "GFX_valyria_dragon"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAinvasions.102" #Yes
+		ai_chance = { factor = 80 }
+		hidden_tooltip = {
+			remove_spouse = spouse
+			any_war = {
+				limit = { attacker = { character = ROOT } }
+				end_war = invalid
+			}
+			if = {
+				limit = { FROM = { has_landed_title = e_iron_throne } }
+				set_defacto_liege = FROM
+			}	
+		}
+		if = {
+			limit = {
+				FROM = {
+					has_landed_title = k_meereen
+					NOT = { has_landed_title = e_iron_throne }
+				}
+			}
+			join_attacker_wars = FROM
+			d_golden_company = {
+				holder_scope = { join_attacker_wars = FROM }
+			}	
+			hidden_tooltip = {
+				set_character_flag = against_king
+				opinion = {
+					modifier = opinion_with_rebel_leader
+					who = FROM
+					years = 100
+				}
+				any_playable_ruler = {
+					limit = {
+						has_character_flag = against_king
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					}
+					remove_opinion = {
+						modifier = opinion_with_rebel_leader
+						who = ROOT
+					}
+					opinion = {
+						modifier = opinion_with_rebel_leader
+						who = FROM
+						years = 100
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { trait = forbid_marriage }
+			remove_trait = forbid_marriage
+		}
+		add_spouse_matrilineal = FROM
+		custom_tooltip = { text = TOOLTIPAEGONSHERITAGE }
+		FROM = {
+			random_child = {
+				limit = {
+					NOT = { any_friend = { is_alive = yes } }
+					trait = dragon
+					is_alive = yes
+				}
+				add_friend = ROOT
+				clr_character_flag = shadow_lands_dragon
+				move_character = ROOT
+			}
+		}	
+		hidden_tooltip = {
+			ROOT = {
+				character_event = { id = invasions.105 } #Set young griff's targaryen ancestry
+				random = {
+					chance = 35
+					character_event = { id = invasions.3 } #gains blackfyre
+				}
+				d_golden_company = {
+					holder_scope = { set_character_flag = young_griff_wins narrative_event = { id = invasions.104 days = 5 } } #disband golden company
+				}
+			}		
+		}	
+	}
+}
+#Inform reject
+letter_event = {
+	id = invasions.103
+	desc = "EVTDESCinvasions.103"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAinvasions.103" #Yes
+	}
+}
+#Golden Company disbands
+narrative_event = {
+	id = invasions.104
+	title = "EVTNAMEinvasions.104"
+	desc = "EVTDESCinvasions.104"
+	picture = "GFX_valyria_dragon"
+	
+	major = yes
+	only_playable = yes
+	
+	trigger = {
+		has_landed_title = d_golden_company
+		d_golden_company = { NOT = { has_raised_standing_troops = yes } } #is not hired
+		e_iron_throne = {
+			holder_scope = { 
+				OR = {
+					dynasty = 57
+					dynasty = 7000 #Bittersteel
+					AND = {
+						ROOT = { has_character_flag = young_griff_wins }
+						OR = {
+							dynasty = 496
+							dynasty = 497
+						}
+					}
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.104" 
+		trigger = { has_landed_title = d_golden_company }
+		prestige = 100
+		clr_character_flag = young_griff_wins	
+		e_iron_throne = {
+			holder_scope = {
+				ROOT = {
+					any_courtier = {
+						limit = { NOT = { character = ROOT } is_ruler = no }
+						move_character = PREVPREV
+					}
+				}	
+			}
+		}
+		activate_title = { status = no title = d_golden_company }
+		d_golden_company = {	
+			destroy_landed_title = THIS	
+		}
+		e_iron_throne = {
+			holder_scope = {
+				ROOT = { move_character = PREV }
+			}
+		}
+	}
+
+	option = {
+		name = "OK" 
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company } 
+			OR = {
+				NOT = { has_landed_title = e_iron_throne	}
+				NOT = {
+					d_golden_company = {	
+						holder_scope = { has_artifact = blackfyre }
+					}
+				}	
+			}	
+		}
+	}
+
+	option = {
+		name = "EVTOPTBinvasions.104"  
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company }
+			has_landed_title = e_iron_throne	
+			d_golden_company = {	
+				holder_scope = { has_artifact = blackfyre }
+			}
+		}
+		d_golden_company = {	
+			holder_scope = { 
+				#hidden_tooltip = { add_trait = held_important_artifact }
+				random_artifact = {
+					limit = { artifact_type = blackfyre }
+					#set_artifact_flag = previous_holder_@PREV
+					transfer_artifact = { from = PREV to = ROOT }		
+				}
+			}
+		}
+	}
+}	
+#Young Griff's Heritage
+character_event = {
+	id = invasions.105
+	
+	hide_window = yes
+	is_triggered_only = yes
+	
+	trigger = { character = 125009 }
+	
+	immediate = {
+		any_child = {
+			limit = { dynasty = ROOT }
+			dynasty=496
+			clr_character_flag = high_valyrian
+			random_bloodline = {
+				limit = { has_bloodline_flag = targaryen }
+				add_bloodline_member = PREV
+			}
+			any_child = {
+				limit = { dynasty = ROOT }
+				dynasty=496
+				clr_character_flag = high_valyrian
+				random_bloodline = {
+					limit = { has_bloodline_flag = targaryen }
+					add_bloodline_member = PREV
+				}
+				any_child = {
+					limit = { dynasty = ROOT }
+					dynasty=496
+					clr_character_flag = high_valyrian
+					random_bloodline = {
+						limit = { has_bloodline_flag = targaryen }
+						add_bloodline_member = PREV
+					}
+				}
+			}
+		}
+		dynasty=496
+		remove_trait = forbid_marriage
+		clr_character_flag = high_valyrian
+		has_missing = {
+			limit = { character = 77043 }
+			father_even_if_dead = {
+				ROOT = { set_father = PREV }
+			}
+			mother_even_if_dead = {
+				ROOT = { set_mother = PREV }
+			}
+		}
+		create_character = {
+			female = yes
+			dynasty = random
+			age = 25
+		}
+		new_character = {
+			has_missing = { 
+				limit = { character = 77043 }
+				set_mother = PREV 
+				dynasty = PREV 
+			}
+			death = yes
+		}
+		create_character = {
+			female = no
+			dynasty = random
+			age = 25
+		}
+		new_character = {
+			has_missing = { 
+				limit = { character = 77043 }
+				set_father = PREV 
+				remove_trait = has_missing
+			}
+			death = yes
+		}
+		add_character_modifier = {
+			name = "grandchild_of_incest"
+			duration = -1
+		}
+		if = {
+			limit = { has_landed_title = e_iron_throne }
+			e_iron_throne = { set_coa = d_daemons_host }
+		}
+		if = {
+			limit = { has_landed_title = e_new_valyria }
+			e_new_valyria = { set_coa = d_daemons_host }
+		}
+		random_bloodline = {
+			limit = { has_bloodline_flag = targaryen }
+			add_bloodline_member = ROOT
+		}
+	}
+	
+	option = {
+		name = "OK" 
+	}	
+}
+#Golden Company leader retains blackfyre on inheritance (citadel event)
+character_event = {
+	id = invasions.106
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "OK" 
+		d_golden_company = { 
+			holder_scope = { 
+				ROOT = {
+					random_artifact = {
+						limit = { artifact_type = blackfyre }
+						transfer_artifact = { from = ROOT to = PREVPREV }		
+					}
+				}
+			}
+		}
+	}	
+}
+######################################
+### Summer Islanders ###
+######################################
+province_event = {
+	id = invasions.4
+	desc = "EVTDESCinvasions.4"
+	picture = "GFX_summer_islanders"
+	
+	trigger = {
+		#NOT = { has_global_flag = summer_islanders_invade_1 }
+		OR = {
+			NOT = { has_global_flag = war_cooldown_period } 
+			had_global_flag = { flag = war_cooldown_period	 days = 25 } 
+		}
+		NOT = {
+			has_game_rule = {
+				name = non_lore_invasions
+				value = off
+			}
+		}
+		OR = {
+			# Dorne
+			province_id = 351
+			province_id = 346
+			province_id = 340
+			province_id = 338
+			province_id = 337
+			# Volantis
+			province_id = 404
+			province_id = 415
+			province_id = 416
+			province_id = 419
+			province_id = 483
+			province_id = 484
+			province_id = 485
+			#Lys
+			province_id = 398
+			province_id = 372
+			province_id = 376
+			#Tyrosh
+			province_id = 370
+			province_id = 369
+			province_id = 367
+			province_id = 366
+		}
+		k_summer_islands = {
+			holder_scope = { #Will now only happen if the King is strong
+				war = no
+				ai = yes
+				culture = summer_islander
+				is_female = no
+				age = 16
+				NOT = { trait = incapable }
+				martial = 16
+				prestige = 1000	
+				NOT = { has_character_flag = summer_islanders_invade_1 }			
+				NOT = { 
+					any_vassal = { 
+						NOT = { tier = BARON }
+						NOT = { opinion = { who = PREV value = -25 } }
+					}
+				}	
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 3000
+		
+		modifier = {
+			factor = 3
+			has_game_rule = {
+				name = non_lore_invasions
+				value = rare
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				top_liege = {
+					primary_title = {
+						OR = {
+							title = e_dorne
+							title = k_dorne
+						}
+					}	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				top_liege = {
+					war = yes	
+				}
+			}
+		}
+		modifier = {
+			factor = 0.5
+			e_iron_throne = { holder_scope = { war = yes } }
+		}
+	}
+	
+	# immediate = {
+		# set_global_flag = summer_islanders_invade_1	
+	# }
+
+	option = {
+		name = "Ok"
+		# create_random_soldier = {
+			# attributes = {
+				# martial = 9
+				# diplomacy = 4
+				# learning = 2
+			# }
+			# female = no
+			# employer = e_summer_islands
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+			# trait = brave
+			# trait = ambitious
+			# trait = skilled_tactician
+		# }
+		custom_tooltip = { text = TOOLTIPinvasions.5 }
+		#new_character = {
+			# random_list = {
+				# 25 = { add_trait = trained_warrior }
+				# 75 = { add_trait = skilled_warrior }
+				# 25 = { add_trait = master_warrior }
+			# }
+			# random = {
+				# chance = 5
+				# add_trait = valyrian_steel
+			# }
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+			# set_character_flag = summer_islander_invader
+			# e_summer_islands = {
+				# gain_title = prev
+			# }
+			#character_event = { id = invasions.5 days = 2  }
+		#}
+		k_summer_islands = {
+			holder_scope = {
+				set_character_flag = summer_islander_invader
+				set_character_flag = summer_islanders_invade_1
+				character_event = { id = invasions.5 }	
+			}
+		}
+		hidden_tooltip = {
+			any_playable_ruler = {
+				limit = { 
+					ai = no 
+					NOT = {
+						any_demesne_province = {
+							province_id = ROOT
+						}
+					}	
+				}
+				narrative_event = { id = invasions.6 } #Notification to other human players. (Mountain Clans)
+			}
+		}	
+	}
+}
+
+#Actually Spawm the Army... [Ai only, Summer Islands]
+character_event = {
+	id = invasions.5
+	desc = "Arrgh!"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok."
+		FROM = {
+			if = {
+				limit = {
+					kingdom = { has_holder = yes }
+				}
+				kingdom = {
+					#add_claim = ROOT
+					reverse_war = {
+						target = ROOT
+						casus_belli = invasion
+					}
+				}
+			}
+			if = {
+				limit = {
+					kingdom = { has_holder = no }
+				}
+				if = {
+					limit = {
+						owner = { 
+							top_liege = {
+								NOT = { has_landed_title = e_iron_throne }
+							}
+						}
+					}
+					owner = {
+						top_liege = {
+							primary_title = {
+								#add_claim = ROOT
+								reverse_war = {
+									target = ROOT
+									casus_belli = invasion
+								}
+							}
+						}	
+					}
+				}	
+				if = {
+					limit = {
+						owner = { 
+							top_liege = {
+								has_landed_title = e_iron_throne
+							}
+						}
+					}
+					owner = {
+						primary_title = {
+							#add_claim = ROOT
+							reverse_war = {
+								target = ROOT
+								casus_belli = invasion
+							}
+						}	
+					}
+				}
+			}	
+			ROOT = {
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 4
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					earmark = summer_islanders
+					attrition = 1.0
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 4
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 13 13 }
+						heavy_infantry = { 2 2 }
+					}
+					earmark = summer_islanders
+					attrition = 1.0
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 4
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					earmark = summer_islanders
+					attrition = 1.0
+				}
+			}	
+		}	
+		#Spawn a few courtiers
+		# create_random_soldier = {
+			# female = no
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+		# }
+		# new_character = {
+			# random_list = {
+				# 70 = { add_trait = trained_warrior }
+				# 20 = { add_trait = skilled_warrior }
+				# 10 = { add_trait = master_warrior }
+			# }
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_random_soldier = {
+			# female = no
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+		# }
+		# new_character = {
+			# random_list = {
+				# 70 = { add_trait = trained_warrior }
+				# 20 = { add_trait = skilled_warrior }
+				# 10 = { add_trait = master_warrior }
+			# }
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_random_soldier = {
+			# female = no
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+		# }
+		# new_character = {
+			# random_list = {
+				# 70 = { add_trait = trained_warrior }
+				# 20 = { add_trait = skilled_warrior }
+				# 10 = { add_trait = master_warrior }
+			# }
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_random_soldier = {
+			# female = no
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+		# }
+		# new_character = {
+			# random_list = {
+				# 70 = { add_trait = trained_warrior }
+				# 20 = { add_trait = skilled_warrior }
+				# 10 = { add_trait = master_warrior }
+			# }
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_character = {
+			# female = yes
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+			# age = 18
+		# }
+		# new_character = {
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_character = {
+			# female = yes
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+			# age = 25
+		# }
+		# new_character = {
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+		# create_character = {
+			# female = yes
+			# religion = summer_rel
+			# culture = summer_islander
+			# random_traits = yes
+			# dynasty = random
+			# age = 24
+		# }
+		# new_character = {
+			# remove_trait = inbred
+			# remove_trait = imbecile
+			# remove_trait = infirm
+			# remove_trait = incapable
+			# remove_trait = dwarf
+			# remove_trait = hunchback
+			# remove_trait = clubfooted
+			# remove_trait = weak
+			# remove_trait = leper
+			# remove_trait = possessed
+			# remove_trait = ill
+			# remove_trait = pneumonic
+			# remove_trait = maimed
+		# }
+	}
+}
+#Inform the world
+narrative_event = {
+	id = invasions.6
+	desc = "EVTDESCinvasions.6"
+	title = "EVTNAMEinvasions.6"
+	picture = "GFX_summer_islanders"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok"
+		tooltip = {
+			k_summer_islands = {
+				holder_scope = { }
+			}
+		}
+	}
+}
+
+###################################################
+###Return of The Blackfyres with Golden Company ###
+###################################################
+narrative_event = {
+	id = invasions.600
+	title = "EVTNAMEinvasions.600"
+	desc = "EVTDESCinvasions.600"
+	picture = "GFX_evt_blackfyre"
+	
+	major = yes
+	
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	min_age = 16
+	war = no
+	in_command = no
+	
+	trigger = {
+		has_landed_title = d_golden_company
+		NOT = { has_landed_title = e_iron_throne }
+		e_iron_throne = { 
+			has_holder = yes 
+			holder_scope = { NOT = { dynasty = 57 } }
+			NOT = {
+				any_war = {
+					attacker = { 
+						OR = {
+							dynasty = 57 
+							supported_claimant = { dynasty = 57 }
+						}	
+					}
+				}
+			}
+		}	
+		d_golden_company = { NOT = { has_raised_standing_troops = yes } } #is not hired		
+		OR = {
+			dynasty = 57 
+			any_courtier = { 
+				dynasty = 57 
+				age = 14
+				prisoner = no
+				can_press_claims_trigger = yes
+			}
+		}	
+		OR = { #5 year Cooldown
+			NOT = { has_global_flag = blackfyre_invasion }
+			had_global_flag = { flag = blackfyre_invasion days = 1825 }
+		}
+	}
+
+	mean_time_to_happen = {
+		years = 40
+		
+		modifier = { #Prime claimant
+			factor = 0.2
+			any_courtier = {
+				dynasty = 57 
+				is_female = no
+				age = 18					
+				prisoner = no
+				NOT = { trait = bastard }
+				can_press_claims_trigger = yes		
+
+				NOT = { age = 40 }
+				is_incapable = no	
+				NOT = { has_severe_disability_trigger = yes }
+				is_ill = no
+				OR = {
+					martial = 10
+					diplomacy = 10
+					combat_rating = 60
+				}
+				
+				NOT = {
+					any_courtier = {
+						dynasty = 57 			
+						prisoner = no
+						is_female = no
+						NOT = { character = PREV }
+						NOT = { trait = bastard }
+						can_press_claims_trigger = yes				
+						OR = {
+							AND = {
+								sibling = PREV
+								is_older_than = PREV
+							}
+							any_child = { character = PREVPREV }
+						}	
+					}
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			trait = content
+		}
+		modifier = {
+			factor = 0.5
+			trait = ambitious
+		}
+		modifier = { #iron throne losing war, great opportunity
+			factor = 0.1
+			e_iron_throne = { 
+				holder_scope = {
+					any_war = {
+						defender = { has_landed_title = e_iron_throne }
+						war_score = 50				
+					}
+				}	
+			}
+		}
+		modifier = {
+			factor = 0.33
+			e_iron_throne = { holder_scope = { trait = civil_war } }
+		}
+		modifier = {
+			factor = 0.33
+			e_iron_throne = { holder_scope = { has_regent = yes } }
+		}
+	}
+	
+	immediate = { #Find best Blackfyre claimant
+		if = {
+			limit = { has_landed_title = d_golden_company }
+			if = { #maybe support own claim
+				limit = { 
+					dynasty = 57
+					OR = {
+						trait = ambitious
+						trait = greedy
+						trait = ruthless
+						trait = arbitrary
+					}
+					NOR = {
+						trait = content
+						trait = honorable
+						trait = just
+					}
+				}
+				save_event_target_as = blackfyre_claimant
+				set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+				break = yes
+			}
+			#Oldest male
+			if = {
+				limit = { 
+					dynasty = 57
+					is_female = no
+					NOT = { trait = bastard }
+					NOT = {
+						any_courtier = {
+							dynasty = 57 			
+							prisoner = no
+							can_press_claims_trigger = yes
+							
+							is_female = no
+							NOT = { trait = bastard }
+							OR = {
+								AND = {
+									sibling = PREV
+									is_older_than = PREV
+								}
+								any_child = { character = PREVPREV }
+							}	
+						}
+					}
+				}
+				save_event_target_as = blackfyre_claimant
+				set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+			}	
+			if = {
+				limit = { 
+					NOT = { event_target:blackfyre_claimant = { always = yes } }
+				}
+				random_courtier = { 
+					limit = {
+						dynasty = 57 
+						age = 14				
+						prisoner = no
+						can_press_claims_trigger = yes
+						
+						is_female = no
+						NOT = { trait = bastard }
+						NOT = {
+							any_courtier = {
+								dynasty = 57 			
+								prisoner = no
+								can_press_claims_trigger = yes
+								
+								is_female = no
+								NOT = { trait = bastard }
+								OR = {
+									AND = {
+										sibling = PREV
+										is_older_than = PREV
+									}
+									any_child = { character = PREVPREV }
+								}	
+							}
+						}
+					}
+					save_event_target_as = blackfyre_claimant
+					set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+				}
+				if = {
+					limit = { NOT = { event_target:blackfyre_claimant = { always = yes } } }
+					random_courtier = { #Oldest female
+						limit = {
+							dynasty = 57 
+							age = 14				
+							prisoner = no
+							can_press_claims_trigger = yes
+							
+							is_female = yes
+							NOT = { trait = bastard }
+							NOT = {
+								any_courtier = {
+									dynasty = 57 			
+									prisoner = no
+									can_press_claims_trigger = yes
+									
+									is_female = yes
+									NOT = { trait = bastard }
+									OR = {
+										AND = {
+											sibling = PREV
+											is_older_than = PREV
+										}
+										any_child = { character = PREVPREV }
+									}
+								}
+							}
+						}
+						save_event_target_as = blackfyre_claimant
+						set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+					}
+				}
+				if = { #Failsafe
+					limit = { NOT = { event_target:blackfyre_claimant = { always = yes } } }
+					if = { 
+						limit = {
+							dynasty = 57
+						}
+						save_event_target_as = blackfyre_claimant
+						set_character_flag = blackfyre_claimant # So it works with the cb and historical ones			
+					}
+					if = {
+						limit = { NOT = { event_target:blackfyre_claimant = { always = yes } } }					
+						random_courtier = {
+							limit = {
+								dynasty = 57 
+								age = 14				
+								prisoner = no
+								can_press_claims_trigger = yes
+							}
+							save_event_target_as = blackfyre_claimant
+							set_character_flag = blackfyre_claimant # So it works with the cb and historical ones			
+						}
+					}	
+				}	
+			}
+			#perhaps use older sibling who is abroad instead
+			event_target:blackfyre_claimant = {
+				random_sibling = { 
+					limit = {
+						dynasty = 57 
+						age = 14				
+						prisoner = no
+						is_incapable = no
+						can_press_claims_trigger = yes
+						
+						is_female = no
+						NOT = { trait = bastard }
+						NOT = {
+							any_sibling = {
+								dynasty = 57 			
+								prisoner = no
+								is_incapable = no
+								can_press_claims_trigger = yes
+								
+								is_female = no
+								NOT = { trait = bastard }
+								is_older_than = PREV
+								is_alive = yes							
+							}
+						}
+						
+						NOT = { character = PREV }
+						is_ruler = no
+						is_alive = yes
+					}
+					PREV = { clr_character_flag = blackfyre_claimant }
+					set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+					save_event_target_as = blackfyre_claimant				
+				}	
+			}
+			#perhaps use father who is abroad instead
+			event_target:blackfyre_claimant = {
+				father = { 
+					if = {
+						limit = {
+							dynasty = 57 
+							age = 14				
+							prisoner = no
+							is_incapable = no
+							can_press_claims_trigger = yes				
+							is_female = no
+							NOT = { trait = bastard }
+							is_ruler = no
+							is_alive = yes
+						}
+						PREV = { clr_character_flag = blackfyre_claimant }
+						set_character_flag = blackfyre_claimant # So it works with the cb and historical ones
+						save_event_target_as = blackfyre_claimant	
+					}	
+				}	
+			}
+		}	
+	}
+
+	option = {
+		name = "EVTOPTAinvasions.600" # Long live the King!	
+		trigger = { 
+			has_landed_title = d_golden_company 
+			event_target:blackfyre_claimant = { NOT = { has_landed_title = d_golden_company } }
+		}
+		event_target:blackfyre_claimant = {
+			set_character_flag = war_for_iron_throne
+			set_global_flag = blackfyre_invasion
+			if = {
+				limit = { trait = wikid }
+				remove_trait = wikid
+				if = {
+					limit = { has_character_flag = foreign_adventure }
+					clr_character_flag = foreign_adventure
+					prestige = 75	
+					add_character_modifier = { 
+						name = went_on_foreign_tour
+						duration = -1
+					}
+				}	
+			}
+			character_event = { id = invasions.601 }	
+		}
+		character_event = { id = invasions.601 days = 1 }		
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.600" # Long live the King!	
+		trigger = { 
+			has_landed_title = d_golden_company 
+			event_target:blackfyre_claimant = { has_landed_title = d_golden_company }
+		}
+		set_global_flag = blackfyre_invasion
+		set_character_flag = war_for_iron_throne
+		character_event = { id = invasions.601 days = 1 }	
+	}
+	
+	option = {
+		name = "EVTOPTBinvasions.600" # Long live the King!	
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company } 
+			NOT = { has_landed_title = e_iron_throne } 
+		}		
+		d_golden_company = {
+			holder_scope = {
+				tooltip = { show_portrait = yes }
+				event_target:blackfyre_claimant = {
+					tooltip = { show_portrait = yes }
+				}
+			}	
+		}	
+	}
+
+	option = {
+		name = "EVTOPTCinvasions.600" # an unlikely story
+		trigger = { 
+			NOT = { has_landed_title = d_golden_company } 
+			NOT = { has_landed_title = e_iron_throne} 
+		}		
+		d_golden_company = {
+			holder_scope = {
+				tooltip = { show_portrait = yes }
+				event_target:blackfyre_claimant = {
+					tooltip = { show_portrait = yes }
+				}
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTDinvasions.600" 
+		trigger = { has_landed_title = e_iron_throne } 		
+		d_golden_company = {
+			holder_scope = {
+				tooltip = { show_portrait = yes }
+				event_target:blackfyre_claimant = {
+					tooltip = { show_portrait = yes }
+				}
+			}	
+		}
+	}
+
+}
+#Company joins war
+character_event = {
+	id = invasions.601
+	desc = "EVTDESCinvasions.601"
+	picture = "GFX_evt_blackfyre"
+
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { dynasty = 57  }
+			#Find random province to land in
+			e_iron_throne = {
+				holder_scope = {
+					random_realm_province = {
+						limit = {
+							owner = { 
+								NOT = { any_liege = { tier = KING } }
+								NOT = { higher_tier_than = DUKE }
+							}	
+							port = yes
+							region = world_westeros
+							duchy = {
+								NOT = { title = d_dragonstone }
+								NOT = { title = d_kings_landing }
+								NOT = { title = d_rosby }
+								NOT = { title = d_kingswood }
+								NOT = { title = d_hayford }
+								NOT = { title = d_stokeworth }
+							}
+						}
+						save_event_target_as = landing_location
+					}
+					#backup options
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros_east
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+									NOT = { any_liege = { tier = KING } }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+									NOT = { any_liege = { tier = KING } }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = {
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_realm_province = {
+							limit = {
+								owner = { 
+									NOT = { any_liege = { tier = KING } }
+									NOT = { higher_tier_than = DUKE }
+								}	
+								port = yes
+								region = world_westeros
+							}
+							save_event_target_as = landing_location
+						}
+					}
+					if = { 
+						limit = { NOT = { event_target:landing_location = { always = yes } } }
+						random_province = {
+							limit = {
+								port = yes
+								region = world_westeros
+								owner = {
+									primary_title = { is_variable_equal = { which = "de_facto_empire" value = 1 } }
+									NOT = { higher_tier_than = DUKE }
+								}
+							}
+							save_event_target_as = landing_location
+						}
+					}
+				}
+			}
+			# event_target:landing_location = {
+				# county = {
+					# holder_scope = { save_event_target_as = old_holder }
+					# usurp_title_plus_barony_if_unlanded = { target = ROOT type = invasion }
+					# hidden_tooltip = {
+						# add_pressed_claim = event_target:old_holder
+						# clear_event_target = old_holder
+					# }
+				# }
+			# }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAinvasions.601" #
+		if = {
+			limit = { dynasty = 57 }
+			set_character_flag = claimant_adventurer
+			activate_title = { status = yes title = k_daemon_blackfyres_host }
+			k_daemon_blackfyres_host = {
+				gain_title = ROOT
+				set_preferred_capital = event_target:landing_location
+				set_name = D_BLACKFYRE_HOST
+			}
+			set_defacto_liege = THIS
+			if = {
+				limit = { e_iron_throne = { ROOT = { NOT = { has_claim = PREV } } } }
+				e_iron_throne = { add_claim = ROOT }
+			}
+			e_iron_throne = {
+				holder_scope = { #Call in claimant faction if possible
+					save_event_target_as = mega_war_liege
+					random_vassal = { 
+						limit = {
+							leads_faction = faction_claimant
+							supported_claimant = { character = ROOT }
+						}
+						any_faction_backer = {
+							faction = faction_claimant
+							if = {
+								limit = { ai = no }
+								letter_event = { id = TOG.1276 } 
+							}	
+							if = {
+								limit = { ai = yes }
+								letter_event = { id = TOG.1276 days = 1 } 
+							}
+						}
+						set_character_flag = faction_leader_1276
+						if = {
+							limit = { ai = no }
+							letter_event = { id = TOG.1276 } 
+						}	
+						if = {
+							limit = { ai = yes }
+							letter_event = { id = TOG.1276 days = 1 } 
+						}
+					} 	
+				}
+				reverse_war = {
+					target = ROOT
+					casus_belli = claim_iron_throne_ACOK
+				}
+			}	
+			set_global_flag = golden_company_in_invasion
+			#spawn golden company units
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			spawn_unit = {
+				province = event_target:landing_location
+				owner = ROOT
+				troops = {
+					archers = { 334 334 }
+					heavy_infantry = { 1000 1000 }
+					pikemen = { 1000 1000 }
+					light_infantry = { 334 334 }	
+					light_cavalry = { 233 233 }		
+					knights = { 334 334 }
+					war_elephants = { 10 10 }					
+				}
+				attrition = 1.0
+				disband_on_peace = yes
+				earmark = golden_company	
+			}
+			#add_friend = 316 #JC
+			d_golden_company = {
+				holder_scope = {
+					if = {
+						limit = { 
+							dynasty = 7000 # Bittersteel			
+						}	
+						add_friend = ROOT
+					}	
+				}	
+			}
+			e_iron_throne = {
+				holder_scope = {
+					reverse_opinion = {
+						modifier = opinion_usurped_title
+						who = ROOT
+					}			
+				}
+			}
+			e_iron_throne = { holder_scope = { save_event_target_as = previous_liege } }
+			character_event = { id = TOG.1378 } #acquire landless supporters
+		}	
+		# if = { #Now hardcoded not to work
+			# limit = { NOT = { dynasty = 57 } }
+			# event_target:blackfyre_claimant = {
+				# ROOT = {
+					# join_attacker_wars = PREV
+				# }
+			# }
+		# }	
+	}
+}
+
+#Disgruntled Blackfyre moves to company
+character_event = {
+	id = invasions.602
+	hide_window = yes
+	is_triggered_only = yes
+
+	capable_only = yes
+	prisoner = no
+	only_men = yes
+	min_age = 14
+	in_command = no
+	
+	trigger = {
+		d_golden_company = { has_holder = yes }
+		is_ruler = no
+		is_ill = no
+		NOT = { liege = { regent = { character = PREVPREV } } }
+		liege = { 
+			NOT = { has_landed_title = d_golden_company }
+			NOT = { is_friend = ROOT }
+			NOT = { is_married = ROOT }
+			NOT = { any_consort = { character = ROOT } }
+			NOT = { is_lover = ROOT }
+			NOT = { is_close_relative = ROOT }
+			OR = {
+				ROOT = { trait = ambitious }
+				NOT = { reverse_opinion = { who = ROOT value = 30 } }
+			}	
+			NAND = {
+				leads_faction = faction_claimant
+				supported_claimant = { character = ROOT }
+			}
+		}
+		e_iron_throne = { 
+			has_holder = yes 
+			holder_scope = { NOT = { dynasty = 57 } }
+			NOT = {
+				any_war = {
+					attacker = { dynasty = 57 }
+				}
+			}
+		}			
+		dynasty = 57 
+		can_press_claims_trigger = yes
+		
+		NOT = { trait = content }
+	}
+
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 3
+			trait = ambitious
+		}
+		modifier = {
+			factor = 2
+			trait = envious
+		}	
+		modifier = {
+			factor = 2
+			trait = proud
+		}
+		modifier = {
+			factor = 2
+			trait = wroth
+		}
+		modifier = {
+			factor = 0.5
+			trait = humble
+		}
+		modifier = {
+			factor = 0.5
+			trait = patient
+		}
+		modifier = {
+			factor = 2
+			is_councillor = no
+			NOT = { is_voter = yes }
+		}
+		modifier = {
+			factor = 3
+			trait = dragon_rider
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { opinion = { who = liege value = -99 } }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { opinion = { who = liege value = -74 } }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { opinion = { who = liege value = -49 } }
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { opinion = { who = liege value = -24 } }
+		}
+		modifier = {
+			factor = 0.5
+			opinion = { who = liege value = 25 }
+		}
+	}
+
+	immediate = {
+		d_golden_company = {
+			holder_scope = {
+				ROOT = {
+					#Move family as well
+					if = {
+						limit = { 
+							is_married = yes 
+							OR = {
+								AND = {
+									is_female = no
+									is_married_matrilineally = no
+								}
+								AND = {
+									is_female = yes
+									is_married_matrilineally = yes
+								}
+							}
+						}
+						any_spouse = {
+							limit = {
+								is_ruler = no
+								same_liege = PREV
+							}
+							move_character = PREV
+						}
+					}	
+					any_child = {
+						limit = {
+							is_ruler = no
+							same_liege = PREV
+							is_alive = yes
+							OR = {
+								is_adult = no
+								AND = {
+									is_councillor = no
+									is_voter = no
+									NOT = { liege = { is_close_relative = PREV } }
+								}
+							}
+							NOT = {
+								mother = {
+									is_alive = yes
+									NOT = { character = ROOT_FROM }
+									OR = {
+										same_liege = PREV
+										is_liege_of = PREV
+									}
+								}
+							}
+							NOT = {
+								father = {
+									is_alive = yes
+									NOT = { character = ROOT_FROM }
+									OR = {
+										same_liege = PREV
+										is_liege_of = PREV
+									}
+								}
+							}
+						}
+						move_character = PREV
+					}
+					move_character = PREV
+				}		
+			}
+		}
+	}
+}
+
+#####  Far East specific invasions
+
+###Descendants of the Yellow Emperors invade from Carcosa
+character_event = {
+	id = invasions.609
+	
+	hide_window = yes
+	only_independent = yes
+	
+	trigger = {
+		has_landed_title = e_yi_ti
+		NOT = { dynasty = 65962 }
+		NOT = { has_global_flag = yellow_emperor_invasion }
+		NOT = { culture_group = winter_group }
+		OR = {
+			total_years_played = 50
+			year = 8282
+		}	
+		OR = {
+			NOT = { has_global_flag = war_cooldown_period } 
+			had_global_flag = { flag = war_cooldown_period days = 25 } 
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 500
+		
+		modifier = {
+			factor = 0.008 #4 years in canon time
+			year = 8282
+		}
+		modifier = {
+			factor = 0.5
+			war = yes
+		}
+	}
+	
+	immediate = {
+		random_list = {
+			1 = { 771 = { province_event = { id = invasions.610 } } }
+			1 = { 871 = { province_event = { id = invasions.610 } } }
+			1 = { 874 = { province_event = { id = invasions.610 } } }
+			1 = { 772 = { province_event = { id = invasions.610 } } }
+			1 = { 821 = { province_event = { id = invasions.610 } } }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+province_event = {
+	id = invasions.610
+	desc = "EVTDESCinvasions.610"
+	picture = "GFX_evt_china_invades"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { owner = { culture_group = unoccupied_group } }
+	}
+	
+	immediate = {
+		set_global_flag = yellow_emperor_invasion
+	}
+
+	option = {
+		name = "Ok"
+		create_random_soldier = {
+			female = no
+			employer = d_carcosa_raiders
+			culture = yi_ti
+			dynasty = 65962
+			religion = lion_night
+			random_traits = yes
+			trait = ambitious
+			trait = mystic
+			historical = yes
+		}
+		new_character = {
+			set_character_flag = duchy_adventurer 
+			e_yi_ti = { add_pressed_claim = PREV }
+			prestige = 100
+			random_list = {
+				25 = { add_trait = trained_warrior }
+				75 = { add_trait = skilled_warrior }
+				25 = { add_trait = master_warrior }
+			}
+			remove_trait = content
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+			set_dynasty_flag = yellow_emperor
+			set_dynasty_flag = yi_ti_emperor_colour_assigned
+			e_yi_ti = { set_title_flag = yellow_emperor }
+			d_carcosa_raiders = { 
+				if = {
+					limit = { has_holder = yes }
+					holder_scope = {
+						abdicate_to = PREVPREV	
+					}
+				}
+				if = {
+					limit = { has_holder = no }
+					gain_title = PREV
+				}				
+			}
+			character_event = { id = invasions.611 }	
+		}
+		hidden_tooltip = {
+			any_playable_ruler = {
+				limit = { 
+					ai = no 
+					OR = {
+						top_liege = { has_landed_title = e_yi_ti }
+						capital_scope = {
+							OR = {
+								region = world_far_east
+								region = world_jade_sea																
+								region = world_ghiscar
+								region = world_basilisk_isles
+								region = world_sothoryos
+							}
+						}
+					}
+					NOR = {
+						has_landed_title = k_asshai
+						has_landed_title = d_asshai
+					}
+					NOT = {
+						any_demesne_province = {
+							province_id = ROOT
+						}
+					}
+				}
+				character_event = { id = invasions.612 days = 1 } #Notification to other human players.
+			}
+			#Propose alliance to Asshai
+			if = {
+				limit = { k_asshai = { has_holder = yes } }	
+				k_asshai = {
+					holder_scope = {
+						character_event = { id = far_east.10 days = 1 }
+					}
+				}
+				break = yes
+			}
+			d_asshai = {
+				holder_scope = {
+					character_event = { id = far_east.10 days = 1 }
+				}
+			}
+		}
+	}	
+}
+
+#Actually Spawm the Army...
+character_event = {
+	id = invasions.611
+	desc = "Arrgh!"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok."
+		e_yi_ti = {
+			reverse_war = {
+				target = ROOT
+				casus_belli = duchy_adventure
+			}
+		}	
+		FROM = {
+			ROOT = {
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+					match_min = 3000
+					match_max = 9000
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 13 13 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+					match_min = 3000
+					match_max = 9000
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+					match_min = 3000
+					match_max = 9000
+				}
+			}	
+		}	
+		#Spawn a few courtiers
+		create_random_soldier = {
+			female = no
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = grey_waste
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+			age = 18
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+			age = 25
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = yi_ti
+			religion = lion_night
+			random_traits = yes
+			dynasty = none
+			age = 24
+		}
+		new_character = {
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+	}
+}
+#Inform the world
+character_event = {
+	id = invasions.612
+	desc = "EVTDESCinvasions.612"
+	picture = "GFX_evt_china_expansionist"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok"
+		tooltip = {
+			d_carcosa_raiders = {
+				holder_scope = { }
+			}
+		}
+	}
+}
+
+###########################
+### Brindleman Invaders ###
+###########################
+### Brindleman from Sothoryos invades Slaver's Bay and Qarth
+character_event = {
+	id = invasions.1099
+	
+	hide_window = yes
+	only_independent = yes
+	
+	trigger = {
+		has_landed_title = e_rebels
+		NOT = { has_global_flag = brindleman_invasion }
+		total_years_played = 75
+		OR = {
+			NOT = { has_global_flag = war_cooldown_period } 
+			had_global_flag = { flag = war_cooldown_period days = 25 } 
+		}
+		NOT = {
+			has_game_rule = {
+				name = non_lore_invasions
+				value = off
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 2000
+		
+		modifier = {
+			factor = 3
+			has_game_rule = {
+				name = non_lore_invasions
+				value = rare
+			}
+		}
+		modifier = {
+			factor = 0.5
+			624 = {
+				owner = {
+					top_liege = {
+						war = yes	
+					}
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.5
+			e_ghiscar = { holder_scope = { war = yes } }
+		}
+	}
+	
+	immediate = {
+		random_list = {
+			#Ghis
+			1 = { 624 = { province_event = { id = invasions.10 } } }
+			1 = { 617 = { province_event = { id = invasions.10 } } }
+			1 = { 616 = { province_event = { id = invasions.10 } } }
+			1 = { 620 = { province_event = { id = invasions.10 } } }
+			#Qarth
+			1 = { 662 = { province_event = { id = invasions.10 } } }
+			1 = { 664 = { province_event = { id = invasions.10 } } }
+			1 = { 654 = { province_event = { id = invasions.10 } } }
+			#Moraq
+			1 = { 726 = { province_event = { id = invasions.10 } } }
+			1 = { 723 = { province_event = { id = invasions.10 } } }
+			1 = { 730 = { province_event = { id = invasions.10 } } }
+			1 = { 731 = { province_event = { id = invasions.10 } } }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+province_event = {
+	id = invasions.10
+	desc = "EVTDESCinvasions.10"
+	picture = "GFX_sothoryos"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { owner = { culture_group = unoccupied_group } }
+	}
+	
+	immediate = {
+		set_global_flag = brindleman_invasion
+	}
+	
+	option = {
+		name = "Ok"
+		create_random_soldier = {
+			female = no
+			employer = d_brindleman_invaders
+			culture = brindlemen
+			dynasty = actually_culture
+			religion = sothoryos_rel
+			random_traits = yes
+			historical = yes
+		}
+		new_character = {
+			prestige = 100
+			random_list = {
+				25 = { add_trait = trained_warrior }
+				75 = { add_trait = skilled_warrior }
+				25 = { add_trait = master_warrior }
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+			
+			add_trait = strong
+			
+			d_brindleman_invaders = { 
+				if = {
+					limit = { has_holder = yes }
+					holder_scope = {
+						abdicate_to = PREVPREV	
+					}
+				}
+				if = {
+					limit = { has_holder = no }
+					gain_title = PREV
+				}				
+			}
+			character_event = { id = invasions.11 }	
+			if = {
+				limit = {
+					e_iron_throne = {
+						holder_scope = {
+							any_friend = {
+								trait = dragon
+								is_alive = yes
+							}
+						}
+					}
+					NOT = { has_game_rule = { name = dragon_hatching_taming value = off } }
+				}
+				set_character_flag = brindleman_dragon
+				add_trait = dragon_rider
+				set_dynasty_flag = dragon_riding_dynasty
+				random_list = {
+					50 = {
+						create_character = {
+							dynasty = actually_culture
+							age = 162
+							culture = dragon_culture
+							religion = dragon_rel
+							historical = yes
+						}
+					}
+					50 = {
+						create_character = {
+							female = yes
+							dynasty = actually_culture
+							age = 162
+							culture = dragon_culture
+							religion = dragon_rel
+							historical = yes
+						}
+					}
+				}
+				new_character = {
+					add_trait = dragon
+					add_trait = incapable_dragon
+					change_martial = 80
+					d_brindleman_invaders = { holder_scope = { add_friend = PREVPREV } }
+					add_trait = fair_dragon
+					character_event = { id = dragon.8 days = 2 }
+					random_list = {
+						1 = { add_trait = dragon_1 }
+						1 = { add_trait = dragon_2 }
+						1 = { add_trait = dragon_3 }
+						1 = { add_trait = dragon_4 }
+						1 = { add_trait = dragon_5 }
+						1 = { add_trait = dragon_6 }
+						1 = { add_trait = dragon_7 }
+						1 = { add_trait = dragon_8 }
+						1 = { add_trait = dragon_9 }
+						1 = { add_trait = dragon_10 }
+						1 = { add_trait = dragon_11 }
+						1 = { add_trait = dragon_12 }
+						1 = { add_trait = dragon_13 }
+						1 = { add_trait = dragon_14 }
+						1 = { add_trait = dragon_15 }
+						1 = { add_trait = dragon_16 }
+						1 = { add_trait = dragon_17 }
+						1 = { add_trait = dragon_18 }
+						1 = { add_trait = dragon_19 }
+						1 = { add_trait = dragon_20 }
+						1 = { add_trait = dragon_21 }
+						1 = { add_trait = dragon_22 }
+						1 = { add_trait = dragon_23 }
+						1 = { add_trait = dragon_24 }
+						1 = { add_trait = dragon_25 }
+						1 = { add_trait = dragon_26 }
+					}
+				}
+			}		
+		}
+		hidden_tooltip = {
+			any_playable_ruler = {
+				limit = { 
+					ai = no 
+					NOT = {
+						any_demesne_province = {
+							province_id = ROOT
+						}
+					}	
+				}
+				narrative_event = { id = invasions.12 } #Notification to other human players. (Mountain Clans)
+			}
+		}	
+	}
+}
+
+#Actually Spawm the Army...
+character_event = {
+	id = invasions.11
+	desc = "Arrgh!"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok."
+		FROM = {
+			owner = {
+				top_liege = {
+					primary_title = {
+						add_claim = ROOT
+						reverse_war = {
+							target = ROOT
+							casus_belli = claim
+						}
+					}
+				}	
+			}
+			ROOT = {
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1.5
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1.5
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 13 13 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+				}
+				spawn_unit = {
+					province = prev
+					home = prev
+					scaled_by_biggest_garrison = 1.5
+					troops = {
+						archers = { 19 19 }
+						light_infantry = { 12 12 }
+						heavy_infantry = { 2 2 }
+					}
+					attrition = 1.0
+				}
+				spawn_fleet = {
+					province = closest
+					owner = ROOT
+					troops = {
+						galleys = { 500 500 }
+					}
+				}
+				spawn_fleet = {
+					province = closest
+					owner = ROOT
+					troops = {
+						galleys = { 500 500 }
+					}
+				}
+				spawn_fleet = {
+					province = closest
+					owner = ROOT
+					troops = {
+						galleys = { 500 500 }
+					}
+				}
+			}	
+		}	
+		#Spawn a few courtiers
+		create_random_soldier = {
+			female = no
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			character_event = { id = essos.1 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			character_event = { id = essos.1 days = 1 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			character_event = { id = essos.1 days = 2 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_random_soldier = {
+			female = no
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+		}
+		new_character = {
+			random_list = {
+				70 = { add_trait = trained_warrior }
+				20 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			character_event = { id = essos.1 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+			age = 18
+		}
+		new_character = {
+			character_event = { id = essos.1 days = 1 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+			age = 25
+		}
+		new_character = {
+			character_event = { id = essos.1 days = 2 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+		create_character = {
+			female = yes
+			culture = brindlemen
+			religion = sothoryos_rel
+			random_traits = yes
+			dynasty = none
+			age = 24
+		}
+		new_character = {
+			character_event = { id = essos.1 }
+			
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+		}
+	}
+}
+#Inform the world
+narrative_event = {
+	id = invasions.12
+	desc = "EVTDESCinvasions.12"
+	title = "EVTTITLEinvasions.12"
+	picture = "GFX_sothoryos"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "Ok"
+		tooltip = {
+			d_brindleman_invaders = {
+				holder_scope = { }
+			}
+		}
+	}
+}

@@ -1,0 +1,5665 @@
+
+namespace = kingsmoot
+
+### Kingsmoot! ### by knuckey
+
+#Revamped with new kingsmoot succession law, prelim events now defunct
+
+# character_event = {
+	# id = kingsmoot.1
+	# desc = "EVTDESCkingsmoot.1" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# #Count candidates
+		# set_variable = { which = "kingsmoot_candidates" value = 0 }
+		
+		# clr_character_flag = kingsmoot_candidate
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = kingsmoot_candidate_contesting
+		# clr_character_flag = dynasty
+		# clr_character_flag = close_relative
+		# clr_character_flag = kingsmoot_imposter
+		# #Record laws
+		# primary_title = {
+			# #CA
+			# if = {
+				# limit = { has_law = centralization_0 }
+				# set_title_flag = centralization_0
+			# }
+			# if = {
+				# limit = { has_law = centralization_1 }
+				# set_title_flag = centralization_1
+			# }
+			# if = {
+				# limit = { has_law = centralization_2 }
+				# set_title_flag = centralization_2
+			# }
+			# if = {
+				# limit = { has_law = centralization_3 }
+				# set_title_flag = centralization_3
+			# }
+			# if = {
+				# limit = { has_law = centralization_4 }
+				# set_title_flag = centralization_4
+			# }
+			# #Slavery
+			# if = {
+				# limit = { NOT = { has_game_rule = { name = slavery value = off } } }
+				# if = {
+					# limit = { has_law = slavery_0 }
+					# set_title_flag = slavery_0
+				# }
+				# if = {
+					# limit = { has_law = slavery_1 }
+					# set_title_flag = slavery_1
+				# }
+				# if = {
+					# limit = { has_law = slavery_2 }
+					# set_title_flag = slavery_2
+				# }
+				# if = {
+					# limit = { has_law = slavery_3 }
+					# set_title_flag = slavery_3
+				# }
+				# if = {
+					# limit = { has_law = treaty_breach_0 }
+					# set_title_flag = treaty_breach_0
+				# }	
+				# if = {
+					# limit = { has_law = treaty_breach_1 }
+					# set_title_flag = treaty_breach_1
+				# }	
+			# }	
+			# #First Night
+			# if = {
+				# limit = { has_law = first_night_0 }
+				# set_title_flag = first_night_0
+			# }
+			# if = {
+				# limit = { has_law = first_night_1 }
+				# set_title_flag = first_night_1
+			# }
+			# #Gender Law
+			# if = {
+				# limit = { has_law = cognatic_succession }
+				# set_title_flag = cognatic_succession
+			# }
+			# if = {
+				# limit = { has_law = agnatic_succession }
+				# set_title_flag = agnatic_succession
+			# }
+			# if = {
+				# limit = { has_law = true_cognatic_succession }
+				# set_title_flag = true_cognatic_succession
+			# }
+		# }	
+	# }
+	
+	# option = {		
+		# name = {
+			# text = "EVTOPTAkingsmoot.1" 
+			# trigger = {
+				# prisoner = no
+				# NOT = { trait = incapable }
+				# age = 14
+			# }
+		# }
+		# name = {
+			# text = "EVTOPTAkingsmoot.1B" 
+			# trigger = {
+				# OR = {
+					# prisoner = yes
+					# trait = incapable
+					# NOT = { age = 14 }
+				# }	
+			# }
+		# }			
+		# character_event = { id = kingsmoot.3 days = 40 tooltip = TOOLTIPkingsmoot.3 } 
+		
+		# #Feast
+		
+		# add_character_modifier = {
+			# name = holding_large_feast	
+			# duration = 180
+		# }		
+		# hidden_tooltip = { character_event = { id = feast.2 days = 2 } }#Random Events	
+		# set_character_flag = host_feast_started
+		
+		# hidden_tooltip = {
+			# if = {
+				# limit = { is_close_relative = FROM }
+				# set_character_flag = close_relative
+			# }
+			# if = {
+				# limit = { dynasty = FROM }
+				# set_character_flag = dynasty
+			# }
+			# any_realm_character = {
+				# character_event = { id = kingsmoot.2 }
+			# }
+			# FROM = {
+				# any_dynasty_member = {
+					# limit = {
+						# is_close_relative = FROM
+						# is_alive = yes
+						# is_ruler = no			
+						# NOT = { any_liege = { character = ROOT } }
+					# }
+					# character_event = { id = kingsmoot.2 }
+				# }
+			# }	
+			# #Chance of random pretender
+			# random = {
+				# chance = 5
+				# character_event = { id = kingsmoot.28 days = 25 random = 10 }
+			# }
+			# any_vassal = {
+				# hidden_tooltip = { character_event = { id = feast.3 } } #random events
+			# }
+		# }
+	# }
+# }	
+# #Inform Realm
+# character_event = {
+	# id = kingsmoot.2
+	# desc = "EVTDESCkingsmoot.2" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { trait = dragon } }
+	
+	# immediate = {
+		# if = {
+			# limit = {
+				# age = 15
+				# prisoner = no
+				# NOT = { trait = incapable }
+				# can_press_claims_trigger = yes
+				# OR = { #Must either follow Drowned God or be dejure part of the Kingdom
+					# religion = drowned_god
+					# AND = {
+						# is_ruler = yes
+						# any_demesne_title = {
+							# OR = {
+								# kingdom = {
+									# has_law = succ_kingsmoot_elective
+									# is_primary_holder_title = yes
+									# holder_scope = { character = FROM }
+								# }
+								# empire = {
+									# has_law = succ_kingsmoot_elective
+									# is_primary_holder_title = yes
+									# holder_scope = { character = FROM }
+								# }				
+							# }
+						# }
+					# }	
+				# }	
+				# OR = {
+					# AND = {
+						# is_ruler = yes 
+						# is_feudal = yes
+					# }	
+					# FROM = { FROM = { is_close_relative = ROOT } }
+					# prestige = 500
+					# AND = {
+						# martial = 15
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = viking
+						# }
+					# }
+					# has_character_flag = council_candidate
+				# }
+				# OR = { #Women can only stand if close relative of previous King and are strong
+					# is_female = no
+					# AND = {
+						# FROM = { FROM = { is_close_relative = ROOT } }
+						# OR = {
+							# prestige = 750
+							# martial = 17
+						# }
+					# }				
+				# }
+			# }
+			# set_character_flag = eligible_for_kingsmoot
+		# }
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.2" #Cannot participate	
+		# trigger = { NOT = { has_character_flag = eligible_for_kingsmoot } }
+		# clr_character_flag = council_candidate
+		# clr_character_flag = kingsmoot_candidate
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = kingsmoot_candidate_contesting
+	# }
+	
+	# option = {
+		# name = "EVTOPTBkingsmoot.2" #I Put myself forward!
+		# trigger = { has_character_flag = eligible_for_kingsmoot }
+		# ai_chance = {
+			# factor = 50
+			# modifier  = {
+				# factor = 0.1
+				# is_inaccessible_trigger = yes
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = 0 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -25 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -50 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# NOT = { opinion = { who = FROM value = -75 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { primary_title = { ROOT = { has_claim = PREV } } }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { NOT = { age = 16 } }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { trait = incapable }
+			# }
+			# modifier = {
+				# factor = 3
+				# religion = drowned_god
+				# NOT = { religion = FROM }
+			# }
+			# modifier = {
+				# factor = 5
+				# trait = ambitious
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = ruthless
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { FROM = { is_close_relative = ROOT } }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { FROM = { dynasty = ROOT } }
+			# }
+			# modifier = {
+				# factor = 2
+				# tier = COUNT
+			# }
+			# modifier = {
+				# factor = 3
+				# tier = DUKE
+			# }
+			# modifier = {
+				# factor = 4
+				# tier = KING
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = master_warrior
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = skilled_warrior
+			# }
+			# modifier = {
+				# factor = 10
+				# trait = dragon_rider
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = brave
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = diligent
+			# }
+			# modifier = {
+				# factor = 3
+				# martial = 15
+			# }
+		# }
+		# custom_tooltip = { text = TOOLTIPEVTOPTBkingsmoot.2 }
+		# clr_character_flag = eligible_for_kingsmoot
+		# clr_character_flag = council_candidate
+		# set_character_flag = kingsmoot_candidate
+		# set_character_flag = guest_feast_started
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = kingsmoot_candidate_contesting
+		# clr_character_flag = dynasty
+		# clr_character_flag = close_relative
+		# clr_character_flag = kingsmoot_imposter
+		# if = {
+			# limit = { FROM = { FROM = { is_close_relative = ROOT } } }
+			# set_character_flag = close_relative
+		# }
+		# if = {
+			# limit = { FROM = { FROM = { dynasty = ROOT } } }
+			# set_character_flag = dynasty
+		# }
+		# if = {
+			# limit = {
+				# is_ruler = no			
+				# NOT = { any_liege = { character = FROM } }
+			# }
+			# move_character = FROM
+		# }
+		# if = {
+			# limit = { is_inaccessible_trigger = yes	}
+			# remove_trait = in_hiding
+			# add_character_modifier = {
+				# name = went_out_of_hiding_timer
+				# duration = 180
+				# hidden = yes
+			# }
+			# hidden_tooltip = { character_event = { id = CM.6400 } } # Notify plotters and family
+		# }
+	# }
+	
+	# option = {
+		# name = "EVTOPTCkingsmoot.2" #No Thanks
+		# trigger = { has_character_flag = eligible_for_kingsmoot }
+		# ai_chance = {
+			# factor = 50
+			# modifier = {
+				# factor = 1.5
+				# opinion = { who = FROM value = 25 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# opinion = { who = FROM value = 50 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# opinion = { who = FROM value = 75 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# opinion = { who = FROM value = 100 }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = honorable
+				# FROM = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# OR = {
+					# dynasty = 0
+					# NOT = { father_even_if_dead = { always = yes } }
+				# }	
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { prestige = 1000 }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { martial = 18 }
+			# }
+			# modifier = {
+				# factor = 5
+				# trait = content
+			# }
+			# modifier = {
+				# factor = 1.33
+				# NOT = { combat_rating = 2 }
+			# }
+			# modifier = {
+				# factor = 3
+				# NOT = { combat_rating = 4 }
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = craven
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = slothful
+			# }
+			# modifier = {
+				# factor = 3
+				# is_weak_trigger = yes
+			# }
+			# modifier = {
+				# factor = 3
+				# has_severe_disability_trigger = yes
+			# }
+			# modifier = {
+				# factor = 2.5
+				# NOT = { martial = 10 }
+			# }
+			# modifier = {
+				# factor = 3
+				# NOT = { religion = drowned_god }
+			# }
+		# }
+		# custom_tooltip = { text = TOOLTIPkingsmoot.3 }
+		# clr_character_flag = eligible_for_kingsmoot	
+		# clr_character_flag = council_candidate
+		# set_character_flag = guest_feast_started
+		# clr_character_flag = kingsmoot_candidate
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = kingsmoot_candidate_contesting
+	# }
+# }	
+# #Whittle down candiates to 6
+# character_event = {
+	# id = kingsmoot.3
+	
+	# is_triggered_only = yes
+	
+	# hide_window = yes
+	
+	# immediate = {	
+		# #Add self if eligible
+		# if = {
+			# limit = {
+				# prisoner = no
+				# NOT = { trait = incapable }
+				# age = 14
+			# }
+			# change_variable = { which = "kingsmoot_candidates" value = 1 }
+		# }
+		# #Count rest
+		# any_realm_character = {
+			# limit = { has_character_flag = kingsmoot_candidate }	
+			# ROOT = { change_variable = { which = "kingsmoot_candidates" value = 1 } }
+		# }
+		# character_event = { id = kingsmoot.4 days = 1 }
+	# }
+	
+	# option = {
+		# name = OK		
+	# }
+# }		
+# character_event = {
+	# id = kingsmoot.4
+	
+	# is_triggered_only = yes
+	
+	# hide_window = yes
+	
+	# immediate = {	
+		# #If 6 or less proceed to the election
+		# if = {
+			# limit = { NOT = { check_variable = { which = "kingsmoot_candidates" value = 6 } } }
+			# set_variable = { which = "kingsmoot_candidates" value = 0 }
+			# set_character_flag = candidates_found
+			# clr_character_flag = finding_candidates
+			# character_event = { id = kingsmoot.8 days = 1 } 		
+		# }	
+		# #if more than 6 randomly remove candidates
+		# if = {
+			# limit = { 
+				# NOT = { has_character_flag = candidates_found }
+				# check_variable = { which = "kingsmoot_candidates" value = 6 } 
+			# } 
+			# any_realm_character = {
+				# limit = { has_character_flag = kingsmoot_candidate }	
+				# character_event = { id = kingsmoot.5 days = 1 random = 2 }
+			# }
+			# #set_variable = { which = "kingsmoot_candidates" value = 0 }
+			# character_event = { id = kingsmoot.4 days = 4 } 
+		# }
+	# }
+	
+	# option = {
+		# name = OK	
+	# }
+# }	
+# #Candidate is randomly removed from candidacy
+# character_event = {
+	# id = kingsmoot.5
+	
+	# is_triggered_only = yes
+	
+	# hide_window = yes
+	
+	# trigger = {
+		# FROM = {
+			# NOT = { has_character_flag = candidates_found }
+			# check_variable = { which = "kingsmoot_candidates" value = 6 } 
+		# }
+	# }
+	
+	# immediate = {
+		# c_the_citadel = {
+			# holder_scope = {
+				# character_event = { id = kingsmoot.6 } 
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }	
+# character_event = {
+	# id = kingsmoot.6
+	# desc = "AI only Kingsmoot event 6" 
+	
+	# is_triggered_only = yes
+	
+	# option = { #Survive
+		# name = OK
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# FROM = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { has_character_flag = kingsmoot_imposter }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { tier = COUNT }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { tier = DUKE }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { tier = KING }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 10
+				# FROM = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# FROM = { is_strong_trigger = yes }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { trait = tall }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { trait = genius }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { is_smart_trigger = yes }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { trait = gregarious }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { trait = brave }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { trait = viking }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 18 }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 21 }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 24 }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { martial = 30 }
+			# }
+			# modifier = {
+				# factor = 1.3
+				# FROM = { intrigue = 15 }
+			# }
+			# modifier = {
+				# factor = 1.3
+				# FROM = { intrigue = 19 }
+			# }
+			# modifier = {
+				# factor = 1.3
+				# FROM = { intrigue = 24 }
+			# }
+			# modifier = {
+				# factor = 1.1
+				# FROM = { prestige = 150 }
+			# }
+			# modifier = {
+				# factor = 1.1
+				# FROM = { prestige = 300 }
+			# }
+			# modifier = {
+				# factor = 1.1
+				# FROM = { prestige = 450 }
+			# }
+			# modifier = {
+				# factor = 1.1
+				# FROM = { prestige = 600 }
+			# }
+			# modifier = {
+				# factor = 1.25
+				# FROM = { prestige = 750 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { prestige = 1000 }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { prestige = 1500 }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { prestige = 2000 }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { prestige = 3000 }
+			# }
+		# }	
+	# }
+	
+	# option = { #Remove
+		# name = OK
+		# ai_chance = { 
+			# factor = 15
+			# modifier = {
+				# factor = 2.5
+				# FROM = { NOT = { religion = drowned_god } }
+			# }	
+			# modifier = {
+				# factor = 2
+				# FROM = { NOT = { culture_group = iron_isles_culture } }
+			# }	
+			# modifier = {
+				# factor = 3.5
+				# FROM = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } } 
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 6
+				# FROM = { 
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { is_weak_trigger = yes }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { trait = infirm }
+			# }
+			# modifier = {
+				# factor = 4
+				# FROM = { trait = imbecile }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { is_dumb_trigger = yes }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { trait = craven }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { NOT = { martial = 13 } }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { NOT = { martial = 10 } }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 1.6
+				# FROM = { NOT = { martial = 4 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { NOT = { martial = 2 } }
+			# }	
+			# modifier = {
+				# factor = 1.5
+				# FROM = { NOT = { prestige = 0 } }
+			# }		
+		# }	
+		# FROM = {
+			# clr_character_flag = kingsmoot_candidate
+			# character_event = { id = kingsmoot.7 } 
+		# }
+		# FROM = { FROM = { change_variable = { which = "kingsmoot_candidates" value = -1 } } }
+	# }
+# }	
+# #Inform lost candidacy
+# character_event = {
+	# id = kingsmoot.7
+	# desc = "EVTDESCkingsmoot.7" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# show_from_from = yes
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.7" #Cannot participate	
+		# prestige = -100
+		# clr_character_flag = close_relative
+		# clr_character_flag = dynasty
+		# clr_character_flag = kingsmoot_imposter
+	# }
+# }	
+# ###6 Candidates chosen, inform King###
+# character_event = {
+	# id = kingsmoot.8
+	# desc = "EVTDESCkingsmoot.8" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# immediate = {
+		# clr_character_flag = host_feast_started
+		# clr_character_flag = feast_drunkard_guest
+		# remove_character_modifier = holding_large_feast	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.8" 
+		# trigger = {
+			# any_realm_character = { has_character_flag = kingsmoot_candidate } 
+		# }
+		# hidden_tooltip = { character_event = { id = kingsmoot.13 days = 6 } }
+		# if = {
+			# limit = {
+				# prisoner = no
+				# NOT = { trait = incapable }
+				# age = 14
+			# }
+			# set_character_flag = kingsmoot_candidate
+			# character_event = { id = kingsmoot.9 tooltip = TOOLTIPkingsmoot.9 }		
+		# }
+		# hidden_tooltip = {
+			# if = {
+				# limit = { NOT = { has_character_flag = kingsmoot_candidate } }
+				# random_realm_character = {
+					# limit = { 	
+						# has_character_flag = kingsmoot_candidate 
+						# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# }
+					# set_character_flag = candidate_number_found
+					# save_event_target_as = candidate_1
+				# }
+			# }	
+			# random_realm_character = {
+				# limit = { 					
+					# has_character_flag = kingsmoot_candidate 
+					# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# NOT = { has_character_flag = candidate_number_found }
+				# }
+				# set_character_flag = candidate_number_found
+				# save_event_target_as = candidate_2			
+			# }
+			# random_realm_character = {
+				# limit = { 
+					# has_character_flag = kingsmoot_candidate 
+					# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# NOT = { has_character_flag = candidate_number_found }
+				# }
+				# set_character_flag = candidate_number_found
+				# save_event_target_as = candidate_3
+			# }
+			# random_realm_character = {
+				# limit = { 
+					# has_character_flag = kingsmoot_candidate 
+					# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# NOT = { has_character_flag = candidate_number_found }
+				# }
+				# set_character_flag = candidate_number_found
+				# save_event_target_as = candidate_4
+			# }
+			# random_realm_character = {
+				# limit = { 
+					# has_character_flag = kingsmoot_candidate 
+					# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# NOT = { has_character_flag = candidate_number_found }
+				# }
+				# set_character_flag = candidate_number_found
+				# save_event_target_as = candidate_5
+			# }
+			# random_realm_character = {
+				# limit = { 
+					# has_character_flag = kingsmoot_candidate 
+					# NOT = { has_character_flag = kingsmoot_candidate_contesting }
+					# NOT = { has_character_flag = candidate_number_found }
+				# }
+				# set_character_flag = candidate_number_found
+				# save_event_target_as = candidate_6
+			# }
+			# any_realm_character = {
+				# limit = { NOT = { has_character_flag = kingsmoot_candidate } }
+				# character_event = { id = kingsmoot.10 days = 3 }
+			# }
+			# clr_character_flag = candidates_found
+			# set_character_flag = counting_votes
+		# }
+		# any_realm_character = {
+			# limit = { has_character_flag = kingsmoot_candidate }
+			# character_event = { id = kingsmoot.9 tooltip = TOOLTIPkingsmoot.9 }
+		# }
+	# }
+
+	# option = {
+		# name = "EVTOPTBkingsmoot.8" #Unopposed
+		# trigger = {
+			# NOT = { any_realm_character = { has_character_flag = kingsmoot_candidate } }
+		# }
+		# clr_character_flag = candidates_found
+	# }
+# }	
+###Canidate chooses tribute
+character_event = {
+	id = kingsmoot.9
+	desc = "EVTDESCkingsmoot.9" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { has_character_flag = kingsmoot_candidate_contesting } }
+	
+	immediate = {
+		if = { #for loc
+			limit = { ai = no }
+			any_liege = {
+				limit = { 
+					primary_title = { has_law = succ_kingsmoot_elective } 
+				}
+				save_event_target_as = kingsmoot_liege
+			}	
+		}	
+		#set_character_flag = kingsmoot_candidate_contesting
+		# clr_character_flag = large_gift
+		# clr_character_flag = regular_gift
+		# clr_character_flag = small_gift
+		#clr_character_flag = no_gift
+		clr_character_flag = threats
+		clr_character_flag = sunset_sea
+		clr_character_flag = peace
+		#set_variable = { which = "election_votes" value = 0 }	
+		
+		#AI calls in favors
+		if = {
+			limit = { ai = yes }
+			any_liege = {
+				limit = { 
+					primary_title = { has_law = succ_kingsmoot_elective } 
+					OR = { #Must be likely to die soon
+						age = 60
+						NOT = { health = 1 }
+					}
+				}
+				primary_title = { save_event_target_as = kingsmoot_title }
+				any_realm_character = {
+					limit = {
+						owes_favor_to = ROOT
+						ai = yes
+						OR = {
+							can_press_claims_trigger = yes
+							trait = drowned
+						}
+						OR = { #Must either follow Drowned God or be dejure part of the Kingdom
+							is_drowned_god_religion_trigger = yes
+							any_demesne_title = {
+								OR = {
+									kingdom = {
+										title = event_target:kingsmoot_title
+									}
+									empire = {
+										title = event_target:kingsmoot_title
+									}				
+								}
+							}
+						}
+						OR = {
+							is_female = no
+							is_ruler = yes
+							prestige = 500
+							dynasty = PREV
+							event_target:kingsmoot_title = {
+								OR = {
+									has_law = true_cognatic_succession
+									has_law = enatic_cognatic_succession
+									has_law = enatic_succession
+								}
+							}
+							has_character_flag = kingsmoot_imposter #event character
+						}	
+						
+						NOT = { has_character_modifier = election_support_called }
+						NOT = { has_character_flag = favor_vote_called }
+					}					
+					ROOT = { save_event_target_as = favor_vote_caller }
+					set_character_flag = favor_vote_called
+					character_event = { id = ZE.8165 days = 1 random = 1 }
+				}
+			}
+		}
+	}
+	
+	option = { #Nothing
+		name = "EVTOPTDkingsmoot.9" 
+		ai_chance = { factor = 1 }
+		#set_character_flag = no_gift
+	}
+	
+	option = { #Large Gifts
+		name = "EVTOPTAkingsmoot.9" 
+		trigger = { 
+			wealth = 100
+			NOT = { check_variable = { which = kingsmoot_gifts value = 401 } } #Max 500
+		}
+		ai_chance = { 
+			factor = 12
+			modifier = {
+				factor = 0.33 
+				trait = greedy
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					war = yes
+					prisoner = yes
+					NOT = { wealth = 200 }
+				}
+			}
+		}	
+		wealth = -100
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9large_gift 
+			change_variable = { which = kingsmoot_gifts value = 100 }
+		}
+	}
+	
+	option = { #Regular Gifts
+		name = "EVTOPTBkingsmoot.9" 
+		trigger = { 
+			wealth = 50
+			NOT = { check_variable = { which = kingsmoot_gifts value = 451 } }
+		}
+		ai_chance = { 
+			factor = 6
+			modifier = {
+				factor = 0.66
+				trait = greedy
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					war = yes
+					prisoner = yes
+					AND = {
+						is_ruler = yes
+						NOT = { wealth = 100 }
+					}	
+				}
+			}
+		}	
+		wealth = -50
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9regular_gift 
+			change_variable = { which = kingsmoot_gifts value = 50 }
+		}
+		#set_character_flag = regular_gift
+	}
+	
+	option = { #Withdraw fund
+		name = "EVTOPTCkingsmoot.9" 
+		trigger = { 
+			check_variable = { which = kingsmoot_gifts value = 1 }
+		}
+		ai_chance = { 
+			factor = 3
+			modifier = {
+				factor = 0
+				NOR = {
+					war = yes
+					prisoner = yes
+					NOT = { wealth = 0 }
+				}
+			}
+			modifier = {
+				factor = 1.5
+				trait = greedy
+			}
+		}	
+		wealth = kingsmoot_gifts
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9small_gift 
+			set_variable = { which = kingsmoot_gifts value = 0 }
+		}
+	}
+	
+	option = { #Sunset Sea
+		name = "EVTOPTEkingsmoot.9" 
+		trigger = { 
+			OR = {
+				has_landed_title = c_lonely_light
+				dynasty = 114
+				trait = traveller
+			}	
+			OR = {
+				trait = lunatic
+				trait = mystic
+				trait = ambitious
+			}	
+			NOT = { has_character_flag = sunset_sea }
+			NOT = { has_character_flag = threats }
+			NOT = { has_character_flag = peace }
+		}
+		ai_chance = { factor = 3 }
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9sunset_sea
+		}
+		set_character_flag = sunset_sea
+	}
+	
+	option = { #Threaten
+		name = "EVTOPTFkingsmoot.9" 
+		trigger = { 
+			OR = {
+				higher_tier_than = BARON
+				any_liege = { 
+					is_close_relative = ROOT 
+					primary_title = { has_law = succ_kingsmoot_elective }
+				}
+			}	
+			OR = {
+				trait = lunatic
+				trait = wroth
+			}
+			NOT = { trait = patient }			
+			NOT = { trait = kind }
+			NOT = { trait = honorable }
+			NOT = { trait = just }		
+			NOT = { trait = gregarious }	
+			NOT = { has_character_flag = sunset_sea }
+			NOT = { has_character_flag = threats }
+			NOT = { has_character_flag = peace }
+		}
+		ai_chance = { factor = 3 }
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9threats
+		}
+		set_character_flag = threats
+	}
+	
+	option = { #Peace
+		name = "EVTOPTGkingsmoot.9" 
+		trigger = { 	
+			diplomacy = 10
+			OR = {
+				NOT = { is_drowned_god_religion_trigger = yes }
+				has_religion_feature = religion_peaceful
+				has_religion_feature = religion_feature_nath_pagan
+				trait = cynical
+				pacifist = yes
+			}	
+			NOT = { trait = ambitious }	
+			NOT = { has_character_flag = sunset_sea }
+			NOT = { has_character_flag = threats }
+			NOT = { has_character_flag = peace }
+		}
+		ai_chance = { factor = 3 }
+		tooltip_info = diplomacy
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.9peace
+		}
+		set_character_flag = peace
+	}
+	after = {
+		clr_character_flag = kingsmoot_tribute
+	}
+}	
+# ###Realm Votes
+# character_event = {
+	# id = kingsmoot.10
+	# desc = "EVTDESCkingsmoot.10" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# min_age = 14
+	# capable_only = yes
+	# prisoner = no
+	
+	# trigger = {
+		# FROM = { is_alive = yes }
+		# OR = {
+			# can_press_claims_trigger = yes
+			# trait = drowned
+		# }
+		# OR = { #Must either follow Drowned God or be dejure part of the Kingdom
+			# religion = drowned_god
+			# any_demesne_title = {
+				# OR = {
+					# kingdom = {
+						# has_law = succ_kingsmoot_elective
+						# is_primary_holder_title = yes
+						# holder_scope = { character = FROM }
+					# }
+					# empire = {
+						# has_law = succ_kingsmoot_elective
+						# is_primary_holder_title = yes
+						# holder_scope = { character = FROM }
+					# }				
+				# }
+			# }
+		# }
+		# OR = {
+			# is_female = no
+			# is_ruler = yes
+			# prestige = 500
+			# dynasty = FROM
+		# }	
+	# }
+	
+	# immediate = {
+		# clr_character_flag = guest_feast_started
+		# #Set gift level
+		# if = {
+			# limit = { tier = KING }
+			# set_character_flag = gift_1
+		# }
+		# if = {
+			# limit = { 
+				# NOT = { has_character_flag = gift_1 }
+				# OR = {
+					# tier = DUKE
+					# any_dynasty_member = {
+						# is_close_relative = ROOT
+						# religion = drowned_god
+						# higher_tier_than = DUKE
+					# }
+				# }
+			# }
+			# set_character_flag = gift_2
+		# }
+		# if = {
+			# limit = { 
+				# NOT = { has_character_flag = gift_1 }
+				# NOT = { has_character_flag = gift_2 }
+				# OR = {
+					# tier = COUNT
+					# is_patrician = yes
+					# any_dynasty_member = {
+						# is_close_relative = ROOT
+						# religion = drowned_god
+						# tier = DUKE
+					# }
+				# }
+			# }
+			# set_character_flag = gift_3
+		# }
+		# if = {
+			# limit = { 
+				# NOT = { has_character_flag = gift_1 }
+				# NOT = { has_character_flag = gift_2 }
+				# NOT = { has_character_flag = gift_3 }
+				# OR = {
+					# tier = BARON
+					# any_dynasty_member = {
+						# is_close_relative = ROOT
+						# religion = drowned_god
+						# OR = {
+							# is_patrician = yes
+							# tier = COUNT
+						# }
+					# }
+				# }
+			# }
+			# set_character_flag = gift_4
+		# }
+		# if = {
+			# limit = { 
+				# NOT = { has_character_flag = gift_1 }
+				# NOT = { has_character_flag = gift_2 }
+				# NOT = { has_character_flag = gift_3 }
+				# NOT = { has_character_flag = gift_4 }
+			# }
+			# set_character_flag = gift_5
+		# }
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# NOT = { has_character_flag = more }
+			# }
+			# FROM = { has_character_flag = kingsmoot_candidate } 
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# FROM = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# FROM = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# FROM = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# FROM = { 
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# FROM = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# FROM = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# FROM = { 
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }					
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# FROM = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.25
+				# FROM = { trait = infirm }
+			# }
+			# modifier = {
+				# factor = 0.75
+				# FROM = { NOT = { age = 16 } }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# FROM = { NOT = { age = 19 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# FROM = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# FROM = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# FROM = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# FROM = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# FROM = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# FROM = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# FROM = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# FROM = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# FROM = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# FROM = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# FROM = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# FROM = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# FROM = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# FROM = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# FROM = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# FROM = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# FROM = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# FROM = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# FROM = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }	
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# FROM = { NOT = { religion = ROOT } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# FROM = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# FROM = { 
+			# tooltip = { show_portrait = yes } 
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }	
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5
+	# }
+	
+	# option = {
+		# name = "EVTOPTGkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# NOT = { has_character_flag = more }
+			# }
+			# event_target:candidate_1 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_1 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_1 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_1 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_1 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_1 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_1 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_1 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_1 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_1 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_1 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_1 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_1 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_1 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_1 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_1 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_1 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_1 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_1 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_1 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_1 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_1 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_1 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_1 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_1 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_1 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_1 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_1 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_1 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_1 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_1 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_1 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_1 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5			
+	# }
+	
+	# option = {
+		# name = "EVTOPTBkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# NOT = { has_character_flag = more }
+			# }
+			# event_target:candidate_2 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_2 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_2 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_2 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_2 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_2 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_2 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_2 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_2 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_2 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_2 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_2 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_2 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_2 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_2 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_2 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_2 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_2 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_2 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_2 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_2 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_2 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_2 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_2 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_2 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_2 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_2 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_2 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_2 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_2 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_2 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_2 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_2 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5			
+	# }
+	
+	# option = {
+		# name = "EVTOPTCkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# NOT = { has_character_flag = more }
+			# }
+			# event_target:candidate_3 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_3 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_3 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_3 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_3 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_3 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_3 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_3 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_3 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_3 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_3 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_3 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_3 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_3 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_3 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_3 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_3 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_3 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_3 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_3 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_3 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_3 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_3 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_3 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_3 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_3 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_3 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_3 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_3 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_3 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_3 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_3 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_3 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5	
+	# }
+	
+	# option = {
+		# name = "MORE" 
+		# trigger = { 
+			# ai = no 
+			# NOT = { has_character_flag = more }
+			# event_target:candidate_4 = { is_alive = yes }
+		# }	
+		# set_character_flag = more
+		# hidden_tooltip = { 
+			# repeat_event = { id = kingsmoot.10 }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTDkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# has_character_flag = more
+			# }
+			# event_target:candidate_4 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_4 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_4 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_4 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_4 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_4 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_4 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_4 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_4 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_4 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_4 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_4 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_4 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_4 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_4 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_4 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_4 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_4 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_4 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_4 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_4 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_4 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_4 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_4 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_4 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_4 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_4 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_4 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_4 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_4 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_4 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_4 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_4 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5			
+	# }
+	
+	# option = {
+		# name = "EVTOPTEkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# has_character_flag = more
+			# }
+			# event_target:candidate_5 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_6 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_5 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_5 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_5 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_5 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_5 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_5 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_5 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_5 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_5 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_5 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_5 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_5 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_5 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_5 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_5 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_5 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_5 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_5 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_5 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_5 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_5 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_5 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_5 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_5 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_5 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_5 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_5 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_5 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_5 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_5 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_5 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_5 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5			
+	# }
+	
+	# option = {
+		# name = "EVTOPTFkingsmoot.10" 
+		# trigger = { 
+			# OR = {
+				# ai = yes
+				# has_character_flag = more
+			# }
+			# event_target:candidate_6 = { is_alive = yes }
+			# NOR = { #favor has not been called on someone else
+				# has_opinion_modifier = { who = FROM modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_1 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_2 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_3 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_4 modifier = opinion_supporting_in_election }
+				# has_opinion_modifier = { who = event_target:candidate_5 modifier = opinion_supporting_in_election }
+			# }
+		# }
+		# ai_chance = { 
+			# factor = 50
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_6 = { has_character_flag = close_relative }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_6 = { has_character_flag = dynasty }
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = greedy
+				# event_target:candidate_6 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { has_character_flag = large_gift }
+			# }
+			# modifier = {
+				# factor = 0.8
+				# event_target:candidate_6 = { has_character_flag = small_gift }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_6 = {
+					# OR = {
+						# has_character_flag = no_gift 
+						# has_character_flag = threats
+						# has_character_flag = sunset_sea
+						# has_character_flag = peace
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = lunatic
+					# trait = mystic
+				# }
+				# event_target:candidate_6 = { has_character_flag = sunset_sea }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# trait = craven
+				# event_target:candidate_6 = { has_character_flag = threats }
+			# }
+			# modifier = {
+				# factor = 2
+				# NOT = { trait = proud }
+				# NOT = { trait = brave }
+				# event_target:candidate_6 = {
+					# has_character_flag = threats
+					# OR = {
+						# martial = 20
+						# trait = authoritative
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 5
+				# OR = {
+					# trait = cynical
+					# NOT = { religion = drowned_god }
+				# }
+				# event_target:candidate_6 = { has_character_flag = peace }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_6 = { NOT = { reverse_opinion = { who = ROOT value = -99 } } }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_6 = { NOT = { reverse_opinion = { who = ROOT value = -79 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_6 = { NOT = { reverse_opinion = { who = ROOT value = -59 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_6 = { NOT = { reverse_opinion = { who = ROOT value = -39 } } }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_6 = { NOT = { reverse_opinion = { who = ROOT value = -19 } } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { reverse_opinion = { who = ROOT value = 20 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { reverse_opinion = { who = ROOT value = 40 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { reverse_opinion = { who = ROOT value = 60 } }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_6 = { reverse_opinion = { who = ROOT value = 80 } }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_6 = { reverse_opinion = { who = ROOT value = 100 } }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_6 = { is_female = yes }
+			# }
+			# modifier = {
+				# factor = 5
+				# NOT = { dynasty = 0 }
+				# event_target:candidate_6 = { dynasty = ROOT }
+			# }
+			# modifier = {
+				# factor = 2.5
+				# event_target:candidate_6 = { is_close_relative = ROOT }
+			# }
+			# modifier = {
+				# factor = 2
+				# event_target:candidate_6 = { is_liege_of = ROOT }
+			# }
+			# modifier = {
+				# factor = 3
+				# event_target:candidate_6 = { trait = master_warrior }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { trait = skilled_warrior }
+			# }
+			# modifier = {
+				# factor = 0.66
+				# event_target:candidate_6 = { trait = poor_warrior }
+			# }
+			# modifier = {
+				# factor = 0.33
+				# event_target:candidate_6 = {
+					# NOT = {
+						# OR = {
+							# trait = master_warrior
+							# trait = skilled_warrior
+							# trait = trained_warrior
+							# trait = poor_warrior
+						# }
+					# }
+				# }	
+			# }
+			# modifier = {
+				# factor = 10
+				# event_target:candidate_6 = { trait = dragon_rider }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_6 = { NOT = { martial = 3 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_6 = { NOT = { martial = 7 } }
+			# }
+			# modifier = {
+				# factor = 0.6
+				# event_target:candidate_6 = { NOT = { martial = 11 } }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { martial = 15 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { martial = 19 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { martial = 23 }
+			# }
+			# modifier = {
+				# factor = 1.5
+				# event_target:candidate_6 = { martial = 27 }
+			# }
+			# modifier = {
+				# factor = 0.4
+				# event_target:candidate_6 = { 
+					# OR = {
+						# dynasty = 0
+						# NOT = { father_even_if_dead = { always = yes } }
+					# }
+				# }
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_6 = { NOT = { religion = ROOT } } 
+			# }
+			# modifier = {
+				# factor = 0.5
+				# event_target:candidate_6 = { NOT = { culture_group = ROOT } }
+			# }
+		# }
+		# event_target:candidate_6 = {
+			# hidden_tooltip = { change_variable = { which = "election_votes" value = 1 } }
+			# if = {
+				# limit = {
+					# ROOT = {
+						# NOT = { dynasty = 0 }
+						# OR = {
+							# is_ruler = yes
+							# dynasty = PREV
+						# }
+					# }
+				# }
+				# opinion = { who = ROOT modifier = opinion_kingsmoot_champion }
+			# }
+			# if = {
+				# limit = { has_character_flag = sunset_sea }
+				# custom_tooltip = { text = kingsmoot.10sunset_sea }
+			# }	
+			# if = {
+				# limit = { has_character_flag = threats }
+				# custom_tooltip = { text = kingsmoot.10threats }
+			# }	
+			# if = {
+				# limit = { has_character_flag = peace }
+				# custom_tooltip = { text = kingsmoot.10peace }
+			# }	
+			# if = {
+				# limit = { has_character_flag = large_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -100 }
+						# wealth = 100
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = regular_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -50 }
+						# wealth = 50
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+				# }
+			# }
+			# if = {
+				# limit = { has_character_flag = small_gift }
+				# ROOT = {
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -25 }
+						# wealth = 25
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_2 }
+						# PREV = { wealth = -12 }
+						# wealth = 12
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_3 }
+						# PREV = { wealth = -6 }
+						# wealth = 6
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -3 }
+						# wealth = 3
+					# }
+					# if = { 
+						# limit = { has_character_flag = gift_1 }
+						# PREV = { wealth = -1 }
+						# wealth = 1
+					# }
+				# }
+			# }
+		# }	
+		# clr_character_flag = gift_1
+		# clr_character_flag = gift_2
+		# clr_character_flag = gift_3
+		# clr_character_flag = gift_4
+		# clr_character_flag = gift_5	
+	# }
+	
+	# option = {
+		# name = "BACK" 
+		# trigger = { 
+			# ai = no 
+			# has_character_flag = more
+		# }	
+		# clr_character_flag = more
+		# hidden_tooltip = { 
+			# repeat_event = { id = kingsmoot.10 }
+		# }
+	# }
+# }	
+# # character_event = {
+	# # id = kingsmoot.11
+
+	# # is_triggered_only = yes
+	# # hide_window = yes
+	
+	# # immediate = { FROM = { character_event = { id = kingsmoot.10 } } }
+	
+	# # option = {
+		# # name = OK
+	# # }
+# # }
+# ###Count the votes###
+# character_event = {
+	# id = kingsmoot.13
+
+	# is_triggered_only = yes
+	# hide_window = yes
+	
+	# immediate = { 
+		# #Find winner
+		# #If still candidate check against self
+		# if = {
+			# limit = { 
+				# has_character_flag = kingsmoot_candidate_contesting
+				# NOT = {
+					# any_realm_character = {
+						# has_character_flag = kingsmoot_candidate_contesting
+						# check_variable = { which = "election_votes" which = ROOT }	
+						# NOT = { is_variable_equal = { which = "election_votes" which = ROOT } } #check >, not >=							
+						# NOT = { character = ROOT }
+					# }
+				# }
+			# }
+			# set_character_flag = won_kingsmoot
+			# character_event = { id = kingsmoot.19 days = 2 }
+		# }
+		# #If not check against another candidate
+		# if = {
+			# limit = { NOT = { has_character_flag = won_kingsmoot } }
+			# random_realm_character = {
+				# limit = { 
+					# has_character_flag = kingsmoot_candidate_contesting
+					# NOT = {
+						# ROOT = {
+							# any_realm_character = {
+								# has_character_flag = kingsmoot_candidate_contesting
+								# check_variable = { which = "election_votes" which = PREVPREV }	
+								# NOT = { is_variable_equal = { which = "election_votes" which = PREVPREV } }										
+								# NOT = { character = PREVPREV }
+							# }
+						# }	
+					# }
+				# }
+				# ROOT = {
+					# add_trait = dead_target
+					# set_character_flag = usurp_me
+				# }
+				# set_character_flag = won_kingsmoot
+				# character_event = { id = kingsmoot.19 days = 2 }
+			# }
+		# }
+		# #inform losers
+		# if = {
+			# limit = {
+				# has_character_flag = kingsmoot_candidate_contesting
+				# NOT = { has_character_flag = won_kingsmoot }
+			# }
+			# character_event = { id = kingsmoot.15 }
+		# }
+		# any_realm_character = {
+			# limit = {
+				# has_character_flag = kingsmoot_candidate_contesting
+				# NOT = { has_character_flag = won_kingsmoot }
+				# NOT = { character = ROOT }
+			# }
+			# character_event = { id = kingsmoot.15 }
+		# }
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }	
+# ###Inform realm candidate has lost
+# character_event = {
+	# id = kingsmoot.15
+
+	# is_triggered_only = yes
+	# hide_window = yes
+	
+	# immediate = { 	
+		# clr_character_flag = kingsmoot_candidate
+		# clr_character_flag = close_relative
+		# clr_character_flag = dynasty
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = kingsmoot_candidate_contesting
+		# clr_character_flag = kingsmoot_imposter
+		# if = {
+			# limit = { has_character_flag = large_gift }
+			# clr_character_flag = large_gift
+			# character_event = { id = kingsmoot.16 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = regular_gift }
+			# clr_character_flag = regular_gift
+			# character_event = { id = kingsmoot.161 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = small_gift }
+			# clr_character_flag = small_gift
+			# character_event = { id = kingsmoot.162 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = no_gift }
+			# clr_character_flag = no_gift
+			# character_event = { id = kingsmoot.163 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = sunset_sea }
+			# clr_character_flag = sunset_sea
+			# character_event = { id = kingsmoot.164 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = threats }
+			# clr_character_flag = threats
+			# character_event = { id = kingsmoot.165 } 
+		# }
+		# if = {
+			# limit = { has_character_flag = peace }
+			# clr_character_flag = peace
+			# character_event = { id = kingsmoot.166 } 
+		# }
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }	
+# #Inform candidate- Large Gift
+# character_event = {
+	# id = kingsmoot.16
+	# desc = "EVTDESCkingsmoot.16" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.17 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.17 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.16" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }	
+	# }
+# }	
+# #Inform realm- Large Gift
+# character_event = {
+	# id = kingsmoot.17
+	# desc = "EVTDESCkingsmoot.17" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }		 	
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- Regular Gift
+# character_event = {
+	# id = kingsmoot.161
+	# desc = "EVTDESCkingsmoot.161" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.171 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.171 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.161" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- Regular Gift
+# character_event = {
+	# id = kingsmoot.171
+	# desc = "EVTDESCkingsmoot.171" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- Small Gift
+# character_event = {
+	# id = kingsmoot.162
+	# desc = "EVTDESCkingsmoot.162" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.172 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.172 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.162" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- Small Gift
+# character_event = {
+	# id = kingsmoot.172
+	# desc = "EVTDESCkingsmoot.172" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- No Gift
+# character_event = {
+	# id = kingsmoot.163
+	# desc = "EVTDESCkingsmoot.163" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.173 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.173 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.163" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- No Gift
+# character_event = {
+	# id = kingsmoot.173
+	# desc = "EVTDESCkingsmoot.173" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- Sunset Sea
+# character_event = {
+	# id = kingsmoot.164
+	# desc = "EVTDESCkingsmoot.164" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.174 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.174 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.164" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- Sunset Sea
+# character_event = {
+	# id = kingsmoot.174
+	# desc = "EVTDESCkingsmoot.174" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- Threats
+# character_event = {
+	# id = kingsmoot.165
+	# desc = "EVTDESCkingsmoot.165" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.175 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.175 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.165" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- Threats
+# character_event = {
+	# id = kingsmoot.175
+	# desc = "EVTDESCkingsmoot.175" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+# #Inform candidate- Peace
+# character_event = {
+	# id = kingsmoot.166
+	# desc = "EVTDESCkingsmoot.166" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	# hide_from = yes
+	
+	# immediate = {	
+		# clr_character_flag = kingsmoot.16
+		# hidden_tooltip = {
+			# top_liege = {
+				# character_event = { id = kingsmoot.176 }
+				# any_realm_lord = {
+					# limit = { 
+						# ai = no
+						# NOT = { character = ROOT }				
+					# }
+					# character_event = { id = kingsmoot.176 }				
+				# }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = "EVTOPTAkingsmoot.166" 
+		# prestige = -100
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountA }
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }	 		
+				# }
+			# }
+		# }
+	# }
+# }	
+# #Inform realm- Peace
+# character_event = {
+	# id = kingsmoot.176
+	# desc = "EVTDESCkingsmoot.176" 
+	# picture = "GFX_drowned"
+	
+	# is_triggered_only = yes
+	
+	# trigger = { NOT = { character = FROM } }
+	
+	# option = {
+		# name = OK 
+		# custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	# }
+# }	
+###Inform realm of winner of kingsmoot	
+#Inform candidate
+long_character_event = {
+	id = kingsmoot.19
+	desc = "EVTDESCkingsmoot.19" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		job_spiritual = { save_event_target_as = drowned_man }
+		# clr_character_flag = kingsmoot_candidate
+		# clr_character_flag = kingsmoot_candidate_contesting
+		# clr_character_flag = close_relative
+		# clr_character_flag = dynasty
+		# clr_character_flag = candidate_number_found
+		# clr_character_flag = won_kingsmoot
+		# clr_character_flag = large_gift
+		# clr_character_flag = regular_gift
+		# clr_character_flag = small_gift
+		# clr_character_flag = no_gift
+		# clr_character_flag = sunset_sea
+		# clr_character_flag = threats
+		# clr_character_flag = peace
+		clr_character_flag = kingsmoot_imposter
+		#set_character_flag = kingsmoot.19test
+		hidden_tooltip = {
+			top_liege = {
+				if = {
+					limit = { NOT = { character = ROOT } }
+					set_character_flag = kingsmoot.20
+					character_event = { id = kingsmoot.20 }
+				}	
+			}
+			# any_demesne_title = {
+				# limit = {
+					# has_law = succ_kingsmoot_elective 
+					# is_primary_holder_title = yes
+					# OR = {
+						# tier = EMPEROR
+						# AND = {
+							# holder_scope = { 
+								# tier = KING 
+								# NOT = { government = feudal_government_LP }
+							# }
+							# tier = KING
+						# }
+					# }
+				# }
+				# usurp_title = { target = ROOT type = election }
+			# }
+			#character_event = { id = royal_proclamations.998 days = 2 } #Royal Proclamations
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAkingsmoot.19" 
+		#custom_tooltip = { text = TOOLTIPkingsmootvotecountA }#	
+		# #If baron rank or less grant a county
+		# if = {
+			# limit = { NOT = { higher_tier_than = BARON } }
+			# dead_target = {
+				# limit = { has_character_flag = usurp_me }
+				# if = { #If not a ruler and same dynasty as incumbent abdication
+					# limit = { dynasty = ROOT }
+					# ROOT = { set_character_flag = kingsmoot.20 }
+					# clr_character_flag = usurp_me			
+					# clr_character_flag = kingsmoot
+					# clr_character_flag = counting_votes
+					# if = {
+						# limit = { has_character_flag = kingsmoot_change_history }
+						# clr_character_flag = kingsmoot_change_history
+						# ROOT = { set_character_flag = kingsmoot_change_history }
+					# }
+					# transfer_scaled_wealth = { to = ROOT value = all }
+					# abdicate_to = ROOT
+					# hidden_tooltip = { remove_trait = dead_target }
+				# }	
+			# }
+		# }	
+		# dead_target = {
+			# limit = { has_character_flag = usurp_me }			
+			# clr_character_flag = kingsmoot
+			# clr_character_flag = counting_votes
+			# clr_character_flag = dynasty
+			# clr_character_flag = close_relative
+			# if = {
+				# limit = { has_character_flag = kingsmoot_change_history }
+				# clr_character_flag = kingsmoot_change_history
+				# ROOT = { set_character_flag = kingsmoot_change_history }
+			# }
+			# any_demesne_title = {
+				# limit = {
+					# has_law = succ_kingsmoot_elective 
+					# is_primary_holder_title = yes
+					# OR = {
+						# tier = EMPEROR
+						# AND = {
+							# holder_scope = { 
+								# tier = KING 
+								# NOT = { government = feudal_government_LP }
+							# }
+							# tier = KING
+						# }
+					# }
+				# }
+				# usurp_title = { target = ROOT type = election }
+				# add_pressed_claim = PREV
+			# }	
+			# hidden_tooltip = {
+				# #Record laws
+				# any_demesne_title = {
+					# limit = { higher_tier_than = DUKE }
+					# #CA
+					# if = {
+						# limit = { has_title_flag = centralization_0 }
+						# clr_title_flag = centralization_0
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = centralization_0
+					# }
+					# if = {
+						# limit = { has_title_flag = centralization_1 }
+						# clr_title_flag = centralization_1
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = centralization_1
+					# }
+					# if = {
+						# limit = { has_title_flag = centralization_2 }
+						# clr_title_flag = centralization_2
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = centralization_2
+					# }
+					# if = {
+						# limit = { has_title_flag = centralization_3 }
+						# clr_title_flag = centralization_3
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = centralization_3
+					# }
+					# if = {
+						# limit = { has_title_flag = centralization_4 }
+						# clr_title_flag = centralization_4
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = centralization_4
+					# }
+					# #Slavery
+					# if = {
+						# limit = { NOT = { has_game_rule = { name = slavery value = off } } }
+						# if = {
+							# limit = { has_title_flag = slavery_0 }
+							# holder_scope = { set_character_flag = passive_slave_law_change }
+							# clr_title_flag = slavery_0
+							
+							# add_law = slavery_0
+						# }
+						# if = {
+							# limit = { has_title_flag = slavery_1 }
+							# holder_scope = { set_character_flag = passive_slave_law_change }
+							# clr_title_flag = slavery_1
+							
+							# add_law = slavery_1
+						# }
+						# if = {
+							# limit = { has_title_flag = slavery_2 }
+							# holder_scope = { set_character_flag = passive_slave_law_change }
+							# clr_title_flag = slavery_2
+							
+							# add_law = slavery_2
+						# }
+						# if = {
+							# limit = { has_title_flag = slavery_3 }
+							# holder_scope = { set_character_flag = passive_slave_law_change }
+							# clr_title_flag = slavery_3
+							
+							# add_law = slavery_3
+						# }
+						# if = {
+							# limit = { has_title_flag = treaty_breach_0 }
+							# clr_title_flag = treaty_breach_0
+							# ROOT = { set_character_flag = flag_slavery_treaty_breach }
+							# add_law = treaty_breach_0
+						# }
+						# if = {
+							# limit = { has_title_flag = treaty_breach_1 }
+							# clr_title_flag = treaty_breach_1
+							# ROOT = { set_character_flag = flag_slavery_treaty_breach }
+							# add_law = treaty_breach_0
+						# }
+					# }	
+					# #First Night
+					# if = {
+						# limit = { has_title_flag = first_night_0 }
+						# clr_title_flag = first_night_0
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = first_night_0
+					# }
+					# if = {
+						# limit = { has_title_flag = first_night_1 }
+						# clr_title_flag = first_night_1
+						# ROOT = { set_character_flag = passive_crownlaw_change }
+						# add_law = first_night_1
+					# }
+					# #Gender Law
+					# if = {
+						# limit = { has_title_flag = cognatic_succession }
+						# clr_title_flag = cognatic_succession
+						# gender_succ = cognatic
+					# }
+					# if = {
+						# limit = { has_title_flag = agnatic_succession }
+						# clr_title_flag = agnatic_succession
+						# gender_succ = agnatic
+					# }
+					# if = {
+						# limit = { has_title_flag = true_cognatic_succession }
+						# clr_title_flag = true_cognatic_succession
+						# gender_succ = true_cognatic
+					# }
+				# }	
+			# }
+			# clr_character_flag = usurp_me				
+			# hidden_tooltip = { remove_trait = dead_target }
+		# }	
+		# if = {
+			# limit = { ai = no }
+			# top_liege = {
+				# any_realm_character = {
+					# limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_kingsmoot_champion } }
+					# custom_tooltip = { text = TOOLTIPkingsmootchampionA }			
+				# }
+			# }
+		# }	
+		hidden_tooltip = {
+			# if = {
+				# limit = { 
+					# has_character_flag = kingsmoot_change_history
+				# }
+				# d_kingsmoot = { gain_title = ROOT }
+				# primary_title = { copy_title_history = d_kingsmoot }
+				# character_event = { id = kingsmoot.21 days = 2 }
+			# }
+			# #Transfer debts
+			# save_event_target_as = debt_inheritor 
+			# random_demesne_title = {
+				# limit = { has_title_flag = kingsmoot_primary_title }
+				# save_event_target_as = debt_capital
+				# inherit_debt_effect = yes
+				# clr_title_flag = kingsmoot_primary_title
+			# }
+			
+			character_event = { id = kingsmoot.20 days = 1 }
+			any_realm_character = {
+				limit = { 
+					NOT = { character = ROOT }	
+					NOT = { has_character_flag = kingsmoot.20 }	
+					OR = {
+						ai = no
+						has_character_modifier = kingsmoot_pretender
+						has_character_modifier = declined_duel_of_honour
+						has_character_modifier = lost_duel_of_honour
+						check_variable = { which = kingsmoot_gifts value = 1 }
+						# has_character_flag = large_gift
+						# has_character_flag = regular_gift
+						# has_character_flag = small_gift
+						#has_character_flag = no_gift
+						has_character_flag = threats
+						has_character_flag = sunset_sea
+						has_character_flag = peace
+					}
+				}
+				character_event = { id = kingsmoot.20 days = 2 }				
+			}
+			# any_player = {
+				# limit = {
+					# NOT = { character = ROOT }	
+					# NOT = { is_liege_or_above = ROOT }	
+					# is_within_diplo_range = ROOT
+				# }
+				# character_event = { id = kingsmoot.2099 days = 2 }	
+			# }
+			# primary_title = { 
+				# add_law = succ_kingsmoot_elective
+			# }
+		}	
+		if = {
+			limit = {
+				has_character_flag = kingsmoot_imposter
+				trait = refusing_marriage
+			}
+			remove_trait = refusing_marriage
+		}
+		clr_character_flag = kingsmoot 
+		# clr_character_flag = large_gift
+		# clr_character_flag = regular_gift
+		# clr_character_flag = small_gift
+		#clr_character_flag = no_gift
+		clr_character_flag = threats
+		clr_character_flag = sunset_sea
+		clr_character_flag = peace
+		clr_character_flag = kingsmoot_imposter
+		hidden_tooltip = { set_variable = { which = kingsmoot_gifts value = 0 } }
+		# clr_character_flag = won_kingsmoot
+		# if = {
+			# limit = { has_character_flag = kingsmoot_change_history }
+			# clr_character_flag = kingsmoot_change_history
+			# clr_global_flag = kingsmoot
+		# }	
+		# clr_character_flag = counting_votes
+		add_character_modifier = { name = elected_in_kingsmoot duration = 1825 } #opinion boost with ironborn for 5 years
+		prestige = 250
+		
+	}
+}	
+#Inform realm
+long_character_event = {
+	id = kingsmoot.20
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCkingsmoot.20
+		trigger = {
+			NOT = { has_character_modifier = kingsmoot_pretender }
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.16 #Large Gifts
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			check_variable = { which = kingsmoot_gifts value = 250 }
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.161 #Regular Gifts
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			check_variable = { which = kingsmoot_gifts value = 50 }
+			NOT = { check_variable = { which = kingsmoot_gifts value = 250 } }
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.162 #No Gifts
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			NOT = { check_variable = { which = kingsmoot_gifts value = 50 } }
+			NOT = { has_character_flag = sunset_sea }
+			NOT = { has_character_flag = threats }
+			NOT = { has_character_flag = peace }
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.163 #No Gifts
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			NOT = { check_variable = { which = kingsmoot_gifts value = 50 } }
+			NOT = { has_character_flag = sunset_sea }
+			NOT = { has_character_flag = threats }
+			NOT = { has_character_flag = peace }
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.164 #No Gifts
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			has_character_flag = sunset_sea
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.165 #Threats
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			has_character_flag = threats
+		}
+	}
+	desc = {
+		text = EVTDESCkingsmoot.166 #Peace
+		trigger = {
+			has_character_modifier = kingsmoot_pretender
+			has_character_flag = peace
+		}
+	}
+	
+	trigger = {
+		OR = {
+			has_character_flag = kingsmoot.20
+			NOT = { character = FROM }
+		}
+	}
+	
+	immediate = {
+		# if = {
+			# limit = { is_feudal = yes }
+			# primary_title = {
+				# if = {
+					# limit = { has_law = succ_open_elective }
+					# add_law = succ_primogeniture
+				# }
+			# }
+		# }	
+	}
+	
+	option = {
+		name = OK
+		#custom_tooltip = { text = TOOLTIPkingsmootvotecountB }
+		if = {
+			limit = { has_character_modifier = kingsmoot_pretender }
+			prestige = -100
+		}
+		if = {
+			limit = {
+				has_character_flag = kingsmoot_imposter
+				trait = refusing_marriage
+			}
+			remove_trait = refusing_marriage
+		}
+		if = {
+			limit = {
+				has_character_modifier = declined_duel_of_honour
+			}
+			remove_character_modifier = declined_duel_of_honour
+		}
+		if = {
+			limit = {
+				has_character_modifier = lost_duel_of_honour
+			}
+			remove_character_modifier = lost_duel_of_honour
+		}
+		clr_character_flag = kingsmoot.20
+		# clr_character_flag = large_gift
+		# clr_character_flag = regular_gift
+		# clr_character_flag = small_gift
+		#clr_character_flag = no_gift
+		clr_character_flag = threats
+		clr_character_flag = sunset_sea
+		clr_character_flag = peace
+		clr_character_flag = kingsmoot_imposter
+		hidden_tooltip = { set_variable = { which = kingsmoot_gifts value = 0 } }
+		# top_liege = {
+			# any_realm_character = {
+				# limit = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_kingsmoot_champion } }
+				# custom_tooltip = { text = TOOLTIPkingsmootchampionB }			
+			# }
+		# }
+	}
+}		
+#Inform world
+character_event = {
+	id = kingsmoot.2099
+	desc = "EVTDESCkingsmoot.2099" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}	
+#Destroy kingsmoot history altering title
+character_event = {
+	id = kingsmoot.21
+	
+	#only_independent = yes
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { has_landed_title = d_kingsmoot }
+	
+	immediate = { d_kingsmoot = { destroy_landed_title = THIS } }
+	
+	option = {
+		name = OK
+	}
+}	
+###Pre-Kingsmoot feast events###
+#Challenge fellow candidate to a duel
+character_event = {
+	id = kingsmoot.2299
+
+	is_triggered_only = yes
+	only_playable = yes
+	#hide_window = yes
+	
+	trigger = {
+		any_demesne_title = { 
+			has_law = succ_kingsmoot_elective 
+			OR = { 
+				tier = ROOT
+				holder_scope = { primary_title = { title = PREVPREV } }
+			}
+		}
+		NAND = { #Unlikely to be kingsmoot soon
+			NOT = { age = 30 }
+			has_epidemic = no
+			NOT = { trait = incapable }
+			NOT = { trait = severely_injured }
+			prisoner = no
+			health = 2.5
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = { #Unlikely to be kingsmoot soon
+			factor = 0.2
+			NOT = { age = 40 }
+			has_epidemic = no
+			NOT = { trait = incapable }
+			NOT = { trait = severely_injured }
+			prisoner = no
+			health = 2.5
+		}
+		#Likely to be kingsmoot soon
+		modifier = {
+			factor = 2
+			age = 50
+		}
+		modifier = {
+			factor = 2
+			age = 65
+		}
+		modifier = {
+			factor = 2
+			age = 75
+		}
+		modifier = {
+			factor = 3
+			trait = incapable
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				has_epidemic = yes
+				NOT = { health = 1 }
+			}	
+		}
+	}
+	
+	immediate = {	
+		random_demesne_title = { 
+			limit = {
+				has_law = succ_kingsmoot_elective 
+				OR = { 
+					tier = ROOT
+					holder_scope = { primary_title = { title = PREVPREV } }
+				}
+			}	
+			save_event_target_as = kingsmoot_title
+			# #Potential challenger also may move into court
+			# any_claimant = {
+				# limit = {
+					# may_move_court_trigger = yes #Has no particular reason to stay	
+					# is_female = no
+					# NOT = { liege = { character = ROOT } }
+					# kingsmoot_candidate_trigger = yes
+					# OR = { #Must either follow Drowned God, religion of ROOT, or be dejure part of the Kingdom
+						# religion = drowned_god
+						# religion = ROOT
+					# }	
+					# NOT = { has_character_flag = exiled }
+					# is_ill = no
+					# NOT = { trait = content }
+				# }
+				# preferred_limit = {
+					# trait = ambitious
+				# }
+				# count = 1
+				# move_character = ROOT
+			# }
+			
+			random_list = {
+				25 = {
+					trigger = {
+						current_heir = {
+							age = 14
+							is_incapable = no
+							prisoner = no
+							NOT = { is_inaccessible_trigger = yes }
+							OR = {
+								is_female = no
+								female_get_masculine_event_trigger = yes
+							}
+							NOT = { has_severe_disability_trigger = yes }	
+						}
+					}
+					current_heir = {
+						save_event_target_as = kingsmoot_duel_target
+					}
+				}
+				75 = {
+					random_pretender = {
+						limit = {
+							age = 14
+							is_incapable = no
+							prisoner = no
+							NOT = { is_inaccessible_trigger = yes }
+							OR = {
+								is_female = no
+								female_get_masculine_event_trigger = yes
+							}
+							NOT = { has_severe_disability_trigger = yes }	
+						}
+						save_event_target_as = kingsmoot_duel_target
+					}
+				}
+			}
+			if = {
+				limit = { event_target:kingsmoot_duel_target = { always = yes } }
+				random_pretender = {
+					limit = {
+						NOT = { character = event_target:kingsmoot_duel_target }
+						age = 14
+						is_incapable = no
+						prisoner = no
+						NOT = { is_inaccessible_trigger = yes }
+						OR = {
+							is_female = no
+							female_get_masculine_event_trigger = yes
+						}
+						NOT = { has_severe_disability_trigger = yes }
+						NOT = { opinion = { who = event_target:kingsmoot_duel_target value = 25 } }
+						NOT = { reverse_opinion = { who = event_target:kingsmoot_duel_target value = 25 } }
+						
+						OR = {
+							trait = ruthless
+							NOT = { opinion = { who = event_target:kingsmoot_duel_target value = 0 } }
+						}
+						OR = {
+							event_target:kingsmoot_duel_target = { 
+								OR = {
+									trait = ruthless
+									trait = ambitious
+								}	
+							}
+							NOT = { reverse_opinion = { who = event_target:kingsmoot_duel_target value = 0 } }
+						}
+					}
+					character_event = { id = kingsmoot.22 }
+				}
+			}	
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = kingsmoot.22
+	desc = "EVTDESCkingsmoot.22" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	portrait = event_target:kingsmoot_duel_target
+	
+	trigger = {
+		#event_target:kingsmoot_duel_target = { always = yes }
+	}
+	
+	immediate = {
+		set_character_flag = kingsmoot_duel
+		event_target:kingsmoot_duel_target = { set_character_flag = kingsmoot_duel }
+	}
+	
+	option = {
+		name = "EVTOPTAkingsmoot.22" #Challenge
+		ai_chance = {
+			factor = 80
+			
+			modifier = {
+				factor = 0
+				event_target:kingsmoot_title = {
+					holder_scope = {
+						NOR = {
+							dynasty = ROOT
+							is_close_relative = ROOT
+						}
+					}
+				}
+				OR = {
+					trait = craven
+					trait = content
+				}
+				NOT = { trait = ambitious }
+				NOT = { check_variable = { which = kingsmoot_gifts value = 1 } }
+				NOT = { has_character_flag = sunset_sea }
+				NOT = { has_character_flag = threats }
+				NOT = { has_character_flag = peace }
+			}
+			
+			
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = event_target:kingsmoot_duel_target value = 20 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = event_target:kingsmoot_duel_target value = 40 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = event_target:kingsmoot_duel_target value = 60 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = event_target:kingsmoot_duel_target value = 80 }
+			}
+		}
+		event_target:kingsmoot_duel_target = {
+			character_event = { id = kingsmoot.23 tooltip = TOOLTIPkingsmoot.22A days = 1 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBkingsmoot.22" #Back down
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				combat_rating_diff = { character = event_target:kingsmoot_duel_target value = -10 }
+				NOT = { trait = craven }
+				NOT = { trait = humble }
+				NOT = { trait = content }
+			}
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				event_target:kingsmoot_duel_target = { combat_rating_diff = { character = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 2
+				event_target:kingsmoot_duel_target = { combat_rating_diff = { character = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 2
+				event_target:kingsmoot_duel_target = { combat_rating_diff = { character = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 2
+				event_target:kingsmoot_duel_target = { combat_rating_diff = { character = ROOT value = 80 } }
+			}
+		}
+		custom_tooltip = { 
+			text = TOOLTIPkingsmoot.22B 		
+		}
+		add_character_modifier = {
+			name = declined_duel_of_honour
+			duration = 5475
+		}
+		prestige = -100		
+		if = {
+			limit = {
+				has_character_flag = kingsmoot_imposter
+				trait = refusing_marriage
+			}
+			remove_trait = refusing_marriage
+		}
+		clr_character_flag = kingsmoot_imposter
+		clr_character_flag = kingsmoot_duel
+		event_target:kingsmoot_duel_target = { clr_character_flag = kingsmoot_duel }
+	}
+}	
+#Challenge received
+character_event = {
+	id = kingsmoot.23
+	desc = "EVTDESCkingsmoot.23" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAkingsmoot.23" #Accept
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = FROM value = 20 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = FROM value = 40 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = FROM value = 60 }
+			}
+			modifier = {
+				factor = 2
+				combat_rating_diff = { character = FROM value = 80 }
+			}
+		}
+		set_character_flag = flag_duel_friendly
+		FROM = { set_character_flag = flag_duel_friendly }
+		custom_tooltip = { text = TOOLTIPkingsmoot.23 }
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+	}
+	
+	option = {
+		name = "EVTOPTBkingsmoot.22" #Back down
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				FROM = { combat_rating_diff = { character = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { combat_rating_diff = { character = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { combat_rating_diff = { character = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 2
+				FROM = { combat_rating_diff = { character = ROOT value = 80 } }
+			}
+		}
+		custom_tooltip = { text = TOOLTIPkingsmoot.22B }
+		prestige = -100
+		add_character_modifier = {
+			name = declined_duel_of_honour
+			duration = 5475
+		}
+		hidden_tooltip = { 
+			FROM = { character_event = { id = kingsmoot.24 } }
+		}
+		if = {
+			limit = {
+				has_character_flag = kingsmoot_imposter
+				trait = refusing_marriage
+			}
+			remove_trait = refusing_marriage
+		}
+		clr_character_flag = kingsmoot_imposter
+		clr_character_flag = kingsmoot_duel
+	}
+}	
+#Inform backed down
+character_event = {
+	id = kingsmoot.24
+	desc = "EVTDESCkingsmoot.24" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAkingsmoot.24" 
+		clr_character_flag = kingsmoot_duel
+		prestige = 25
+	}
+}	
+#Inform won duel
+character_event = {
+	id = kingsmoot.25
+	desc = "EVTDESCkingsmoot.25" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	trigger = { has_character_flag = kingsmoot_duel }
+	
+	option = {
+		name = "EVTOPTAkingsmoot.25" 
+		clr_character_flag = kingsmoot_duel
+		prestige = 25
+		hidden_tooltip = {
+		}
+	}
+}	
+#Inform lost duel
+character_event = {
+	id = kingsmoot.26
+	desc = "EVTDESCkingsmoot.26" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = kingsmoot_duel }
+	
+	option = {
+		name = "EVTOPTAkingsmoot.26" 
+		custom_tooltip = { text = TOOLTIPkingsmoot.22B }
+		prestige = -50
+		add_character_modifier = {
+			name = lost_duel_of_honour
+			duration = 5475
+		}
+		if = {
+			limit = {
+				has_character_flag = kingsmoot_imposter
+				trait = refusing_marriage
+			}
+			remove_trait = refusing_marriage
+		}
+		clr_character_flag = kingsmoot_duel
+		clr_character_flag = kingsmoot_imposter
+		hidden_tooltip = { 
+			event_target:kingsmoot_title = {
+				holder_scope = { 
+					character_event = { id = kingsmoot.27 }
+					any_realm_lord = {
+						limit = {
+							ai = no
+							NOT = { character = ROOT }
+							NOT = { character = FROM }
+						}
+						character_event = { id = kingsmoot.27 }
+					}
+				} 		
+			}	
+		}
+	}
+}	
+#Inform duel is draw
+character_event = {
+	id = kingsmoot.2699
+	desc = "EVTDESCkingsmoot.2699" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	trigger = { has_character_flag = kingsmoot_duel }
+	
+	option = {
+		name = "EVTOPTAkingsmoot.2699" 
+		clr_character_flag = kingsmoot_duel
+		FROM = {
+			if = {
+				limit = { has_character_flag = kingsmoot_duel }
+				character_event = { id = kingsmoot.2699 }
+			}
+		}
+	}
+}	
+#Inform realm
+character_event = {
+	id = kingsmoot.27
+	desc = "EVTDESCkingsmoot.27" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAkingsmoot.27" 
+		FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	}		
+}	
+#New Pretender Claim Descent from iron King
+character_event = {
+	id = kingsmoot.28
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	only_playable = yes
+	portrait = event_target:iron_king_pretender
+	
+	trigger = { 
+		any_demesne_title = { 
+			has_law = succ_kingsmoot_elective 
+			OR = { 
+				tier = ROOT
+				holder_scope = { primary_title = { title = PREVPREV } }
+			}
+		}
+		NOT = { has_character_flag = kingsmoot_imposter_event }
+		NAND = { #Unlikely to be kingsmoot soon
+			NOT = { age = 30 }
+			has_epidemic = no
+			NOT = { trait = incapable }
+			NOT = { trait = severely_injured }
+			prisoner = no
+			health = 2.5
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = { #Unlikely to be kingsmoot soon
+			factor = 0.2
+			NOT = { age = 40 }
+			has_epidemic = no
+			NOT = { trait = incapable }
+			NOT = { trait = severely_injured }
+			prisoner = no
+			health = 2.5
+		}
+		#Likely to be kingsmoot soon
+		modifier = {
+			factor = 2
+			age = 50
+		}
+		modifier = {
+			factor = 2
+			age = 65
+		}
+		modifier = {
+			factor = 2
+			age = 75
+		}
+		modifier = {
+			factor = 3
+			trait = incapable
+		}
+		modifier = {
+			factor = 3
+			OR = {
+				has_epidemic = yes
+				NOT = { health = 1 }
+			}	
+		}
+	}
+	
+	immediate = {
+		set_character_flag = kingsmoot_imposter_event
+		##Find Claim of Descent
+		#first try another realm lord
+		random_realm_lord = {
+			limit = { 
+				father_even_if_dead = {
+					father_even_if_dead = {
+						OR = {
+							AND = {
+								is_alive = no
+								NOT = { dynasty = ROOT }
+								OR = {
+									culture = ROOT
+									culture_group = iron_isles_culture
+								}	
+								primary_title = {
+									tier = ROOT
+									holder_scope = { character = ROOT }
+								}
+							}
+							father_even_if_dead = {
+								is_alive = no
+								NOT = { dynasty = ROOT }
+								OR = {
+									culture = ROOT
+									culture_group = iron_isles_culture
+								}
+								primary_title = {
+									tier = ROOT
+									holder_scope = { character = ROOT }
+								}
+							}
+						}
+					}	
+				}
+			}
+			father_even_if_dead = {
+				father_even_if_dead = {
+					if = {
+						limit = {
+							is_alive = no
+							NOT = { dynasty = ROOT }
+							OR = {
+								culture = ROOT
+								culture_group = iron_isles_culture
+							}
+							primary_title = {
+								tier = ROOT
+								holder_scope = { character = ROOT }
+							}
+						}	
+						save_event_target_as = iron_king
+					}
+					father_even_if_dead = {
+						if = {
+							limit = {
+								is_alive = no
+								NOT = { dynasty = ROOT }
+								OR = {
+									culture = ROOT
+									culture_group = iron_isles_culture
+								}
+								primary_title = {
+									tier = ROOT
+									holder_scope = { character = ROOT }
+								}
+							}	
+							save_event_target_as = iron_king
+						}
+					}
+				}	
+			}			
+		}
+		#then try own dynasty
+		if = { 
+			limit = { NOT = { event_target:iron_king = { always = yes } } }
+			father_even_if_dead = {
+				father_even_if_dead = {
+					if = {
+						limit = {
+							is_alive = no
+							OR = {
+								culture = ROOT
+								culture_group = iron_isles_culture
+							}
+							primary_title = {
+								tier = ROOT
+								holder_scope = { character = ROOT }
+							}
+						}	
+						save_event_target_as = iron_king
+					}
+					father_even_if_dead = {
+						if = {
+							limit = {
+								is_alive = no
+								OR = {
+									culture = ROOT
+									culture_group = iron_isles_culture
+								}
+								primary_title = {
+									tier = ROOT
+									holder_scope = { character = ROOT }
+								}
+							}	
+							save_event_target_as = iron_king
+						}
+					}
+				}	
+			}
+		}
+		event_target:iron_king = {
+			ROOT = {
+				create_random_soldier = {
+					random_traits = yes
+					dynasty = none
+					female = no
+					culture = PREV
+					religion = drowned_god
+					historical = yes
+					genetic_father = PREV
+				}
+				new_character = {
+					save_event_target_as = iron_king_pretender
+					set_real_father = PREVPREV
+					add_trait = bastard
+					random = {
+						chance = 33
+						copy_name = PREVPREV
+					}
+					if = {
+						limit = { culture = high_valyrian }
+						set_character_flag = high_valyrian
+					}
+				}
+			}	
+		}	
+		if = { #if none found then use generic dynasty with descent from grey king
+			limit = { NOT = { event_target:iron_king = { always = yes } } }
+			if = {
+				limit = { culture_group = iron_isles_culture }
+				save_event_target_as = pretender_culture
+			}
+			else = {
+				capital_scope = { save_event_target_as = pretender_culture }
+			}
+			create_random_soldier = {
+				random_traits = yes
+				dynasty = actually_culture
+				female = no
+				culture = event_target:pretender_culture
+				religion = drowned_god
+				historical = yes
+			}
+			new_character = {
+				save_event_target_as = iron_king_pretender
+			}
+		}	
+		event_target:iron_king_pretender = {
+			set_immune_to_pruning = yes
+			set_character_flag = no_court_invites
+			add_trait = refusing_marriage
+			ROOT = {
+				any_demesne_title = {
+					limit = {
+						has_law = succ_kingsmoot_elective 
+						OR = { 
+							tier = ROOT
+							holder_scope = { primary_title = { title = PREVPREV } }
+						}
+					}
+					add_weak_pressed_claim = PREVPREV
+				}
+			}
+			remove_trait = inbred
+			remove_trait = imbecile
+			remove_trait = slow
+			remove_trait = infirm
+			remove_trait = incapable
+			remove_trait = dwarf
+			remove_trait = hunchback
+			remove_trait = clubfooted
+			remove_trait = weak
+			remove_trait = leper
+			remove_trait = possessed
+			remove_trait = ill
+			remove_trait = pneumonic
+			remove_trait = maimed
+			remove_trait = content
+			remove_trait = craven
+			random_list = {
+				60 = { add_trait = trained_warrior }
+				30 = { add_trait = skilled_warrior }
+				10 = { add_trait = master_warrior }
+			}
+			random = {
+				chance = 50
+				add_trait = ambitious
+			}
+			random = {
+				chance = 25
+				add_trait = viking
+			}
+			random_list = {
+				20 = {  }
+				5 = { add_trait = strong }
+				5 = { add_trait = robust }
+				5 = { add_trait = quick }
+				5 = { add_trait = shrewd }
+				10 = { add_trait = tall }
+				5 = { add_trait = genius }
+				10 = { add_trait = brave }
+				10 = { add_trait = authoritative }
+			}	
+			random_list = {
+				1 = { give_nickname = nick_ironreaver }
+				1 = { give_nickname = nick_the_red_reaver }
+				1 = { give_nickname = nick_the_black_reaver }
+				1 = { give_nickname = nick_ironfist }
+				1 = { give_nickname = nick_ironsword }
+				1 = { give_nickname = nick_ironshield }
+				1 = { give_nickname = nick_the_raider }
+				1 = { give_nickname = nick_ironraider }
+				1 = { give_nickname = nick_ironheart }
+				1 = { give_nickname = nick_butcher }
+				1 = { give_nickname = nick_ironhand }
+				1 = { give_nickname = nick_hardhand }
+				1 = { give_nickname = nick_the_strong }
+				1 = { give_nickname = nick_the_bold }
+				1 = { give_nickname = nick_the_warrior }
+				1 = { give_nickname = nick_the_iron_storm }
+				1 = { give_nickname = nick_the_hammer }
+				1 = { give_nickname = nick_the_brave }
+				1 = { give_nickname = nick_the_black }
+				1 = { give_nickname = nick_whiteshirt }
+				1 = { give_nickname = nick_the_younger }
+				1 = { give_nickname = nick_the_shadow }
+				1 = { give_nickname = nick_bloodaxe }
+				1 = { give_nickname = nick_the_strong }
+				1 = { give_nickname = nick_the_bold }
+				1 = { give_nickname = nick_the_bloody }
+				1 = { give_nickname = nick_the_reaver }
+				1 = { give_nickname = nick_crows_eye }
+				1 = { give_nickname = nick_the_blue }
+				1 = { give_nickname = nick_greysteel }
+				1 = { give_nickname = nick_silveraxe }
+				1 = { give_nickname = nick_the_bull }
+				1 = { give_nickname = nick_the_red }
+				1 = { give_nickname = nick_ironhand }
+				1 = { give_nickname = nick_shieldbreaker }
+				1 = { give_nickname = nick_the_grey }
+				1 = { give_nickname = nick_redhand }
+				1 = { give_nickname = nick_the_latecomer }
+				1 = { give_nickname = nick_the_mighty }
+				1 = { give_nickname = nick_the_wild }
+				1 = { give_nickname = nick_the_last }
+				1 = { give_nickname = nick_the_golden }
+				1 = { give_nickname = nick_the_daring }
+				1 = { give_nickname = nick_the_woe }
+			}
+		}
+	}
+	
+	desc = {
+		text = "EVTDESCkingsmoot.28" 
+		trigger = { event_target:iron_king = { always = yes } }
+	}	
+	
+	desc = {
+		text = "EVTDESCkingsmoot.28B" 
+		trigger = { NOT = { event_target:iron_king = { always = yes } } }
+	}
+	
+	option = {
+		name = "EVTOPTAkingsmoot.28" 
+		event_target:iron_king_pretender = {
+			tooltip = { show_portrait = yes }
+			#set_character_flag = kingsmoot_candidate
+			#set_character_flag = guest_feast_started
+			set_character_flag = kingsmoot_imposter
+		}
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				character_event = { id = kingsmoot.29 }
+			}
+		}
+	}		
+}	
+character_event = { #inform realm
+	id = kingsmoot.29
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	portrait = event_target:iron_king_pretender
+	
+	desc = {
+		text = "EVTDESCkingsmoot.28" 
+		trigger = { event_target:iron_king = { always = yes } }
+	}	
+	
+	desc = {
+		text = "EVTDESCkingsmoot.28B" 
+		trigger = { NOT = { event_target:iron_king = { always = yes } } }
+	}
+	
+	option = {
+		name = "EVTOPTAkingsmoot.29" 
+		show_portrait = FROM
+		show_portrait = event_target:iron_king
+	}		
+}	

@@ -1,0 +1,4552 @@
+########################################
+###Written by Ogaburan aka Ran Miller & knuckey###
+########################################
+
+###################################
+#######Drowned & Ironborn##########
+namespace = ironborn_events
+###################################
+
+#ironborn_events.10 - Lifechanging Drowned event (Dumphair-maker).
+
+###black_imperator inspired events###
+#ironborn_events.12 - Fingerdance.
+#ironborn_events.13 - Ironprice Father. (son in a dress)
+#ironborn_events.14 - Ironprice Son. (Father Asks)
+#ironborn_events.15 - Son payed the Ironprice.
+#ironborn_events.16 - Son payed the Goldprice.
+
+###comradebot inspired events###
+#ironborn_events.1 -  Ship blessed with sea water by a Drowned Man.
+#ironborn_events.2 - Crazy man babbles about voyage to Sunset Sea
+#ironborn_events.3-8- Low tide reveals ancient Longship
+
+#Salt Wife Events
+#ironborn_events.60 - Saltwife is with child
+#ironborn_events.61 - Lose salt wife trait
+
+#ironborn_events.75 -  Salt Child gains new dynasty
+
+#ironborn_events.85 - Flagship events
+###End###
+##################################
+
+#ironborn_events.10 - Lifechanging Drowned event (Dumphair-maker).
+narrative_event = {
+	id = ironborn_events.10
+	title = EVTTITLEironborn_events.10
+	desc = "EVTDESCironborn_events.10" #You have drowned!
+	picture = "GFX_drowned"
+	
+	min_age = 16
+	max_age = 45
+	only_men = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {	
+		is_drowned_god_religion_trigger = yes
+		NOT = { trait = drowned }
+		NOT = { any_sibling = { trait = drowned } }
+	}
+	
+	mean_time_to_happen = { 
+		years = 400
+		modifier = {
+			factor = 0.4
+			is_at_sea = yes
+		}
+		modifier = {
+			factor = 0.4
+			trait = on_reaving
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.10" #I have seen the halls of the dorwned god in their glory!		
+		add_trait = drowned
+		if = {
+			limit =  { is_married = yes }
+			remove_spouse = spouse
+		}
+		if = {
+			limit =  { trait = hedonist }
+			remove_trait = hedonist
+		}	
+		if = {
+			limit =  { trait = lustful }
+			remove_trait = lustful
+		}
+		if = {
+			limit =  { trait = gluttonous }
+			remove_trait = gluttonous
+			lose_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+		}
+		if = {
+			limit =  { trait = greedy }
+			remove_trait = greedy
+		}
+		if = {
+			limit =  { trait = cynical }
+			remove_trait = cynical
+		}
+		if = {
+			limit =  { trait = drunkard }
+			remove_trait = drunkard
+		}
+		if = {
+			limit =  { trait = slothful }
+			remove_trait = slothful
+		}
+		if = {
+			limit =  { trait = maester }
+			remove_trait = maester
+			remove_special_character_title = title_maester
+		}
+		if = {
+			limit =  { trait = archmaester }
+			remove_trait = archmaester
+		}
+		if = {
+			limit =  { NOT = { trait = chaste } }
+			add_trait = chaste
+		}
+		if = {
+			limit =  { NOT = { trait = diligent } }
+			add_trait = diligent
+		}
+		if = {
+			limit =  { NOT = { trait = zealous } }
+			add_trait = zealous
+		}
+		if = {
+			limit =  { NOT = { trait = temperate } }
+			add_trait = temperate
+			lose_weight_medium_effect = yes
+			weight_trait_check_effect = yes
+		}
+		prestige = 200
+		piety = 200	
+		recalc_succession = yes
+		hidden_tooltip = {
+			liege = { character_event = { id = ironborn_events.11 } }
+			any_dynasty_member = {
+				limit = {
+					is_close_relative = ROOT
+					NOT = { is_liege_of = ROOT }
+					ai = no
+				}
+				character_event = { id = ironborn_events.11 } 
+			}
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_DROWNED
+					picture = GFX_drowned
+				}	
+			}
+		}
+	}
+}
+#ironborn_events.11
+character_event = {
+	id = ironborn_events.11
+	desc = "EVTDESCironborn_events.11" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.10" 	
+		if = {
+			limit = { is_close_relative = FROM }
+			chronicle = {
+				entry = CHRONICLE_DROWNED_FROM
+				portrait = [From.GetID]
+				picture = GFX_drowned
+			}	
+		}
+		tooltip = { FROM = { add_trait = drowned } }
+	}
+}	
+#ironborn_events.12 - Fingerdance.
+character_event = {
+	id = ironborn_events.12
+	desc = "EVTDESCironborn_events.12"	# Finger dance
+	picture = GFX_fingerdance
+	
+	only_men = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+	max_age = 30
+	culture_group = iron_isles_culture
+	is_sick = no
+	
+	trigger = {	
+		has_epidemic = no
+		is_ill = no
+		NOT = { trait = on_reaving } #has its own finger dance
+		has_severe_disability_trigger = no
+		OR = {
+			trait = drunkard
+			trait = hedonist
+			trait = duelist
+			trait = brave
+			trait = trained_warrior
+			trait = skilled_warrior
+			trait = master_warrior
+		}
+		NOT = { trait = nightswatch }
+		NOT = { trait = kingsguard }
+		NOT = { trait = archmaester }
+		NOT_mythical_creature_trigger = yes
+		NOT = { is_inaccessible_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		years = 80
+		
+		modifier = {
+			factor = 0.75
+			OR = {
+				trait = drunkard
+				trait = impaler
+				trait = duelist
+				has_character_flag = fingerdance_expert
+			}
+		}
+		modifier = {
+			factor = 0.85
+			OR = {
+				trait = brave
+				trait = arbitrary
+				trait = wroth
+			}
+		}
+		modifier = {
+			factor = 0.85
+			trait = proud
+		}
+		modifier = {
+			factor = 0.75
+			NOT = { trait = craven }
+			has_character_flag = fingerdance_refused   #Other Ironborn calling him a chicken and egging him on
+		}
+		modifier = {
+			factor = 5
+			trait = craven
+		}
+	}
+	
+	immediate = {
+		random_courtier = {
+			limit = {
+				ai = yes
+				is_female = no
+				age = 16
+				NOT = { age = 30 }
+				culture_group = iron_isles_culture
+				NOT_mythical_creature_trigger = yes
+				NOT = { is_inaccessible_trigger = yes }
+				is_incapable = no
+				
+				has_epidemic = no
+				is_ill = no
+				has_severe_disability_trigger = no
+				NOT = { trait = on_reaving } #has its own finger dance
+				OR = {
+					trait = drunkard
+					trait = hedonist
+					trait = duelist
+					trait = brave
+					trait = trained_warrior
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = archmaester }
+				
+				NOT = { character = ROOT }
+				NOT = { trait = craven }
+				NOT = { trait = temperate }
+			}
+			save_event_target_as = fingerdance_challenger
+		}
+		if = {
+			limit = { 
+				NOT = { event_target:fingerdance_challenger = { always = yes } } 
+				is_playable = yes
+			}
+			capital_scope = {
+				create_character = {
+					random_traits = yes
+					dynasty = NONE
+					female = no
+					culture = ROOT
+					religion = THIS
+				}
+				new_character = {
+					set_immune_to_pruning = yes
+					character_event = { id = wildling.1 } #check for wildling trait
+					character_event = { id = pirate.1 } #check for pirate trait
+					remove_lifestyle_trait_effect = yes
+					remove_trait = craven
+					
+					random_list = {
+						45 = { add_trait = poor_warrior }
+						40 = { add_trait = trained_warrior }
+						15 = { add_trait = skilled_warrior }
+					}
+					random_list = { # Flavor Randomization
+						35 = { 
+							# Nothing
+						}
+						10 = {
+							add_trait = wroth
+						}
+						10 = {
+							add_trait = drunkard
+						}
+						10 = {
+							add_trait = hedonist
+						}
+						10 = {
+							add_trait = duelist
+						}
+						10 = {
+							add_trait = brave
+						}
+					}
+					save_event_target_as = fingerdance_challenger
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.12" #Accept
+		trigger = { event_target:fingerdance_challenger = { always = yes } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				trait = impaler
+			}
+			modifier = {
+				factor = 1.25
+				trait = duelist
+			}	
+			modifier = {
+				factor = 1.25
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.25
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+			modifier = {
+				factor = 1.25
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.5
+				trait = cruel
+			}
+		}		
+		clr_character_flag = fingerdance_refused
+		prestige = 25
+		event_target:fingerdance_challenger = {
+			character_event = { id = ironborn_events.1299 tooltip = TOOLTIPironborn_events.1299 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBironborn_events.12" #Refuse
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.5
+				trait = temperate
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			modifier = {
+				factor = 10
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = fingerdance_expert
+			}
+		}		
+		prestige = -50
+		set_character_flag = fingerdance_refused
+		if = {
+			limit = {
+				NOT = { trait = craven }
+				NOT = { trait = brave }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 30
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}
+		}	
+		any_courtier = {
+			limit = {
+				culture_group = iron_isles_culture
+				is_female = no
+				age = 12
+				prisoner = no
+				NOT = { trait = incapable }
+				NOT = { character = ROOT }
+			}
+			opinion = {
+				modifier = opinion_coward
+				who = ROOT
+				years = 5
+			}	
+		}
+	}
+}
+character_event = {
+	id = ironborn_events.1299
+
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		set_character_flag = flag_duel_friendly
+		set_character_flag = mock_duel
+		set_character_flag = finger_dance_duel
+		set_character_flag = duel_can_be_draw
+		FROM = {
+			set_character_flag = flag_duel_friendly
+			set_character_flag = mock_duel
+			set_character_flag = finger_dance_duel
+			set_character_flag = duel_can_be_draw
+		}
+		
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+	}
+}	
+#ironborn_events.13 - Ironprice Father. (son in a dress)
+character_event = {
+	id = ironborn_events.13
+	desc = "EVTDESCironborn_events.13"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	only_men = yes
+	only_rulers = yes
+	culture_group = iron_isles_culture
+	
+	trigger = {
+		num_of_children = 1
+		any_child = {
+			is_alive = yes
+			is_female = no
+			age = 16
+			NOT = { trait = dragon }
+			NOT = { trait = nightswatch }
+			NOT = { trait = kingsguard }
+			NOT = { trait = archmaester }
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.13" #where did you get that?
+		random_child = {
+			limit = {
+				is_alive = yes
+				is_female = no
+				age = 16
+				NOT = { trait = dragon }
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = archmaester }
+			}
+			character_event = {
+				id = ironborn_events.14
+				tooltip = "EVTTOOLTIPironborn_events.14"
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBironborn_events.13" #none of my buisness.
+		random_child = {
+			limit = {
+				is_alive = yes
+				is_female = no
+				age = 16
+				NOT = { trait = dragon }
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = archmaester }
+			}
+			random = {
+				chance = 30
+				if = {
+					limit = { 
+						NOT = { trait = proud } 
+						NOT = { trait = humble }
+					}
+					add_trait = proud
+					hidden_tooltip = {
+						character_event ={
+							id = 38261 #Notify
+						}
+					}
+				}	
+			}
+		}	
+	}
+}
+
+#ironborn_events.14 - Ironprice Son. (Father Asks)
+character_event = {
+	id = ironborn_events.14
+	desc = "EVTDESCironborn_events.14"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.14" #Ironprice
+		
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.5
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+					is_strong_trigger = yes
+					trait = impaler
+					trait = duelist
+					trait = wroth
+					trait = brave
+					trait = ambitious
+					trait = cruel
+				}
+			}
+		}
+		
+		piety = 25
+		prestige = 25
+		FROM = { character_event = { id = ironborn_events.15 tooltip = "EVTTOOLTIPironborn_events.15" } }
+	}
+	
+	option = {
+		name = "EVTOPTBironborn_events.14" #Goldprice
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.5
+				OR = {
+					is_weak_trigger = yes
+					trait = dwarf
+					trait = gluttonous
+					trait = temperate
+					trait = slothful
+					trait = kind
+					trait = craven
+				}
+			}
+		}
+		
+		prestige = -25
+		FROM = { character_event = { id = ironborn_events.16 tooltip = "EVTTOOLTIPironborn_events.16" } }
+	}
+	
+}
+
+#ironborn_events.15 - Son paid the Ironprice.
+character_event = {
+	id = ironborn_events.15
+	desc = "EVTDESCironborn_events.15"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.15"
+		opinion = {
+			modifier = opinion_impressed
+			who = FROM
+			years = 5
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_delighted
+				who = ROOT
+				years = 5
+			}
+		}
+	}			
+}
+
+#ironborn_events.16 - Son paid the Goldprice.
+character_event = {
+	id = ironborn_events.16
+	desc = "EVTDESCironborn_events.16"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAironborn_events.16"
+		opinion = {
+			modifier = opinion_disappointed
+			who = FROM
+			years = 5
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_disappointed
+				who = ROOT
+				years = 5
+			}
+		}
+	}	
+}
+#Drowned Priest offers to bless Ship
+character_event = {
+	id = ironborn_events.1
+	desc = "EVTDESCironborn_events.1" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	only_rulers = yes
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {	
+		is_drowned_god_religion_trigger = yes
+		any_demesne_province = { port = yes }
+	}
+	
+	weight_multiplier = { days = 1 }
+	
+	option = {
+		name = "EVTOPTAironborn_events.1" #OK	
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+		}
+		piety = 20
+	}
+	option = {
+		name = "EVTOPTBironborn_events.1" #A pointless gesture	
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+		}
+		piety = -25
+		if = {
+			limit = { NOT = { trait = authoritative } }
+			random = {
+				chance = 20
+				add_trait = authoritative 	
+				hidden_tooltip = {
+					character_event ={
+						id = trait_notification.7 #Notify
+					}
+				}
+			}	
+		}
+		if = {
+			limit = {
+				NOT = {
+					trait = cynical
+					trait = zealous
+				}
+			}
+			random = {
+				chance = 20
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify Cynical
+					}
+				}
+			}	
+		}
+		if = {
+			limit = {
+				trait = zealous
+			}
+			remove_trait = zealous	
+		}
+	}
+}
+#Crazy man babbles about voyage to Sunset Sea
+character_event = {
+	id = ironborn_events.2
+	desc = "EVTDESCironborn_events.2" 
+	picture = "GFX_evt_jugglers"
+	
+	is_triggered_only = yes
+	
+	min_age = 16
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	war = no
+	in_command = no
+	
+	trigger = {
+		any_demesne_province = { 
+			port = yes
+			OR = {
+				region = world_iron_isles 
+				region = world_north 
+				region = world_westerlands 
+				region = world_reach 
+			}	
+		}
+		NOT = { trait = nightswatch }
+		NOT = { trait = kingsguard }
+		NOT = { trait = archmaester }
+	}
+	
+	weight_multiplier = { days = 1 }
+	
+	option = {
+		name = "EVTOPTAironborn_events.2" #Grant him an audience and listen politely	
+		trigger = { NOT = { trait = cruel } }
+		if = {
+			limit = {
+				NOT = { trait = kind }
+			}
+			random = {
+				chance = 20
+				
+				add_trait = kind
+				hidden_tooltip = {
+					character_event = {
+						id = 38268 #Notify Kind
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBironborn_events.2" #Lies!!
+		trigger = {
+			OR = {
+				trait = wroth
+				trait = cynical
+				trait = proud
+			}	
+		}
+		prestige = 15
+		if = {
+			limit = {
+				NOT = {
+					trait = cynical
+					trait = zealous
+				}
+			}
+			random = {
+				chance = 15
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify Cynical
+					}
+				}
+			}	
+		}
+		if = {
+			limit = {
+				NOT = { trait = proud }
+			}
+			random = {
+				chance = 15
+				if = {
+					limit = { trait = humble }
+					remove_trait = humble
+				}
+				add_trait = proud
+				hidden_tooltip = { character_event = { id = 38261 } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTD4150"
+		trigger = {
+			trait = arbitrary
+			NOT = {
+				trait = gregarious
+			}
+		}
+		add_character_modifier = {
+			name = the_suspicious
+			duration = 730
+		}
+	}
+	option = {
+		name = "EVTOPTE4150"
+		create_character = {
+			learning = 8
+			random_traits = yes
+			dynasty = random
+			age = 40
+			female = no
+		}	
+		new_character = {
+			random = {
+				chance = 20
+				add_trait = mystic
+			}	
+			random = {
+				chance = 20
+				add_trait = lunatic
+			}
+			random = {
+				chance = 20
+				add_trait = possessed
+			}
+		}		
+	}
+}
+#Low tide reveals ancient Longship
+character_event = {
+	id = ironborn_events.3
+	desc = "EVTDESCironborn_events.3" 
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	min_age = 16
+	only_men = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	culture_group = iron_isles_culture
+	war = no
+	in_command = no
+	
+	trigger = {
+		any_demesne_province = { 
+			region = world_iron_isles 
+		}
+	}
+	
+	weight_multiplier = { days = 1 }
+	
+	option = {
+		name = "EVTOPTAironborn_events.3" #I will investigate!
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = brave
+			}
+			modifier = {
+				factor = 5
+				trait = greedy
+			}
+			modifier = {
+				factor = 5
+				trait = proud
+			}
+			modifier = {
+				factor = 5
+				trait = diligent
+			}
+		}
+		random_list = {
+			47 = {
+				custom_tooltip = { text = TOOLTIPironborn_events.3GOOD }
+				hidden_tooltip = { character_event = { id = ironborn_events.4 days = 1 } }
+			}
+			47 = {
+				custom_tooltip = { text = TOOLTIPironborn_events.3BAD }
+				hidden_tooltip = { character_event = { id = ironborn_events.5 days = 1 } }
+			}
+			6 = {
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 days = 1 } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTBironborn_events.3" #Send my Master at Arms
+		trigger = {
+			job_marshal = { 
+				NOT = { demesne_size = 1 } 
+				is_female = no
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = craven
+			}
+			modifier = {
+				factor = 5
+				trait = greedy
+			}
+			modifier = {
+				factor = 5
+				trait = shy
+			}
+			modifier = {
+				factor = 5
+				trait = slothful
+			}
+		}
+		prestige = -15
+		random_list = {
+			47 = {
+				job_marshal = { custom_tooltip = { text = TOOLTIPironborn_events.3GOODMAM } }
+				hidden_tooltip = { character_event = { id = ironborn_events.6 days = 1 } }
+			}
+			47 = {
+				job_marshal = { custom_tooltip = { text = TOOLTIPironborn_events.3BADMAM } }
+				hidden_tooltip = { character_event = { id = ironborn_events.7 days = 1 } }
+			}
+			6 = {
+				job_marshal = { add_trait_silently_wounded_effect = yes }
+				hidden_tooltip = { character_event = { id = ironborn_events.8 days = 1 } }
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTCironborn_events.3" #Too risky
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 5
+				trait = craven
+			}
+			modifier = {
+				factor = 5
+				trait = charitable
+			}
+			modifier = {
+				factor = 5
+				trait = humble
+			}
+			modifier = {
+				factor = 5
+				trait = slothful
+			}
+		}		
+		prestige = -30
+	}
+}
+
+#Finds Treasure
+character_event = {
+	id = ironborn_events.4
+	desc = "EVTDESCironborn_events.4"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random = {
+			chance = 1
+			random = {
+				chance = 25
+				set_character_flag = find_valyrian_sword
+			}
+		}
+		random_list = {
+			20 = { set_character_flag = find_50 }
+			20 = { set_character_flag = find_100 }
+			20 = { set_character_flag = find_150 }
+			20 = { set_character_flag = find_200 }
+			20 = { set_character_flag = find_250 }
+		}
+	}
+
+	option = {
+		name = "EVTOPTAironborn_events.4" 
+		if = {
+			limit = { has_character_flag = find_50 }
+			wealth = 50
+			clr_character_flag = find_50
+		}
+		if = {
+			limit = { has_character_flag = find_100 }
+			wealth = 100
+			clr_character_flag = find_100
+		}
+		if = {
+			limit = { has_character_flag = find_150 }
+			wealth = 150
+			clr_character_flag = find_150
+		}
+		if = {
+			limit = { has_character_flag = find_200 }
+			wealth = 200
+			clr_character_flag = find_200
+		}
+		if = {
+			limit = { has_character_flag = find_250 }
+			wealth = 250
+			clr_character_flag = find_250
+		}
+		if = {
+			limit = { has_character_flag = find_valyrian_sword }
+			add_artifact = valyrian_steel
+			new_artifact = { 
+				set_artifact_flag = heirloom_@PREV 
+				get_random_sword_name_effect = yes
+			}
+			clr_character_flag = find_valyrian_sword
+			custom_tooltip = {
+				text = TOOLTIPRENAMEARTIFACTADVICE
+			}
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_IRONBORN_FOUND_LONGSHIP
+			}	
+		}
+	}	
+}
+#Find no treasure
+character_event = {
+	id = ironborn_events.5
+	desc = "EVTDESCironborn_events.5"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.5"
+		prestige = -10
+	}	
+}
+#Marshall Finds Treasure
+character_event = {
+	id = ironborn_events.6
+	desc = "EVTDESCironborn_events.6"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random = {
+			chance = 1
+			random = {
+				chance = 25
+				set_character_flag = find_valyrian_sword
+			}
+		}
+		random_list = {
+			20 = { set_character_flag = find_30 }
+			20 = { set_character_flag = find_60 }
+			20 = { set_character_flag = find_100 }
+			20 = { set_character_flag = find_150 }
+			20 = { set_character_flag = find_200 }
+		}
+	}
+
+	option = {
+		name = "EVTOPTAironborn_events.6" #It is mine by right	
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+		}
+		if = {
+			limit = { has_character_flag = find_30 }
+			wealth = 30
+			clr_character_flag = find_30
+		}
+		if = {
+			limit = { has_character_flag = find_60 }
+			wealth = 60
+			clr_character_flag = find_60
+		}
+		if = {
+			limit = { has_character_flag = find_100 }
+			wealth = 100
+			clr_character_flag = find_100
+		}
+		if = {
+			limit = { has_character_flag = find_150 }
+			wealth = 150
+			clr_character_flag = find_150
+		}
+		if = {
+			limit = { has_character_flag = find_200 }
+			wealth = 200
+			clr_character_flag = find_200
+		}
+		if = {
+			limit = { has_character_flag = find_valyrian_sword }
+			add_artifact = valyrian_steel
+			new_artifact = { 
+				set_artifact_flag = heirloom_@PREV 
+				get_random_sword_name_effect = yes
+			}
+			clr_character_flag = find_valyrian_sword
+			custom_tooltip = {
+				text = TOOLTIPRENAMEARTIFACTADVICE
+			}
+		}
+		job_marshal = { 
+			opinion = {
+				who = ROOT
+				modifier = greedy_neg
+			}
+			ROOT = {
+				if = {
+					limit = { ai = no }
+					chronicle = {
+						entry = CHRONICLE_IRONBORN_FOUND_LONGSHIP_MARSHAL
+						portrait = [Prev.GetID]
+					}	
+				}
+			}	
+		}	
+	}	
+	option = {
+		name = "EVTOPTBironborn_events.6" #Give him some
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 3
+				trait = charitable
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+		}
+		if = {
+			limit = { has_character_flag = find_30 }
+			wealth = 15
+			job_marshal = { wealth = 15 }	
+			clr_character_flag = find_30
+		}
+		if = {
+			limit = { has_character_flag = find_60 }
+			wealth = 30
+			job_marshal = { wealth = 30 }	
+			clr_character_flag = find_60
+		}
+		if = {
+			limit = { has_character_flag = find_100 }
+			wealth = 50
+			job_marshal = { wealth = 50 }	
+			clr_character_flag = find_100
+		}
+		if = {
+			limit = { has_character_flag = find_150 }
+			wealth = 75
+			job_marshal = { wealth = 75 }	
+			clr_character_flag = find_150
+		}
+		if = {
+			limit = { has_character_flag = find_200 }
+			wealth = 100
+			job_marshal = { wealth = 100 }	
+			clr_character_flag = find_200
+		}
+		if = {
+			limit = { has_character_flag = find_valyrian_sword }
+			job_marshal = { 
+				add_artifact = valyrian_steel 
+				new_artifact = { set_artifact_flag = heirloom_@PREV }
+				if = { #AI names sword
+					limit = { ai = yes }
+					new_artifact = { get_random_sword_name_effect = yes }
+				}
+			}
+			clr_character_flag = find_valyrian_sword
+		}	
+	}
+}
+#Marshall Finds no treasure
+character_event = {
+	id = ironborn_events.7
+	desc = "EVTDESCironborn_events.7"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.7"
+		job_marshal = { prestige = -10 }
+	}	
+}
+#Marshall wounded
+character_event = {
+	id = ironborn_events.8
+	desc = "EVTDESCironborn_events.8"
+	picture = GFX_GREYJOY
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.8"
+		job_marshal = { add_trait_silently_wounded_effect = yes }
+	}	
+}
+###SALT WIFE EVENTS###
+# salt wife falls pregnant
+character_event = {
+	id = ironborn_events.6099
+
+	hide_window = yes
+	min_age = 14
+	max_age = 40
+	only_women = yes
+	capable_only = yes
+	prisoner = no
+	lacks_dlc = "The Old Gods" #Uses new DLC system instead if owned
+	
+	trigger = {
+		trait = salt_wife
+		is_pregnant = no
+		fertility = 0.1
+		persistent_event_target:salt_wife_owner = { 
+			is_alive = yes
+			age = 14
+			prisoner = no
+			is_incapable = no
+			NOT = { trait = chaste }
+			NOT = { trait = celibate }
+			NOT = { trait = eunuch }
+			has_pilgrimage_trait_trigger = no
+		}
+	}
+	
+	mean_time_to_happen = {
+		years = 10
+		modifier = {
+			factor = 0.5
+			persistent_event_target:salt_wife_owner = { trait = lustful }
+		}
+		modifier = {
+			factor = 100
+			persistent_event_target:salt_wife_owner = { NOT = { fertility = 0.01 } }
+		}
+		modifier = {
+			factor = 2
+			persistent_event_target:salt_wife_owner = { NOT = { fertility = 0.1 } }
+		}
+		modifier = {
+			factor = 2
+			persistent_event_target:salt_wife_owner = { NOT = { fertility = 0.3 } }
+		}
+		modifier = {
+			factor = 0.75
+			persistent_event_target:salt_wife_owner = { fertility = 0.75 }
+		}
+		modifier = {
+			factor = 0.75
+			persistent_event_target:salt_wife_owner = { fertility = 0.9 }
+		}
+	}
+
+	option = {
+		name = OK
+		persistent_event_target:salt_wife_owner = { 
+			character_event = { id = ironborn_events.60 }
+		}
+	}
+}
+character_event = {
+	id = ironborn_events.60
+	desc = "EVTDESCironborn_events.60"
+	picture = "GFX_evt_lovers"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.60"
+		FROM = {
+			impregnate = ROOT	
+		}
+	}
+}
+# Lose salt wife trait
+character_event = {
+	id = ironborn_events.61
+	desc = "EVTDESCironborn_events.61"
+	picture = "GFX_evt_saltwife"
+	
+	is_triggered_only = yes
+	
+	min_age = 14
+	only_women = yes
+
+	trigger = {
+		trait = salt_wife
+		OR = {
+			AND = {
+				has_dlc = "The Old Gods"
+				is_consort = no
+			}
+			AND = {
+				NOT = { has_dlc = "The Old Gods" }
+				liege = {
+					OR = {
+						dynasty = ROOT
+						is_close_relative = ROOT
+						NOT = { culture_group = iron_isles_culture }
+						NOT = { religion_group = drowned_god_group }
+					}
+				}
+				OR = {
+					NOT = {
+						persistent_event_target:salt_wife_owner = { is_alive = yes }
+					}
+					liege = {
+						OR = {
+							dynasty = ROOT
+							is_close_relative = ROOT
+						}
+					}	
+				}
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.61"
+		remove_trait = salt_wife
+		clr_character_flag = no_court_invites
+		clear_persistent_event_target = salt_wife_owner
+		recalc_succession = yes
+	}
+}
+# Salt wife (or abducted consorts) trys to murder husband
+character_event = {
+	id = ironborn_events.62
+	desc = "EVTDESCironborn_events.62"
+	picture = "GFX_evt_saltwife"
+	
+	is_triggered_only = yes
+	min_age = 14
+	only_women = yes
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		OR = {
+			trait = salt_wife
+			trait = slave
+			persistent_event_target:salt_wife_owner = { reverse_has_opinion_modifier = { modifier = opinion_forced_consort who = ROOT } }
+			consort = { reverse_has_opinion_modifier = { modifier = opinion_forced_consort who = ROOT } }
+		}
+		OR = {
+			AND = {
+				trait = salt_wife
+				is_consort = no
+				persistent_event_target:salt_wife_owner = {
+					is_incapable = no
+					prisoner = no
+					NOT = { trait = chaste }
+					NOT = { trait = celibate }
+					NOT = { trait = eunuch }		
+					NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					NOT = { is_lover = ROOT }	
+				}
+			}
+			AND = {
+				is_consort = yes
+				consort = {
+					is_incapable = no
+					prisoner = no
+					NOT = { trait = chaste }
+					NOT = { trait = celibate }
+					NOT = { trait = eunuch }		
+					NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					NOT = { is_lover = ROOT }	
+				}
+			}	
+		}
+		NOT = { trait = craven }
+		NOT = { trait = kind }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 1.33
+			consort = {
+				trait = lustful
+			}
+		}
+		modifier = {
+			factor = 1.25
+			consort = {
+				NOT = { reverse_opinion = { who = ROOT value = -60 } }
+			}
+		}
+		modifier = {
+			factor = 1.25
+			consort = {
+				NOT = { reverse_opinion = { who = ROOT value = -80 } }
+			}
+		}
+		modifier = {
+			factor = 1.33
+			persistent_event_target:salt_wife_owner = {	
+				trait = lustful
+			}
+		}
+		modifier = {
+			factor = 1.25
+			persistent_event_target:salt_wife_owner = {
+				NOT = { reverse_opinion = { who = ROOT value = -60 } }
+			}
+		}
+		modifier = {
+			factor = 1.25
+			persistent_event_target:salt_wife_owner = {
+				NOT = { reverse_opinion = { who = ROOT value = -80 } }
+			}
+		}
+		modifier = {
+			factor = 1.5
+			trait = ruthless
+		}
+		modifier = {
+			factor = 1.5
+			trait = cruel
+		}
+		modifier = {
+			factor = 1.5
+			trait = wroth
+		}
+		modifier = {
+			factor = 1.5
+			trait = brave
+		}
+		modifier = {
+			factor = 1.5
+			trait = proud
+		}
+		modifier = {
+			factor = 0.5
+			trait = honorable
+		}
+		modifier = {
+			factor = 0.66
+			trait = patient
+		}
+		modifier = {
+			factor = 0.66
+			trait = humble
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.62" #Get Him!
+		if = {
+			limit = {
+				trait = salt_wife
+				is_consort = no
+				persistent_event_target:salt_wife_owner = {
+					is_incapable = no
+					prisoner = no
+					NOT = { trait = chaste }
+					NOT = { trait = celibate }
+					NOT = { trait = eunuch }		
+					NOT = { reverse_opinion = { who = ROOT value = -40 } }
+					NOT = { is_lover = ROOT }	
+				}
+			}
+			persistent_event_target:salt_wife_owner = {
+				character_event = { id = ironborn_events.63 }
+			}
+		}
+		else = {
+			consort = {
+				character_event = { id = ironborn_events.63 }
+			}
+		}
+	}
+}
+# Husband Attacked
+character_event = {
+	id = ironborn_events.63
+	desc = "EVTDESCironborn_events.63"
+	picture = "GFX_evt_lovers"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.63" #Get Him!
+		FROM = {
+			if = {
+				limit = { liege = { character = ROOT } }
+				imprison = ROOT	
+			}
+			if = {
+				limit = { NOT = { liege = { character = ROOT } } }
+				liege = { ROOT_FROM = { imprison = PREV } }
+			}
+			random_list= {
+				50 = {
+					custom_tooltip = { text = TOOLTIPironborn_events.62SURVIVE }
+				}
+				30 = {
+					add_trait_silently_wounded_effect = yes
+					hidden_tooltip = { character_event = { id = 38280 } }
+				}
+				20 = {
+					red_god_resurrect_effect = yes #check for rhllor resurrection
+					death = {
+						death_reason = death_duel
+						killer = ROOT
+					}
+				}
+			}	
+			hidden_tooltip = {
+				reverse_opinion = {
+					who = ROOT
+					modifier = attempted_murder
+					months = 120
+				}
+			}
+		}
+		random_list= {
+			75 = {
+				custom_tooltip = { text = TOOLTIPironborn_events.62SURVIVE }
+			}
+			10 = {
+				add_trait_silently_wounded_effect = yes
+				hidden_tooltip = { character_event = { id = 38280 } }
+			}
+			10 = {
+				add_trait = eunuch
+			}
+			5 = {				
+				hidden_tooltip = {
+					save_event_target_as = target_victim
+					FROM = {
+						set_character_flag = murder_event_override
+						character_event = { id = 10 }
+					}
+					clear_event_target = target_victim
+				}	
+				FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = {
+					death_reason = death_murder_slayed
+					killer = FROM
+				}
+			}
+		}
+	}
+}	
+# # Salt wife asks for freedom
+# character_event = {
+	# id = ironborn_events.64
+	# desc = "EVTDESCironborn_events.64"
+	# picture = "GFX_evt_saltwife"
+	
+	# min_age = 14
+	# only_women = yes
+	# capable_only = yes
+
+	# trigger = {
+		# trait = salt_wife
+		# NOT = { has_character_flag = ask_for_freedom }
+		# any_courtier = {
+			# is_alive = yes
+			# NOT = { trait = incapable }
+			# reverse_has_opinion_modifier = {
+				# modifier = opinion_salt_wife
+				# who = ROOT
+			# }
+			# opinion = { who = ROOT value = 25 } }
+		# }
+	# }
+	
+	# mean_time_to_happen = {
+		# years = 50
+		# modifier = {
+			# factor = 0.8
+			# any_courtier = {
+				# reverse_has_opinion_modifier = {
+					# modifier = opinion_salt_wife
+					# who = ROOT
+				# }
+				# opinion = { who = ROOT value = 50 } }
+			# }
+		# }
+		# modifier = {
+			# factor = 0.8
+			# any_courtier = {
+				# reverse_has_opinion_modifier = {
+					# modifier = opinion_salt_wife
+					# who = ROOT
+				# }
+				# opinion = { who = ROOT value = 75 } }
+			# }
+		# }
+	# }
+	
+	# immediate = { set_character_flag = ask_for_freedom }
+	
+	# option = {
+		# name = "EVTOPTAironborn_events.64" #Get Him!
+		# any_courtier = {
+			# limit = {
+				# is_alive = yes
+				# NOT = { trait = incapable }
+				# reverse_has_opinion_modifier = {
+					# modifier = opinion_salt_wife
+					# who = ROOT
+				# }
+				# NOT = { reverse_opinion = { who = ROOT value = -40 } }
+			# }	
+			# character_event = { id = ironborn_events.65 }
+		# }
+	# }
+# }
+# # Husband Attacked
+# character_event = {
+	# id = ironborn_events.65
+	# desc = "EVTDESCironborn_events.65"
+	# picture = "GFX_evt_saltwife"
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTAironborn_events.65" #OK
+		# FROM = {
+			# if = {
+				# limit = { liege = { character = ROOT } }
+				# imprison = ROOT	
+			# }
+			# if = {
+				# limit = { NOT = { liege = { character = ROOT } } }
+				# liege = { FROM = { imprison = PREV } }
+			# }
+			# random_list= {
+				# 50 = {
+					# custom_tooltip = { text = TOOLTIPironborn_events.62SURVIVE }
+				# }
+				# 30 = {
+					# add_trait_silently_wounded_effect = yes
+					# hidden_tooltip = { character_event = { id = 38280 } }
+				# }
+				# 20 = {
+					# death = {
+						# death_reason = death_duel
+						# killer = ROOT
+					# }
+				# }
+			# }	
+			# hidden_tooltip = {
+				# reverse_opinion = {
+					# who = ROOT
+					# modifier = attempted_murder
+					# months = 120
+				# }
+			# }
+		# }
+		# random_list= {
+			# 75 = {
+				# custom_tooltip = { text = TOOLTIPironborn_events.62SURVIVE }
+			# }
+			# 10 = {
+				# add_trait_silently_wounded_effect = yes
+				# hidden_tooltip = { character_event = { id = 38280 } }
+			# }
+			# 10 = {
+				# add_trait = eunuch
+			# }
+			# 5 = {
+				# death = {
+					# death_reason = death_murder
+					# killer = FROM
+				# }
+				# hidden_tooltip = {
+					# mother = {
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }
+					# }
+					# father = {
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }
+					# }
+					# any_child = {
+						# limit = {
+							# NOT = {
+								# has_opinion_modifier = {
+									# who = FROM
+									# modifier = opinion_vengeance
+								# }						
+							# }
+						# }
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }
+					# }
+					# any_sibling = {
+						# limit = {
+							# NOT = {
+								# has_opinion_modifier = {
+									# who = FROM
+									# modifier = opinion_vengeance
+								# }						
+							# }
+						# }
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }
+					# }
+					# spouse = {
+						# if = {
+							# limit = {
+								# NOT = {
+									# has_opinion_modifier = {
+										# who = FROM
+										# modifier = opinion_killed_close_kin
+									# }						
+								# }
+							# }
+							# opinion = {
+								# who = FROM
+								# modifier = opinion_vengeance
+							# }				
+						# }
+					# }
+					# any_dynasty_member = {
+						# limit = {
+							# is_close_relative = ROOT
+							# NOT = {
+								# has_opinion_modifier = {
+									# who = FROM
+									# modifier = opinion_vengeance
+								# }						
+							# }
+						# }
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }				
+					# }
+					# any_friend = {
+						# limit = {
+							# NOT = {
+								# has_opinion_modifier = {
+									# who = FROM
+									# modifier = opinion_vengeance
+								# }						
+							# }
+						# }
+						# opinion = {
+							# who = FROM
+							# modifier = opinion_vengeance
+						# }
+					# }
+					# liege = {
+						# if = {
+							# limit = {
+								# NOT = {
+									# has_opinion_modifier = {
+										# who = FROM
+										# modifier = opinion_vengeance
+									# }							
+								# }
+							# }
+							# opinion = {
+								# who = FROM
+								# modifier = killed_vassal
+								# months = 60
+							# }				
+						# }
+					# }
+				# }	
+			# }
+		# }
+	# }
+# }	
+	
+# Salt Child gains new dynasty (REMOVED, merged into event cadet.100)
+# character_event = {
+	# id = ironborn_events.75
+	# desc = "EVTDESCironborn_events.75"
+	
+	# is_triggered_only = yes
+	# hide_window = yes
+	
+	# trigger = {
+		# FROM = {
+			# trait = child_of_consort
+			# #trait = disinherited
+			# #NOT = { trait = bastard }
+			# trait = bastard
+			# OR = {
+				# AND = {
+					# is_female = yes
+					# is_married_matrilineally = yes
+				# }
+				# AND = {
+					# is_female = no
+					# is_married_matrilineally = no
+				# }
+			# }
+			# father_even_if_dead = { dynasty = PREV }
+		# }	
+	# }
+	
+	# immediate = {
+		# FROM = {
+			# any_child_even_if_dead = {
+				# limit = { 
+					# dynasty = ROOT_FROM
+					# NOR = {
+						# father_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } }
+						# mother_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } }
+					# }
+				# }
+				# set_character_flag = change_salt_child_dynasty
+				# any_child_even_if_dead = {
+					# limit = { 
+						# dynasty = ROOT_FROM 
+						# NOR = {
+							# father_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } NOT = { character = PREV } }
+							# mother_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } NOT = { character = PREV } }
+						# }
+					# }
+					# set_character_flag = change_salt_child_dynasty
+					# any_child_even_if_dead = {
+						# limit = { 
+							# dynasty = ROOT_FROM 
+							# NOR = {
+								# father_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } NOT = { character = PREV } }
+								# mother_even_if_dead = { dynasty = PREV NOT = { character = ROOT_FROM } NOT = { character = PREV } }
+							# }
+						# }
+						# set_character_flag = change_salt_child_dynasty
+					# }
+				# }
+			# }
+			# create_character = { #create character to get interesting dynasty name
+				# random_traits = yes
+				# dynasty = actually_culture
+				# religion = THIS
+				# culture = THIS
+				# female = no
+				# age = 30
+			# }
+			# new_character = {
+				# ROOT_FROM = { dynasty = PREV }
+				# dynasty = father_bastard
+				# death = yes
+			# }	
+			# any_child_even_if_dead = {
+				# limit = { has_character_flag = change_salt_child_dynasty }
+				# dynasty = ROOT_FROM
+				# clr_character_flag = change_salt_child_dynasty
+				# any_child_even_if_dead = {
+					# limit = { has_character_flag = change_salt_child_dynasty }
+					# dynasty = ROOT_FROM
+					# clr_character_flag = change_salt_child_dynasty
+					# any_child_even_if_dead = {
+						# limit = { has_character_flag = change_salt_child_dynasty }
+						# dynasty = ROOT_FROM
+						# clr_character_flag = change_salt_child_dynasty
+					# }
+				# }
+			# }
+			# #Set cadet link
+			# add_trait = assign_mission_target
+			# set_dynasty_flag = is_cadet_house
+			# father_even_if_dead = {
+				# add_trait = assign_mission_target
+				# set_dynasty_flag = has_cadet_house
+				# set_dynasty_flag = owned_cadet_house_@PREV
+				# ROOT_FROM = { set_dynasty_flag = cadet_house_@PREV }
+			# }
+		# }	
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }	
+###Construct Flagship###
+# Pick Ship size
+character_event = {
+	id = ironborn_events.85
+	desc = "EVTDESCironborn_events.85"
+	picture = GFX_evt_busy_trading_dock_republic
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#find councillor for loc
+		random_courtier_or_vassal = { 
+			limit = { 
+				OR = {
+					# has_minor_title = title_master_of_ships
+					# has_minor_title = title_master_of_ships_B
+					has_minor_title = title_high_admiral
+					has_minor_title = title_high_admiral_B
+				}
+			}
+			save_event_target_as = master_of_ships	
+			break = yes
+		}
+		job_marshal = { save_event_target_as = master_of_ships }
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.85" #Enormous
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0
+				trait = humble
+			}
+			modifier = {
+				factor = 0
+				trait = content
+			}
+		}
+		wealth = -150
+		set_character_flag = enormous_flagship
+		long_character_event = { id = ironborn_events.86 days = 400 random = 100 tooltip = ironborn_events.86A }
+	}
+	option = {
+		name = "EVTOPTBironborn_events.85" #Regular
+		ai_chance = {
+			factor = 50
+		}
+		wealth = -80
+		set_character_flag = regular_flagship
+		long_character_event = { id = ironborn_events.86 days = 250 random = 75 tooltip = ironborn_events.86B }
+	}
+	option = {
+		name = "EVTOPTCironborn_events.85" #Small
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				trait = proud
+			}
+			modifier = {
+				factor = 0
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+		}
+		wealth = -40
+		set_character_flag = small_flagship
+		long_character_event = { id = ironborn_events.86 days = 150 random = 50 tooltip = ironborn_events.86C }
+	}
+	option = {
+		name = "EVTOPTDironborn_events.85" #Cancel
+		trigger = { ai = no }
+		clr_character_flag = construct_a_flagship
+	}
+}	
+#Ship complete
+long_character_event = {
+	id = ironborn_events.86
+	picture = GFX_evt_dromond
+
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = {
+		has_character_flag = construct_a_flagship
+	}
+	
+	#Generic
+	desc = {
+		text = "EVTDESCironborn_events.86"
+		trigger = {
+			has_character_flag = enormous_flagship
+			NOT = { culture_group = iron_isles_culture }
+		}
+	}
+	desc = {
+		text = "EVTDESCironborn_events.86B"
+		trigger = {
+			has_character_flag = regular_flagship
+			NOT = { culture_group = iron_isles_culture }
+		}
+	}
+	desc = {
+		text = "EVTDESCironborn_events.86C"
+		trigger = {
+			has_character_flag = small_flagship
+			NOT = { culture_group = iron_isles_culture }
+		}
+	}
+	#Ironborn
+	desc = {
+		text = "EVTDESCironborn_events.86D"
+		trigger = {
+			has_character_flag = enormous_flagship
+			culture_group = iron_isles_culture
+		}
+	}
+	desc = {
+		text = "EVTDESCironborn_events.86E"
+		trigger = {
+			has_character_flag = regular_flagship
+			culture_group = iron_isles_culture
+		}
+	}
+	desc = {
+		text = "EVTDESCironborn_events.86F"
+		trigger = {
+			has_character_flag = small_flagship
+			culture_group = iron_isles_culture
+		}
+	}
+	
+	immediate = {
+		# if = { #For loc
+			# limit = { ai = no }
+			# capital_scope = {
+				# random_neighbor_province = {
+					# limit = { is_land = no }
+					# save_event_target_as = launch_sea_province ###FLAG##
+				# }
+			# }
+		# }	
+		random_courtier_or_vassal = { 
+			limit = { 
+				OR = {
+					# has_minor_title = title_master_of_ships
+					# has_minor_title = title_master_of_ships_B
+					has_minor_title = title_high_admiral
+					has_minor_title = title_high_admiral_B
+				}
+			}
+			save_event_target_as = master_of_ships	
+			break = yes
+		}
+		job_marshal = { save_event_target_as = master_of_ships }
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.86"
+		if = {
+			limit = { has_character_flag = enormous_flagship }
+			clr_character_flag = enormous_flagship		
+			add_artifact = enormous_flagship
+			primary_title = { save_event_target_as = ROOT_primary_title }
+			new_artifact = { 
+				set_artifact_flag = heirloom_@PREV 
+				#set_artifact_flag = heirloom_@event_target:ROOT_primary_title
+			}
+			prestige = 150
+		}
+		else_if = {
+			limit = { has_character_flag = regular_flagship }
+			clr_character_flag = regular_flagship
+			add_artifact = regular_flagship
+			prestige = 80
+		}
+		else = {
+			clr_character_flag = small_flagship
+			add_artifact = small_flagship
+			prestige = 40
+		}
+		event_target:master_of_ships = {
+			prestige = 30
+			hidden_tooltip = {
+				change_variable = { which = "services_rendered" value = 1 } 
+				reverse_opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}	
+		}
+		if = {
+			limit = { ai = no }
+			set_character_flag = ship_name_page_1
+		}
+		hidden_tooltip = { character_event = { id = ironborn_events.87 } }
+		clr_character_flag = construct_a_flagship
+	}
+}	
+#Name Ship
+character_event = {
+	id = ironborn_events.87
+	picture = GFX_evt_dromond
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCironborn_events.87"
+		trigger = {
+			NOT = { culture_group = iron_isles_culture }
+		}
+	}
+	#Ironborn
+	desc = {
+		text = "EVTDESCironborn_events.87B"
+		trigger = {
+			culture_group = iron_isles_culture
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = { trait = dragon_rider }
+			random_friend = {
+				limit = { trait = dragon }
+				save_event_target_as = ship_name_dragon
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			save_event_target_as = new_flagship
+		}
+	}
+	
+	option = {
+		name = "MORE"
+		trigger = { ai = no }
+		if = {
+			limit = { has_character_flag = ship_name_page_1 }
+			clr_character_flag = ship_name_page_1
+			set_character_flag = ship_name_page_2
+			hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+			break = yes
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_2 }
+			clr_character_flag = ship_name_page_2
+			set_character_flag = ship_name_page_3
+			hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+			break = yes
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_3 }
+			clr_character_flag = ship_name_page_3
+			set_character_flag = ship_name_page_4
+			if = {
+				limit = {
+					OR = {
+						has_fair_trait_trigger = yes
+						trait = ugly
+						trait = lustful
+						trait = chaste
+						trait = gluttonous
+						trait = temperate
+					}
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}	
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_4 }
+			clr_character_flag = ship_name_page_4
+			set_character_flag = ship_name_page_5
+			if = {
+				limit = {
+					OR = {
+						trait = hedonist
+						trait = scholar
+						trait = gardener
+						trait = impaler
+						trait = duelist
+						trait = hunter
+						trait = poet
+						dynasty = 178
+						trait = falconer
+						trait = dragon_rider
+						dynasty = 190
+						dynasty = 496
+						dynasty = 57
+						dynasty = 59
+						dynasty = 159
+						dynasty = 107
+						dynasty = 253
+						dynasty = 317
+						dynasty = 1544
+						dynasty = 1
+						dynasty = 1254
+						dynasty = 87
+						dynasty = 93
+						dynasty = 80
+						dynasty = 112
+						dynasty = 122
+						dynasty = 121
+						dynasty = 119
+						dynasty = 114
+						dynasty = 197
+						dynasty = 285
+						dynasty = 288
+					}
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_5 }
+			clr_character_flag = ship_name_page_5
+			set_character_flag = ship_name_page_6
+			if = {
+				limit = {
+					OR = {
+						trait = greedy
+						trait = charitable
+						trait = slothful
+						trait = diligent
+						trait = envious
+					}
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_6 }
+			clr_character_flag = ship_name_page_6
+			set_character_flag = ship_name_page_7
+			if = {
+				limit = {
+					OR = {
+						trait = kind
+						trait = cruel
+						is_strong_trigger = yes
+						trait = tall
+					}
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_7 }
+			clr_character_flag = ship_name_page_7
+			set_character_flag = ship_name_page_8
+			if = {
+				limit = {
+					OR = {
+						trait = brave
+						trait = craven
+						trait = stubborn
+						has_fashionable_groomed_trigger = yes
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_8 }
+			clr_character_flag = ship_name_page_8
+			set_character_flag = ship_name_page_9
+			if = {
+				limit = {
+					OR = {
+						trait = lunatic
+						trait = wroth
+						trait = patient
+						trait = proud
+						trait = humble
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_9 }
+			clr_character_flag = ship_name_page_9
+			set_character_flag = ship_name_page_10
+			if = {
+				limit = {
+					OR = {
+						trait = deceitful
+						trait = honest
+						trait = gregarious
+						trait = shy
+						trait = ambitious
+						trait = content
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_10 }
+			clr_character_flag = ship_name_page_10
+			set_character_flag = ship_name_page_11
+			if = {
+				limit = {
+					OR = {
+						trait = arbitrary
+						trait = just
+						trait = cynical
+						trait = trusting
+						trait = paranoid
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_11 }
+			clr_character_flag = ship_name_page_11
+			set_character_flag = ship_name_page_12
+			if = {
+				limit = {
+					OR = {
+						trait = authoritative
+						trait = rude
+						trait = familyperson
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_12 }
+			clr_character_flag = ship_name_page_12
+			set_character_flag = ship_name_page_13
+			if = {
+				limit = {
+					OR = {
+						trait = ruthless
+						trait = honorable
+						trait = elephant
+						trait = tiger
+						trait = fire_obsessed
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_13 }
+			clr_character_flag = ship_name_page_13
+			set_character_flag = ship_name_page_14
+			if = {
+				limit = {
+					OR = {
+						trait = blinded
+						trait = drunkard
+						trait = bastard
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_14 }
+			clr_character_flag = ship_name_page_14
+			set_character_flag = ship_name_page_15
+			if = {
+				limit = {
+					OR = {
+						trait = celibate
+						trait = liberator
+						any_artifact = {
+							has_artifact_flag = combat_weapon
+							is_artifact_equipped = yes
+							NAND = {
+								ROOT = { ai = yes }
+								NOR = {
+									has_artifact_flag = combat_tier_3
+									has_artifact_flag = canon_sword
+								}
+							}
+						}
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}	
+		if = {
+			limit = { has_character_flag = ship_name_page_15 }
+			clr_character_flag = ship_name_page_15
+			set_character_flag = ship_name_page_16
+			if = {
+				limit = {
+					OR = {
+						trait = depressed
+						trait = infirm
+						twin_even_if_dead = { always = yes }
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_16 }
+			clr_character_flag = ship_name_page_16
+			set_character_flag = ship_name_page_17
+			if = {
+				limit = {
+					OR = {
+						trait = kinslayer
+						AND = {
+							trait = ruthless
+							trait = cruel
+						}
+						AND = {
+							trait = proud
+							trait = ambitious
+						}
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}
+		if = {
+			limit = { has_character_flag = ship_name_page_17 }
+			clr_character_flag = ship_name_page_17
+			set_character_flag = ship_name_page_18
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							trait = lunatic
+							trait = diligent
+						}
+						trait = possessed
+						AND = {
+							trait = just
+							trait = patient
+						}
+						AND = {
+							is_strong_trigger = yes
+							trait = tall
+						}
+						NOT = { age = 5 }
+						AND = {
+							has_dlc = Reapers
+							has_epidemic = yes
+						}
+						trait = rebel_leader
+						dynasty = 16
+					}	
+				}
+				hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+				break = yes
+			}
+		}	
+		if = {
+			limit = { has_character_flag = ship_name_page_18 }
+			clr_character_flag = ship_name_page_18
+			set_character_flag = ship_name_page_1
+			hidden_tooltip = { repeat_event = { id = ironborn_events.87 } }
+			break = yes
+		}	
+	}
+	#Page 1
+	option = {
+		name = "EVTOPTironborn_events.87_OWNNAME" #Pick own name
+		trigger = {
+			ai = no
+			has_character_flag = ship_name_page_1
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			prompt_name = {
+				player = ROOT
+				type = RENAME_ARTIFACT_MESSAGE
+			}
+			clr_artifact_flag = new_flagship
+		}
+		clr_character_flag = ship_name_page_1
+	}
+	option = {
+		name = "EVTOPTAironborn_events.87" #Self
+		trigger = {
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_1
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.GetTitledFirstName]
+		}
+		clr_character_flag = ship_name_page_1
+	}
+	option = {
+		name = "EVTOPTBironborn_events.87" #Father
+		trigger = { 
+			father_even_if_dead = { always = yes } 
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_1
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.Father.GetTitledFirstName]
+		}
+		clr_character_flag = ship_name_page_1
+	}
+	#Page 2	
+	option = {
+		name = "EVTOPTironborn_events.87_MOTHER" #Mother
+		trigger = { 
+			mother_even_if_dead = { always = yes } 
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_2
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.Mother.GetTitledFirstName]
+		}
+		clr_character_flag = ship_name_page_2
+	}
+	option = {
+		name = "EVTOPTCironborn_events.87" #Spouse
+		trigger = { 
+			spouse = { always = yes } 
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_2
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.Spouse.GetTitledFirstName]
+		}
+		clr_character_flag = ship_name_page_2
+	}
+	
+	option = {
+		name = "EVTOPTDironborn_events.87" #Capital
+		trigger = {
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_2
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.Capital.GetName]
+		}
+		clr_character_flag = ship_name_page_2
+	}
+	#Page 3	
+	option = {
+		name = "EVTOPTEironborn_events.87" #Nickname
+		trigger = {
+			has_nickname = yes
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_3
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.GetFirstNameWithNick]
+		}
+		clr_character_flag = ship_name_page_3
+	}
+	option = {
+		name = "EVTOPTFironborn_events.87" #God
+		trigger = {
+			NOR = {
+				is_old_gods_religion_trigger = yes
+				religion = gods_sarnor
+				religion = qarth_warlocks
+				religion = harpy
+				religion = shadowbinders
+				religion = gods_bone_mountains
+				religion = gods_nghai
+				religion = gods_ibben
+				religion = jogos_pagan
+				is_summer_rel_trigger = yes
+				religion = pirate
+				religion = corsair
+				religion = sothoryos_rel
+				
+				religion = gods_sarnor_reformed
+				religion = harpy_reformed
+				religion = shadowbinders_reformed
+				religion = gods_bone_mountains_reformed
+				religion = gods_nghai_reformed
+				religion = jogos_pagan_reformed
+			}
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_3
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.Religion.GetRandomGodNameCap]
+		}
+		clr_character_flag = ship_name_page_3
+	}
+	option = {
+		name = "EVTOPTironborn_events.87_PRIMARYTITLE" #Primary Title
+		trigger = {
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_3
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = [Root.PrimaryTitle.GetName]
+		}
+		clr_character_flag = ship_name_page_3
+	}
+	
+	###########
+	option = {
+		name = EVTOPTironborn_events87-10
+		trigger = {
+			has_fair_trait_trigger = yes
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = fair
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			clr_artifact_flag = new_flagship
+			set_name = ship_name_Beauty
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	option = {
+		name = EVTOPTironborn_events87-11
+		trigger = {
+			trait = ugly
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = ugly
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Monster
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	option = {
+		name = EVTOPTironborn_events87-12
+		trigger = {
+			trait = lustful
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = lustful
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Desire
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	option = {
+		name = EVTOPTironborn_events87-41
+		trigger = {
+			trait = chaste
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = chaste
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Maiden
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	option = {
+		name = EVTOPTironborn_events87-42
+		trigger = {
+			trait = gluttonous
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = gluttonous
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Feast
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	option = {
+		name = EVTOPTironborn_events87-43
+		trigger = {
+			trait = temperate
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_4
+			}
+		}
+		tooltip_info = temperate
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Discipline
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_4
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-13
+		trigger = {
+			trait = hedonist
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = hedonist
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Pleasure
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-14
+		trigger = {
+			trait = scholar
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = scholar
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Intellect
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-15
+		trigger = {
+			trait = gardener
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = gardener
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Golden_Flower
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-16
+		trigger = {
+			trait = impaler
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = impaler
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Pain
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-17
+		trigger = {
+			trait = duelist
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = duelist
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Battle
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-18
+		trigger = {
+			trait = hunter
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = hunter
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Hunter
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-19
+		trigger = {
+			trait = poet
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = poet
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Song
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-20
+		trigger = {
+			OR = {
+				dynasty = 178
+				trait = falconer
+			}	
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		tooltip_info = falconer
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Falcon
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-dragon
+		trigger = {
+			trait = dragon_rider
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = [ship_name_dragon.GetFirstName]
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-21
+		trigger = {
+			dynasty = 190
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Golden_Lion
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-22
+		trigger = {
+			OR = {
+				dynasty = 496
+				dynasty = 57
+			}	
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Dragon
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-23
+		trigger = {
+			dynasty = 59
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Wolf
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-24
+		trigger = {
+			dynasty = 159
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Silver_Trout
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-25
+		trigger = {
+			dynasty = 107
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Kraken
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-26
+		trigger = {
+			dynasty = 253
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Golden_Rose
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-27
+		trigger = {
+			OR = {
+				dynasty = 317
+				dynasty = 1544
+			}	
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Crowned_Stag
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-28
+		trigger = {
+			dynasty = 1
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Red_Sun
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-29
+		trigger = {
+			dynasty = 1254
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Green_Hand
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-30
+		trigger = {
+			dynasty = 87
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Flayed_Man
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-31
+		trigger = {
+			dynasty = 93
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Roarin_Giant
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-32
+		trigger = {
+			dynasty = 80
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Merman
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-33
+		trigger = {
+			dynasty = 112
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Black_Warhorn
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-34
+		trigger = {
+			dynasty = 122
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Scythe
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-35
+		trigger = {
+			dynasty = 121
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Boned_Hand
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-36
+		trigger = {
+			dynasty = 119
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Leviathan
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-37
+		trigger = {
+			dynasty = 114
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Red_Sunset
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-38
+		trigger = {
+			dynasty = 197
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Red_Lion
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-39
+		trigger = {
+			dynasty = 285
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Hightower
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	option = {
+		name = EVTOPTironborn_events87-40
+		trigger = {
+			dynasty = 288
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_5
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Golden_Wine
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_5
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-44
+		trigger = {
+			trait = greedy
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_6
+			}
+		}
+		tooltip_info = greedy
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Opulence
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_6
+	}
+	option = {
+		name = EVTOPTironborn_events87-45
+		trigger = {
+			trait = charitable
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_6
+			}
+		}
+		tooltip_info = charitable
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Benevolence
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_6
+	}
+	option = {
+		name = EVTOPTironborn_events87-46
+		trigger = {
+			trait = slothful
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_6
+			}
+		}
+		tooltip_info = slothful
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Big_Ship
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_6
+	}
+	option = {
+		name = EVTOPTironborn_events87-47
+		trigger = {
+			trait = diligent
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_6
+			}
+		}
+		tooltip_info = diligent
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Intent
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_6
+	}
+	option = {
+		name = EVTOPTironborn_events87-48
+		trigger = {
+			trait = envious
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_6
+			}
+		}
+		tooltip_info = envious
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Resentment
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_6
+	}
+	option = {
+		name = EVTOPTironborn_events87-49
+		trigger = {
+			trait = kind
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_7
+			}
+		}
+		tooltip_info = kind
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Benign
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_7
+	}
+	option = {
+		name = EVTOPTironborn_events87-70
+		trigger = {
+			trait = cruel
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_7
+			}
+		}
+		tooltip_info = cruel
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Bloodless
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_7
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-50
+		trigger = {
+			is_strong_trigger = yes
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_7
+			}
+		}
+		tooltip_info = strong
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Formidable
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_7
+	}
+	option = {
+		name = EVTOPTironborn_events87-51
+		trigger = {
+			trait = tall
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_7
+			}
+		}
+		tooltip_info = tall
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Leviathan
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_7
+	}
+	option = {
+		name = EVTOPTironborn_events87-52
+		trigger = {
+			trait = brave
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_8
+			}
+		}
+		tooltip_info = brave
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Audacious
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_8
+	}
+	option = {
+		name = EVTOPTironborn_events87-62
+		trigger = {
+			trait = craven
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_8
+			}
+		}
+		tooltip_info = craven
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Caution
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_8
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-53
+		trigger = {
+			trait = stubborn
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_8
+			}
+		}
+		tooltip_info = stubborn
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Fortitude
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_8
+	}
+	option = {
+		name = EVTOPTironborn_events87-54
+		trigger = {
+			has_fashionable_groomed_trigger = yes
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_8
+			}
+		}
+		tooltip_info = fashionable
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Magnificent
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_8
+	}
+	option = {
+		name = EVTOPTironborn_events87-55
+		trigger = {
+			trait = lunatic
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_9
+			}
+		}
+		tooltip_info = lunatic
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Invincible
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_9
+	}
+	option = {
+		name = EVTOPTironborn_events87-56
+		trigger = {
+			trait = wroth
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_9
+			}
+		}
+		tooltip_info = wroth
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Fury
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_9
+	}
+	option = {
+		name = EVTOPTironborn_events87-57
+		trigger = {
+			trait = patient
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_9
+			}
+		}
+		tooltip_info = patient
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Serenity
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_9
+	}
+	option = {
+		name = EVTOPTironborn_events87-58
+		trigger = {
+			trait = proud
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_9
+			}
+		}
+		tooltip_info = proud
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Glory
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_9
+	}
+	option = {
+		name = EVTOPTironborn_events87-59
+		trigger = {
+			trait = humble
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_9
+			}
+		}
+		tooltip_info = humble
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Noble
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_9
+	}
+	option = {
+		name = EVTOPTironborn_events87-60
+		trigger = {
+			trait = deceitful
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = deceitful
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Cunning
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-61
+		trigger = {
+			trait = honest
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = honest
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Forthright
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-63
+		trigger = {
+			trait = gregarious
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = gregarious
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Friend
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-86
+		trigger = {
+			trait = shy
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = shy
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Silence
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-64
+		trigger = {
+			trait = ambitious
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = ambitious
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Victory
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-65
+		trigger = {
+			trait = content
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_10
+			}
+		}
+		tooltip_info = content
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Fulfillment
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_10
+	}
+	option = {
+		name = EVTOPTironborn_events87-66
+		trigger = {
+			trait = arbitrary
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_11
+			}
+		}
+		tooltip_info = arbitrary
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Whimsy
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_11
+	}
+	option = {
+		name = EVTOPTironborn_events87-67
+		trigger = {
+			trait = just
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_11
+			}
+		}
+		tooltip_info = just
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Duty
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_11
+	}
+	option = {
+		name = EVTOPTironborn_events87-68
+		trigger = {
+			trait = cynical
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_11
+			}
+		}
+		tooltip_info = cynical
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_War-Bringer
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_11
+	}
+	option = {
+		name = EVTOPTironborn_events87-69
+		trigger = {
+			trait = trusting
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_11
+			}
+		}
+		tooltip_info = trusting
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Confidence
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_11
+	}
+	option = {
+		name = EVTOPTironborn_events87-87
+		trigger = {
+			trait = paranoid
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_11
+			}
+		}
+		tooltip_info = paranoid
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Cave
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_11
+	}
+	option = {
+		name = EVTOPTironborn_events87-71
+		trigger = {
+			trait = authoritative
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_12
+			}
+		}
+		tooltip_info = authoritative
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Imperious
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_12
+	}
+	option = {
+		name = EVTOPTironborn_events87-72
+		trigger = {
+			trait = rude
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_12
+			}
+		}
+		tooltip_info = rude
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Cunt
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_12
+	}
+	option = {
+		name = EVTOPTironborn_events87-73
+		trigger = {
+			trait = familyperson
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_12
+			}
+		}
+		tooltip_info = familyperson
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = [Root.GetOnlyDynastyName]
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_12
+	}
+	option = {
+		name = EVTOPTironborn_events87-74
+		trigger = {
+			trait = ruthless
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_13
+			}
+		}
+		tooltip_info = ruthless
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Merciless
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_13
+	}
+	option = {
+		name = EVTOPTironborn_events87-75
+		trigger = {
+			trait = honorable
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_13
+			}
+		}
+		tooltip_info = honorable
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Honour
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_13
+	}
+	option = {
+		name = EVTOPTironborn_events87-76
+		trigger = {
+			trait = elephant
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_13
+			}
+		}
+		tooltip_info = elephant
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Elephant
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_13
+	}
+	option = {
+		name = EVTOPTironborn_events87-77
+		trigger = {
+			trait = tiger
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_13
+			}
+		}
+		tooltip_info = tiger
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Tiger
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_13
+	}
+	option = {
+		name = EVTOPTironborn_events87-78
+		trigger = {
+			trait = fire_obsessed
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_13
+			}
+		}
+		tooltip_info = fire_obsessed
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Flame
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_13
+	}
+	option = {
+		name = EVTOPTironborn_events87-79
+		trigger = {
+			trait = blinded
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_14
+			}
+		}
+		tooltip_info = blinded
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Clear-Sighted
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_14
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-7
+		trigger = {
+			trait = drunkard
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_14
+			}
+		}
+		tooltip_info = drunkard
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Tankard
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_14
+	}
+	option = {
+		name = EVTOPTironborn_events87-8
+		trigger = {
+			trait = bastard
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_14
+			}
+		}
+		tooltip_info = bastard
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Bastard
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_14
+	}
+	option = {
+		name = EVTOPTironborn_events87-9
+		trigger = {
+			trait = celibate
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_15
+			}
+		}
+		tooltip_info = celibate
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Abstinance
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_15
+	}
+	option = {
+		name = EVTOPTironborn_events87-80
+		trigger = {
+			any_artifact = {
+				has_artifact_flag = combat_weapon
+				is_artifact_equipped = yes
+				NAND = {
+					ROOT = { ai = yes }
+					NOR = {
+						has_artifact_flag = combat_tier_3
+						has_artifact_flag = canon_sword
+					}
+				}
+			}
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_15
+			}
+		}
+		random_artifact = {
+			limit = { 
+				has_artifact_flag = combat_weapon
+				is_artifact_equipped = yes
+				NAND = {
+					ROOT = { ai = yes }
+					NOR = {
+						has_artifact_flag = combat_tier_3
+						has_artifact_flag = canon_sword
+					}
+				}
+			}
+			ROOT = {
+				random_artifact = {
+					limit = { has_artifact_flag = new_flagship }
+					set_name = PREVPREV
+					clr_artifact_flag = new_flagship		
+				}
+			}
+		}
+		clr_character_flag = ship_name_page_15
+	}
+	option = {
+		name = EVTOPTironborn_events87-81
+		trigger = {
+			trait = liberator
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_15
+			}
+		}
+		tooltip_info = liberator
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Uprising
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_15
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-82
+		trigger = {
+			trait = depressed
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_16
+			}
+		}
+		tooltip_info = depressed
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Desolation
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_16
+	}
+	option = {
+		name = EVTOPTironborn_events87-83
+		trigger = {
+			trait = infirm
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_16
+			}
+		}
+		tooltip_info = infirm
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Vigorous
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_16
+	}
+	option = {
+		name = EVTOPTironborn_events87-84
+		trigger = {
+			twin_even_if_dead = { always = yes }
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_16
+			}
+		}
+		tooltip_info = twin
+		twin_even_if_dead = {
+			ROOT = {
+				random_artifact = {
+					limit = { has_artifact_flag = new_flagship }
+					set_name = [PrevPrev.GetTitledFirstNameNoRegnal]
+					clr_artifact_flag = new_flagship		
+				}
+			}
+		}	
+		clr_character_flag = ship_name_page_16
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-85
+		trigger = {
+			trait = kinslayer
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_17
+			}
+		}
+		tooltip_info = kinslayer
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Parricide
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_17
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-88
+		trigger = {
+			trait = ruthless
+			trait = cruel
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_17
+			}
+		}
+		tooltip_info = ruthless
+		tooltip_info = cruel
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Dead_Inside
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_17
+	}
+	option = {
+		name = EVTOPTironborn_events87-89
+		trigger = {
+			trait = proud
+			trait = ambitious
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_17
+			}
+		}
+		tooltip_info = proud
+		tooltip_info = ambitious
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Glorious
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_17
+	}
+	
+	option = {
+		name = EVTOPTironborn_events87-90
+		trigger = {
+			trait = lunatic
+			trait = diligent
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = lunatic
+		tooltip_info = diligent
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Hysteria
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-91
+		trigger = {
+			trait = possessed
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = possessed
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Madness
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-92
+		trigger = {
+			trait = just
+			trait = patient
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = just
+		tooltip_info = patient
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Mercy
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-93
+		trigger = {
+			is_strong_trigger = yes
+			trait = tall
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = strong
+		tooltip_info = tall
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Muscle_Museum
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-94
+		trigger = {
+			NOT = { age = 5 }
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_New_Born
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-95
+		trigger = {
+			has_dlc = Reapers
+			has_epidemic = yes
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = yes
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Reapers
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-96
+		trigger = {
+			trait = rebel_leader
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = rebel_leader
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Resistance
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	option = {
+		name = EVTOPTironborn_events87-97
+		trigger = {
+			dynasty = 16
+			OR = {
+				ai = yes
+				has_character_flag = ship_name_page_18
+			}
+		}
+		tooltip_info = yes
+		random_artifact = {
+			limit = { has_artifact_flag = new_flagship }
+			set_name = ship_name_Starlight
+			clr_artifact_flag = new_flagship		
+		}
+		clr_character_flag = ship_name_page_18
+	}
+	
+	after = {
+		event_target:new_flagship = { 
+			hidden_tooltip = {
+				set_description = [This.GetFlagshipDescription] 
+			}
+		}
+	}
+}	
+# character_event = { #new ship name
+	# id = ironborn_events.889
+	# desc = EVTDESCironborn_events.889
+	
+	# is_triggered_only = yes
+	
+	# immediate = { c_artifact_rename = { save_event_target_as = new_artifact_name } }
+	
+	# option = {
+		# name = OK
+		# event_target:new_flagship = { 
+			# set_name = [new_artifact_name.GetName]
+			# set_description = [This.GetFlagshipDescription] 
+			# clr_artifact_flag = new_flagship
+		# }
+		# hidden_tooltip = { c_artifact_rename = { destroy_landed_title = yes } }
+		# clr_character_flag = renaming_artifact
+	# }
+# }	
+#Ship boosts morale
+character_event = {
+	id = ironborn_events.88
+	desc = EVTDESCironborn_events.88
+	picture = "GFX_evt_reaving3"
+
+	ai = no
+	hide_from = yes
+	
+	trigger = {
+		is_at_sea = yes
+		any_artifact = { 
+			has_artifact_flag = flagship 
+			is_artifact_equipped = yes
+		}
+		NOT = { has_character_modifier = flagship_morale }
+	}
+	
+	mean_time_to_happen = {
+		months = 240
+		modifier = {
+			factor = 0.66
+			has_artifact = enormous_flagship
+		}
+		modifier = {
+			factor = 1.5
+			has_artifact = small_flagship
+		}
+	}
+	
+	immediate = {
+		find_ship_name_effect = yes
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.88"
+		add_character_modifier = {
+			name = flagship_morale
+			months = 12
+		}
+	}
+}	
+#Flagship lost after siege
+character_event = {
+	id = ironborn_events.89
+	desc = EVTDESCironborn_events.89
+	picture = "GFX_evt_reaving_ship_lost"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		capital_holding = { 
+			title = FROMFROM 
+			location = { port = yes }
+		}	
+		NOT = { is_at_sea = yes } #Not plausibly at sea
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					ai = no
+					FROM = { ai = no }
+				}
+			}
+			find_ship_name_effect = yes
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.89"
+		hidden_tooltip = { FROM = { character_event = { id = ironborn_events.90 } } }
+		random_artifact = {
+			limit = { has_artifact_flag = flagship }
+			if = {
+				limit = { artifact_type = enormous_flagship }
+				ROOT = { prestige = -100 }
+			}
+			if = {
+				limit = { artifact_type = regular_flagship }
+				ROOT = { prestige = -50 }
+			}
+			if = {
+				limit = { artifact_type = small_flagship }
+				ROOT = { prestige = -25 }
+			}
+			destroy_artifact = yes			
+		}		
+	}
+}	
+character_event = { #Inform enemy
+	id = ironborn_events.90
+	desc = EVTDESCironborn_events.90
+	picture = "GFX_evt_reaving_ship_lost"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.90"
+		prestige = 50
+	}
+}	
+#Flagship retired
+character_event = {
+	id = ironborn_events.91
+	desc = EVTDESCironborn_events.91
+	picture = "GFX_evt_reaving3"
+
+	is_triggered_only = yes
+	
+	trigger = {
+		num_of_artifacts = 1
+		any_artifact = {
+			had_artifact_flag = { flag = flagship days = 14600 }
+		}
+	}
+	
+	immediate = {
+		random_artifact = {
+			limit = { had_artifact_flag = { flag = flagship days = 14600 } }
+			save_event_target_as = flagship_to_retire		
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAironborn_events.91"
+		event_target:flagship_to_retire = {
+			destroy_artifact = yes			
+		}		
+	}
+	option = {
+		name = "EVTOPTBironborn_events.91" #Renovate
+		trigger = {
+			OR = {
+				ROOT = { ai = no }
+				event_target:flagship_to_retire = {
+					is_artifact_equipped = yes
+					OR = {
+						AND = {
+							artifact_type = small_flagship
+							ROOT = { wealth = 30 }
+						}
+						AND = {
+							artifact_type = regular_flagship
+							ROOT = { wealth = 60 }
+						}
+						AND = {
+							artifact_type = enormous_flagship
+							ROOT = { wealth = 115 }
+						}
+					}
+				}
+			}	
+		}	
+		event_target:flagship_to_retire = {
+			clr_artifact_flag = flagship
+			set_artifact_flag = flagship
+			if = {
+				limit = { artifact_type = enormous_flagship }
+				ROOT = { wealth = -115 }
+			}
+			if = {
+				limit = { artifact_type = regular_flagship }
+				ROOT = { wealth = -60 }
+			}
+			if = {
+				limit = { artifact_type = small_flagship }
+				ROOT = { wealth = -30 }
+			}		
+		}
+	}
+}	
+#Criticised by drowned men for having business focus
+character_event = {
+	id = ironborn_events.100
+	desc = "EVTDESCironborn_events.100" 
+	picture = "GFX_drowned"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAironborn_events.100" 
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = ironborn_business_criticised
+				duration = 3650
+				hidden = yes
+			}
+		}
+		prestige = -50
+		if = {
+			limit = { is_drowned_god_religion_trigger = yes }
+			piety = -100
+		}	
+		top_liege = {
+			any_realm_character = {
+				limit = {
+					NOT = { character = ROOT }
+					OR = {
+						liege = { character = ROOT }
+						same_liege = ROOT
+						is_liege_of = ROOT
+					}
+					OR = {
+						culture_group = iron_isles_culture
+						is_drowned_god_religion_trigger = yes
+					}
+					OR = {
+						trait = zealous
+						trait = proud
+						trait = wroth
+						trait = drowned
+					}
+					NOT = { trait = cynical }
+					NOT = { has_focus = focus_business }
+				}
+				opinion = { who = ROOT modifier = opinion_ironborn_business_focus months = 60 }
+			}
+		}	
+	}
+}

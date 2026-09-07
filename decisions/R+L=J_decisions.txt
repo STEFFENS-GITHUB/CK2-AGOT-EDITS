@@ -1,0 +1,177 @@
+#
+###SPOILER ALERT### DO NOT READ THIS FILE IF UNFAMILIAR WITH R+L=J THEORY
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+
+decisions = {
+	R+L_J_legalise_parentage = {
+		is_high_prio = yes
+		potential = {
+			is_ruler = yes
+			dynasty = 59
+			father_even_if_dead = { character = 59 } #Ned
+			OR = {
+				character = 1002059
+				has_character_flag = jon_snow
+			}	
+			#real_father = { character = 77039 } #Rhaegar
+			has_character_flag = knows_parentage
+			has_character_flag = revealed_parentage
+			NOT = { trait = nightswatch }
+		}
+		allow = {
+			war = no
+			OR = {
+				tier = EMPEROR
+				AND = {
+					independent = yes
+					primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}				
+				any_spouse = { has_landed_title = e_iron_throne }
+			}	
+		}
+		effect = {			
+			# has_missing = {
+				# limit = { character = 4059 }
+				# ROOT = { set_mother = PREV }
+			# }	
+			# assign_mission_target = {
+				# limit = { character = 77039 }
+				# ROOT = { set_father = PREV } 
+				# hidden_tooltip = { remove_trait = assign_mission_target }
+			# }
+			
+			c_4059 = {
+				ROOT = { set_mother = PREV }
+			}	
+			c_77039 = {
+				ROOT = { set_father = PREV } 
+				hidden_tooltip = { remove_trait = assign_mission_target }
+			}
+			# real_father = { 
+				# ROOT = { set_father = PREV } 
+			# }	
+			add_character_modifier = {
+				name = "grandchild_of_incest"
+				duration = -1
+			}
+			if = {
+				limit = {
+					has_landed_title = e_iron_throne
+					is_in_interregnum_trigger = yes
+				}
+				set_character_flag = interregnum_title_claimant
+			}			
+			hidden_tooltip = { character_event = { id = tower_of_joy.55 } }				
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	
+	R+L_J_claim_iron_throne= {
+		is_high_prio = yes
+		potential = {
+			dynasty = 59
+			father_even_if_dead = { character = 59 } #Ned
+			OR = {
+				character = 1002059
+				has_character_flag = jon_snow
+			}	
+			#real_father = { character = 77039 } #Rhaegar
+			has_character_flag = knows_parentage
+			NOT = { has_character_flag = revealed_parentage }
+		}
+		allow = {	
+		}
+		effect = {			
+			e_iron_throne = { 
+				add_pressed_claim = ROOT 
+				holder_scope = {
+					if = {
+						limit = { NOT = { character = ROOT } }
+						opinion = {
+							who = ROOT
+							modifier = opinion_traitor
+						}
+					}	
+					if = {
+						limit = {
+							character = ROOT
+							is_in_interregnum_trigger = yes
+						}
+						set_character_flag = interregnum_title_claimant
+					}
+				}
+				any_character = {
+					limit = { 
+						has_claim = PREV 
+						NOT = { character = ROOT }
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_traitor
+					}
+				}
+				
+			}
+			if = {
+				limit = { has_landed_title = d_nightswatch }
+				add_character_modifier = {
+					name = NW_broken_vows
+					duration = -1
+				}
+			}
+			set_character_flag = revealed_parentage
+			hidden_tooltip = {
+				any_player = {
+					limit = {
+						ai = no
+						OR = {
+							dynasty = 496
+							dynasty = 59
+							capital_scope = { region = world_westeros }
+							has_character_flag = ToJ_survivor
+						}
+						NOT = { character = ROOT }
+					}
+					letter_event = { id = tower_of_joy.54 }
+				}
+				letter_event = { id = tower_of_joy.54 }				
+			}	
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 0.03
+			modifier = {
+				factor = 0
+				OR = {
+					has_landed_title = d_nightswatch
+					trait = content
+					trait = honorable
+					trait = humble
+					trait = craven
+					e_iron_throne = { holder_scope = { reverse_opinion = { who = ROOT value = 50 } } }
+				}
+			}
+			modifier = {
+				factor = 0
+				father_even_if_dead = { is_alive = yes }
+				is_ruler = no
+				NOT = { trait = ambitious }
+			}
+		}
+	}
+}
+
+

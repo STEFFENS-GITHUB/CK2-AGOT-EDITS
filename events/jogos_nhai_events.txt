@@ -1,0 +1,692 @@
+namespace = jogos_nhai
+
+
+# AI looks for clan annexation targets
+character_event = {
+	id = jogos_nhai.1
+	
+	hide_window = yes
+	is_triggered_only = yes
+	only_independent = yes
+	prisoner = no
+	capable_only = yes
+	min_age = 16
+	culture = jogos_nhai
+	
+	trigger = {
+		is_nomadic = yes
+		is_ill = no
+		prestige = 250
+		
+		NOT = { trait = content }
+	}
+	
+	
+	immediate = {
+		random_independent_ruler = {
+			limit = {
+				independent = yes	
+				is_nomadic = yes
+				culture = jogos_nhai
+				NOT = { character = ROOT }
+				NOT = { has_character_modifier = jhattar_of_jogos_nhai }
+				custom_tooltip = {
+					text = TOOLTIPjogos_nhai_annex_clanNEIGHBOUR
+					hidden_tooltip = {
+						any_realm_province = {
+							any_neighbor_province = {
+								owner = { same_realm = ROOT }
+							}
+						}
+					}
+				}
+				OR = {
+					ai = no
+					opinion = { who = ROOT value = 0 }
+					AND = {
+						prisoner = yes
+						host = { character = ROOT }
+					}
+				}	
+				custom_tooltip = {
+					text = TOOLTIPjogos_nhai_annex_clanCLAN
+					hidden_tooltip = {
+						NOT = {
+							any_vassal = {
+								is_nomadic = yes
+								ai = yes
+								NOT = { opinion = { who = ROOT value = 0 } }
+							}
+						}
+					}
+				}
+				OR = {
+					prisoner = no
+					host = { character = ROOT }
+				}				
+				NOT = { trait = incapable }
+				war = no
+				NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_rejected_jogos_nhai_annex_clan } }
+				
+				OR = {
+					ROOT = { trait = ambitious }
+					AND = {
+						ROOT = { num_of_count_titles_in_realm = 10 }
+						NOT = { num_of_count_titles_in_realm = 8 }
+					}	
+					AND = {
+						ROOT = { num_of_count_titles_in_realm = 3 }
+						NOT = { num_of_count_titles_in_realm = 2 }
+					}
+					is_close_relative = ROOT
+					is_allied_with = ROOT
+					has_non_aggression_pact_with = ROOT
+					is_friend = ROOT
+					opinion = { who = ROOT value = 50 }
+				}
+			}
+			character_event = { id = jogos_nhai.2 tooltip = TOOLTIPjogos_nhai.2 days = 5 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+#Clan offers protection
+character_event = {
+	id = jogos_nhai.2
+	picture = GFX_evt_jogos_nhai
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	only_independent = yes
+	capable_only = yes
+	war = no
+	
+	desc = "EVTDESCjogos_nhai.2"
+
+	trigger = {
+		is_nomadic = yes
+		FROMFROM = {
+			independent = yes
+			is_nomadic = yes
+			prisoner = no
+			has_regent = no
+		}
+	}
+	
+	immediate = {
+		#calculate difference in realm size
+		set_variable = { which = jogos_realm_size_diff value = 0 }
+		any_realm_province = {
+			ROOT = { change_variable = { which = jogos_realm_size_diff value = 1 } }
+		}
+		FROMFROM = {
+			any_realm_province = {
+				ROOT = { change_variable = { which = jogos_realm_size_diff value = -1 } }
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAjogos_nhai.2" #OK
+		ai_chance = {
+			factor = 25
+			
+			modifier = { #Must have motive to join
+				factor = 0
+				NOR = {
+					NOT = { relative_power = { who = FROMFROM power = 1 } } #Has a smaller realm
+					is_close_relative = FROMFROM
+					is_allied_with = FROMFROM
+					has_non_aggression_pact_with = FROMFROM
+					is_friend = FROMFROM
+					opinion = { who = FROMFROM value = 50 }
+					AND = {
+						ROOT = { num_of_count_titles_in_realm = 3 }
+						NOT = { num_of_count_titles_in_realm = 2 }
+					}
+				}	
+			}
+			modifier = {
+				factor = 0
+				relative_power = { who = FROMFROM power = 1.33 } #Has a larger realm
+				NOT = { opinion = { who = FROMFROM value = 100 } }
+			}
+			
+			modifier = {
+				factor = 1.5
+				NOT = { check_variable = { which = jogos_realm_size_diff value = -3 } } #Has a smaller realm
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { check_variable = { which = jogos_realm_size_diff value = -6 } } #Has a smaller realm
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { check_variable = { which = jogos_realm_size_diff value = -9 } } #Has a smaller realm
+			}
+			modifier = {
+				factor = 1.5
+				is_close_relative = FROMFROM
+			}
+			modifier = {
+				factor = 1.5
+				is_allied_with = FROMFROM
+			}
+			modifier = {
+				factor = 1.25
+				has_non_aggression_pact_with = FROMFROM
+			}
+			modifier = {
+				factor = 1.5
+				is_friend = FROMFROM
+			}
+			modifier = {
+				factor = 0
+				is_rival = FROMFROM
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 20 }	
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 40 }	
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 60 }	
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 80 }	
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 100 }	
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { relative_power = { who = FROMFROM power = 0.8 } }	
+			}
+			modifier = {
+				factor = 2
+				NOT = { relative_power = { who = FROMFROM power = 0.5 } }	
+			}
+			modifier = {
+				factor = 2
+				NOT = { relative_power = { who = FROMFROM power = 0.25 } }	
+			}
+			modifier = {
+				factor = 2
+				NOT = { relative_power = { who = FROMFROM power = 0.1 } }	
+			}
+			
+			modifier = {
+				factor = 1.5
+				trait = content
+			}
+			modifier = {
+				factor = 1.5
+				trait = craven
+			}
+			modifier = {
+				factor = 1.5
+				trait = humble
+			}
+			modifier = {
+				factor = 1.5
+				trait = patient
+			}
+			
+			modifier = {
+				factor = 1.33
+				FROMFROM = { martial = 15 }
+			}
+			modifier = {
+				factor = 1.33
+				FROMFROM = { martial = 18 }
+			}
+			modifier = {
+				factor = 1.33
+				FROMFROM = { martial = 21 }
+			}
+			modifier = {
+				factor = 1.33
+				FROMFROM = { martial = 24 }
+			}
+		}
+		tooltip = {
+			any_vassal = {
+				limit = { tier = KING }
+				set_defacto_liege = FROMFROM
+			}
+			set_defacto_liege = FROMFROM
+		}	
+		hidden_tooltip = { FROMFROM = { character_event = { id = jogos_nhai.3 } } }
+	}
+	
+	option = {
+		name = "EVTOPTBjogos_nhai.2" #No
+		trigger = {
+			NAND = {
+				prisoner = yes
+				host = { character = FROMFROM }
+			}
+		}
+		ai_chance = {
+			factor = 75
+			
+			modifier = { #much weaker
+				factor = 0
+				NOT = { relative_power = { who = FROMFROM power = 0.1 } }	
+				NOT = { check_variable = { which = jogos_realm_size_diff value = -3 } } #Has a smaller realm
+				opinion = { who = FROMFROM value = -19 }
+			}
+			modifier = { #one province
+				factor = 0
+				NOT = { num_of_count_titles_in_realm = 2 }
+				NOT = { check_variable = { which = jogos_realm_size_diff value = 0 } } #Has a smaller realm
+				NOT = { relative_power = { who = FROMFROM power = 0.75 } }	
+				opinion = { who = FROMFROM value = -19 }
+			}
+			
+			modifier = {
+				factor = 1.5
+				check_variable = { which = jogos_realm_size_diff value = 2.9 } #Has a larger realm
+			}
+			modifier = {
+				factor = 1.5
+				check_variable = { which = jogos_realm_size_diff value = 5.9 } #Has a larger realm
+			}
+			modifier = {
+				factor = 1.5
+				check_variable = { which = jogos_realm_size_diff value = 8.9 } #Has a larger realm
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { is_female = yes }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -19 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -39 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -59 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -79 } }
+			}
+			modifier = {
+				factor = 1.5
+				NOT = { opinion = { who = FROMFROM value = -99 } }
+			}
+			modifier = {
+				factor = 1.5
+				relative_power = { who = FROMFROM power = 2 }
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 3 }	
+			}
+			modifier = {
+				factor = 2
+				relative_power = { who = FROMFROM power = 4 }	
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 1.5
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 1.5
+				trait = zealous
+			}
+			modifier = {
+				factor = 1.5
+				trait = wroth
+			}		
+			modifier = {
+				factor = 1.33
+				FROMFROM = { NOT = { martial = 9 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROMFROM = { NOT = { martial = 6 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROMFROM = { NOT = { martial = 3 } }
+			}		
+		}
+		FROMFROM = { 	
+			opinion = { who = ROOT modifier = opinion_rejected_jogos_nhai_annex_clan }
+			hidden_tooltip = { character_event = { id = jogos_nhai.4 } }
+		}
+	}	
+}
+character_event = { #Inform accept
+	id = jogos_nhai.3
+	
+	is_triggered_only = yes
+	desc = "EVTDESCjogos_nhai.3"
+	picture = GFX_evt_jogos_nhai
+	
+	trigger = {
+		is_nomadic = yes
+		is_ruler = yes
+	}
+	
+	option = {
+		name = "EVTOPTAjogos_nhai.3"
+		FROM = {
+			any_vassal = {
+				limit = { tier = KING }
+				set_defacto_liege = ROOT
+			}
+			hidden_tooltip = {
+				any_demesne_title = {
+					limit = { tier = EMPEROR }
+					destroy_landed_title = THIS
+				}
+			}
+			set_defacto_liege = ROOT
+		}	
+		prestige = 200
+		clr_character_flag = jogos_annexation_in_progress
+		hidden_tooltip = { #AI maybe try another target
+			if = {
+				limit = { ai = yes }
+				random = {
+					chance = 50
+					modifier = {
+						factor = 1.5
+						trait = ambitious
+					}
+					character_event = { id = jogos_nhai.1 days = 25 }
+				}	
+			}
+		}
+	}
+}	
+character_event = { #Inform reject
+	id = jogos_nhai.4
+	
+	is_triggered_only = yes
+	desc = "EVTDESCjogos_nhai.4"
+	picture = GFX_evt_jogos_nhai
+	
+	trigger = {
+		is_nomadic = yes
+		is_ruler = yes
+	}
+	
+	option = {
+		name = "EVTOPTAjogos_nhai.4"
+		prestige = -100
+		clr_character_flag = jogos_annexation_in_progress
+		hidden_tooltip = { #AI maybe try another target
+			if = {
+				limit = { ai = yes }
+				random = {
+					chance = 50
+					modifier = {
+						factor = 1.5
+						trait = ambitious
+					}
+					character_event = { id = jogos_nhai.1 days = 25 }
+				}	
+			}
+		}
+	}
+}	
+## Fellow Jogos Camp 'sacked', flavour
+character_event = {
+	id = jogos_nhai.5
+	desc = "EVTDESCjogos_nhai.5"
+	
+	is_triggered_only = yes
+	picture = GFX_evt_mongols_pillage_oldgods
+	
+	only_rulers = yes
+	
+	trigger = {	
+		has_jogos_nhai_war_block_trigger = yes
+		FROM = {
+			holder_scope = {
+				has_jogos_nhai_war_block_trigger = yes
+			}
+		}
+	}
+	
+	immediate = {
+		#chance of taking grazing land
+		random = {
+			chance = 50
+			FROM = {
+				holder_scope = {
+					random_demesne_province = {
+						limit = {
+							is_capital = no
+							traditional_nomad_territory_trigger = yes
+							#controller = { character = PREVPREV }
+						}
+						set_province_flag = take_grazing_land
+						ROOT = { set_character_flag = take_grazing_land }
+					}
+				}
+			}	
+		}
+		#abduct random unmarried men/take grazing land
+		FROM = {
+			holder_scope = {
+				random_courtier = {
+					limit = {
+						is_alive = yes
+						is_ruler = no
+						is_female = no
+						age = 14
+						is_married = no
+						has_jogos_nhai_war_block_trigger = yes
+						prisoner = no
+						NOT = { trait = incapable }
+						NOT = { trait = eunuch }
+						is_priest = no
+						is_ill = no
+						location = { 
+							county = {
+								any_direct_de_jure_vassal_title = {
+									title = FROM
+								}
+							}
+						}
+						NOT = { is_inaccessible_trigger = yes }
+					}
+					set_character_flag = abducted_jogos_man
+				}
+				random_courtier = {
+					limit = {
+						is_alive = yes
+						is_ruler = no
+						is_female = no
+						age = 14
+						is_married = no
+						has_jogos_nhai_war_block_trigger = yes
+						prisoner = no
+						NOT = { trait = incapable }
+						NOT = { trait = eunuch }
+						is_priest = no
+						is_ill = no
+						location = { 
+							county = {
+								any_direct_de_jure_vassal_title = {
+									title = FROM
+								}
+							}
+						}
+						NOT = { is_inaccessible_trigger = yes }
+						NOT = { has_character_flag = abducted_jogos_man }
+					}
+					set_character_flag = abducted_jogos_man
+				}
+				random_courtier = {
+					limit = {
+						is_alive = yes
+						is_ruler = no
+						is_female = no
+						age = 14
+						is_married = no
+						has_jogos_nhai_war_block_trigger = yes
+						prisoner = no
+						NOT = { trait = incapable }
+						NOT = { trait = eunuch }
+						is_priest = no
+						is_ill = no
+						location = { 
+							county = {
+								any_direct_de_jure_vassal_title = {
+									title = FROM
+								}
+							}
+						}
+						NOT = { is_inaccessible_trigger = yes }
+						NOT = { has_character_flag = abducted_jogos_man }
+					}
+					set_character_flag = abducted_jogos_man
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = {
+			text = "EVTOPTAjogos_nhai.5"
+			trigger = { 
+				NOT = { has_character_flag = take_grazing_land }
+			}
+		}	
+		name = {
+			text = "EVTOPTAjogos_nhai.5B"
+			trigger = { 
+				has_character_flag = take_grazing_land
+			}
+		}
+		piety = 50
+		FROM = {
+			holder_scope = {
+				random_demesne_province = {
+					limit = {
+						has_province_flag = take_grazing_land
+					}
+					county = { gain_title = ROOT }
+					clr_province_flag = take_grazing_land
+				}
+				any_courtier = {
+					limit = {
+						has_character_flag = abducted_jogos_man
+					}
+					clr_character_flag = abducted_jogos_man
+					imprison = ROOT
+				}
+			}
+		}	
+		clr_character_flag = take_grazing_land
+	}
+}
+## Jhattar of Jogos Nhai emerges
+narrative_event = {
+	id = jogos_nhai.10
+	desc = "EVTDESCjogos_nhai.10"
+	title = "EVTTITLEjogos_nhai.10"
+	
+	is_triggered_only = yes
+	picture = GFX_evt_jogos_nhai
+
+	option = {
+		name = "EVTOPTAjogos_nhai.10"
+		trigger = { character = FROM }
+	}
+	option = {
+		name = "EVTOPTBjogos_nhai.10"
+		trigger = { 
+			NOT = { character = FROM }
+			any_liege = { character = FROM } 
+		}
+	}
+	option = {
+		name = "EVTOPTCjogos_nhai.10"
+		trigger = {
+			NOT = { character = FROM }
+			NOT = { any_liege = { character = FROM } }
+		}
+	}
+}	
+# #AI spawns looters
+# character_event = {
+	# id = jogos_nhai.50
+	
+	# is_triggered_only = yes	
+	# only_rulers = yes
+	# ai = yes	
+	# min_age = 16
+	# prisoner = no
+	# capable_only = yes
+	
+	# culture = jogos_nhai
+	
+	# trigger = {
+		# war = no
+		# in_command = no
+		# is_allowed_to_loot = yes
+	# }
+	
+	# immediate = {
+		# random_realm_province = {
+			# limit = {
+				# any_neighbor_province = {
+					# owner = {
+						# NOT = { character = ROOT }
+						# NOT = { same_realm = ROOT }
+						# NOT = { culture = jogos_nhai }
+					# }
+				# }
+			# }
+			# ROOT = {
+				# spawn_unit = {
+					# province = PREV
+					# home = PREV
+					# leader = THIS
+					# scaled_by_biggest_garrison = 0.5
+					# troops = {
+						# light_cavalry = { 15 15 }
+						# horse_archers = { 15 15 }
+					# }
+					# match_min = 500
+					# match_max = 4000
+					# attrition = 0.25
+					# is_looter = yes
+					# can_toggle_looting = no
+				# }
+			# }
+		# }
+	# }
+	
+	# option = {
+		# name = OK
+	# }
+# }

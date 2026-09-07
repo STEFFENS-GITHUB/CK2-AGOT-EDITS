@@ -1,0 +1,227 @@
+###  Send children to preisthood
+
+targetted_decisions = {
+
+	send_child_to_temple_generic = {
+		ai_target_filter = close_relatives
+		filter = close_relatives
+		only_playable = yes
+		diplomacy_icon = GFX_decision_rhllor
+		
+		from_potential = {
+			is_ruler = yes			
+			is_unorganised_religion_trigger = no
+		}
+		potential = {
+			trigger_if = { #Monastic religion can send all relatives
+				limit = { NOT = { has_religion_feature = religion_monastic } }
+				is_child_of = FROM
+			}			
+			NOT = { has_priest_trait_trigger = yes }
+			NOT = {
+				liege = {
+					OR = {
+						government = theocratic_feudal_government
+						is_theocracy = yes
+					}
+				}
+			}
+			religion = FROM	
+			conditional_tooltip = {
+				trigger = { is_female = no }
+				religion_allows_male_temple_holders = yes
+				NOT = { religion = the_seven }
+			}
+			conditional_tooltip = {
+				trigger = { is_female = yes }
+				OR = {
+					religion_allows_female_temple_holders = yes
+					religion = the_seven
+				}
+			}
+		}		
+		allow = {
+			show_only_failed_conditions = yes
+			trigger_if = { #Monastic religion have easier priesthood decision
+				limit = { has_religion_feature = religion_monastic }
+				FROM = {
+					NOT = { current_heir = { character = ROOT } }	
+				}	
+			}	
+			trigger_else_if = {
+				limit = { NOT = { has_game_rule = { name = disinheritance_decisions value = unrestricted } } }
+				OR = {
+					FROM = {
+						num_of_children = 5
+						custom_tooltip = {
+							text = TOOLTIPsend_child_to_temple_genericA
+							NOT = { 
+								any_child = {
+									count = 2
+									religion = PREV
+									OR = {
+										has_priest_trait_trigger = yes
+										liege = {
+											OR = {
+												government = theocratic_feudal_government
+												is_theocracy = yes
+											}
+										}
+									}
+								}
+							}	
+						}	
+						NOT = { current_heir = { character = ROOT } }	
+					}					
+					conditional_tooltip = {
+						trigger = { dynasty = FROM }
+						custom_tooltip = { #Matilde's Bloodline
+							text = BLOODLINE_EASIER_VOWS_TOOLTIP
+							AND = { 
+								FROM = { 
+									dynasty = ROOT
+									any_owned_bloodline = {
+										has_bloodline_flag = bloodline_easy_monks
+										bloodline_is_active_for = PREV
+									}
+								}
+								ROOT = { 
+									any_owned_bloodline = {
+										has_bloodline_flag = bloodline_easy_monks
+										bloodline_is_active_for = PREV
+									}
+								}
+							}
+						}
+					}
+				}
+				is_primary_heir = no
+			}	
+			FROM = { 
+				trigger_if = { 
+					limit = { has_religion_feature = religion_monastic }
+					piety = 75
+				}
+				trigger_else = {
+					piety = 25
+				}				
+				prisoner = no
+				NOT = { is_incapable = yes }				
+			}
+			is_liege_or_above = FROM		
+			NOT = { has_minor_title = title_triarch }
+			NOT = { is_inaccessible_trigger = yes }
+			age = 10
+			NOT = { age = 30 }
+			is_married = no
+			is_betrothed = no
+			is_ruler = no		
+			prisoner = no		
+		}
+		
+		effect = {
+			FROM = { 
+				tooltip = {
+					if = {
+						limit = { has_religion_feature = religion_monastic }
+						piety = -75
+					}	
+					else = {
+						piety = 200 
+					}	
+					if = {
+						limit = { 
+							is_parent_of = ROOT
+							NOT = { religion_group = drowned_god_group } 
+						}
+						if = {
+							limit = { tier = EMPEROR }
+							wealth = 100
+						}
+						if = {
+							limit = { tier = KING }
+							wealth = 75
+						}
+						if = {
+							limit = { tier = DUKE }
+							wealth = 50
+						}
+						if = {
+							limit = { lower_tier_than = DUKE }
+							wealth = 25
+						}
+					}
+				}
+			}				
+			custom_tooltip = {
+				text = TOOLTIPsend_child_to_temple_generic
+			}
+			tooltip = {		
+				set_character_flag = do_not_add_zealous
+				if = {
+					limit = {
+						is_female = yes
+						religion = the_seven
+					}
+					add_trait = silent_sister
+				}
+				else = {
+					add_priest_trait_effect = yes
+				}	
+				piety = 100
+			}	
+			hidden_tooltip = { character_event = { id = religious.302 } }
+		}
+		ai_check_interval = 3
+		ai_will_do = { 
+			factor = 1
+			
+			modifier = {
+				factor = 0.03
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					is_councillor = yes
+					is_voter = yes
+					martial = 10
+					trait = skilled_warrior
+					trait = master_warrior
+					trait = dragon_rider
+				}
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					OR = {
+						trait = cynical
+						trait = honorable
+						trait = kind
+						trait = familyperson
+						opinion = { who = ROOT value = 25 }
+						NOT = {
+							any_child = {
+								count = 3
+								is_female = no
+								is_alive = yes
+								can_inherit_titles_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

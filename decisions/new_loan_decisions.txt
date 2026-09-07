@@ -1,0 +1,1293 @@
+decisions = {
+	take_loan = {
+		only_playable = yes
+		potential = {
+			is_ruler = yes
+			is_nomadic = no
+			NOT = { has_character_flag = loan_taken }
+			NOT = { has_character_modifier = loan_timer }
+			NOT_mythical_creature_trigger = yes
+			OR = {
+				ai = no
+				prisoner = yes
+				war = yes
+				NOT = { wealth = -25 }
+			}
+			NAND = {
+				ai = yes
+				has_character_modifier = loan_take_fail
+			}
+		}
+		allow = { 
+			custom_tooltip = {
+				text = TOOLTIP_NOTDISHONOUREDLOAN
+				NOT = { has_character_flag = offended_moneylenders }
+			}
+			yearly_income = 5
+			conditional_tooltip = { #wildlings can only if south of The Wall
+				trigger = { trait = wildling }
+				capital_scope = { NOT = { region = world_beyond_the_wall } }
+			}
+		}
+		effect = {
+			set_character_flag = loan_taken	
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = "loan_timer"
+					duration = 1825
+				}
+			}
+			custom_tooltip = { text = EVTTOOLTIPtake_loan }
+			character_event = { id = bankruptcy.1 }
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 1000
+			}
+			modifier = { #Motives
+				factor = 0
+				wealth = -25	 #Short on cash
+				NAND = { #May take loan to pay ransom
+					prisoner = yes
+					NOR = {
+						host = { war_with = ROOT }
+						has_character_modifier = getting_justice
+						AND = {
+							has_character_flag = demmanded_trial_by_combat
+							NOT = { had_character_flag = { flag = demmanded_trial_by_combat days = 365 } } 
+						}	
+						AND = {
+							tier = COUNT
+							wealth = 70
+						}
+						AND = {
+							tier = DUKE
+							wealth = 140
+						}
+						AND = {
+							tier = KING
+							wealth = 250
+						}
+						AND = {
+							tier = EMPEROR
+							wealth = 385
+						}
+					}
+				}	
+				NAND = { #May take loan to pay for mercs
+					war = yes
+					OR = {
+						AND = {
+							any_current_enemy = { relative_power = { who = ROOT power = 0.8 } }
+							NOT = { any_current_enemy = { relative_power = { who = ROOT power = 4 } } }
+						}	
+						any_war = {
+							OR = {
+								AND = {
+									attacker = { character = ROOT }
+									NOT = { war_score = -50 }
+								}
+								AND = {
+									defender = { character = ROOT }
+									war_score = 50
+								}
+							}
+						}
+					}
+				}				
+			}	
+		}
+	}
+	repay_loan = {
+		ai = no
+		potential = {	
+			ai = no
+			is_ruler = yes
+			has_character_flag = loan_taken
+			has_character_modifier = loan_timer
+			check_variable = { which = loan_total_repayable value = 1 }
+		}
+		allow = { 
+			wealth = loan_total_repayable
+		}
+		effect = {
+			wealth = loan_total_repayable_negative
+			hidden_tooltip = {
+				#Adjust bank's records			
+				persistent_event_target:loan_bank = {
+					ROOT = {
+						set_variable = { which = cash_reserve which = loan_total_repayable }
+						set_variable = { which = outstanding_loans which = loan_amount }		
+						multiply_variable = { which = outstanding_loans value = -1 }
+						set_variable = { which = loan_profits which = loan_interest_payable }						
+					}
+					change_variable = { which = cash_reserve which = ROOT }
+					change_variable = { which = outstanding_loans which = ROOT }
+					change_variable = { which = loan_profits which = ROOT }
+				}
+				##
+				clear_loan_flags_and_variables_effect = yes
+			}	
+		}
+
+		ai_will_do = {
+			factor = 0			
+		}	
+	}
+	
+	ai_repay_loan = {
+		only_rulers = yes
+		potential = {
+			is_ruler = yes
+			ai = yes		
+			has_character_flag = loan_taken
+			check_variable = { which = "loan_amount" value = 1 }
+		}
+		allow = { 
+			wealth = 75
+			war = no
+			prisoner = no
+		}
+		effect = {
+			if = {
+				limit = { check_variable = { which = "loan_amount" value = 50 } }
+				wealth = -50			
+				set_variable = { which = loan_interest_payable value = 50 }
+				#Adjust bank's records
+				persistent_event_target:loan_bank = { 
+					change_variable = { which = cash_reserve value = 50 }
+					change_variable = { which = outstanding_loans value = -50 }
+				}					
+				change_variable = { which = "loan_amount" value = -50 }
+			}	
+			else = { #Pay off remainder			
+				#Adjust bank's records			
+				persistent_event_target:loan_bank = {
+					ROOT = {
+						set_variable = { which = cash_reserve which = loan_amount }
+						set_variable = { which = outstanding_loans which = loan_amount }	
+						multiply_variable = { which = outstanding_loans value = -1 }					
+					}
+					change_variable = { which = cash_reserve which = ROOT }
+					change_variable = { which = outstanding_loans which = ROOT }
+				}
+				set_variable = { which = loan_interest_payable which = loan_amount }
+				multiply_variable = { which = loan_amount value = -1 }			
+				wealth = loan_amount								
+				set_variable = { which = "loan_amount" value = 0 }
+			}
+			#Calculate interest payable
+			multiply_variable = { which = loan_interest_payable which = loan_interest }	
+			persistent_event_target:loan_bank = { 
+				ROOT = {
+					set_variable = { which = cash_reserve which = loan_interest_payable }
+					set_variable = { which = loan_profits which = loan_interest_payable }	
+				}
+				change_variable = { which = cash_reserve which = ROOT }
+				change_variable = { which = loan_profits which = ROOT }
+				ROOT = {
+					set_variable = { which = cash_reserve value = 0 }
+					set_variable = { which = loan_profits value = 0 }		
+				}
+			}		
+			multiply_variable = { which = loan_interest_payable value = -1 }
+			wealth = loan_interest_payable
+			#Check if loan is now paid off
+			if = {
+				limit = {
+					NOT = { check_variable = { which = "loan_amount" value = 1 } }
+				}
+				clear_loan_flags_and_variables_effect = yes
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	
+	take_loan_from_vassal = { 
+		only_playable = yes
+		potential = {		
+			is_nomadic = no
+			OR = {
+				ai = no
+				prisoner = yes
+				war = yes
+				NOT = { wealth = -25 }
+			}
+		}
+		allow = {	
+			custom_tooltip = {
+				text = TOOLTIPrequest_loanINPROGRESS
+				OR = {
+					NOT = { has_character_flag = vassal_loan_in_progress }
+					had_character_flag = { flag = vassal_loan_in_progress days = 50 }
+				}
+			}
+			any_vassal = {
+				is_adult = yes
+				prisoner = no
+				is_incapable = no
+				is_inaccessible_trigger = no
+				NOT = { trait = nightswatch }
+				custom_tooltip = {
+					text = TOOLTIPrequest_loanLOANTAKEN
+					NOT = { has_character_flag = loan_taken }
+					NOT = { has_character_modifier = loan_timer }
+				}
+				custom_tooltip = {
+					text = TOOLTIPrequest_loanGIVENLOAN		
+					NOT = { has_character_modifier = liege_loan }
+					NOT = { has_character_flag = given_personal_loan }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_liege_loan } }
+				}	
+				NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = refused_money_request } }
+				conditional_tooltip = {
+					trigger = { ROOT = { NOT = { monthly_income = 3 } } }
+					wealth = 125
+				}
+				conditional_tooltip = {
+					trigger = { 
+						ROOT = { 
+							monthly_income = 3
+							NOT = { monthly_income = 6 } 
+						}
+					}
+					wealth = 225
+				}
+				conditional_tooltip = {
+					trigger = { 
+						ROOT = { 
+							monthly_income = 6
+							NOT = { monthly_income = 12 } 
+						}
+					}
+					wealth = 450
+				}
+				conditional_tooltip = {
+					trigger = { ROOT = { monthly_income = 12 } }
+					wealth = 750
+				}
+			}
+		}
+		ai_check_interval = 2
+		effect = {
+			set_character_flag = vassal_loan_in_progress
+			if = {
+				limit = { tier = EMPEROR }
+				prestige = -50
+			}
+			if = {
+				limit = { tier = KING }
+				prestige = -40
+			}
+			if = {
+				limit = { tier = DUKE }
+				prestige = -30
+			}
+			if = {
+				limit = { lower_tier_than = DUKE }
+				prestige = -20
+			}
+			random_vassal = {
+				limit = {
+					is_adult = yes
+					prisoner = no
+					is_incapable = no
+					is_inaccessible_trigger = no
+					NOT = { trait = nightswatch }
+					NOT = { has_character_flag = loan_taken }
+					NOT = { has_character_modifier = loan_timer }
+					NOT = { has_character_modifier = liege_loan }
+					NOT = { has_character_flag = given_personal_loan }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_liege_loan } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = refused_money_request } }
+					OR = {
+						AND = {
+							ROOT = { NOT = { monthly_income = 3 } }
+							wealth = 125
+						}
+						AND = {
+							ROOT = { 
+								monthly_income = 3
+								NOT = { monthly_income = 6 } 
+							}
+							wealth = 225
+						}	
+						AND = {
+							ROOT = { 
+								monthly_income = 6
+								NOT = { monthly_income = 12 } 
+							}
+							wealth = 450
+						}		
+						AND = {
+							ROOT = { monthly_income = 12 }
+							wealth = 750
+						}				
+					}
+				}
+				letter_event = { id = 38011 days = 5 tooltip = EVTTOOLTIP38013 }
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 1000
+			}
+			modifier = { #Short on cash
+				factor = 0
+				prisoner = no
+				war = no
+				wealth = -25				
+			}	
+			modifier = { #May take loan to pay ransom
+				factor = 0
+				prisoner = yes
+				OR = {
+					host = { war_with = ROOT }
+					has_character_modifier = getting_justice
+					AND = {
+						has_character_flag = demmanded_trial_by_combat
+						NOT = { had_character_flag = { flag = demmanded_trial_by_combat days = 365 } } 
+					}	
+					AND = {
+						tier = COUNT
+						wealth = 70
+					}
+					AND = {
+						tier = DUKE
+						wealth = 140
+					}
+					AND = {
+						tier = KING
+						wealth = 250
+					}
+					AND = {
+						tier = EMPEROR
+						wealth = 385
+					}
+				}	
+			}
+			modifier = { #May take loan to pay for mercs
+				factor = 0
+				war = yes
+				NOT = { wealth = 250 }
+				OR = {
+					NOT = { any_current_enemy = { relative_power = { who = ROOT power = 1 } } }
+					any_current_enemy = { relative_power = { who = ROOT power = 4 } }
+				}	
+			}
+		}
+	}
+	
+	establish_bank = {
+		only_playable = yes
+		is_high_prio = yes
+		potential = {
+			is_ruler = yes		
+			demesne_size = 1				
+			OR = {
+				is_patrician = yes
+				is_republic = yes
+				has_focus = focus_business
+				AND = {
+					NOT = { has_dlc = "Way of Life" }
+					has_education_stewardship_trigger = yes
+				}
+			}
+			higher_tier_than = BARON
+			NOT = { society = { has_flag = bank_society } }
+			OR = {
+				ai = no
+				AND = {
+					NOT = { trait = content }
+					NOT = { trait = zealous }
+				}
+			}
+			is_theocracy = no
+			has_tribal_or_nomadic_government_trigger = no
+			NOT_mythical_creature_trigger = yes
+			can_press_claims_trigger = yes
+		}
+		allow = { 
+			conditional_tooltip = {
+				trigger = { ai = no }
+				wealth = 1000
+			}
+			conditional_tooltip = {
+				trigger = { ai = yes }
+				OR = {
+					wealth = 1000
+					AND = { #AI may take loan
+						yearly_income = 300
+						wealth = 400
+						NOT = { has_character_flag = loan_taken }
+						NOT = { has_character_modifier = loan_timer }
+						NOT = { has_character_flag = offended_moneylenders }
+						any_society_member = { #A bank can actually lend money
+							society = { 
+								has_flag = bank_society 
+								check_variable = { which = cash_reserve value = 600 }
+							}
+						}
+					}
+				}
+			}
+			stewardship = 16
+			prestige = 500
+			custom_tooltip = { #Only one bank per dejure kingdom
+				text = EVTTOOLTIPestablish_bankA
+				capital_scope = {
+					kingdom = {
+						NOR = {
+							any_direct_de_jure_vassal_title = {
+								tier = COUNT
+								location = { has_province_flag = location_has_bank }
+							}
+							any_direct_de_jure_vassal_title = {
+								tier = DUKE
+								any_direct_de_jure_vassal_title = {
+									tier = COUNT
+									location = { has_province_flag = location_has_bank }
+								}
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = { #A bank slot is available
+				text = EVTTOOLTIPestablish_bankB
+				OR = {
+					AND = { 
+						capital_scope = { region = world_braavos } 
+						NOT = { has_global_flag = iron_bank_founded }
+					}
+					AND = { 
+						capital_scope = { region = world_lys } 
+						NOT = { has_global_flag = rogare_bank_founded }
+					}
+					AND = { 
+						capital_scope = { region = world_qarth } 
+						NOT = { has_global_flag = qarth_bank_founded }
+					}
+					AND = { 
+						has_landed_title = e_new_valyria
+						NOT = { has_global_flag = valyria_bank_founded }
+					}
+					AND = {
+						NOR = {
+							capital_scope = { 
+								OR = {
+									region = world_braavos
+									region = world_lys
+									region = world_qarth
+								}
+							}
+							has_landed_title = e_new_valyria
+						}	
+						OR = { 
+							NOT = { has_global_flag = bank_1_founded }
+							NOT = { has_global_flag = bank_2_founded }
+							NOT = { has_global_flag = bank_3_founded }
+							NOT = { has_global_flag = bank_4_founded }
+							NOT = { has_global_flag = bank_5_founded }
+						}
+					}
+				}
+			}
+			is_in_society = no
+			has_regent = no
+			war = no
+		}
+		effect = {		
+			if = { #AI takes loan if shortage of cash
+				limit = { 
+					ai = yes 
+					NOT = { wealth = 1000 }
+				}
+				add_character_modifier = {
+					name = "loan_timer"
+					duration = 1825
+				}
+				set_character_flag = loan_taken
+				#300g loan
+				if = {
+					limit = {
+						wealth = 700
+					}
+					set_variable = { which = "loan_amount" value = 300 }				
+				}
+				#600g loan
+				else = {
+					set_variable = { which = "loan_amount" value = 600 }				
+				}
+				set_character_flag = loan_amount_found
+				character_event = { id = bankruptcy.1 }
+			}
+			wealth = -1000
+			prestige = 500
+			custom_tooltip = { 
+				text = EVTTOOLTIPestablish_bankC
+				character_event = { id = bankruptcy.126 }
+			}
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.025
+			}
+			modifier = { 
+				factor = 4
+				trait = ambitious
+			}
+			modifier = { 
+				factor = 4
+				has_education_stewardship_trigger = yes
+			}
+			modifier = { 
+				factor = 4
+				is_patrician = yes
+			}
+			modifier = { 
+				factor = 4
+				has_focus = focus_business
+			}
+		}
+	}
+	
+	view_accounts = {
+		ai = no
+		potential = {
+			ai = no	
+			society = { has_flag = bank_society }			
+		}
+		allow = {	
+			society_rank > 1
+		}
+		effect = {
+			set_character_flag = viewing_bank_accounts
+			character_event = { id = bankruptcy.21 }
+		}
+		ai_will_do = {
+			factor = 0 
+		}
+	}
+	set_interest_strategy = {
+		ai = no
+		potential = {
+			ai = no	
+			society = { has_flag = bank_society }	
+			is_society_grandmaster = yes
+		}
+		allow = {	
+			
+		}
+		effect = {
+			character_event = { id = bankruptcy.240 }
+		}
+		ai_will_do = {
+			factor = 0 
+		}
+	}
+}
+targetted_decisions = {
+	request_loan = { 
+		ai = no #AI uses old decision
+		filter = all
+		ai_target_filter = none
+		diplomacy_icon = GFX_SEND_GIFT_INTERACTION_icon
+		
+		from_potential = {
+			is_nomadic = no
+		}
+		potential = {	
+			NOT_mythical_creature_trigger = yes
+			OR = {
+				is_liege_or_above = FROM
+				same_liege = FROM
+				is_married = FROM
+				is_close_relative = FROM
+				is_friend = FROM
+			}
+		}
+		allow = {	
+			FROM = {
+				custom_tooltip = {
+					text = TOOLTIPrequest_loanINPROGRESS
+					OR = {
+						NOT = { has_character_flag = vassal_loan_in_progress }
+						had_character_flag = { flag = vassal_loan_in_progress days = 50 }
+					}
+				}	
+			}	
+			is_adult = yes
+			prisoner = no
+			is_incapable = no
+			is_inaccessible_trigger = no
+			NOT = { trait = nightswatch }
+			custom_tooltip = {
+				text = TOOLTIPrequest_loanLOANTAKEN
+				NOT = { has_character_flag = loan_taken }
+				NOT = { has_character_modifier = loan_timer }
+			}
+			custom_tooltip = {
+				text = TOOLTIPrequest_loanGIVENLOAN		
+				NOT = { has_character_modifier = liege_loan }
+				NOT = { has_character_flag = given_personal_loan }
+				NOT = { has_opinion_modifier = { who = FROM modifier = opinion_liege_loan } }
+			}	
+			NOT = { reverse_has_opinion_modifier = { who = FROM modifier = refused_money_request } }
+			conditional_tooltip = {
+				trigger = { FROM = { NOT = { monthly_income = 3 } } }
+				wealth = 125
+			}
+			conditional_tooltip = {
+				trigger = { 
+					FROM = {
+						monthly_income = 3
+						NOT = { monthly_income = 6 } 
+					}
+				}
+				wealth = 225
+			}
+			conditional_tooltip = {
+				trigger = { 
+					FROM = {
+						monthly_income = 6
+						NOT = { monthly_income = 12 } 
+					}
+				}
+				wealth = 450
+			}
+			conditional_tooltip = {
+				trigger = { FROM = { monthly_income = 12 } }
+				wealth = 750
+			}	
+		}
+		effect = {
+			custom_tooltip = {
+				text = TOOLTIPrequest_loanEFFECT
+				FROM = { 
+					set_character_flag = vassal_loan_in_progress
+					character_event = { id = 38911 } 
+				}
+			}					
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	offer_cheap_loan = { #Offer cheap loan to rulers who are fighting defaulters or debtors of rival bank
+		is_in_society = yes
+		only_playable = yes
+		diplomacy_icon = GFX_SEND_GIFT_INTERACTION_icon
+		
+		ai_target_filter = independent_rulers
+		filter = independent_rulers
+		
+		third_party_filter = independent_rulers
+		ai_third_party_filter = independent_rulers
+		show_third_party_score = no
+		is_high_prio = yes
+		
+		from_potential = {
+			society = { has_flag = bank_society }
+			any_society_member = { #Another bank actually exists
+				society = { 
+					has_flag = bank_society 
+					ROOT_FROM = { NOT = { society_member_of = PREV } }
+				}
+			}
+			society_rank > 2
+			prisoner = no
+			is_incapable = no
+			NOT = { is_inaccessible_trigger = yes }
+			
+			OR = { #AI save currency to rank up
+				ai = no
+				NAND = { 
+					society_rank == 3	
+					NOT = { society_currency >= 2300 }
+				}
+			}
+		}
+
+		potential = { 	#Potential Ally
+			independent = yes
+			war = yes
+			demesne_size = 1
+			NOT = { has_character_flag = loan_taken }
+			NOT = { has_character_flag = offended_moneylenders }
+			NOT = { has_character_flag = has_had_loan_default }
+			NOT = { has_character_flag = personal_loan_default }
+			NOT = { society = { has_flag = bank_society } }
+			
+			NOT = { same_realm = FROM }	
+			NOT = { trait = nightswatch } 
+			NOT = { trait = kingsguard } 
+			NOT_mythical_creature_trigger = yes
+			
+			OR = { #FROM AI restrictions
+				FROM = { ai = no }
+				reverse_opinion = { who = ROOT_FROM value = -40 }
+			}
+		}
+		third_party_potential = { #Target
+			FROMFROM = {
+				independent = yes
+				war_with = ROOT
+				#any_current_enemy = { character = ROOT }
+				
+				has_character_flag = loan_taken
+				NOT = { has_character_flag = offended_moneylenders }
+				persistent_event_target:loan_bank = {
+					ROOT_FROM = { NOT = { society_member_of = PREV } }
+				}
+				NOT = { has_character_flag = loan_bank_minor }
+				
+				NOT = { character = ROOT_FROM }
+				NOT = { character = ROOT }
+				
+				NOT = { same_realm = ROOT_FROM }
+				NOT = { same_realm = ROOT }
+				
+				NOT = { trait = nightswatch }	
+				NOT_mythical_creature_trigger = yes
+				
+				OR = { #FROM AI restrictions
+					ROOT_FROM = { ai = no }
+					NOT = { reverse_opinion = { who = ROOT_FROM value = 20 } }
+				}
+			}	
+		}
+		third_party_allow = {
+			FROMFROM = {						
+				NOT = { has_non_aggression_pact_with = ROOT_FROM }	
+			}
+			ROOT = {
+				#Apply ally AI logic here, so player knows if they will accept or not
+				conditional_tooltip = {
+					trigger = { ai = yes }
+					NOT = { wealth = 400 } #has plenty of cash already
+					OR = {
+						NOT = { wealth = 50 } #Short on cash
+						custom_tooltip = { #May take loan to pay for mercs
+							text = TOOLTIPoffer_cheap_loanWAR
+							AND = { #May take loan to pay for mercs
+								war = yes
+								OR = {
+									AND = {
+										any_current_enemy = { 
+											relative_power = { who = ROOT power = 0.8 } 
+											NOT = { relative_power = { who = ROOT power = 4 } }
+										}									
+									}	
+									any_war = {
+										OR = {
+											AND = {
+												attacker = { character = ROOT }
+												NOT = { war_score = -50 }
+											}
+											AND = {
+												defender = { character = ROOT }
+												war_score = 50
+											}
+										}
+									}
+								}
+							}
+						}	
+						custom_tooltip = { #May take loan to pay ransom
+							text = TOOLTIPoffer_cheap_loanPRISONER
+							AND = { 
+								prisoner = yes
+								NOR = {
+									host = { war_with = ROOT }
+									has_character_modifier = getting_justice
+									AND = {
+										has_character_flag = demmanded_trial_by_combat
+										NOT = { had_character_flag = { flag = demmanded_trial_by_combat days = 365 } } 
+									}	
+									AND = {
+										tier = COUNT
+										wealth = 70
+									}
+									AND = {
+										tier = DUKE
+										wealth = 140
+									}
+									AND = {
+										tier = KING
+										wealth = 250
+									}
+									AND = {
+										tier = EMPEROR
+										wealth = 385
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		allow = {
+			FROM = {
+				NOT = { war_with = ROOT }	
+				society = { check_variable = { which = cash_reserve which = preferred_cash_reserve } }#Is above preferred cash reserve
+				has_society_currency_medium_trigger = yes
+				custom_tooltip = {
+					text = TOOLTIPoffer_cheap_loanONGOING
+					hidden_tooltip = { 
+						OR = {
+							NOT = { has_character_flag = offer_cheap_loan } 
+							had_character_flag = { flag = offer_cheap_loan days = 30 }
+						}	
+					}
+				}
+			}
+			yearly_income = 25
+			is_within_diplo_range = FROM
+			has_regent = no
+			NOT = { is_nomadic = yes }
+			NOT = { trait = pirate } 
+		}
+				
+		effect = {
+			FROM = { set_character_flag = offer_cheap_loan }
+			letter_event = { id = bankruptcy.160 tooltip = TOOLTIPbankruptcy.160 days = 5 }
+		}		
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.05
+			}
+			#Target opinion
+			modifier = {
+				factor = 1.5
+				FROMFROM = { 
+					OR = {
+						is_rival = ROOT_FROM
+						is_foe = ROOT_FROM
+					}	
+				}
+			}
+			# modifier = {
+				# factor = 0
+				# FROMFROM = { reverse_opinion = { who = ROOT_FROM value = 20 } }
+			# }		
+			modifier = {
+				factor = 0.66
+				FROMFROM = { reverse_opinion = { who = ROOT_FROM value = 0 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { NOT = { reverse_opinion = { who = ROOT_FROM value = -24 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { NOT = { reverse_opinion = { who = ROOT_FROM value = -49 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { NOT = { reverse_opinion = { who = ROOT_FROM value = -74 } } }
+			}
+			modifier = {
+				factor = 1.5
+				FROMFROM = { NOT = { reverse_opinion = { who = ROOT_FROM value = -99 } } }
+			}
+			#Target ally opinion
+			modifier = {
+				factor = 1.5
+				is_allied_with = ROOT_FROM
+			}
+			# modifier = {
+				# factor = 0
+				# NOT = { reverse_opinion = { who = ROOT_FROM value = -40 } }
+			# }		
+			modifier = {
+				factor = 0.66
+				NOT = { reverse_opinion = { who = ROOT_FROM value = -20 } }
+			}			
+			modifier = {
+				factor = 1.5
+				reverse_opinion = { who = ROOT_FROM value = 0 }
+			}
+			modifier = {
+				factor = 1.5
+				reverse_opinion = { who = ROOT_FROM value = 25 }
+			}
+			modifier = {
+				factor = 1.5
+				reverse_opinion = { who = ROOT_FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				reverse_opinion = { who = ROOT_FROM value = 75 }
+			}
+			#Personality
+			modifier = {
+				factor = 1.66
+				FROM = { trait = envious }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { trait = charitable }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = ruthless }
+			}
+			modifier = {
+				factor = 1.32
+				FROM = { trait = wroth }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { trait = patient }
+			}
+			modifier = {
+				factor = 1.32
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 1.32
+				FROM = { trait = deceitful }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { trait = honest }
+			}
+			modifier = {
+				factor = 1.66
+				FROM = { trait = ambitious }
+			}
+		} 
+	}
+	rename_bank = { 
+		ai = no 
+		is_in_society = yes
+		filter = self
+		ai_target_filter = none
+		
+		potential = {	
+			society = { 
+				has_flag = bank_society 
+				OR = {
+					is_society = rogare_bank
+					is_society = bank_1
+					is_society = bank_2
+					is_society = bank_3
+					is_society = bank_4
+					is_society = bank_5
+				}
+			}		
+			#NOT = { has_character_flag = renaming_bank }
+		}
+		allow = {
+			is_society_grandmaster = yes
+			#higher_tier_than = COUNT
+		}
+		effect = {
+			custom_tooltip = {
+				text = TOOLTIPrename_bank
+				#set_character_flag = renaming_bank
+				if = {
+					limit = { society_member_of = rogare_bank }
+					c_rogare_bank = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}	
+				else_if = {
+					limit = { society_member_of = bank_1 }
+					c_bank_1 = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}
+				else_if = {
+					limit = { society_member_of = bank_2 }
+					c_bank_2 = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}
+				else_if = {
+					limit = { society_member_of = bank_3 }
+					c_bank_3 = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}
+				else_if = {
+					limit = { society_member_of = bank_4 }
+					c_bank_4 = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}
+				else_if = {
+					limit = { society_member_of = bank_5 }
+					c_bank_5 = { 
+						prompt_name = {
+							player = ROOT
+							type = RENAME_BANK_MESSAGE
+							portrait = ROOT
+						}
+					}
+				}
+			}					
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	gift_keyholder = { 
+		ai = no 
+		is_in_society = yes
+		filter = society
+		ai_target_filter = none
+		diplomacy_icon = GFX_SEND_GIFT_INTERACTION_icon
+		
+		from_potential = {
+			society_rank == 4
+			society = { has_flag = bank_society }
+		}
+		potential = {	
+			same_society_as = FROM				
+		}
+		allow = {
+			FROM = { 
+				has_society_currency_medium_trigger = yes
+				prisoner = no
+				is_incapable = no
+				is_adult = yes
+			}
+			society_rank == 1
+		}
+		effect = {
+			tooltip = { 
+				society_rank_up = 1
+				set_variable = { which = shares value = 1 }
+			}
+			opinion = { who = FROM modifier = opinion_gifted_keyholder_rank months = 120 }	
+			letter_event = { id = 73567 }
+			FROM = { 
+				show_scope_change = no
+				detract_society_currency_medium_effect = yes 
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+society_decisions = {
+	reduce_loan_interest = {
+		is_high_prio = yes
+		only_rulers = yes
+		potential = {
+			society = { has_flag = bank_society }	
+		}
+		allow = {
+			custom_tooltip = {
+				text = TOOLTIP_HASLOANFROMSOCIETY
+				has_character_flag = loan_taken
+				persistent_event_target:loan_bank = { ROOT = { society_member_of = PREV } }
+			}
+			conditional_tooltip = {
+				trigger = { society_rank == 1 }
+				has_society_currency_tiny_trigger = yes
+				check_variable = { which = loan_interest value = 0.21 }
+			}
+			conditional_tooltip = {
+				trigger = { society_rank == 2 }
+				has_society_currency_minor_trigger = yes
+				check_variable = { which = loan_interest value = 0.16 }
+			}
+			conditional_tooltip = {
+				trigger = { society_rank > 2 }
+				has_society_currency_medium_trigger = yes
+				check_variable = { which = loan_interest value = 0.11 }
+			}
+			conditional_tooltip = {
+				trigger = { society_rank < 4 }
+				custom_tooltip = {
+					text = TOOLTIP_NOTDEFAULTEDLOAN
+					NOT = { has_character_flag = has_had_loan_default }
+					NOT = { has_character_flag = personal_loan_default }
+				}
+			}	
+		}
+		effect = {
+			if = {
+				limit = { society_rank == 1 }
+				custom_tooltip = {
+					text = TOOLTIPbankruptcy.1_INTEREST_20
+					set_variable = { which = loan_interest value = 0.2 }
+				}
+				detract_society_currency_tiny_effect = yes
+			}
+			else_if = {
+				limit = { society_rank == 2 }
+				custom_tooltip = {
+					text = TOOLTIPbankruptcy.1_INTEREST_15
+					set_variable = { which = loan_interest value = 0.15 }
+				}
+				detract_society_currency_minor_effect = yes
+			}
+			else_if = {
+				limit = { society_rank > 2 }
+				custom_tooltip = {
+					text = TOOLTIPbankruptcy.1_INTEREST_10
+					set_variable = { which = loan_interest value = 0.1 }
+				}
+				detract_society_currency_medium_effect = yes
+			}
+			hidden_tooltip = {
+				if = { #this is calculated for the player so they can repay instantly
+					limit = { 
+						ai = no
+					}
+					calculate_loan_repayable_effect = yes				
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 100	
+		}
+	}
+	
+	hire_banker = { #guarantees character with at least 12 stewardship
+		only_playable = yes
+		is_high_prio = yes
+		potential = {
+			society = { has_flag = bank_society }	
+			OR = {
+				is_patrician = yes
+				NOT = { tier = BARON }
+			}	
+			demesne_size = 1
+		}
+		allow = {
+			has_society_currency_minor_trigger = yes
+			has_regent = no		
+			NOT = { has_character_modifier = hired_banker }
+		}
+		effect = {
+			if = {
+				limit = { society_rank == 1 }
+				wealth = -50
+			}	
+			if = {
+				limit = { society_rank == 2 }
+				wealth = -30
+			}
+			if = {
+				limit = { society_rank == 3 }
+				wealth = -15
+			}			
+			detract_society_currency_minor_effect = yes
+			add_character_modifier = {
+				name = hired_banker
+				duration = 1825
+			}
+			character_event = { id = bankruptcy.125 tooltip = TOOLTIPbankruptcy.125 }
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.6
+			}
+			modifier = {
+				factor = 0
+				job_treasurer = {
+					stewardship = 12
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { wealth = 50 }	
+			}
+			modifier = {
+				factor = 0
+				war = yes	
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = loan_taken
+				OR = {
+					stewardship = 9
+					trait = temperate
+					NOT = { 
+						OR = {
+							trait = gluttonous 
+							trait = hedonist
+							trait = slothful
+						}	
+					}	
+				}	
+			}			
+		}
+	}
+	build_fortification = {
+		only_playable = yes
+		is_high_prio = yes
+		potential = {
+			society = { has_flag = bank_society }	
+			society_rank == 4
+			has_quest = quest_bank_build_fortification
+			NOT = { trait = working_at_bank }
+		}
+		allow = {
+			society = { check_variable = { which = cash_reserve value = 400 } }
+			NOT = { is_inaccessible_trigger = yes }
+			is_incapable = no
+		}
+		effect = {
+			society = { 
+				change_variable = { which = cash_reserve value = -400 } 
+				hidden_tooltip = { change_variable = { which = expenses value = -400 } }
+			}
+			character_event = { id = bankruptcy.176 tooltip = TOOLTIPbankruptcy.176 }
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				war = yes
+			}			
+		}
+	}
+}

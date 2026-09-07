@@ -1,0 +1,951 @@
+#decisions to arrange prisoner swap
+
+decisions = {
+	bring_out_of_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = {
+			OR = {
+				has_character_modifier = stalwart_defender 
+				#has_character_modifier = left_at_siege
+				AND = {
+					trait = in_hiding
+					has_character_flag = hidden_from_siege
+				}	
+				any_courtier = {
+					#at_location = ROOT
+					liege = { character = ROOT }
+					OR = {
+						AND = {
+							trait = in_hiding
+							OR = {
+								has_character_flag = hidden_from_siege
+								AND = {
+									is_playable = no
+									NOT = { is_married = ROOT }
+									NOT = { is_child_of = ROOT }
+								}
+							}	
+						}
+						#has_character_modifier = left_at_siege
+						#has_character_modifier = stalwart_defender
+					}
+				}
+			}		
+		}
+		allow = { 
+			war = no
+			NOT = { any_liege = { war = yes } }
+		}
+		effect = {
+			clr_character_flag = siege_choice_made
+			if = {
+				limit = { 
+					trait = in_hiding
+					has_character_flag = hidden_from_siege
+				}
+				remove_trait = in_hiding
+				clr_character_flag = hidden_from_siege
+			}
+			# if = {
+				# limit = { 
+					# has_character_modifier = left_at_siege
+				# }
+				# remove_character_modifier = left_at_siege
+			# }
+			any_courtier = {
+				limit = { 
+					#at_location = ROOT
+					liege = { character = ROOT }
+					OR = {
+						AND = {
+							trait = in_hiding
+							OR = {
+								has_character_flag = hidden_from_siege
+								AND = {
+									is_playable = no
+									NOT = { is_married = ROOT }
+									NOT = { is_child_of = ROOT }
+								}
+							}	
+						}
+						#has_character_modifier = left_at_siege
+						#has_character_modifier = stalwart_defender
+					}
+				}
+				remove_trait = in_hiding
+				clr_character_flag = do_not_disturb
+				clr_character_flag = hidden_from_siege
+			}
+			# any_dynasty_member = {
+				# limit = { 
+					# at_location = ROOT
+					# has_character_modifier = left_at_siege
+				# }
+				# remove_character_modifier = left_at_siege
+			# }
+			# any_courtier = {
+				# limit = { 
+					# at_location = ROOT
+					# NOT = { dynasty = ROOT }
+					# has_character_modifier = left_at_siege
+				# }
+				# remove_character_modifier = left_at_siege
+			# }#
+			hidden_tooltip = {
+				remove_character_modifier = stalwart_defender
+			}	
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}#bring			
+}
+targetted_decisions = {
+	go_into_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		filter = self
+		ai_target_filter = self		
+		
+		diplomacy_icon = GFX_go_into_hiding
+		
+		potential = {
+			is_ruler = yes
+			NOT = { trait = in_hiding }
+			OR = {
+				ai = no
+				trait = amateurish_plotter
+				trait = flamboyant_schemer
+				trait = intricate_webweaver
+				trait = elusive_shadow
+				trait = paranoid
+				trait = craven
+			}
+		}
+		allow = {
+			in_command = no
+			prisoner = no
+			custom_tooltip = {
+				text = is_not_busy_trigger_tooltip
+				hidden_tooltip = { NOT = { has_character_flag = do_not_disturb } }
+			}
+			has_job_title = no
+			custom_tooltip = {
+				text = is_target_of_murder_plot_tooltip
+				hidden_tooltip = {
+					OR = {
+						has_character_modifier = suspected_murder_plot
+						any_known_plotter = {
+							target = ROOT
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = recently_went_out_of_hiding_tooltip
+				hidden_tooltip = {
+					NOT = { has_character_modifier = went_out_of_hiding_timer }
+				}
+			}
+		}
+		effect = {
+			set_character_flag = do_not_disturb
+			custom_tooltip = { text = go_into_hiding_info_tooltip }
+			add_trait = in_hiding
+			hidden_tooltip = {                    # Notify player and close family and plotters
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							NOT = { has_character_flag = murder_in_motion }
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6000 }
+						any_backed_character = { 
+							character_event = { id = CM.6000 }
+						}
+					}
+					any_plotter = {
+						target = ROOT
+						limit = {
+							has_character_flag = murder_in_motion
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6180 }
+						any_plot_backer = {
+							character_event = { id = CM.6000 }
+						}
+					}
+				}
+				any_spouse = {
+					limit = {
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+						NOT = { is_rival = ROOT }
+					}
+					character_event = { id = CM.6000 }
+				}
+			}
+		}
+
+		
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1 
+			
+			modifier = {
+				factor = 0.06
+			}
+			modifier = {
+				factor = 0.1
+				age = 65
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = brave
+					trait = proud
+					trait = ambitious
+				}	
+			}
+			modifier = {
+				factor = 2
+				trait = depressed
+			}
+			modifier = {
+				factor = 5
+				trait = craven
+			}
+			modifier = {
+				factor = 10
+				trait = paranoid
+			}
+		}
+	}
+	
+	come_out_of_hiding = {
+		is_high_prio = yes
+		only_rulers = yes
+		filter = self
+		ai_target_filter = self
+		diplomacy_icon = GFX_go_into_hiding
+		
+		potential = {
+			is_ruler = yes
+			trait = in_hiding
+			NOT = { has_character_flag = hidden_from_siege }
+		}
+		allow = {
+			trait = in_hiding
+			OR = {
+				age = 16
+				NOT = { trait = incapable }
+				AND = {
+					has_regent = yes
+					regent = {
+						NOT = { trait = deceitful }
+						NOT = { trait = ambitious }
+						NOT = { is_rival = ROOT }
+					}
+				}	
+			}
+		}
+		effect = {
+			add_character_modifier = {
+				name = went_out_of_hiding_timer
+				duration = 180
+				hidden = yes
+			}
+			clr_character_flag = do_not_disturb
+			custom_tooltip = { text = come_out_of_hiding_info_tooltip }
+			remove_trait = in_hiding
+			hidden_tooltip = {                    # Notify player and close family and plotters
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6001 }
+					}
+				}
+				any_spouse = {
+					limit = {
+						ROOT = {
+							NOT = { is_plot_target_of = THIS }
+						}
+					}
+					character_event = { id = CM.6001 }
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+				trait = paranoid
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					ROOT = {
+						any_plotter = {
+							target = ROOT
+							is_primary_heir = yes
+							ai = no
+						}
+					}
+				}
+				OR = {
+					has_character_modifier = suspected_murder_plot
+					any_known_plotter = {
+						target = ROOT
+						OR = {
+							has_plot = plot_kill_character
+							has_plot = plot_kill_spouse
+						}
+					}
+				}
+			}
+		}
+	}
+
+	send_spouse_into_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		filter = spouse
+		ai_target_filter = spouse
+		diplomacy_icon = GFX_go_into_hiding
+		
+		from_potential = {
+			is_ruler = yes
+			has_regent = no
+			OR = {
+				ai = no
+				trait = amateurish_plotter
+				trait = flamboyant_schemer
+				trait = intricate_webweaver
+				trait = elusive_shadow
+				trait = paranoid
+				trait = craven
+			}
+		}
+		potential = {
+			is_ruler = no
+			is_married = FROM
+			liege = { character = FROM }
+			NAND = { 
+				is_plot_target_of = FROM 
+				FROM = {
+					OR = {
+						has_plot = plot_kill_character
+						has_plot = plot_kill_spouse
+					}
+				}
+			}
+			NOT = { has_character_modifier = went_out_of_hiding_timer }
+		}
+		allow = {
+			in_command = no
+			prisoner = no
+			custom_tooltip = {
+				text = is_not_busy_trigger_tooltip
+				hidden_tooltip = { NOT = { has_character_flag = do_not_disturb } }
+			}
+			has_job_title = no
+			NOT = { is_ruler = yes }
+			custom_tooltip = {
+				text = is_target_of_murder_plot_tooltip
+				hidden_tooltip = {
+					OR = {
+						has_character_modifier = suspected_murder_plot
+						FROM = {
+							any_known_plotter = {
+								target = PREV
+								OR = {
+									has_plot = plot_kill_character
+									has_plot = plot_kill_spouse
+								}
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = recently_went_out_of_hiding_tooltip
+				hidden_tooltip = {
+					NOT = { has_character_modifier = went_out_of_hiding_timer }
+				}
+			}
+		}
+		effect = {
+			set_character_flag = do_not_disturb
+			custom_tooltip = { text = go_into_hiding_info_tooltip }
+			add_trait = in_hiding
+			hidden_tooltip = {                    # Notify player and close family and plotters
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							NOT = { has_character_flag = murder_in_motion }
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6002 }
+						any_backed_character = { 
+							character_event = { id = CM.6002 }
+						}
+					}
+					any_plotter = {
+						target = ROOT
+						limit = {
+							has_character_flag = murder_in_motion
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6180 }
+						any_plot_backer = {
+							character_event = { id = CM.6002 }
+						}
+					}
+				}
+			}
+		}
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1 
+			
+			modifier = {
+				factor = 0.06
+			}
+			modifier = {
+				factor = 0.1
+				age = 65
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					OR = {
+						trait = brave
+						trait = proud
+						trait = ambitious
+					}	
+				}	
+			}
+			modifier = {
+				factor = 0.1
+				trait = pregnant 
+				NOT = {
+					father_of_unborn = {
+						character = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { 
+					FROM = { 
+						trait = in_hiding 
+					} 
+				}
+			}
+			modifier = {
+				factor = 0.5
+				NOT = {
+					reverse_opinion = {
+						who = FROM
+						value = -24
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				reverse_opinion = {
+					who = FROM
+					value = 25
+				}	
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = in_hiding }
+			}
+			modifier = {
+				factor = 10
+				FROM = { trait = paranoid }
+			}
+			modifier = {
+				factor = 10
+				trait = pregnant 
+				father_of_unborn = {
+					character = ROOT
+				}
+			}
+		}
+	}
+
+	take_spouse_out_of_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		filter = spouse
+		ai_target_filter = spouse
+		diplomacy_icon = GFX_go_into_hiding
+		
+		from_potential = {
+			is_ruler = yes
+		}
+		potential = {			
+			trait = in_hiding
+			NOT = { has_character_flag = hidden_from_siege }
+			liege = { character = FROM }
+			is_ruler = no
+		}
+		allow = {
+			trait = in_hiding
+			liege = { character = FROM }
+			is_ruler = no
+		}
+		effect = {
+			add_character_modifier = {
+				name = went_out_of_hiding_timer
+				duration = 180
+				hidden = yes
+			}
+			clr_character_flag = do_not_disturb
+			custom_tooltip = { text = come_out_of_hiding_info_tooltip }
+			remove_trait = in_hiding
+			hidden_tooltip = {                    # Notify player and close family and plotters
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							spouse = { NOT = { character = PREV } }
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6003 }
+					}
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.3
+				FROM = { trait = paranoid }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_character_modifier = suspected_murder_plot
+					FROM = {
+						any_known_plotter = {
+							target = PREV
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+					}
+				}
+			}			
+		}
+	}
+	send_child_into_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		filter = close_relatives
+		ai_target_filter = close_relatives
+		diplomacy_icon = GFX_go_into_hiding
+		from_potential = {
+			is_ruler = yes
+			has_regent = no
+			has_children = yes
+			OR = {
+				ai = no
+				trait = amateurish_plotter
+				trait = flamboyant_schemer
+				trait = intricate_webweaver
+				trait = elusive_shadow
+				trait = paranoid
+				trait = craven
+			}
+		}
+		
+		potential = {
+			is_ruler = no
+			liege = { character = FROM }
+			NOT = { is_plot_target_of = FROM }
+			is_child_of = FROM
+			OR = {
+				has_character_modifier = suspected_murder_plot
+				FROM = {
+					any_known_plotter = {
+						target = PREV
+						OR = {
+							has_plot = plot_kill_character
+							has_plot = plot_kill_spouse
+						}
+					}
+				}
+			}
+			NOT = { is_married = FROM }	
+			OR = {
+				father = { ai = no }
+				mother = { ai = no }
+				is_primary_heir = yes
+				FROM = { primary_title = { has_law = true_cognatic_succession } }
+				AND = {
+					is_female = yes
+					FROM = { 
+						primary_title = {
+							OR = {
+								has_law = enatic_succession
+								has_law = enatic_cognatic_succession
+							}
+						}	
+					}
+				}
+				AND = {
+					is_female = no
+					FROM = { 
+						primary_title = {
+							OR = {
+								has_law = agnatic_succession
+								has_law = cognatic_succession
+							} 
+						}	
+					}
+				}
+			}
+			NOT = { has_character_modifier = went_out_of_hiding_timer }
+		}
+		
+		allow = {
+			in_command = no
+			prisoner = no
+			has_job_title = no
+			custom_tooltip = {
+				text = is_not_busy_trigger_tooltip
+				hidden_tooltip = { NOT = { has_character_flag = do_not_disturb } }
+			}
+			custom_tooltip = {
+				text = is_target_of_murder_plot_tooltip
+				hidden_tooltip = {
+					OR = {
+						has_character_modifier = suspected_murder_plot
+						FROM = {
+							any_known_plotter = {
+								target = PREV
+								OR = {
+									has_plot = plot_kill_character
+									has_plot = plot_kill_spouse
+								}
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = {
+				text = recently_went_out_of_hiding_tooltip
+				hidden_tooltip = {
+					NOT = { has_character_modifier = went_out_of_hiding_timer }
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = { text = go_into_hiding_info_tooltip }
+			add_trait = in_hiding
+			set_character_flag = do_not_disturb
+			hidden_tooltip = {
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							NOT = { has_character_flag = murder_in_motion }
+							NOT = { character = FROM }
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6004 }
+						any_backed_character = { 
+							character_event = { id = CM.6004 }
+						}
+					}
+					any_plotter = {
+						target = ROOT
+						limit = {
+							has_character_flag = murder_in_motion
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6180 }
+						any_backed_character = { 
+							character_event = { id = CM.6004 }
+						}
+					}
+				}
+				father = {
+					if = {
+						limit = {
+							NOT = { character = FROM }
+							NOT = { plot_target_char = { character = ROOT } }
+							NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+							NOT = { is_rival = ROOT }
+						}
+						character_event = { id = CM.6004 }
+					}
+				}
+				mother = {
+					if = {
+						limit = {
+							NOT = { character = FROM }
+							NOT = { plot_target_char = { character = ROOT } }
+							NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+							NOT = { is_rival = ROOT }
+						}
+						character_event = { id = CM.6004 }
+					}
+				}
+				any_spouse = {
+					limit = {
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+						NOT = { is_rival = ROOT }
+					}
+					character_event = { id = CM.6004 }
+				}
+				any_child = {
+					limit = {
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+						NOT = { is_rival = ROOT }
+					}
+					character_event = { id = CM.6004 }
+				}
+				any_lover = {
+					limit = {
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+						NOT = { is_rival = ROOT }
+						NOT = { spouse = { character = ROOT } }
+					}
+					character_event = { id = CM.6004 }
+				}
+				any_sibling = {
+					limit = {
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+						NOT = { is_rival = ROOT }
+						NOT = { is_lover = ROOT }
+					}
+					character_event = { id = CM.6004 }
+				}
+				any_rival = {
+					limit = {
+						NOT = { character = FROM }
+						NOT = { plot_target_char = { character = ROOT } }
+						NOT = { any_backed_character = { plot_target_char = { character = ROOT } } }
+					}
+					character_event = { id = CM.6004 }
+				}
+			}
+		}
+		
+		ai_check_interval = 6
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.06
+			}
+			modifier = {
+				factor = 0
+				FROM = {
+					OR = {
+						trait = brave
+						trait = proud
+						trait = ambitious
+					}	
+				}	
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { 
+					FROM = { 
+						trait = in_hiding 
+					} 
+				}
+			}
+			modifier = {
+				factor = 0.5
+				NOT = {
+					reverse_opinion = {
+						who = FROM
+						value = -24
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				reverse_opinion = {
+					who = FROM
+					value = 25
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = { trait = in_hiding }
+			}
+			modifier = {
+				factor = 10
+				FROM = { trait = paranoid }
+			}					
+		}
+	}
+	
+	take_child_out_of_hiding = {
+		is_high_prio = yes
+		only_playable = yes
+		filter = close_relatives
+		ai_target_filter = close_relatives
+		diplomacy_icon = GFX_go_into_hiding
+		from_potential = {
+			is_ruler = yes
+			has_children = yes
+			has_regent = no
+		}
+		
+		potential = {
+			trait = in_hiding
+			NOT = { has_character_flag = hidden_from_siege }
+			is_ruler = no
+			liege = { character = FROM }
+			NOT = { is_married = FROM }	
+			is_child_of = FROM
+			prisoner = no
+		}
+		
+		allow = {
+			trait = in_hiding
+		}
+		effect = {
+			custom_tooltip = { text = come_out_of_hiding_info_tooltip }
+			remove_trait = in_hiding
+			clr_character_flag = do_not_disturb
+			add_character_modifier = {
+				name = went_out_of_hiding_timer
+				duration = 180
+				hidden = yes
+			}
+			hidden_tooltip = {
+				ROOT = {
+					any_plotter = {
+						target = ROOT
+						limit = {
+							NOT = { character = FROM }
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+						character_event = { id = CM.6005 }
+					}
+				}
+				father = {
+					if = {
+						limit = {
+							NOT = { character = FROM }
+						}
+						character_event = { id = CM.6005 }
+					}
+				}
+				mother = {
+					if = {
+						limit = {
+							NOT = { character = FROM }
+						}
+						character_event = { id = CM.6005 }
+					}
+				}
+				any_sibling = {
+					limit = {
+						ROOT = {
+							NOT = { is_plot_target_of = THIS }
+						}
+					}
+					character_event = { id = CM.6005 }
+				}
+			}
+		}
+		
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.3
+				FROM = { trait = paranoid }
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_character_modifier = suspected_murder_plot
+					FROM = {
+						any_known_plotter = {
+							target = PREV
+							OR = {
+								has_plot = plot_kill_character
+								has_plot = plot_kill_spouse
+							}
+						}
+					}
+				}
+			}		
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

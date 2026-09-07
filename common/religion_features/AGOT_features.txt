@@ -1,0 +1,617 @@
+#TODO
+
+#holy orders
+
+
+
+religion_nature = {
+
+	religion_cutthroat = {
+		picture = GFX_religion_feature_cutthroat
+		trigger = {
+			NOT = { religion_group = westerosi_religion }
+			#NOT = { has_selected_religion_feature = religion_peaceful }
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_no_kinslaying }
+			custom_tooltip = { text = tooltip_religion_feature_moral_murder }
+			custom_tooltip = { text = tooltip_religion_feature_more_plotting }
+			custom_tooltip = { text = tooltip_religion_feature_prisoner_torture }
+			hidden_tooltip = {
+				set_pacifist = no
+				set_allow_looting = no
+				set_hard_to_convert = no
+				set_peace_piety_gain = 0
+				set_raised_vassal_opinion_loss = no
+				set_piety_loss_for_attacking_same_religion = no
+				set_peace_prestige_loss = no
+				set_convert_other_groups = 0
+				#set_convert_same_group = 1
+				set_ai_aggression = 1.5
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = { 
+				factor = 0.33
+				religion_group = drowned_god_group
+			}
+			modifier = { 	
+				factor = 1.5
+				FROM = { 
+					character = yes 
+					religion = aztec
+				}
+			}
+			modifier = { 	
+				factor = 2
+				FROM = { 
+					character = yes 
+					trait = ruthless
+				}
+			}
+			modifier = { 	
+				factor = 0
+				FROM = { 
+					character = yes 
+					trait = honorable
+				}
+			}
+			modifier = { 	
+				factor = 1.5
+				FROM = { 
+					character = yes 
+					trait = arbitrary
+				}
+			}
+			modifier = { 	
+				factor = 0.33
+				FROM = { 
+					character = yes 
+					trait = just
+				}
+			}
+			modifier = { 	
+				factor = 1.5
+				FROM = { 
+					character = yes 
+					trait = cruel
+				}
+			}
+			modifier = { 	
+				factor = 0.33
+				FROM = { 
+					character = yes 
+					trait = kind
+				}
+			}		
+		}
+	}
+	religion_feature_nath_pagan = {
+		picture = GFX_religion_feature_nath_pagan
+		potential = {
+			has_game_started = yes
+			religion = nath_pagan_reformed
+			NOT = {
+				has_alternate_start_parameter = { key = religion_names value = random }
+			}
+		}
+		trigger = {
+			religion = nath_pagan_reformed
+			NOT = { 
+				has_selected_religion_feature = religion_stable
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_pacifist }
+			custom_tooltip = { text = tooltip_religion_feature_peace_piety }
+			custom_tooltip = { text = tooltip_religion_feature_no_looting }
+			custom_tooltip = { text = tooltip_religion_feature_opinion_boost }
+			set_character_modifier = {
+				global_revolt_risk = -0.04
+				westerosi_religion_opinion = 5
+				wildling_religion_opinion = 5
+				drowned_god_group_opinion = 5
+				essos_group_opinion = 5
+				sarnor_rel_opinion = 5
+				qarth_rel_opinion = 5
+				ghiscar_rel_opinion = 5
+				far_east_group_opinion = 5
+				ibben_rel_opinion = 5
+				dothraki_rel_group_opinion = 5
+				jogos_rel_group_opinion = 5
+				lhazar_rel_group_opinion = 5
+				summer_rel_group_opinion = 5
+				valyrian_rel_group_opinion = 5
+				pirate_group_opinion = 5
+				corsair_group_opinion = 5
+				islands_rel_opinion = 5
+				sothoryos_rel_group_opinion = 5
+				pagan_group_opinion = 5
+				key = "peaceful_RELIGION"
+			}
+			custom_tooltip = { text = tooltip_religion_feature_stable }
+			custom_tooltip = { text = tooltip_religion_feature_meliorism } 
+			custom_tooltip = { text = tooltip_religion_feature_revolt_risk }
+			hidden_tooltip = { 
+				set_short_reign_opinion_year_mult = 0
+				set_allow_looting = no
+				set_can_call_crusade = no
+				set_hard_to_convert = no
+				set_pacifist = yes
+				set_raised_vassal_opinion_loss = yes
+				set_peace_prestige_loss = no
+				set_piety_loss_for_attacking_same_religion = no
+				set_peace_piety_gain = 1
+				set_convert_other_groups = 0
+				set_convert_same_group = 0
+				set_ai_aggression = 0.1
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+}
+
+religion_doctrine = {
+
+	religion_feature_elective = {
+		picture = GFX_religion_feature_elective
+		trigger = {
+			NOT = { has_selected_religion_feature = religion_feature_norse }
+			FROM = {
+				trigger_if = {
+					limit = { character = yes }
+					higher_tier_than = DUKE
+					government = feudal_government
+				}	
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_elective }
+			hidden_tooltip = {
+				FROM = {
+					primary_title = {
+						if = {
+							limit = {
+								is_law_potential = succ_kingsmoot_elective
+							}
+							add_law_w_cooldown = succ_kingsmoot_elective
+						}
+						else = {
+							add_law_w_cooldown = succ_feudal_elective
+						}
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = { 
+				factor = 0.33
+			}		
+		}
+	}
+	religion_feature_the_seven = {
+		picture = GFX_religion_feature_the_seven
+		potential = {
+			has_game_started = yes
+			NOT = {
+				has_alternate_start_parameter = { key = religion_names value = random }
+			}
+			NOT = { religion = the_seven } #just in case
+		}
+		trigger = {
+			NOT = { has_selected_religion_feature = religion_dogmatic }
+			NOT = { has_selected_religion_feature = religion_feature_norse }
+			OR = {
+				religion_group = westerosi_religion
+				religion_group = drowned_god_group	
+				FROM = { trait = sympathy_westerosi }
+				custom_tooltip = {
+					text = TOOLTIPreligion_feature_the_sevenNEIGHBOR
+					FROM = {
+						OR = {
+							any_liege = { religion = the_seven }
+							any_vassal = { religion = the_seven }
+						}
+					}	
+				}
+			}	
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_the_seven }		
+			hidden_tooltip = { 
+				random_playable_ruler = { 
+					limit = { religion = the_seven }
+					add_intermarry = ROOT
+					ROOT = { add_intermarry = PREV }
+				}
+				any_playable_ruler = { 
+					limit = { 
+						has_religion_feature = religion_feature_the_seven 
+						NOT = { religion = FROM }
+					}
+					add_intermarry = ROOT
+					ROOT = { add_intermarry = PREV }
+				}
+				set_character_modifier = {
+					the_seven_opinion = 5
+					key = "the_seven_RELIGION"
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = { 
+				factor = 2
+				religion_group = westerosi_religion
+				NOT = { FROM = { trait = zealous } }
+			}
+			modifier = { 
+				factor = 0.5
+				religion_group = drowned_god_group
+				NOT = { FROM = { trait = sympathy_westerosi } }
+			}
+		}
+	}
+	religion_feature_pro_slavery = {
+		picture = GFX_religion_feature_pro_slavery
+		trigger = {
+			NOR = {
+				has_selected_religion_feature = religion_peaceful
+				has_selected_religion_feature = religion_feature_moonsingers
+				has_selected_religion_feature = religion_feature_rhoynar_pagan
+			}
+			FROM = {
+				trigger_if = {
+					limit = { character = yes }
+					NOT = { trait = liberator }
+				}
+			}	
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_pro_slavery }
+			hidden_tooltip = {
+				FROM = {
+					any_demesne_title = {
+						limit = { 
+							tier = PREV
+							NOT = { has_law = slavery_2 } 
+							higher_tier_than = DUKE
+						}
+						add_law_w_cooldown = slavery_2
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = { 
+				factor = 0.25
+			}		
+			modifier = { 
+				factor = 1.75
+				FROM = {
+					character = yes
+					has_slavery_religion_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 1.75
+				FROM = {
+					character = yes
+					has_slavery_culture_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 0
+				FROM = {
+					character = yes
+					has_antislavery_culture_trigger = yes
+					has_slavery_religion_trigger = no
+				}
+			}	
+			modifier = { 
+				factor = 0.5
+				FROM = {
+					character = yes
+					has_antislavery_culture_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 1.5
+				FROM = {
+					character = yes
+					trait = slave_owner
+				}
+			}
+			modifier = { 
+				factor = 0
+				FROM = {
+					character = yes
+					trait = liberator
+				}
+			}			
+		}
+	}
+	religion_feature_anti_slavery = {
+		picture = GFX_religion_feature_anti_slavery
+		trigger = {
+			NOR = {
+				has_selected_religion_feature = religion_feature_moonsingers
+				has_selected_religion_feature = religion_feature_rhoynar_pagan
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_anti_slavery }
+			hidden_tooltip = {
+				FROM = {
+					any_demesne_title = {
+						limit = { 
+							tier = PREV
+							NOT = { has_law = slavery_0 } 
+							higher_tier_than = DUKE
+						}
+						add_law_w_cooldown = slavery_0
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = { 
+				factor = 0.25
+			}	
+			modifier = { 
+				factor = 1.75
+				FROM = {
+					character = yes
+					has_antislavery_religion_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 1.75
+				FROM = {
+					character = yes
+					has_antislavery_culture_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 0
+				FROM = {
+					character = yes
+					has_slavery_culture_trigger = yes
+					has_antislavery_religion_trigger = no
+					NOT = { trait = liberator }
+				}
+			}	
+			modifier = { 
+				factor = 0.5
+				FROM = {
+					character = yes
+					has_slavery_culture_trigger = yes
+				}
+			}
+			modifier = { 
+				factor = 0.5
+				FROM = {
+					character = yes
+					trait = slave_owner
+				}
+			}
+			modifier = { 
+				factor = 6
+				FROM = {
+					character = yes
+					trait = liberator
+				}
+			}
+		}
+	}
+	religion_adoption = {
+		picture = GFX_religion_feature_adoption
+		trigger = {
+			FROM = {
+				NOT = { culture_group = hyrkoon_group } #already allowed anyway
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_adoption }
+		}
+		ai_will_do = {
+			factor = 0.25
+			# modifier = { #Handles feature randomization in AltStart to make unreformed pagans still have "paganish" features.
+				# factor = 0
+				# has_game_started = no
+				# religion_group = pagan_group
+			# }
+		}
+	}
+	religion_feature_valyrian_rel = {
+		picture = GFX_religion_feature_valyrian
+		potential = {
+			has_game_started = yes
+			religion = valyrian_rel_reformed
+			NOT = {
+				has_alternate_start_parameter = { key = religion_names value = random }
+			}
+		}
+		trigger = {
+			religion = valyrian_rel_reformed
+			FROM = { culture_group = valyrian }
+			NOR = { 
+				has_selected_religion_feature = religion_harems
+				has_selected_religion_feature = religion_holy_family
+				has_selected_religion_feature = religion_syncretic
+				has_selected_religion_feature = religion_haruspicy
+				has_selected_religion_feature = religion_dogmatic
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_harems }
+			custom_tooltip = { text = tooltip_religion_feature_incest }
+			custom_tooltip = { text = tooltip_religion_feature_holy_family }
+			custom_tooltip = { text = tooltip_religion_feature_syncretic }
+			custom_tooltip = { text = tooltip_religion_feature_blood_magic }
+			hidden_tooltip = { 
+				set_max_consorts = 0
+				set_max_wives = 3
+				#set_pc_marriage = yes
+				set_bs_marriage = yes
+				set_psc_marriage = yes
+				set_cousin_marriage = yes
+				set_divine_blood = yes
+				FROM = {
+					set_divine_blood = yes
+					set_dynasty_flag = high_valyrian
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	religion_feature_moonsingers = {
+		picture = GFX_religion_feature_moonsingers
+		potential = {
+			has_game_started = yes
+			religion = moonsingers_reformed
+			NOT = {
+				has_alternate_start_parameter = { key = religion_names value = random }
+			}
+		}
+		trigger = {
+			religion = moonsingers_reformed
+			NOR = { 
+				has_selected_religion_feature = religion_feature_anti_slavery
+				has_selected_religion_feature = religion_feature_pro_slavery
+				has_selected_religion_feature = religion_syncretic
+				has_selected_religion_feature = religion_dogmatic
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_syncretic }
+			custom_tooltip = { text = tooltip_religion_feature_anti_slavery }
+			hidden_tooltip = { 
+				FROM = {
+					any_demesne_title = {
+						limit = { 
+							tier = PREV
+							NOT = { has_law = slavery_0 } 
+							higher_tier_than = DUKE
+						}
+						add_law_w_cooldown = slavery_0
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	religion_feature_rhoynar_pagan = {
+		picture = GFX_religion_feature_rhoynar_pagan
+		potential = {
+			has_game_started = yes
+			religion = rhoynar_pagan_reformed
+			NOT = {
+				has_alternate_start_parameter = { key = religion_names value = random }
+			}
+		}
+		trigger = {
+			religion = rhoynar_pagan_reformed
+			NOR = { 
+				has_selected_religion_feature = religion_feature_anti_slavery
+				has_selected_religion_feature = religion_feature_pro_slavery
+				has_selected_religion_feature = religion_patriarchal
+				has_selected_religion_feature = religion_matriarchal
+				has_selected_religion_feature = religion_equal
+				has_selected_religion_feature = religion_seafaring
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_anti_slavery }
+			custom_tooltip = { text = tooltip_religion_feature_cognatic }
+			custom_tooltip = { text = tooltip_religion_feature_feminist }
+			custom_tooltip = { text = tooltip_religion_feature_rivermovement }
+			custom_tooltip = { text = tooltip_religion_feature_ship_maintenance }
+			custom_tooltip = { text = tooltip_religion_feature_seafaring }
+			hidden_tooltip = { 
+				set_allows_matrilineal_marriage = yes
+				set_feminist = yes
+				set_women_can_take_consorts = yes
+				set_men_can_take_consorts = yes
+				set_female_temple_holders = yes
+				set_seafaring = yes
+				set_allow_rivermovement = yes
+				FROM = {
+					any_demesne_title = {
+						limit = { 
+							tier = PREV
+							NOT = { has_law = slavery_0 } 
+							higher_tier_than = DUKE
+						}
+						add_law_w_cooldown = slavery_0
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
+	
+}
+
+religion_leadership = {
+
+	religion_god_king_head = {
+		picture = GFX_religion_feature_god_king_head
+		potential = {
+			has_game_started = yes
+		}
+		trigger = {
+			FROM = {
+				character = yes
+				is_feudal_monarch_trigger = yes
+				higher_tier_than = DUKE
+			}
+		}
+		effect = {
+			custom_tooltip = { text = tooltip_religion_feature_god_king_head }
+			hidden_tooltip = {
+				set_can_excommunicate = no
+				set_can_grant_divorce = yes
+				set_can_grant_claim = no
+				make_reformer_head_of_religion = yes
+			}
+		}
+		ai_will_do = {
+			factor = 5
+			modifier = { 	
+				factor = 50
+				FROM = { 
+					OR = { 
+						religion = yiti_gods
+						religion = lion_night
+					}
+				}
+			}
+			# modifier = { 	
+				# factor = 0.1
+				# FROM = { 
+					# NOR = { 
+						# religion = drowned_god
+						# religion = aztec
+					# }
+				# }
+			# }
+		}
+	}
+}

@@ -1,0 +1,1095 @@
+###################################
+#
+# Province Lordship Events
+#
+# Id 77000 - 77999 is reserved
+#
+###################################
+#
+# Designed by Johan Andersson
+# Written by Sara Wendel-Örtqvist
+
+namespace = province
+
+# The Clergy demands a stop to commerce in all church squares
+province_event = {
+	id = 77000
+	desc = EVTDESC77000
+	picture = GFX_evt_market
+	
+	trigger = {
+		NOT = {
+			has_province_modifier = stop_commerce
+		}
+		any_province_lord = {
+			is_theocracy = yes
+		}
+		any_province_lord = {
+			is_republic = yes
+		}
+		NOT = { is_unorganised_religion_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+	}
+	
+	option = {
+		name = EVTOPTA77000
+		owner = {
+			piety = 5
+		}
+		add_province_modifier = {
+			name = stop_commerce
+			duration = 3650
+		}
+		any_province_lord = {
+			limit = { is_theocracy = yes }
+			opinion = {
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						trait = zealous
+						has_job_title = job_spiritual
+					}
+					NOT = { any_demesne_title = { location = { province_id = ROOT } } }
+				}
+				opinion = {
+					modifier = opinion_happy
+					who = PREV
+					years = 5
+				}
+			}
+		}
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}	
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		trade_post_owner = {
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB77000
+		any_province_lord = {
+			limit = {
+				is_theocracy = yes
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						trait = zealous
+						has_job_title = job_spiritual
+					}
+					NOT = { any_demesne_title = { location = { province_id = ROOT } } }
+				}
+				opinion = {
+					modifier = opinion_dislike
+					who = PREV
+					years = 5
+				}
+			}
+		}
+		owner = { piety = -50 }
+	}
+}
+
+# Burghers demands that city laws is set higher than canonical law
+province_event = {
+	id = 77001
+	desc = EVTDESC77001
+	picture = GFX_evt_cathedral
+	
+	trigger = {
+		any_province_lord = {
+			is_theocracy = yes
+		}
+		any_province_lord = {
+			is_republic = yes
+		}
+		NOT = { is_unorganised_religion_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+		
+	}
+	
+	option = {
+		name = EVTOPTA77001
+		any_province_lord = {
+			limit = {
+				is_theocracy = yes
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						trait = zealous
+						has_job_title = job_spiritual
+					}
+					NOT = { any_demesne_title = { location = { province_id = ROOT } } }
+				}
+				opinion = {
+					modifier = opinion_dislike
+					who = PREV
+					years = 5
+				}
+			}
+		}
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+			}
+			opinion = {
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			job_treasurer = {
+				if = {
+					limit = { NOT = { trait = zealous } }
+					opinion = {
+						modifier = opinion_happy
+						who = ROOT
+						years = 5
+					}
+				}
+			}
+			piety = -50 
+		}
+	}
+	option = {
+		name = EVTOPTB77001
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			job_treasurer = {
+				if = {
+					limit = { NOT = { trait = zealous } }
+					opinion = {
+						modifier = opinion_dislike
+						who = ROOT
+						years = 5
+					}
+				}
+			}
+		}
+	}
+}
+# last time thousands of years ago
+# The Nobility demands Prima Noctae rights
+province_event = {
+	id = 77002
+	desc = EVTDESC77002
+	picture = GFX_evt_peasants
+	
+	trigger = {
+		NOT = { has_province_modifier = prima_noctae }
+		owner = {
+			crownlaw_title = { has_law = first_night_1 }
+			NOT = { culture_group = unoccupied_group }
+			NOT = { trait = nightswatch }
+		}
+		any_province_lord = {
+			is_female = no
+			is_feudal = yes
+			tier = BARON
+			age = 16
+			OR = {
+				trait = just
+				trait = lustful
+				trait = proud
+				trait = cruel
+				trait = arbitrary
+			}
+			NOT = { trait = chaste }
+			NOT = { trait = kind }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+	}
+	
+	option = {
+		name = EVTOPTA77002
+		owner = {
+			ROOT = {
+				any_province_character = {
+					limit = {
+						is_liege_or_above = PREVPREV
+						is_female = no
+						prisoner = no
+						is_incapable = no
+						age = 16
+						OR = {
+							trait = ruthless
+							trait = lustful
+							trait = proud
+							trait = cruel
+							trait = arbitrary
+						}
+						NOT = { trait = chaste }
+						NOT = { trait = kind }
+						
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+						NOT = { trait = kingsguard }
+						NOT = { trait = maester }
+						NOT = { trait = archmaester }
+						is_priest = no
+						is_theocracy = no
+						NOT = { dynasty = 0 }
+					}
+					opinion = {
+						modifier = opinion_confirmed_first_night
+						who = PREVPREV
+						years = 5
+					}
+				}	
+			}
+			piety = -40
+		}	
+		add_province_modifier = {
+			name = prima_noctae
+			duration = 3650
+		}	
+	}
+	option = {
+		name = EVTOPTB77002
+		owner = {
+			ROOT = {
+				any_province_character = {
+					limit = {
+						is_liege_or_above = PREVPREV
+						is_female = no
+						prisoner = no
+						is_incapable = no
+						age = 16
+						OR = {
+							trait = ruthless
+							trait = lustful
+							trait = proud
+							trait = cruel
+							trait = arbitrary
+						}
+						NOT = { trait = chaste }
+						NOT = { trait = kind }
+						
+						NOT = { trait = slave }
+						NOT = { trait = dragon }
+						NOT = { trait = kingsguard }
+						NOT = { trait = maester }
+						NOT = { trait = archmaester }
+						is_priest = no
+						is_theocracy = no
+						NOT = { dynasty = 0 }
+					}
+					opinion = {
+						modifier = opinion_restricted_first_night
+						who = PREVPREV
+						years = 5
+					}
+				}	
+			}
+			piety = 25
+		}	
+	}
+}
+
+# The Burgers demands that peasants be forbidden to sell goods within the city walls
+province_event = {
+	id = 77003
+	desc = EVTDESC77003
+	picture = GFX_evt_market
+	
+	trigger = {
+		NOT = {
+			has_province_modifier = peasants_forbidden_sale
+		}
+		any_province_lord = {
+			is_republic = yes
+		}
+		NOT = {
+			has_province_modifier = peasants_forbidden_sale
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+		
+	}
+	
+	option = {
+		name = EVTOPTA77003
+		add_province_modifier = {
+			name = peasants_forbidden_sale
+			duration = 3650
+		}
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+			}
+			opinion = {
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB77003
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+	}
+}
+
+# The Nobles demands hunting rights on church lands
+province_event = {
+	id = 77004
+	desc = EVTDESC77004
+	picture = GFX_evt_hunt
+	
+	trigger = {
+		any_province_lord = {
+			is_adult = yes
+			is_feudal = yes
+			is_incapable = no
+			NOT = { ROOT = { owner = { character = PREVPREV } } }
+		}
+		any_province_lord = {
+			is_incapable = no
+			is_theocracy = yes
+			NOT = { ROOT = { owner = { character = PREVPREV } } }
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 36000		
+	}
+	
+	immediate = {		
+		random_province_lord = {
+			limit = {
+				is_incapable = no
+				is_theocracy = yes
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			save_event_target_as = target_bishop
+		}
+		owner = { #chance of targetting wealthy courtier
+			random_courtier = {
+				limit = {
+					is_adult = yes
+					is_incapable = no
+					NOT = { character = PREV }				
+					liege = { character = PREVPREV }
+					wealth = 100
+					can_press_claims_trigger = yes
+					is_theocracy = no
+				}
+				random = {
+					chance = 33
+					save_event_target_as = target_feudal
+					break = yes
+				}	
+			}
+		}	
+		random_province_lord = {
+			limit = {
+				is_adult = yes
+				is_feudal = yes
+				is_incapable = no
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			save_event_target_as = target_feudal
+		}
+	}
+	
+	option = {
+		name = EVTOPTA77004
+		event_target:target_feudal = {
+			opinion = {	
+				modifier = opinion_happy
+				who = ROOT
+				years = 2
+			}
+		}
+		event_target:target_bishop = {
+			opinion = {	
+				modifier = opinion_dislike
+				who = ROOT
+				years = 2
+			}
+		}
+		owner = { piety = -50 }
+	}
+	option = {
+		name = EVTOPTB77004
+		event_target:target_bishop = {
+			opinion = {	
+				modifier = opinion_happy
+				who = ROOT
+				years = 2
+			}
+		}
+		event_target:target_feudal = {
+			opinion = {	
+				modifier = opinion_dislike
+				who = ROOT
+				years = 2
+			}
+		}
+	}
+}
+
+# The Clergy demands right to collect extra tithe on free peasants
+province_event = {
+	id = 77005
+	desc = EVTDESC77005
+	picture = GFX_evt_stone_church
+	
+	trigger = {
+		NOT = {
+			has_province_modifier = clergy_extra_tithe
+		}
+		any_province_lord = {
+			is_theocracy = yes
+		}
+		NOT = { is_unorganised_religion_trigger = yes }
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+		
+	}
+	
+	option = {
+		name = EVTOPTA77005
+		add_province_modifier = {
+			name = clergy_extra_tithe
+			duration = 3650
+		}
+	}
+	option = {
+		name = EVTOPTB77005
+		any_province_lord = {
+			limit = {
+				is_theocracy = yes
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						trait = zealous
+						has_job_title = job_spiritual
+					}
+					NOT = { any_demesne_title = { location = { province_id = ROOT } } }
+				}
+				opinion = {
+					modifier = opinion_dislike
+					who = PREV
+					years = 5
+				}
+			}
+		}
+		owner = { piety = -50 }
+	}
+}
+
+# Sell titles to rich merchants
+province_event = {
+	id = 77006
+	desc = EVTDESC77006
+	picture = GFX_evt_market
+	
+	trigger = {
+		any_province_lord = {
+			is_republic = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+		
+	}
+	
+	option = {
+		name = EVTOPTA77006
+		owner = {
+			scaled_wealth = { value = 0.25 min = 20 max = 200 }
+		}
+		any_province_lord = {
+			limit = {
+				is_feudal = yes
+				ROOT = {
+					owner = {
+						NOT = {
+							character = PREVPREV
+						}
+					}
+				}
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					NOT = { dynasty = 0 }
+					is_patrician = no
+					is_adult = yes
+					is_incapable = no
+					NOT = { character = PREV }				
+					liege = { character = PREVPREV }
+					can_press_claims_trigger = yes					
+					OR = {
+						trait = proud
+						trait = wroth
+						trait = greedy
+					}
+				}
+				opinion = {
+					modifier = opinion_dislike
+					who = PREV
+					years = 5
+				}
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB77006
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+			}
+			opinion = {
+				modifier = opinion_dislike
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					dynasty = 0
+					wealth = 100
+					is_ruler = no
+					is_adult = yes
+					is_incapable = no
+					NOT = { character = PREV }				
+					liege = { character = PREVPREV }
+					can_press_claims_trigger = yes
+				}
+				opinion = {
+					modifier = opinion_dislike
+					who = PREV
+					years = 5
+				}
+			}
+		}
+	}
+}
+
+# Rights to spoils from shipwrecks
+province_event = {
+	id = 77007
+	desc = EVTDESC77007
+	picture = GFX_evt_merchant_ship_at_sea_republic
+	
+	trigger = {
+		port = yes
+		any_province_lord = {
+			is_feudal = yes
+		}
+		any_province_lord = {
+			is_republic = yes
+		}
+		any_province_lord = {
+			is_theocracy = yes
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 36000
+		
+	}
+	
+	option = {
+		name = EVTOPTA77007
+		any_province_lord = {
+			limit = {
+				is_theocracy = yes
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			opinion ={
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = { 
+			any_courtier = {
+				limit = {
+					religion = ROOT
+					OR = {
+						trait = zealous
+						has_job_title = job_spiritual
+					}
+					NOT = { any_demesne_title = { location = { province_id = ROOT } } }
+				}
+				opinion = {
+					modifier = opinion_happy
+					who = PREV
+					years = 5
+				}
+			}
+			piety = 30 
+		}
+	}
+	option = {
+		name = EVTOPTB77007
+		any_province_lord = {
+			limit = {
+				OR = {
+					is_patrician = yes
+					is_republic = yes
+				}
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			opinion ={
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					dynasty = 0
+					wealth = 50
+					is_ruler = no
+					is_adult = yes
+					is_incapable = no
+					NOT = { character = PREV }				
+					liege = { character = PREVPREV }
+					can_press_claims_trigger = yes
+				}
+				opinion = {
+					modifier = opinion_happy
+					who = PREV
+					years = 5
+				}
+			}
+		}
+	}
+	option = {
+		name = EVTOPTC77007
+		any_province_lord = {
+			limit = {
+				is_feudal = yes
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			opinion ={
+				modifier = opinion_happy
+				who = ROOT
+				years = 5
+			}
+		}
+		owner = {
+			any_courtier = {
+				limit = {
+					NOT = { dynasty = 0 }
+					is_patrician = no
+					is_adult = yes
+					is_incapable = no
+					NOT = { character = PREV }				
+					liege = { character = PREVPREV }
+					can_press_claims_trigger = yes					
+					OR = {
+						trait = proud
+						trait = greedy
+					}
+				}
+				opinion = {
+					modifier = opinion_happy
+					who = PREV
+					years = 5
+				}
+			}
+		}
+	}
+	option = {
+		name = EVTOPTD77007
+		owner = {
+			scaled_wealth = { value = 0.25 min = 20 max = 150 }
+			prestige = -100
+		}
+	}
+}
+
+##AGOT, important city gains base value
+province_event = {
+	id = province.1
+	desc = EVTDESCprovince.1
+	picture = GFX_evt_busy_trading_dock_republic
+	
+	trigger = {
+		#capital of a kingdom
+		is_capital = yes
+		owner = { 
+			higher_tier_than = DUKE
+			independent = yes
+			OR = {
+				tier = EMPEROR
+				primary_title = { NOT = { is_variable_equal = { which = "de_facto_empire" value = 1 } } }
+			}
+			war = no
+			NOT = { culture_group = unoccupied_group }
+			NOT = { culture_group = winter_group }
+		}	
+		OR = { #must be a port or on trade route
+			port = yes 
+			borders_major_river = yes
+			has_trade_post = yes		
+		}	
+		NOR = { #These provinces are already linked to large cities
+			province_id = 182 #Casterly Rock
+			province_id = 352 #Sunspear
+			province_id = 419 #Old Volantis
+		}
+		any_province_holding = { holding_type = city }
+		NOT = {
+			any_province_holding = {
+				holding_type = city
+				base_value_6_trigger = yes
+			}
+		}
+		NOR = {
+			has_province_modifier = depopulated_1
+			has_province_modifier = depopulated_2
+			has_province_modifier = depopulated_3
+			has_province_flag = colony_province
+			has_province_modifier = overcrowding
+		}
+		NAND = { #king's landing has special events
+			province_id = 226
+			OR = {
+				has_global_flag = KL_established
+				has_global_flag = KL_fortifications_1_done
+				has_global_flag = KL_fortifications_2_done
+				has_global_flag = KL_fortifications_3_done
+				has_global_flag = KL_fortifications_1
+				has_global_flag = KL_fortifications_2
+				has_global_flag = KL_fortifications_3
+				has_global_flag = KL_fortifications_4
+			}
+		}
+	}
+	
+	mean_time_to_happen = {
+		months = 2000
+		
+		#Competing city already owned
+		modifier = {
+			factor = 3
+			owner = {
+				any_demesne_province = {
+					NOT = { province_id = ROOT }
+					any_province_holding = {
+						holding_type = city
+						base_value_5_trigger = yes
+					}	
+				}
+			}
+		}
+		#Reapers DLC prosperity
+		modifier = {
+			factor = 0.9
+			has_province_modifier = prosperity_modifier_1
+		}
+		modifier = {
+			factor = 0.75
+			OR = {
+				NOT = { has_dlc = "Reapers" }
+				has_province_modifier = prosperity_modifier_2
+			}
+		}
+		modifier = {
+			factor = 0.6
+			has_province_modifier = prosperity_modifier_3
+		}
+		#Small Islands
+		modifier = {
+			factor = 3
+			OR = {
+				duchy = { title = d_dragonstone }
+				duchy = { title = d_the_sisters }
+				province_id = 121 #The Paps
+				province_id = 122 #Pebble
+				province_id = 325 #Wrathrock
+				province_id = 342 #Ghaston Grey
+				province_id = 357 #Lonely Light
+			}
+		}
+		#Revolt Risk
+		modifier = {
+			factor = 1.25
+			revolt_risk = 0.11
+		}
+		modifier = {
+			factor = 1.25
+			revolt_risk = 0.08
+		}
+		modifier = {
+			factor = 1.25
+			revolt_risk = 0.05
+		}
+		modifier = {
+			factor = 1.25
+			revolt_risk = 0.02
+		}
+		modifier = {
+			factor = 0.8
+			NOT = { revolt_risk = 0.01 }
+		}
+		#Owner realm/wealth effects
+		modifier = {
+			factor = 3
+			owner = { NOT = { realm_size = 10 } }
+		}
+		modifier = {
+			factor = 2
+			owner = { NOT = { realm_size = 25 } }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 50 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 100 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 200 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 300 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 500 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 750 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { realm_size = 1000 }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { NOT = { yearly_income = 50 } }
+		}
+		modifier = {
+			factor = 1.25
+			owner = { NOT = { yearly_income = 100 } }
+		}
+		modifier = {
+			factor = 0.8
+			owner = { yearly_income = 200 }
+		}
+		modifier = {
+			factor = 0.8
+			owner = { yearly_income = 300 }
+		}
+		modifier = {
+			factor = 0.75
+			owner = { yearly_income = 500 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { yearly_income = 750 }
+		}
+		modifier = {
+			factor = 0.66
+			owner = { yearly_income = 1000 }
+		}
+	}
+	
+	immediate = {
+		#find main city holding
+		random_province_holding = {
+			limit = { 
+				holding_type = city
+				base_value_5_trigger = yes 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+		random_province_holding = {
+			limit = { 
+				holding_type = city
+				base_value_4_trigger = yes 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+		random_province_holding = {
+			limit = { 
+				holding_type = city
+				base_value_3_trigger = yes 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+		random_province_holding = {
+			limit = { 
+				holding_type = city
+				base_value_2_trigger = yes 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+		random_province_holding = {
+			limit = { 
+				holding_type = city
+				base_value_1_trigger = yes 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+		random_province_holding = {
+			limit = { 
+				holding_type = city 
+			}
+			save_event_target_as = improved_holding
+			break = yes
+		}
+	}
+	
+	option = {
+		name = EVTOPTAprovince.1
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 3				
+				owner = {
+					wealth = 0
+					NOT = { has_character_modifier = loan_timer } 
+				}
+			}
+			modifier = {
+				factor = 3
+				owner = { trait = charitable }
+			}
+			modifier = {
+				factor = 3
+				owner = { trait = diligent }
+			}
+			modifier = {
+				factor = 0.33
+				owner = { trait = slothful }
+			}
+			modifier = {
+				factor = 0.33
+				owner = { trait = greedy }
+			}
+		}
+		owner = { wealth = -400 }
+		event_target:improved_holding = { increase_holding_base_value_effect = yes }
+	}
+	option = {
+		name = EVTOPTBprovince.1
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 0
+				owner = { wealth = 250 }
+			}
+		}
+		add_province_modifier = { name = overcrowding duration = 1825 }
+	}
+}	

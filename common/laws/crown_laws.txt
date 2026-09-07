@@ -1,0 +1,1676 @@
+# Crown level (de jure) laws
+# Laws ending with 0 will be default laws at game start
+
+de_jure_laws = {
+
+# CENTRALIZATION
+
+	centralization_0 = {
+		show_as_title = yes
+		group = centralization
+		
+		feudal_opinion = 10
+		city_opinion = 10
+		temple_opinion = 10
+		
+		potential = {
+			holder_scope = {
+				is_nomadic = no
+				is_tribal = no
+			}
+		}
+		allow = {
+			has_law = centralization_1
+		}
+		revoke_allowed = {
+			always = no
+		}
+		default_selection = {
+			factor = 0
+		}
+		ai_will_do = {
+			factor = 0
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						has_law = centralization_1 
+						NOT = { holder_scope = { has_character_flag = passive_crownlaw_change } }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							OR = {
+								religion = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_crown_authority months = 60 }
+					}
+					holder_scope = {
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_CROWN_AUTHORITY_LOWER
+								portrait = [This.GetID]
+							}
+						}
+					}
+				}				
+			}
+		}
+		effect = {
+			hidden_tooltip = {
+				revoke_law = centralization_0
+				revoke_law = centralization_1
+				revoke_law = centralization_2
+				revoke_law = centralization_3
+				revoke_law = centralization_4
+				holder_scope = { clr_character_flag = passive_crownlaw_change }
+				
+				#set_appoint_regents = no
+				set_the_kings_peace = no
+				set_the_kings_full_peace = no
+				set_allow_free_infidel_revokation = no
+				#set_allow_free_revokation = no
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					set_protected_inheritance = no
+				}
+			}		
+			set_appoint_generals = no				
+			set_allow_title_revokation = no
+		}
+		
+		vassal_limit = 10
+		city_vassal_min_levy = 0.0
+		castle_vassal_min_levy = 0.0
+		temple_vassal_min_levy = 0.0
+	}
+	
+	centralization_1 = {
+		show_as_title = yes
+		group = centralization
+		default = yes
+		
+		feudal_opinion = 0
+		city_opinion = 0
+		temple_opinion = 0
+		
+		potential = {
+			holder_scope = {
+				is_nomadic = no
+				is_tribal = no
+			}
+		}
+		allow = {
+			OR = {
+				has_law = centralization_0
+				has_law = centralization_2
+			}
+		}
+		default_selection = {
+			factor = 1
+		}
+		revoke_allowed = {
+			always = no
+		}			
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.01
+			}
+			modifier = { #Just characters will never change
+				factor = 0
+				holder_scope = { trait = just }
+			}
+			#Increase
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_0
+				holder_scope = {
+					NOT = { trait = ambitious }
+					NOT = { trait = proud }
+					NOT = { trait = greedy }
+					NOT = { trait = authoritative }
+					NOT = { trait = diligent }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_0
+				holder_scope = {
+					OR = {
+						trait = content
+						trait = humble
+						trait = slothful
+						trait = charitable
+						war = yes
+					}
+				}
+			}
+			modifier = { #Do not do this if a strong vassal doesn't like me
+				factor = 0
+				has_law = centralization_0
+				holder_scope = {
+					any_vassal = { 
+						relative_power_to_liege = 0.2
+						NOT = { opinion = { who = PREV value = -25 } } 
+					}
+				}
+			}
+			
+			#Decrease
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_2
+				holder_scope = { 
+					NOT = { trait = humble }
+					NOT = { trait = charitable }
+					#Strong vassal dosn't like me
+					NOT = { any_vassal = { relative_power_to_liege = 0.2 NOT = { opinion = { who = PREV value = -25 } } } }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_2
+				holder_scope = {
+					OR = {
+						trait = proud
+						trait = greedy
+						trait = ambitious
+						trait = envious
+						trait = stubborn
+					}
+				}
+			}		
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { NOT = { holder_scope = { has_character_flag = passive_crownlaw_change } } }
+					if = { 
+						limit = { has_law = centralization_0 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_increased_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_INCREASE
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+					if = {
+						limit = { has_law = centralization_2 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_crown_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_LOWER
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			hidden_tooltip = {
+				revoke_law = centralization_0
+				revoke_law = centralization_1
+				revoke_law = centralization_2
+				revoke_law = centralization_3
+				revoke_law = centralization_4
+				holder_scope = { clr_character_flag = passive_crownlaw_change }
+				#set_appoint_regents = no
+				set_the_kings_peace = no
+				set_the_kings_full_peace = no
+				set_allow_free_infidel_revokation = no
+				#set_allow_free_revokation = no
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					set_protected_inheritance = no
+				}
+			}
+			set_appoint_generals = yes
+			set_allow_title_revokation = yes
+		}
+		
+		city_vassal_min_levy = 0.1
+		castle_vassal_min_levy = 0.1
+		temple_vassal_min_levy = 0.1
+		vassal_limit = 5
+	}
+	
+	centralization_2 = {
+		show_as_title = yes
+		group = centralization
+		
+		feudal_opinion = -10
+		city_opinion = -10
+		temple_opinion = -10
+		
+		potential = {
+			holder_scope = {
+				is_nomadic = no
+				is_tribal = no
+			}
+		}
+		allow = {
+			holder_scope = { 
+				hidden_tooltip = {
+					#NOT = { religion = norse_pagan }
+					#NOT = { religion = tengri_pagan }
+					#NOT = { religion = baltic_pagan }
+					#NOT = { religion = finnish_pagan }
+					NOT = { religion = aztec }
+					#NOT = { religion = slavic_pagan }
+				}
+				#custom_tooltip = TT_NOT_UNREFORMED_PAGAN
+			}
+			OR = {
+				has_law = centralization_1
+				has_law = centralization_3
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}	
+		default_selection = {
+			factor = 0
+		}		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.01
+			}
+			modifier = { #Just characters will never change
+				factor = 0
+				holder_scope = { trait = just }
+			}
+			#Increase
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_1
+				holder_scope = {
+					NOT = { trait = ambitious }
+					NOT = { trait = proud }
+					NOT = { trait = greedy }
+					NOT = { trait = authoritative }
+					NOT = { trait = diligent }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_1
+				holder_scope = {
+					OR = {
+						trait = content
+						trait = humble
+						trait = slothful
+						trait = charitable
+						war = yes
+					}
+				}
+			}
+			modifier = { #Do not do this if a strong vassal doesn't like me
+				factor = 0
+				has_law = centralization_1
+				holder_scope = {
+					any_vassal = { 
+						relative_power_to_liege = 0.2
+						NOT = { opinion = { who = PREV value = -25 } } 
+					}
+				}
+			}
+			
+			#Decrease
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_3
+				holder_scope = { 
+					NOT = { trait = humble }
+					NOT = { trait = charitable }
+					#Strong vassal dosn't like me
+					NOT = { any_vassal = { relative_power_to_liege = 0.2 NOT = { opinion = { who = PREV value = -25 } } } }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_3
+				holder_scope = {
+					OR = {
+						trait = proud
+						trait = greedy
+						trait = ambitious
+						trait = envious
+						trait = stubborn
+					}
+				}
+			}	
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { NOT = { holder_scope = { has_character_flag = passive_crownlaw_change } } }
+					if = { 
+						limit = { has_law = centralization_1 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_increased_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_INCREASE
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+					if = {
+						limit = { has_law = centralization_3 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_crown_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_LOWER
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			hidden_tooltip = {
+				revoke_law = centralization_0
+				revoke_law = centralization_1
+				revoke_law = centralization_2
+				revoke_law = centralization_3
+				revoke_law = centralization_4
+				holder_scope = { clr_character_flag = passive_crownlaw_change }
+				
+				#set_appoint_regents = no
+				set_the_kings_peace = no
+				set_the_kings_full_peace = no
+				set_allow_free_infidel_revokation = no
+				#set_allow_free_revokation = no
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					set_protected_inheritance = no
+				}
+			}
+			custom_tooltip = { text = TOOLTIPCA2 }
+			set_appoint_generals = yes
+			set_allow_title_revokation = yes
+		}
+		
+		city_vassal_min_levy = 0.3
+		castle_vassal_min_levy = 0.3
+		temple_vassal_min_levy = 0.3
+	}
+
+	centralization_3 = {
+		show_as_title = yes
+		group = centralization
+		
+		feudal_opinion = -25
+		city_opinion = -25
+		temple_opinion = -25
+		
+		potential = {
+			holder_scope = {
+				is_nomadic = no
+				is_tribal = no
+			}
+		}
+		allow = {
+			holder_scope = { 
+				hidden_tooltip = {
+					#NOT = { religion = norse_pagan }
+					#NOT = { religion = tengri_pagan }
+					#NOT = { religion = baltic_pagan }
+					#NOT = { religion = finnish_pagan }
+					NOT = { religion = aztec }
+					#NOT = { religion = slavic_pagan }
+				}
+				#custom_tooltip = TT_NOT_UNREFORMED_PAGAN
+			}
+			OR = {
+				has_law = centralization_2
+				has_law = centralization_4
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}
+		default_selection = {
+			factor = 0
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.005
+			}
+			modifier = { #Only long reigned rulers will try this
+				factor = 0
+				OR = {
+					NOT = { has_law = centralization_2 }
+					holder_scope = { NOT = { ruled_years = 20 } }
+				}
+			}
+			modifier = { #Just characters will never change
+				factor = 0
+				holder_scope = { trait = just }
+			}
+			#Increase
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_2
+				holder_scope = {
+					NOT = { trait = ambitious }
+					NOT = { trait = proud }
+					NOT = { trait = greedy }
+					NOT = { trait = authoritative }
+					NOT = { trait = diligent }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_2
+				holder_scope = {
+					OR = {
+						trait = content
+						trait = humble
+						trait = slothful
+						trait = charitable
+						war = yes
+					}
+				}
+			}
+			modifier = { #Do not do this if a strong vassal doesn't like me
+				factor = 0
+				has_law = centralization_2
+				holder_scope = {
+					any_vassal = { 
+						relative_power_to_liege = 0.2
+						NOT = { opinion = { who = PREV value = -25 } } 
+					}
+				}
+			}
+			
+			#Decrease
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_4
+				holder_scope = { 
+					NOT = { trait = humble }
+					NOT = { trait = charitable }
+					#Strong vassal dosn't like me
+					NOT = { any_vassal = { relative_power_to_liege = 0.2 NOT = { opinion = { who = PREV value = -25 } } } }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_4
+				holder_scope = {
+					OR = {
+						trait = proud
+						trait = greedy
+						trait = ambitious
+						trait = envious
+						trait = stubborn
+					}
+				}
+			}	
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { NOT = { holder_scope = { has_character_flag = passive_crownlaw_change } } }
+					if = { 
+						limit = { has_law = centralization_2 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_increased_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_INCREASE
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+					if = {
+						limit = { has_law = centralization_4 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_crown_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_LOWER
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		
+		effect = {
+		
+			hidden_tooltip = {
+				revoke_law = centralization_0
+				revoke_law = centralization_1
+				revoke_law = centralization_2
+				revoke_law = centralization_3
+				revoke_law = centralization_4
+				holder_scope = { clr_character_flag = passive_crownlaw_change }
+				
+				#set_appoint_regents = no
+				set_the_kings_peace = no
+				set_the_kings_full_peace = no
+				set_allow_free_infidel_revokation = no
+				#set_allow_free_revokation = no
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					set_protected_inheritance = no
+				}
+			}
+			set_appoint_generals = yes
+			set_allow_title_revokation = yes
+		}
+		
+		city_vassal_min_levy = 0.5
+		castle_vassal_min_levy = 0.5
+		temple_vassal_min_levy = 0.5
+		vassal_limit = -5
+	}
+	
+	centralization_4 = {
+		show_as_title = yes
+		group = centralization
+		
+		feudal_opinion = -50
+		city_opinion = -50
+		temple_opinion = -50
+		
+		potential = {
+			holder_scope = {
+				is_nomadic = no
+				is_tribal = no
+			}
+		}
+		allow = {
+			holder_scope = { 
+				hidden_tooltip = {
+					#NOT = { religion = norse_pagan }
+					#NOT = { religion = tengri_pagan }
+					#NOT = { religion = baltic_pagan }
+					#NOT = { religion = finnish_pagan }
+					NOT = { religion = aztec }
+					#NOT = { religion = slavic_pagan }
+				}
+				#custom_tooltip = TT_NOT_UNREFORMED_PAGAN
+			}
+			has_law = centralization_3
+		}
+		revoke_allowed = {
+			always = no
+		}		
+		default_selection = {
+			factor = 0
+		}		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.001
+			}
+			modifier = { #Only long reigned rulers will try this
+				factor = 0
+				holder_scope = { NOT = { ruled_years = 20 } }
+			}
+			modifier = { #Just characters will never change
+				factor = 0
+				holder_scope = { trait = just }
+			}
+			#Increase
+			modifier = { #Must be one of the following
+				factor = 0
+				has_law = centralization_3
+				holder_scope = {
+					NOT = { trait = ambitious }
+					NOT = { trait = proud }
+					NOT = { trait = greedy }
+					NOT = { trait = authoritative }
+					NOT = { trait = diligent }
+				}
+			}
+			modifier = { #Must NOT be the following
+				factor = 0
+				has_law = centralization_3
+				holder_scope = {
+					OR = {
+						trait = content
+						trait = humble
+						trait = slothful
+						trait = charitable
+						war = yes
+					}
+				}
+			}
+			modifier = { #Do not do this if a strong vassal doesn't like me
+				factor = 0
+				has_law = centralization_3
+				holder_scope = {
+					any_vassal = { 
+						relative_power_to_liege = 0.2
+						NOT = { opinion = { who = PREV value = -25 } } 
+					}
+				}
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { NOT = { holder_scope = { has_character_flag = passive_crownlaw_change } } }
+					if = { 
+						limit = { has_law = centralization_3 }
+						any_de_jure_vassal = {
+							limit = {
+								OR = {
+									religion = ROOT
+									is_liege_or_above = ROOT
+								}
+							}
+							opinion = { who = ROOT modifier = opinion_increased_authority months = 60 }
+						}
+						holder_scope = {
+							if = {
+								limit = { ai = no }
+								chronicle = {
+									entry = CHRONICLE_CROWN_AUTHORITY_INCREASE
+									portrait = [This.GetID]
+								}
+							}
+						}
+					}
+				}	
+			}
+		}
+		
+		effect = {
+			hidden_tooltip = {
+				revoke_law = centralization_0
+				revoke_law = centralization_1
+				revoke_law = centralization_2
+				revoke_law = centralization_3
+				revoke_law = centralization_4
+				holder_scope = { clr_character_flag = passive_crownlaw_change }
+				
+				#set_appoint_regents = no
+				set_the_kings_peace = no
+				set_the_kings_full_peace = no
+				set_allow_free_infidel_revokation = no
+				#set_allow_free_revokation = no
+				if = {
+					limit = { NOT = { has_dlc = "Zeus" } }
+					set_protected_inheritance = no
+				}
+			}
+			if = {
+				limit = { tier = EMPEROR }
+				custom_tooltip = { text = TOOLTIPCA4 }
+			}	
+			set_appoint_generals = yes
+			set_allow_title_revokation = yes
+		}
+		
+		city_vassal_min_levy = 0.8
+		castle_vassal_min_levy = 0.8
+		temple_vassal_min_levy = 0.8
+		vassal_limit = -10
+	}
+	
+# FAITH AUTHORITY
+
+	investiture_law_0 = { #Min
+		show_as_title = yes
+		#rel_head_opinion = -30
+		#temple_all_opinion = 25 # Bishops will be grateful to their liege for their appointment
+		group = investiture_law
+		potential = {
+			NOT = { title = k_the_most_devout }
+			k_the_most_devout = { has_holder = yes }
+			holder_scope = { 
+				OR = {
+					religion = the_seven 
+					any_vassal = { has_landed_title = k_the_most_devout }
+				}	
+			}
+			OR = {
+				tier = EMPEROR
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+			}
+		}
+		allow = {
+			has_law = investiture_law_1
+			holder_scope = { k_the_most_devout = { holder_scope = { NOT = { war_with = PREVPREV } } } }
+			hidden_tooltip = {
+				OR = {
+					tier = EMPEROR
+					NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}	
+		default_selection = {
+			factor = 0
+		}		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.002 # Rare to do this
+			}
+			modifier = {
+				factor = 0
+				holder_scope = {
+					NOT = { trait = cynical }
+					NOT = { trait = ruthless }
+					NOT = { trait = proud }
+					NOT = { trait = arbitrary }
+					NOT = { trait = excommunicated }
+				}
+			}
+			modifier = {
+				factor = 0
+				holder_scope = {
+					OR = {
+						trait = zealous
+						trait = slothful
+						trait = just
+						trait = honorable
+						war = yes
+					}
+				}
+			}
+		}
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { has_law = investiture_law_1 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_weakened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+					}
+					holder_scope = {					
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_LOWER
+								portrait = [This.GetID]
+							}
+						}
+					}	
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					holder_scope = { any_vassal = { has_landed_title = k_the_most_devout } }
+					OR = {
+						is_title_active = d_warriors_sons
+						is_title_active = d_poor_fellows
+					}
+					had_global_flag = { flag = scenario_initialised days = 2 }
+				}
+				k_the_most_devout = { holder_scope = { character_event = { id = religious.290 tooltip = TOOLTIPreligious.290 } } }
+			}
+			hidden_tooltip = {
+				k_the_most_devout = { 
+					holder_scope = {
+						opinion = { who = ROOT modifier = opinion_investiture_law_0 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_1 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_3 }
+					} 
+				}
+				revoke_law = investiture_law_1
+				revoke_law = investiture_law_2
+				revoke_law = investiture_law_3
+				set_investiture = any
+			}
+			custom_tooltip = { text = TOOLTIPINVEST0 }
+		}
+	}
+	
+	investiture_law_1 = {
+		show_as_title = yes
+		#rel_head_opinion = -15
+		default = yes
+		group = investiture_law
+		potential = {
+			NOT = { title = k_the_most_devout }
+			k_the_most_devout = { has_holder = yes }
+			holder_scope = { 
+				OR = {
+					religion = the_seven 
+					any_vassal = { has_landed_title = k_the_most_devout }
+				}	
+			}
+			OR = {
+				tier = EMPEROR
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+			}
+		}
+		allow = {
+			NOT = { has_law = investiture_law_3 }
+			holder_scope = { k_the_most_devout = { holder_scope = { NOT = { war_with = PREVPREV } } } }
+			hidden_tooltip = {
+				OR = {
+					tier = EMPEROR
+					NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}	
+		default_selection = {
+			factor = 1
+		}		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.005 # Rare to do this
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_2
+				holder_scope = {
+					NOT = { trait = cynical }
+					NOT = { trait = ruthless }
+					NOT = { trait = proud }
+					NOT = { trait = arbitrary }
+					NOT = { trait = excommunicated }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_2
+				holder_scope = {
+					OR = {
+						trait = zealous
+						trait = slothful
+						trait = just
+						trait = honorable
+						war = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_0
+				holder_scope = {
+					NOT = { trait = zealous }
+					k_the_most_devout = { holder_scope = { opinion = { who = PREVPREV value = -75 } } } 
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_0
+				holder_scope = {
+					OR = {
+						trait = cynical
+						trait = ruthless
+						trait = just
+						trait = proud
+						trait = excommunicated
+					}
+				}
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { has_law = investiture_law_2 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_weakened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+					}
+					holder_scope = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_LOWER
+								portrait = [This.GetID]
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { has_law = investiture_law_0 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_strengthened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+					}
+					holder_scope = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_INCREASE
+								portrait = [This.GetID]
+							}
+						}
+					}	
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					holder_scope = { any_vassal = { has_landed_title = k_the_most_devout } }
+					OR = {
+						is_title_active = d_warriors_sons
+						is_title_active = d_poor_fellows
+					}
+					had_global_flag = { flag = scenario_initialised days = 2 }
+				}
+				k_the_most_devout = { holder_scope = { character_event = { id = religious.290 tooltip = TOOLTIPreligious.290 } } }
+			}
+			hidden_tooltip = {
+				k_the_most_devout = { 
+					holder_scope = {
+						opinion = { who = ROOT modifier = opinion_investiture_law_1 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_0 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_3 }
+					} 
+				}
+				revoke_law = investiture_law_0
+				revoke_law = investiture_law_2
+				revoke_law = investiture_law_3
+				set_investiture = head
+			}		
+			custom_tooltip = { text = TOOLTIPINVEST1 }
+		}
+	}
+	investiture_law_2 = {
+		show_as_title = yes
+		group = investiture_law
+		potential = {
+			NOT = { title = k_the_most_devout }
+			k_the_most_devout = { has_holder = yes }
+			holder_scope = { 
+				OR = {
+					religion = the_seven 
+					any_vassal = { has_landed_title = k_the_most_devout }
+				}	
+			}
+			OR = {
+				tier = EMPEROR
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+			}
+		}
+		allow = {
+			NOT = { has_law = investiture_law_0 }
+			holder_scope = { k_the_most_devout = { holder_scope = { NOT = { war_with = PREVPREV } } } }
+			hidden_tooltip = {
+				OR = {
+					tier = EMPEROR
+					NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}		
+		default_selection = {
+			factor = 0
+			
+			additive_modifier = { 
+				value = 10			
+				NOT = { year = 7996 }
+			}
+		}	
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.005 # Rare to do this
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_3
+				holder_scope = {
+					NOT = { trait = cynical }
+					NOT = { trait = ruthless }
+					NOT = { trait = proud }
+					NOT = { trait = arbitrary }
+					NOT = { trait = excommunicated }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_3
+				holder_scope = {
+					OR = {
+						trait = zealous
+						trait = slothful
+						trait = just
+						trait = honorable
+						war = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_1
+				holder_scope = {
+					NOT = { trait = zealous }
+					k_the_most_devout = { holder_scope = { opinion = { who = PREVPREV value = -75 } } } 
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_1
+				holder_scope = {
+					OR = {
+						trait = cynical
+						trait = ruthless
+						trait = just
+						trait = proud
+						trait = excommunicated
+					}
+				}
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { has_law = investiture_law_3 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_weakened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+					}
+					holder_scope = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_lowered_faith_authority_good months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_LOWER
+								portrait = [This.GetID]
+							}
+						}
+					}	
+				}
+				if = {
+					limit = { has_law = investiture_law_1 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_strengthened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+					}
+					holder_scope = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_INCREASE
+								portrait = [This.GetID]
+							}
+						}
+					}		
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					is_primary_holder_title = yes
+					holder_scope = {
+						k_the_most_devout = 	{
+							holder_scope = {
+								OR = {
+									AND = { 
+										character = PREVPREV
+										independent = yes
+										primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+									}
+									vassal_of = PREVPREV
+									primary_title = {
+										is_variable_equal = { which = "de_facto_empire" which = PREVPREVPREVPREV }
+										check_variable = { which = "de_facto_empire" value = 0.9 }
+									}
+								}
+							}
+						}	
+					}
+					OR = {
+						NOT = { is_title_active = d_warriors_sons }
+						NOT = { is_title_active = d_poor_fellows }
+					}
+					had_global_flag = { flag = scenario_initialised days = 2 }
+				}
+				k_the_most_devout = { holder_scope = { narrative_event = { id = religious.200 tooltip = TOOLTIPreligious.200 } } }
+			}
+			hidden_tooltip = {
+				k_the_most_devout = { 
+					holder_scope = {
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_0 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_1 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_3 }
+					} 
+				}
+				revoke_law = investiture_law_0
+				revoke_law = investiture_law_1
+				revoke_law = investiture_law_3
+				set_investiture = head
+			}
+			custom_tooltip = { text = TOOLTIPINVEST2 }
+		}
+	}
+	investiture_law_3 = {
+		show_as_title = yes
+		#rel_head_opinion = 30
+		group = investiture_law
+		potential = {
+			k_the_most_devout = { has_holder = yes }
+			holder_scope = { 
+				OR = {
+					religion = the_seven 
+					any_vassal = { has_landed_title = k_the_most_devout }
+					has_landed_title = k_the_most_devout
+				}	
+			}
+			OR = {
+				tier = EMPEROR
+				title = k_the_most_devout
+				NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+			}
+		}
+		allow = {
+			has_law = investiture_law_2
+			holder_scope = { k_the_most_devout = { holder_scope = { NOT = { war_with = PREVPREV } } } }
+			hidden_tooltip = {
+				OR = {
+					tier = EMPEROR
+					NOT = { check_variable = { which = "de_facto_empire" value = 1 } }
+				}
+			}
+		}
+		revoke_allowed = {
+			always = no
+		}	
+		default_selection = {
+			factor = 0
+		}		
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.002 # Rare to do this
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_2
+				holder_scope = {
+					NOT = { trait = zealous }
+					k_the_most_devout = { holder_scope = { opinion = { who = PREVPREV value = -75 } } } 
+				}
+			}
+			modifier = {
+				factor = 0
+				has_law = investiture_law_2
+				holder_scope = {
+					OR = {
+						trait = cynical
+						trait = ruthless
+						trait = just
+						trait = proud
+						trait = excommunicated
+					}
+				}
+			}
+		}
+		ai_will_revoke = {
+			factor = 0
+		}
+		pass_effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { has_law = investiture_law_2 }
+					k_the_most_devout = { 
+						holder_scope = {
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 } 
+							religion_authority = {
+								modifier = authority_strengthened
+							}
+						} 
+					}
+					any_de_jure_vassal = {
+						limit = {
+							religion = the_seven
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+								trait = just
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+					}
+					any_de_jure_vassal = {
+						limit = {
+							NOT = { religion = the_seven }
+							OR = {
+								is_theocracy = yes
+								trait = zealous
+							}	
+							NOT = { has_landed_title = k_the_most_devout }
+						}
+						opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+					}
+					holder_scope = {
+						any_realm_character = {
+							limit = {
+								religion = the_seven
+								is_ruler = no
+								OR = {
+									trait = zealous
+									trait = just
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority months = 60 }
+						}
+						any_courtier = {
+							limit = {
+								NOT = { religion = the_seven }
+								is_ruler = no
+								OR = {
+									trait = zealous
+									has_job_title = job_spiritual
+								}	
+							}
+							opinion = { who = ROOT modifier = opinion_raised_faith_authority_bad months = 60 }
+						}
+						if = {
+							limit = { ai = no }
+							chronicle = {
+								entry = CHRONICLE_FAITH_AUTHORITY_INCREASE
+								portrait = [This.GetID]
+							}
+						}
+					}		
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					is_primary_holder_title = yes
+					holder_scope = {
+						k_the_most_devout = 	{
+							holder_scope = {
+								OR = {
+									AND = { 
+										character = PREVPREV
+										independent = yes
+										primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+									}
+									vassal_of = PREVPREV
+									primary_title = {
+										is_variable_equal = { which = "de_facto_empire" which = PREVPREVPREVPREV }
+										check_variable = { which = "de_facto_empire" value = 0.9 }
+									}
+								}
+							}
+						}	
+					}
+					OR = {
+						NOT = { is_title_active = d_warriors_sons }
+						NOT = { is_title_active = d_poor_fellows }
+					}
+					had_global_flag = { flag = scenario_initialised days = 2 }
+				}
+				k_the_most_devout = { holder_scope = { narrative_event = { id = religious.200 tooltip = TOOLTIPreligious.200 } } }
+			}
+			hidden_tooltip = {
+				k_the_most_devout = { 
+					holder_scope = {
+						opinion = { who = ROOT modifier = opinion_investiture_law_3 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_1 }
+						remove_opinion = { who = ROOT modifier = opinion_investiture_law_0 }
+					} 
+				}
+				revoke_law = investiture_law_0
+				revoke_law = investiture_law_1
+				revoke_law = investiture_law_2
+				set_investiture = head
+			}
+			custom_tooltip = { text = TOOLTIPINVEST3 }
+		}
+	}
+}

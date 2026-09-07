@@ -1,0 +1,888 @@
+targetted_decisions = {
+	create_mercenary_company_feudal = {
+		filter = home_court
+		ai_target_filter = home_court
+		only_playable = yes
+		
+		from_potential = {
+			has_dlc = "Zeus"
+			is_ruler = yes
+			mercenary = no
+			primary_title = {
+				is_landless_type_title = no
+			}
+			controls_religion = no
+			holy_order = no			
+			OR = {
+				ai = no
+				AND = {
+					OR = {
+						higher_tier_than = COUNT
+						AND = {
+							is_republic = yes
+							higher_tier_than = BARON
+						}
+					}
+					OR = {
+						trait = brilliant_strategist
+						trait = fortune_builder
+					}
+					NOR = {
+						is_primary_war_attacker = yes
+						is_primary_war_defender = yes
+					}
+				}
+			}
+			NOR = {
+				government = nomadic_government
+				has_character_modifier = mercenary_traditions
+			}
+		}
+		potential = {
+			prisoner = no
+			is_ruler = no
+			can_press_claims_trigger = yes
+			liege = { character = FROM }
+			OR = {
+				dynasty = FROM
+				FROM = { ai = no }
+			}
+			OR = {
+				is_female = no
+				female_get_masculine_event_trigger = yes
+			}
+			NOT_mythical_creature_trigger = yes
+		}
+		allow = {
+			is_adult = yes			
+			custom_tooltip = {
+				text = mercenary_martial_education_tooltip
+				hidden_tooltip = {
+					OR = {
+						trait = misguided_warrior
+						trait = tough_soldier
+						trait = skilled_tactician
+						trait = brilliant_strategist
+					}
+				}
+			}
+			FROM = {
+				NOT = { has_mercenary_band = yes }
+				wealth = 50
+			}
+		}
+		effect = {
+			FROM = {
+				wealth = -50
+				custom_tooltip = {
+					text = CREATE_DYNAMIC_MERC_TOOLTIP
+					hidden_tooltip = {
+						primary_title = {
+							create_title = {
+								tier = DUKE
+								name = DYNAMIC_MERCENARY_COMPANY_FEUDAL
+								landless = yes
+								temporary = yes
+								adventurer = yes
+								custom_created = yes
+								culture = ROOT
+								holder = ROOT
+								base_title = THIS
+								mercenary = yes
+								replace_captain_on_death = yes
+								siphons_income_to_creator = 0.15
+								ruler = "CAPTAIN"
+								ruler_female = "CAPTAIN"
+								foa = "CAPTAIN_FOA"
+							}
+						}
+						ROOT = {
+							set_defacto_liege = THIS
+						}
+					}
+				}
+			}
+			set_character_flag = is_mercenary_leader
+			set_character_flag = mercenary_ambition_1
+			primary_title = {
+				set_title_flag = ze_dyn_merc
+				set_title_flag = not_hired
+			}
+		}
+		ai_check_interval = 60
+		ai_will_do = {
+			factor = 0.05
+		}
+	}
+
+	dissolve_mercenary_company_feudal = {
+		filter = all
+		ai_target_filter = dynasty
+		only_playable = yes
+		
+		from_potential = {
+			has_dlc = "Zeus"
+			is_ruler = yes
+		}
+		potential = {
+			is_ruler = yes
+			mercenary = yes
+			primary_title = {
+				has_title_flag = ze_dyn_merc
+				band_creator = {
+					character = FROM
+				}
+			}
+		}
+		allow = {
+			primary_title = {
+				NOT = { has_raised_standing_troops = yes }
+				band_creator = {
+					character = FROM
+				}
+			}
+		}
+		effect = {
+			character_event = { id = ZE.11020 }
+		}
+		ai_check_interval = 36
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.03
+			}
+		}
+	}
+
+	ask_wards_liege_to_allow_culture_religion_swap = {
+		only_playable = yes
+		filter = sub_realm
+		ai_target_filter = court
+		
+		from_potential = {
+			is_playable = yes
+			has_dlc = "Zeus"
+		}
+		
+		potential = {
+			NOT_mythical_creature_trigger = yes
+			prisoner = no
+			is_adult = no
+			is_landed = no
+			NOR = { 
+				has_character_flag = guardian_asked_to_change_focus
+				has_focus = focus_ch_heritage
+				character = FROM
+			}
+			
+			host = {
+				OR = {
+					character = FROM
+					is_liege_or_above = FROM
+				}
+			}
+			NOT = { liege = { character = FROM } }
+			NOT = { liege = { character = ROOT } }
+			educator = {
+				NOT = { culture_group = ROOT }
+			}
+		}
+		
+		allow = { 
+			NOT = { 
+				age = 10
+			}
+			conditional_tooltip = {
+				trigger = { 
+					NOT = { has_game_rule = { name = high_valyrian_cull value = off } }
+				}
+				true_valyrian_culture_trigger = no 
+				OR = {
+					educator = { true_valyrian_culture_trigger = no }
+					father_even_if_dead = { true_valyrian_culture_trigger = yes }
+					mother_even_if_dead = { true_valyrian_culture_trigger = yes }
+				}				
+			}
+		}
+		
+		effect = {
+			set_character_flag = guardian_asked_to_change_focus
+			if = {
+				limit = {
+					liege = { character = FROM }
+				}
+				hidden_tooltip = {
+					clear_focus = yes
+				}
+				set_focus = focus_ch_heritage
+				break = yes
+			}
+			liege = {
+				letter_event = { id = ZE.2130 days = 5 }
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.075
+			}
+			modifier = {
+				factor = 0
+				NOT = { host = { character = FROM } }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					educator = {
+						culture_group = FROM
+						religion = FROM
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0
+				#don't bother rulers I like about their own relatives
+				OR = {
+					AND = {
+						is_ruler = yes
+						reverse_opinion = { who = FROM value = 15 }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT
+							culture_group = ROOT
+							reverse_opinion = { who = FROM value = 15 }
+							NOT = { character = FROM }
+						}
+					}	
+				}	
+				FROM = { 
+					NOT = { trait = proud } 
+					NOT = { trait = zealous } 
+				}
+			}
+			modifier = {
+				factor = 0
+				#Dont ask if same culture as home province (destabilising)
+				OR = {
+					AND = {
+						is_ruler = yes
+						capital_scope = { culture_group = ROOT }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT							
+							capital_scope = { culture_group = ROOT }
+							NOT = { character = FROM }
+						}	
+					}
+				}
+				FROM = { 
+					NOT = { trait = proud } 
+					NOT = { trait = zealous } 
+				}
+			}
+		}
+	}
+
+	change_wards_focus_to_heritage  = {
+		only_playable = yes
+		filter = court
+		ai_target_filter = court
+		
+		from_potential = {
+			is_playable = yes
+			has_dlc = "Zeus"
+		}
+		
+		potential = {
+			is_adult = no
+			NOR = { 
+				has_character_flag = guardian_asked_to_change_focus
+				has_focus = focus_ch_heritage
+				character = FROM
+			}
+			host = { character = FROM }
+			OR = {
+				liege = { character = FROM }
+				prisoner = yes
+			}
+			educator = {
+				NOT = { culture_group = ROOT }
+			}
+		}
+		
+		allow = { 
+			NOT = { 
+				age = 10
+			}
+			conditional_tooltip = {
+				trigger = { 
+					NOT = { has_game_rule = { name = high_valyrian_cull value = off } }
+					NAND = {
+						liege = { trait = wildling }
+						educator = { wildling_culture_trigger = yes }
+					}	
+				}
+				true_valyrian_culture_trigger = no 
+				OR = {
+					educator = { true_valyrian_culture_trigger = no }
+					father_even_if_dead = { true_valyrian_culture_trigger = yes }
+					mother_even_if_dead = { true_valyrian_culture_trigger = yes }
+				}
+			}
+		}
+		
+		effect = {
+			set_character_flag = guardian_asked_to_change_focus
+			if = {
+				limit = {
+					OR = {
+						liege = { character = FROM }
+						prisoner = yes
+					}
+				}
+				hidden_tooltip = {
+					clear_focus = yes
+				}
+				set_focus = focus_ch_heritage
+				break = yes
+			}
+			hidden_tooltip = {
+				liege = {
+					letter_event = { id = ZE.2130 days = 5 }
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.075
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					educator = {
+						culture_group = FROM
+						religion = FROM
+					}
+				}
+				NAND = {
+					FROM = { 
+						government = wildling_feudal_government
+						trait = deserter
+					}
+					educator = { wildling_culture_trigger = yes }
+				}
+			}
+			modifier = {
+				factor = 5
+				FROM = { 
+					government = wildling_feudal_government
+					trait = deserter
+				}
+				educator = { wildling_culture_trigger = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0
+				#don't bother rulers I like about their own relatives
+				OR = {
+					AND = {
+						is_ruler = yes
+						reverse_opinion = { who = FROM value = 15 }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT
+							culture_group = ROOT
+							reverse_opinion = { who = FROM value = 15 }
+							NOT = { character = FROM }
+						}
+					}	
+				}	
+				FROM = { 
+					NOT = { trait = proud } 
+					NOT = { trait = zealous } 
+				}
+			}
+			modifier = {
+				factor = 0
+				#Dont ask if same culture as home province (destabilising)
+				OR = {
+					AND = {
+						is_ruler = yes
+						capital_scope = { culture_group = ROOT }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT							
+							capital_scope = { culture_group = ROOT }
+							NOT = { character = FROM }
+						}	
+					}
+				}
+				FROM = { 
+					NOT = { trait = proud } 
+					NOT = { trait = zealous } 
+				}
+			}
+		}
+	}
+
+	ask_for_pardon = {
+		only_playable = yes
+		filter = liege
+		ai_target_filter = liege
+		
+		from_potential = {
+			has_dlc = "Zeus"
+			is_playable = yes
+			NOT = { trait = incapable }
+		}
+		potential = {
+			FROM = { liege = { character = ROOT } }
+			owes_favor_to = FROM
+			NOT = { trait = incapable }
+		}
+		allow = {
+			FROM = { just_execution_reason_PREV_trigger = yes }
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_vengeance } }
+		}
+		effect = {
+			hidden_tooltip = {
+				character_event = { id = ZE.8120 }
+			}
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	change_composition_mercenary_company_feudal = {
+		only_playable = yes
+		filter = dynasty
+		ai_target_filter = dynasty
+		
+		from_potential = {
+			is_playable = yes
+			is_landed = yes
+			has_dlc = "Zeus"
+			has_mercenary_band = yes
+		}
+		potential = {
+			mercenary = yes
+			primary_title = {
+				has_title_flag = ze_dyn_merc
+				band_creator = {
+					character = FROM
+				}
+			}
+		}
+		allow = {
+			primary_title = {
+				NOT = { has_raised_standing_troops = yes }
+				band_creator = {
+					character = FROM
+				}
+			}
+			FROM = {
+				wealth = 50
+			}
+		}
+		effect = {
+			character_event = { id = ZE.23100 }
+		}
+
+		ai_check_interval = 36
+		ai_will_do = {
+			factor = 0.03
+		}
+	}
+	
+	send_troops_mercenary_company_feudal = {
+		only_playable = yes
+		filter = dynasty
+		ai_target_filter = dynasty
+		
+		from_potential = {
+			is_playable = yes
+			is_landed = yes
+			has_dlc = "Zeus"
+			has_mercenary_band = yes
+		}
+		potential = {
+			mercenary = yes
+			primary_title = {
+				has_title_flag = ze_dyn_merc
+				band_creator = {
+					character = FROM
+				}
+			}
+		}
+		allow = {
+			primary_title = {
+				NOT = { has_raised_standing_troops = yes }
+				band_creator = {
+					character = FROM
+				}
+			}
+			FROM = {
+				wealth = 50
+			}
+		}
+		effect = {
+			character_event = { id = ZE.23105 }
+		}
+		ai_check_interval = 36
+		ai_will_do = {
+			factor = 0.03
+		}
+	}
+	
+	introduce_heir = {
+		ai = no
+		is_high_prio = yes
+		
+		filter = home_court
+		ai_target_filter = none
+	
+		from_potential = {
+			is_playable = yes
+			ai = no
+			has_ambition = obj_groom_an_heir
+		}
+		
+		potential = {
+			is_child_of = FROM
+			FROM = { current_heir = { character = ROOT } }
+			NOT = { has_character_flag = introduced_heir }
+		}
+		allow = {
+			FROM = {
+				prisoner = no
+				NOR = { 
+					trait = incapable
+					is_inaccessible_trigger = yes
+				}
+				war = no
+				num_of_vassals = 7
+			}
+			is_primary_heir = FROM
+			age = 12
+			prisoner = no
+			NOR = {
+				is_landed = yes
+				prisoner = yes
+				is_adult = yes
+				custom_tooltip = {
+					text = bastard_eunuch_celibate_or_incapable_tt
+					OR = {
+						trait = bastard
+						trait = eunuch
+						trait = celibate
+						trait = incapable
+					}
+				}
+				is_ascetic_trigger = yes
+			}
+			is_inaccessible_trigger = no
+			host = { character = FROM }
+		}
+		
+		effect = {
+			custom_tooltip = {
+				text = introduce_heir_custom_tooltip
+				hidden_tooltip = {
+					set_character_flag = introduced_heir
+					save_event_target_as = introduced_heir
+					FROM = { character_event = { id = ZE.22900 } }
+				}
+			}
+		}
+		
+
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.01
+				always = yes
+			}
+		}
+	}
+	
+	ask_wards_liege_to_allow_faith_focus = {
+		only_playable = yes
+		filter = sub_realm
+		ai_target_filter = court
+		
+		from_potential = {
+			is_playable = yes
+			has_dlc = "Zeus"
+		}
+		
+		potential = {
+			prisoner = no
+			is_adult = no
+			is_landed = no
+			NOR = {
+				has_character_flag = guardian_asked_to_change_focus
+				has_focus = focus_ch_faith
+				character = FROM
+			}
+			
+			host = {
+				OR = {
+					character = FROM
+					is_liege_or_above = FROM
+				}
+			}
+			NOT = { liege = { character = FROM } }
+			NOT = { liege = { character = ROOT } }
+			#OR = {
+				#is_landed = no
+				#liege = { character = FROM }
+			#}
+			educator = {
+				NOT = { religion = ROOT }
+			}
+		}
+		
+		allow = {
+			NOT = {
+				age = 10
+			}
+		}
+		
+		effect = {
+			set_character_flag = guardian_asked_to_change_focus
+			if = {
+				limit = {
+					liege = { character = FROM }
+				}
+				hidden_tooltip = {
+					clear_focus = yes
+				}
+				set_focus = focus_ch_faith
+				break = yes
+			}
+			hidden_tooltip = {
+				liege = {
+					letter_event = { id = ZE.2140 days = 5 }
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.075
+			}
+			modifier = {
+				factor = 0
+				has_focus = focus_ch_heritage
+			}
+			modifier = {
+				factor = 0
+				NOT = { host = { character = FROM } }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					educator = {
+						religion = FROM
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 0
+				FROM = { trait = cynical }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0
+				#don't bother rulers I like about their own relatives
+				OR = {
+					AND = {
+						is_ruler = yes
+						reverse_opinion = { who = FROM value = 15 }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT
+							religion = ROOT
+							reverse_opinion = { who = FROM value = 15 }
+						}
+					}	
+				}	
+				FROM = { 
+					NOT = { trait = zealous } 
+				}
+			}
+		}
+	}
+	
+	change_wards_focus_to_faith  = {
+		only_playable = yes
+		filter = court
+		ai_target_filter = court
+		
+		from_potential = {
+			is_playable = yes
+			has_dlc = "Zeus"
+		}
+		
+		potential = {
+			#prisoner = no
+			is_adult = no
+			NOR = {
+				has_character_flag = guardian_asked_to_change_focus
+				has_focus = focus_ch_faith
+				character = FROM
+			}
+			host = { character = FROM }
+			OR = {
+				liege = { character = FROM }
+				prisoner = yes
+			}
+			#OR = {
+				#is_landed = no
+				#is_liege_or_above = FROM
+				#prisoner = yes
+			#}
+			NOT = {
+				educator = {
+					religion = ROOT
+				}
+			}
+		}
+		
+		allow = {
+			NOT = {
+				age = 10
+			}
+		}
+		
+		effect = {
+			set_character_flag = guardian_asked_to_change_focus
+			if = {
+				limit = {
+					OR = {
+						liege = { character = FROM }
+						prisoner = yes
+					}
+				}
+				hidden_tooltip = {
+					clear_focus = yes
+				}
+				set_focus = focus_ch_faith
+				break = yes
+			}
+			hidden_tooltip = {
+				liege = {
+					letter_event = { id = ZE.2140 days = 5 }
+				}
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.075
+			}
+			modifier = {
+				factor = 0
+				has_focus = focus_ch_heritage
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					educator = {
+						religion = FROM
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = proud }
+			}
+			modifier = {
+				factor = 2
+				FROM = { trait = zealous }
+			}
+			modifier = {
+				factor = 0
+				FROM = { trait = cynical }
+			}
+			modifier = {
+				factor = 0.2
+				FROM = { trait = humble }
+			}
+			modifier = {
+				factor = 0
+				#don't bother rulers I like about their own relatives
+				OR = {
+					AND = {
+						is_ruler = yes
+						reverse_opinion = { who = FROM value = 15 }
+					}
+					AND = {
+						is_ruler = no
+						liege = {
+							is_close_relative = ROOT
+							religion = ROOT
+							reverse_opinion = { who = FROM value = 15 }
+						}
+					}	
+				}	
+				FROM = { 
+					NOT = { trait = zealous } 
+				}
+			}
+		}
+	}
+}

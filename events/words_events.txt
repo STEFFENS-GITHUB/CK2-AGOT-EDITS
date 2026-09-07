@@ -1,0 +1,1026 @@
+namespace = words_events
+#As high as Honor
+character_event = {
+	id = words_events.1
+	desc = "EVTDESCwords_events.1"
+	picture = "GFX_ARRYN"
+	
+	only_playable = yes
+	min_age = 16
+	max_age = 60
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {	
+		OR = {
+			has_landed_title = k_vale
+			has_landed_title = e_vale
+			any_liege = { has_landed_title = k_vale }
+			any_liege = { has_landed_title = e_vale }	
+		}
+		OR = {
+			dynasty = 178
+			any_liege = {
+				dynasty = 178
+			}
+		}	
+		location = { region = world_vale }
+	}
+	
+	mean_time_to_happen = {
+		months = 600
+		modifier = {
+			factor = 5
+			war = yes
+		}
+		modifier = {
+			factor = 1.25
+			trait = falconer
+		}
+		modifier = {
+			factor = 1.5
+			trait = hunter
+		}
+		modifier = {
+			factor = 2
+			trait = misguided_warrior
+		}
+		modifier = {
+			factor = 0.5
+			trait = gardener
+		}
+		modifier = {
+			factor = 0.5
+			trait = slothful
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwords_events.1" #Let the standard fly and press onwards, as High as Honour, men!
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				trait = brave
+			}
+		}
+		prestige = 20
+		random = {
+			chance = 15
+			add_trait_silently_wounded_effect = yes
+			hidden_tooltip = { character_event = { id = 38280 } }
+		}
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = brave
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBwords_events.1" #Leave the standard be, but drop to the back of the column.
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+		}
+		prestige = 10
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = craven
+				hidden_tooltip = { character_event = { id = 38257 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = diligent }
+				NOT = { trait = slothful }
+				NOT = { personality_traits = 6 }
+			}		
+			random = {
+				chance = 15
+				add_trait = diligent
+				hidden_tooltip = { character_event = { id = 38256 } }
+			}
+		}	
+		job_marshal = {
+			character_event = {
+				id = words_events.2 tooltip = "TOOLTIPwords_events.2"
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCwords_events.1" #Drop the standard and wait for the clansmen to pass.
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		prestige = -10
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 30
+				add_trait = craven
+				hidden_tooltip = { character_event = { id = 38257 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = patient }
+				NOT = { trait = wroth }
+				NOT = { personality_traits = 6 }
+			}		
+			random = {
+				chance = 20
+				add_trait = patient
+				hidden_tooltip = { character_event = { id = 38264 } }
+			}
+		}	
+	}
+}
+
+
+#Marshal is left in command of column
+character_event = {
+	id = words_events.2
+	desc = "EVTDESCwords_events.2"
+	picture = "GFX_ARRYN_TWO"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwords_events.2"
+		prestige = 10
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = brave
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}	
+		random = {
+			chance = 15
+			add_trait_silently_wounded_effect = yes
+			hidden_tooltip = { character_event = { id = 38280 } }
+		}
+	}
+}
+
+#Hear me Roar!
+character_event = {
+	id = words_events.3
+	desc = "EVTDESCwords_events.3"
+	picture = "GFX_LANNISTER"
+	
+	is_triggered_only = yes
+	only_playable = yes
+	prisoner = no
+	capable_only = yes
+	war = yes
+	in_command = yes
+	
+	trigger = {	
+		dynasty = 190
+		any_vassal = {
+			NOT = { character = ROOT }
+			NOT = { trait = brave }
+			in_command = yes
+			at_location = ROOT
+		}		
+		NOT = { personality_traits = 6 }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+
+		modifier = {
+			factor = 0.5
+			trait = slothful
+		}
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwords_events.3" # Craven , Hear me Roar!
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0.1
+				trait = shy
+			}
+			modifier = {
+				factor = 0.1
+				trait = kind
+			}
+			modifier = {
+				factor = 2.0
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 2.0
+				trait = ruthless
+			}
+		}
+		prestige = 25	
+		random_vassal = {
+			limit = {
+				NOT = { character = ROOT }
+				NOT = { trait = brave }
+				in_command = yes
+				at_location = ROOT
+			}
+			tooltip = { show_portrait = yes }
+			character_event = { id = words_events.4 tooltip = "TOOLTIPwords_events.4" }
+			opinion = {
+				who = ROOT
+				modifier = opinion_humliated
+				years = 2
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = authoritative }
+			}
+			random = {
+				chance = 20
+				add_trait = authoritative
+				#hidden_tooltip = { character_event = { id = 38256 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = wroth }
+				NOT = { trait = patient }
+			}		
+			random = {
+				chance = 20
+				add_trait = wroth
+				hidden_tooltip = { character_event = { id = 38254 } }
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBwords_events.3" #Peace? Get this man some more wine!
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = drunkard
+			}
+			modifier = {
+				factor = 5
+				trait = gregarious
+			}
+		}	
+		if = {
+			limit = {
+				NOT = { trait = gregarious }
+				NOT = { trait = shy }
+			}
+			random = {
+				chance = 25
+				add_trait = gregarious	
+				hidden_tooltip = { character_event = { id = 38265 } }	
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = drunkard }
+			}		
+			random = {
+				chance = 10
+				add_trait = drunkard
+				hidden_tooltip = { character_event = { id = 38286 } }	
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTCwords_events.3" # I'll just smile and nod politely
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 5
+				trait = shy
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 0.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+		}	
+		prestige = -15
+		if = {
+			limit = {
+				NOT = { trait = patient }
+				NOT = { trait = wroth }
+			}
+			random = {
+				chance = 20
+				add_trait = patient
+				hidden_tooltip = { character_event = { id = 38264 } }	
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = gregarious }
+				NOT = { trait = shy }
+			}		
+			random = {
+				chance = 20
+				add_trait = shy
+				hidden_tooltip = { character_event = { id = 38263 } }		
+			}	
+		}	
+	}
+}
+#Liege ejected me from Council of war!
+character_event = {
+	id = words_events.4
+	desc = "EVTDESCwords_events.4"
+	picture = "GFX_LANNISTER"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwords_events.4"
+		prestige = -25
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+			}
+			random = {
+				chance = 15
+				add_trait = craven
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}	
+	}
+}	
+#Growing Strong
+character_event = {
+	id = words_events.5
+	desc = "EVTDESCwords_events.5"
+	picture = "GFX_TYRELL"
+	
+	only_playable = yes
+	
+	trigger = {
+		OR = {
+			has_landed_title = k_reach
+			has_landed_title = e_reach
+			any_liege = { has_landed_title = k_reach }
+			any_liege = { has_landed_title = e_reach }
+		}
+		NOT = { has_character_flag = winter_letter }
+		dynasty = 253
+	}
+	
+	mean_time_to_happen = {
+		months = 360
+		
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 6 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 8 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 10 }
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 12
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 14
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 16
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 18
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAwords_events.5" #We are Growing Strong! Tax it fully!
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				trait = diligent
+			}
+			modifier = {
+				factor = 5
+				trait = greedy
+			}
+		}
+		scaled_wealth = { value = 0.2 min = 10 max = 150 }
+		if = {
+			limit = {
+				NOT = { trait = diligent }
+				NOT = { trait = slothful }
+			}
+			random = {
+				chance = 15
+				add_trait = diligent
+				hidden_tooltip = { character_event = { id = 38256 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = greedy }
+				NOT = { trait = charitable }
+			}		
+			random = {
+				chance = 15
+				add_trait = greedy
+				hidden_tooltip = { character_event = { id = 38252 } }
+			}
+		}	
+	}
+	option = {
+		name = "EVTOPTBwords_events.5" #Let the smallfolk keep a healthy store for winter
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 5
+				trait = charitable
+			}
+			modifier = {
+				factor = 5
+				trait = slothful
+			}
+		}
+		piety = 20
+		if = {
+			limit = {
+				NOT = { trait = greedy }
+				NOT = { trait = charitable }
+			}	
+			random = {
+				chance = 15
+				add_trait = charitable
+				hidden_tooltip = { character_event = { id = 38273 } }
+			}
+		}	
+		if = {
+			limit = {
+				NOT = { trait = diligent }
+				NOT = { trait = slothful }
+			}
+			random = {
+				chance = 15
+				add_trait = slothful
+				hidden_tooltip = { character_event = { id = 38251 } }
+			}
+		}	
+	}
+}
+
+#We do not Sow.
+character_event = {
+	id = words_events.6
+	desc = "EVTDESCwords_events.6"
+	picture = "GFX_GREYJOY"
+	
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	culture_group = iron_isles_culture
+	
+	trigger = {	
+		is_drowned_god_religion_trigger = yes
+		# OR = {
+			# has_character_flag = house_greyjoy
+			# any_dynasty_member = { has_character_flag = house_greyjoy }
+		# }	
+		any_vassal = {
+			NOT = { character = ROOT }
+			NOT = { trait = zealous }
+			age = 16
+			stewardship = 10
+			prisoner = no
+		}	
+		NOT = { trait = nightswatch }
+		NOT = { trait = kingsguard }
+		NOT = { trait = archmaester }
+	}
+	
+	mean_time_to_happen = {
+		months = 600
+	}
+	
+	option = {
+		name = "EVTOPTAwords_events.6" # We Do Not Sow.
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 5
+				trait = wroth
+			}
+			modifier = {
+				factor = 5
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 5
+				trait = arbitrary
+			}
+		}	
+		prestige = 30
+		random_vassal = {
+			limit = {
+				NOT = { character = ROOT }
+				NOT = { trait = zealous }
+				age = 16
+				stewardship = 10
+				prisoner = no
+			}
+			character_event = { id = words_events.7 tooltip = "TOOLTIPwords_events.7" }
+			opinion = {
+				who = ROOT
+				modifier = opinion_banned_from_sowing
+				years = 5
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = zealous }
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 15
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = wroth }
+				NOT = { trait = patient }
+			}		
+			random = {
+				chance = 15
+				add_trait = wroth
+				hidden_tooltip = { character_event = { id = 38254 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = just }
+				NOT = { trait = arbitrary }
+			}		
+			random = {
+				chance = 15
+				add_trait = arbitrary
+				hidden_tooltip = { character_event = { id = 38266 } }
+			}	
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBwords_events.6" # The old ways are gone. Encourage it.
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = scholar
+			}
+			modifier = {
+				factor = 2
+				trait = gardener
+			}
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+		}	
+		prestige = -30
+		scaled_wealth = { value = 0.2 min = 10 max = 150 }
+		if = {
+			limit = {
+				NOT = { trait = zealous }
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 15
+				add_trait = cynical
+				hidden_tooltip = { character_event = { id = 38258 } }
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+			}		
+			random = {
+				chance = 15
+				add_trait = craven
+				hidden_tooltip = { character_event = { id = 38257 } }
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTCwords_events.6" # Ignore it.
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 5
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 5
+				trait = cynical
+			}
+		}	
+		prestige = -10
+		if = {
+			limit = {
+				NOT = { trait = kind }
+				NOT = { trait = cruel }
+			}
+			random = {
+				chance = 15
+				add_trait = kind
+				hidden_tooltip = { character_event = { id = 38268 } }
+			}
+		}	
+		if = {
+			limit = {
+				NOT = { trait = zealous }
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 15
+				add_trait = cynical
+				hidden_tooltip = { character_event = { id = 38258 } }
+			}
+		}	
+	}
+}
+#Liege stopped my sowing!
+character_event = {
+	id = words_events.7
+	desc = "EVTDESCwords_events.7"
+	picture = "GFX_GREYJOY"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwords_events.7"
+		prestige = -25
+		if = {
+			limit = {
+				NOT = { trait = stressed }
+			}
+			random = {
+				chance = 10
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}	
+		if = {
+			limit = {
+				NOT = { trait = zealous }
+				NOT = { trait = cynical }
+			}
+			random = {
+				chance = 10
+				add_trait = cynical
+				hidden_tooltip = { character_event = { id = 38258 } }
+			}
+		}	
+	}
+}		
+#Gold of the West
+character_event = {
+	id = words_events.8
+	desc = "EVTDESCwords_events.8"
+	picture = "GFX_LANNISTER"
+	
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	war = no
+	
+	trigger = {
+		demesne_size = 1
+		capital_scope = { region = world_westerlands }
+	}
+	
+	mean_time_to_happen = {
+		months = 600
+		
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 4 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 6 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 8 }
+		}
+		modifier = {
+			factor = 1.25
+			NOT = { stewardship = 10 }
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 12
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 14
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 16
+		}
+		modifier = {
+			factor = 0.8
+			stewardship = 18
+		}
+	}
+	
+	option = {  #Go for it!
+		name = "EVTOPTAwords_events.8"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 2
+				stewardship = 14
+			}
+		}
+		scaled_wealth = { value = -0.5 min = -50 max = -250 }
+		if = {
+			limit = {
+				NOT = { stewardship = 8 }
+			}
+			random_list = {
+				30 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8POOR }
+					hidden_tooltip = { character_event = { id = words_events.9 days = 200 } }
+				}
+				35 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8AVERAGE }
+					hidden_tooltip = { character_event = { id = words_events.10 days = 200 } }
+				}
+				25 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GOOD }
+					hidden_tooltip = { character_event = { id = words_events.11 days = 200 } }
+				}
+				10 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GREAT }
+					hidden_tooltip = { character_event = { id = words_events.12 days = 200 } }
+				}
+			}
+		}
+		if = {
+			limit = {
+				stewardship = 8
+				NOT = { stewardship = 14 }
+			}
+			random_list = {
+				20 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8POOR }
+					hidden_tooltip = { character_event = { id = words_events.9 days = 200 } }
+				}
+				30 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8AVERAGE }
+					hidden_tooltip = { character_event = { id = words_events.10 days = 200 } }
+				}
+				35 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GOOD }
+					hidden_tooltip = { character_event = { id = words_events.11 days = 200 } }
+				}
+				15 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GREAT }
+					hidden_tooltip = { character_event = { id = words_events.12 days = 200 } }
+				}
+			}
+		}
+		if = {
+			limit = {
+				stewardship = 14
+			}
+			random_list = {
+				10 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8POOR }
+					hidden_tooltip = { character_event = { id = words_events.9 days = 200 } }
+				}
+				25 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8AVERAGE }
+					hidden_tooltip = { character_event = { id = words_events.10 days = 200 } }
+				}
+				45 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GOOD }
+					hidden_tooltip = { character_event = { id = words_events.11 days = 200 } }
+				}
+				20 = { 
+					custom_tooltip = { text = TOOLTIPwords_events.8GREAT }
+					hidden_tooltip = { character_event = { id = words_events.12 days = 200 } }
+				}
+			}
+		}
+	}
+	option = {  
+		name = "EVTOPTBwords_events.8"  #Too risky
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = slothful
+			}
+			modifier = {
+				factor = 2
+				NOT = { stewardship = 8 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { scaled_wealth = 0.5 }
+			}
+		}
+		prestige = -50
+	}
+}
+#Mine Failiure
+character_event = {
+	id = words_events.9
+	desc = "EVTDESCwords_events.9"
+	picture = "GFX_LANNISTER"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwords_events.9"
+		prestige = -25
+		scaled_wealth = { value = 0.2 min = 10 max = 50 }
+	}
+}
+#Mine average success
+character_event = {
+	id = words_events.10
+	desc = "EVTDESCwords_events.10"
+	picture = "GFX_LANNISTER"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAwords_events.10"
+		prestige = 15
+		scaled_wealth = { value = 0.5 min = 50 max = 250 }
+	}
+}
+#Mine good success
+character_event = {
+	id = words_events.11
+	desc = "EVTDESCwords_events.11"
+	picture = "GFX_LANNISTER"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = "EVTOPTAwords_events.12"
+			trigger = {
+				NOT = {
+					dynasty = 190	
+				}
+			}
+		}	
+		name = {
+			text = "EVTOPTBwords_events.11"
+			trigger = {
+				dynasty = 190	
+			}
+		}
+		prestige = 30
+		scaled_wealth = { value = 0.8 min = 80 max = 400 }
+	}
+}
+#Mine great success
+character_event = {
+	id = words_events.12
+	desc = "EVTDESCwords_events.12"
+	picture = "GFX_LANNISTER"
+
+	is_triggered_only = yes
+	
+	option = {
+		name = {
+			text = "EVTOPTAwords_events.12"
+			trigger = {
+				NOT = {
+					dynasty = 190	
+				}
+			}
+		}	
+		name = {
+			text = "EVTOPTBwords_events.11"
+			trigger = {
+				dynasty = 190	
+			}
+		}
+		prestige = 60
+		scaled_wealth = { value = 1.25 min = 125 max = 625 }
+	}
+}

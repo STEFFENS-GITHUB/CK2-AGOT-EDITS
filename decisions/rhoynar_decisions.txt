@@ -1,0 +1,222 @@
+decisions = {
+	flood_the_field_dec = {
+		is_high_prio = yes
+		ai = no #ai decides via event
+		potential = { 
+			trait = favored_by_rhoyne 
+			in_battle = yes
+			in_command = yes			
+			OR = {
+				had_character_flag = { flag = water_magic_used days = 15 } 
+				NOT = { has_character_flag = water_magic_used }
+			}
+		}
+		allow = {
+			location = { # must be bordering the Rhoyne or it's tributaries
+				region = world_the_rhoyne
+			}
+			custom_tooltip = {
+				text = TOOLTIPfield_of_fire_dec
+				hidden_tooltip = {
+					OR = {
+						AND = {
+							is_ruler = yes
+							war = yes
+							any_current_enemy = {
+								#war_with = ROOT
+								OR = {
+									AND = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+									any_realm_lord = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+									any_courtier = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+								}	
+							}
+						}
+						#war = no # Your liege's wars still count
+						any_liege = {
+							any_current_enemy = {
+								#war_with = PREV
+								OR = {
+									AND = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+									any_realm_lord = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+									any_courtier = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+									}
+								}	
+							}
+						}				
+						any_independent_ruler = {
+							mercenary = yes
+							at_location = ROOT
+							in_command = yes
+							prisoner = no
+						}				
+					}	
+				}
+			}	
+		}
+		effect = {
+			set_character_flag = water_magic_used
+			character_event = { id = essos.185 }				
+		}	
+	}
+	flood_the_castle_dec = {
+		is_high_prio = yes
+		potential = { 
+			trait = favored_by_rhoyne			
+			OR = {
+				had_character_flag = { flag = water_magic_used days = 30 } 
+				NOT = { has_character_flag = water_magic_used }
+			}	
+			siege = {
+				is_attacker = yes
+			}
+		}
+		allow = {
+			location = { # must be bordering the Rhoyne or it's tributaries
+				region = world_the_rhoyne
+			}
+			NOT = { in_battle = yes }
+		}
+		effect = {
+			set_character_flag = water_magic_used
+			hidden_tooltip = { #find leader/target
+				siege = {
+					enemy = {
+						leader = {
+							save_event_target_as = siege_of_fire_target
+							#set_character_flag = siege_leader
+							ROOT = { set_character_flag = watersiege_target }
+						}
+					}
+					if = { #if no leader default to province owner (capital only)
+						limit = { ROOT = { NOT = { has_character_flag = watersiege_target } } }
+						location = { 
+							owner = { 
+								if = {
+									limit = {
+										capital_holding = { controller = { character = PREVPREV } }
+										capital_scope = { ROOT = { at_location = PREV } }
+									}
+									save_event_target_as = siege_of_fire_target
+								}
+							} 
+						}
+					}					
+				}	
+				clr_character_flag = watersiege_target
+			}
+			character_event = { id = essos.187 }		
+		}		
+	}
+	fight_dragons_dec = {
+		is_high_prio = yes
+		ai = no #ai decides via event
+		potential = { 
+			trait = favored_by_rhoyne 
+			in_battle = yes
+			in_command = yes			
+			OR = {
+				had_character_flag = { flag = water_magic_used days = 30 } 
+				NOT = { has_character_flag = water_magic_used }
+			}
+		}
+		allow = {	
+			location = { # must be bordering the Rhoyne or it's tributaries
+				region = world_the_rhoyne
+			}
+			custom_tooltip = {
+				text = TOOLTIPfield_of_fire_dec
+				hidden_tooltip = {
+					OR = {
+						AND = {
+							is_ruler = yes
+							war = yes
+							any_current_enemy = {
+								#war_with = ROOT
+								OR = {
+									AND = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+									any_realm_lord = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+									any_courtier = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+								}	
+							}
+						}
+						#war = no # Your liege's wars still count
+						any_liege = {
+							any_current_enemy = {
+								#war_with = PREV
+								OR = {
+									AND = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+									any_realm_lord = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+									any_courtier = {
+										at_location = ROOT
+										prisoner = no
+										in_command = yes
+										trait = dragon_rider
+									}
+								}	
+							}
+						}					
+						any_independent_ruler = {
+							mercenary = yes
+							at_location = ROOT
+							in_command = yes
+							prisoner = no
+							trait = dragon_rider
+						}				
+					}	
+				}
+			}	
+		}
+		effect = {
+			set_character_flag = water_magic_used
+			character_event = { id = essos.186 }		
+		}	
+	}
+}

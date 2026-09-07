@@ -1,0 +1,347 @@
+# Targetted decisions are possible vs _all_ other characters and shown are in the Diplomacy View, not the Intrigue View. The taker is in the FROM scope.
+#
+# filter = [self/court/home_court/vassals/sub_realm/realm/dynasty/spouse/liege/religious_head/rivals/society/all] ('self' MUST be set for decisions targetting only the taker, the other filter types can be set to lessen CPU load)
+# ai_target_filter = [self/court/home_court/vassals/sub_realm/realm/dynasty/spouse/liege/religious_head/rivals/society/all] (which characters for which the AI evaluates the decision.)
+#	court: all characters in the AI's host court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	home_court: all characters in the AI's home court, including prisoners, and characters currently away (wards, prisoners, etc)
+#	vassals: direct vassal rulers of the AI's employer
+#	sub_realm: all characters below the AI's employer
+#	realm: all characters in the same top realm as the AI
+#	dynasty: all members of the same dynasty (but not yourself)
+#	rivals: your rivals plus any character you have an opinion modifier with 'crime = yes' set (the same set of characters the 'is_foe' trigger evaluates)
+# society: the other members of your society (but not yourself)
+#	all: all living characters (Avoid if possible. VERY CPU-HEAVY!)
+#	independent_rulers
+#	close_relatives. Includes children, grandchildren, parents, siblings, and niblings
+#	
+decisions = {
+	go_on_quest = {
+		only_playable = yes
+		potential = {
+			OR = {
+				ai = no
+				higher_tier_than = DUKE
+			}
+			NOT = { has_character_flag = on_a_foreign_tour }
+			is_ruler = yes						
+			is_theocracy = no
+			NOT = { dynasty = 0 }
+			NOT = { culture = moon_clansman }
+			NOT = { wildling_culture_trigger = yes }
+			NOT = { trait = dragon }
+			NOT = { culture_group = winter_group }	
+			NOT = { culture_group = unoccupied_group }				
+			OR = {
+				AND = {
+					ai = no
+					OR = {
+						trait = traveller
+						NOT = { has_character_modifier = went_on_foreign_tour }	
+					}
+				}
+				AND = {
+					higher_tier_than = DUKE
+					OR = {
+						government = feudal_government
+						government = feudal_government_LP
+					}
+					NOT = { has_character_modifier = made_progress }
+				}
+			}
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			wealth = 50 
+			prisoner = no
+			war = no 
+			OR = {
+				is_patrician = yes
+				higher_tier_than = COUNT
+			}
+			NOT = { is_inaccessible_trigger = yes }
+			in_command = no
+			age = 18
+			OR = {
+				AND = {
+					higher_tier_than = DUKE
+					OR = {
+						government = feudal_government
+						government = feudal_government_LP
+					}
+					NOT = { has_character_modifier = made_progress }
+				}
+				trait = traveller
+				AND = {
+					NOT = { age = 30 }	
+					NOT = { trait = content }
+					NOT = { trait = slothful }
+				}
+			}	
+			has_epidemic = no
+			is_ill = no
+			NOT = { has_severe_disability_trigger = yes }	
+			can_press_claims_trigger = yes
+			is_priest = no			
+			NOT = { is_inaccessible_trigger = yes }
+			NOT = { has_minor_title = title_triarch }
+		}
+		effect = {
+			set_character_flag = on_a_foreign_tour # Safety check, use as fast trigger in all events
+			set_character_flag = page_1
+			character_event = { id = wikid.295 tooltip = TOOLTIPwikid.295 }
+		}
+		ai_check_interval = 96
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.2			
+			}
+			
+			modifier = {
+				factor = 2
+				NOT = { ruled_years = 8 }
+			}
+			modifier = {
+				factor = 0.25
+				independent = no
+			}
+			
+			modifier = {
+				factor = 0
+				OR = {
+					trait = slothful
+					trait = content
+					trait = paranoid
+				}
+				NOR = {
+					trait = diligent
+					trait = ambitious
+					trait = gregarious
+				}
+			}
+			
+			modifier = {
+				factor = 2
+				trait = diligent
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = trusting
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = slothful
+			}
+			modifier = {
+				factor = 0.5
+				trait = content
+			}
+			modifier = {
+				factor = 0.5
+				trait = shy
+			}
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 0.5
+				trait = paranoid
+			}			
+		}
+	}
+}
+targetted_decisions = {
+	offer_quest = {
+		ai_target_filter = none
+		filter = home_court
+		ai = no
+		diplomacy_icon = GFX_decision_wikid
+		
+		from_potential = {
+			ai = no
+			is_ruler = yes						
+			is_theocracy = no
+			NOT = { dynasty = 0 }
+			NOT = { culture = moon_clansman }
+			NOT = { wildling_culture_trigger = yes }
+		}
+	
+		potential = {
+			host = { character = FROM }
+			liege = { character = FROM }			
+			is_close_relative = FROM
+			dynasty = FROM		
+			is_ruler = no
+			OR = {
+				is_female = no
+				female_get_masculine_event_trigger = yes
+			}
+			NOT = { trait = dragon }
+			NOT = { culture_group = winter_group }	
+			NOT = { culture_group = unoccupied_group }	
+			age = 14
+			NOT = { age = 30 }			
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			FROM = { 
+				wealth = 50 
+				prisoner = no
+				is_incapable = no
+				age = 16
+				war = no 
+				OR = {
+					is_patrician = yes
+					higher_tier_than = COUNT
+				}
+			}
+			NOT = { is_inaccessible_trigger = yes }
+			in_command = no
+			prisoner = no
+			age = 18
+			NOT = { age = 30 }			
+			NOT = { trait = content }
+			NOT = { trait = slothful }
+			has_epidemic = no
+			is_ill = no
+			NOT = { has_severe_disability_trigger = yes }		
+			can_press_claims_trigger = yes
+			is_priest = no			
+			NOT = { is_inaccessible_trigger = yes }
+			NOT = { has_minor_title = title_triarch }
+			NOT = { has_character_modifier = went_on_foreign_tour }
+			custom_tooltip = {
+				text = TOOLTIPrejected_adventure
+				hidden_tooltip = { NOT = { has_character_flag = rejected_adventure } }
+			}	
+		}
+		effect = {
+			character_event = { id = wikid.292 tooltip = TOOLTIPwikid.292 }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	royal_progress_destination = {
+		ai_target_filter = none
+		filter = sub_realm
+		ai = no
+		diplomacy_icon = GFX_decision_wikid
+		
+		from_potential = {
+			ai = no
+			trait = wikid
+			has_character_flag = on_a_foreign_tour
+			has_character_flag = touring_royal_progress
+			has_character_flag = royal_progress_destination_needed
+		}
+	
+		potential = {
+			higher_tier_than = BARON
+			demesne_size = 1
+			is_liege_or_above = FROM
+			NOT = { culture_group = unoccupied_group }		
+		}
+		allow = {
+			show_only_failed_conditions = yes
+			NOT = { is_inaccessible_trigger = yes }
+			in_command = no
+			war = no 
+			prisoner = no		
+			has_epidemic = no
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_visited_on_progress } }
+			NOT = { has_character_modifier = holding_large_feast }
+			custom_tooltip = {
+				text = is_not_busy_trigger_tooltip
+				hidden_tooltip = { NOT = { has_character_flag = do_not_disturb } }
+			}
+			trigger_if = {
+				limit = { NOT = { FROM = { has_character_flag = first_royal_progress_destination } } }
+				trigger_if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 800 } } } }
+					}
+					FROM = { wealth = 100 }
+				}
+				trigger_else_if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 400 } } } }
+					}
+					FROM = { wealth = 50 }
+				}
+				trigger_else_if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 200 } } } }
+					}
+					FROM = { wealth = 25 }
+				}
+			}
+			trigger_else = { #first destination must be close
+				capital_scope = {
+					show_scope_change = no
+					FROM = {
+						show_scope_change = no
+						capital_scope = {
+							NOT = { distance = { where = PREVPREV value = 800 } }
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = { FROM = { NOT = { has_character_flag = first_royal_progress_destination } } }
+				if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 800 } } } }
+					}
+					FROM = { wealth = -100 }
+				}
+				else_if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 400 } } } }
+					}
+					FROM = { wealth = -50 }
+				}
+				else_if = {
+					limit = {
+						capital_scope = { FROM = { persistent_event_target:royal_progress_destination = { distance = { where = PREVPREV value = 200 } } } }
+					}
+					FROM = { wealth = -25 }
+				}
+			}			
+			custom_tooltip = {
+				text = TOOLTIProyal_progress_destination
+				capital_scope = {
+					save_event_target_as = tour_destination
+					FROM = { save_persistent_event_target = { name = royal_progress_destination scope = PREV } }
+				}
+			}	
+			opinion = { who = FROM modifier = opinion_visited_on_progress months = 48 }
+			FROM = {
+				clr_character_flag = royal_progress_destination_needed
+				clr_character_flag = first_royal_progress_destination	
+				character_event = { id = wikid.303 days = 30 random = 15 } #Arrive
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}

@@ -1,0 +1,986 @@
+adjacencies = {
+	#Iron Islands
+	357 = 152 #Lonely Light-Great Wyk
+	162 = 163 #Pyke - Banefort
+	159 = 76  #Stonetree - Cape of Eagles
+	
+	#Westeros outlying islands
+	292 = 290 #The Arbor-Sunhouse
+	221 = 217 #Dragonstone-The Whispers
+	220 = 234 #Driftmark-Sharp Point
+	124 = 1131 #Shorched Vale - Sunderland
+	
+	#Narrow Sea crossings
+	348 = 353 #Spottswood-Sunstone
+	362 = 370 #Torturers Deep - Vilibosh
+	305 = 384 #Tarth - Nontelos
+	226 = 406 #KL - Pentos
+	221 = 485 #Dragonstone Andal Coast
+	149 = 462 #Gulltown - Freneros
+	139 = 470 #Longbow Hall - Braavos
+	
+	#Essos outlying Islands
+	367 = 369 #Tyrosh-Tyroshi Landing
+	367 = 366 #Tyrosh-Little Tyrosh
+	368 = 376 #Lys-Disputed Forest
+	471 = 446 #Lorath-Fisher Point
+	602 = 601 #Elyria-Tolos
+	622 = 616 #Velos-Ghiscar Point
+	624 = 620 #Ghaen-Qimbreen
+	663 = 720 #Qarth-Jade Gate
+	666 = 667 #Qal-Jade point
+	667 = 721 #Qal-Bawrashar
+	670 = 669 #Abaj-Asabhad
+	767 = 1146 #Xianqi-Leng Xotli
+	798 = 799 #Safron Isle
+	801 = 800 #Ulos
+	789 = 795 #Manticore-Asshai
+	789 = 790 #Manticore-Turrani
+	789 = 788 #Manticore-Marahai
+	790 = 788 #Marahai-Turrani
+	
+	#Ibben crossing
+	576 = 592 #New Ibbish-Ibben Zok
+	595 = 593 #Ibben Hran-Ib Sar
+	
+	#Summer Islands
+	350 = 493 #Plankytown - Last Lament
+	496 = 368 #Lys - Last Lament
+	417 = 500 #Volantis - Tall Trees Town
+	526 = 626 #Naath red Flower Bay	
+	521 = 534 
+	528 = 508 
+	523 = 506 
+	522 = 516 
+	515 = 512
+	514 = 510
+	504 = 502
+	505 = 503
+	509 = 501
+	503 = 500
+	502 = 496
+	514 = 504
+	
+	#Sothoryos crossing
+	626 = 750 #Naath to the Isle of Flies
+	753 = 625 #Talon - New Ghis
+	747 = 757 #Gogoggos - Aquos Dhaen
+	741 = 746 #Zamettar - Basilisk Point
+	736 = 739
+	787 = 764 #Isle of Whips
+	726 = 732 #Cinnamon Isles
+	727 = 728 #Isle of Elephants
+	722 = 729 #Vahar
+	729 = 730 #Pongar
+	731 = 735 #Wyvern Point
+	741 = 743 #Zammetar
+	741 = 744 #Zammetar
+	747 = 752 #Gogossos
+	747 = 746 #Basilisk Point
+	748 = 749 #Isle of Lice
+}
+
+culture_group_spread = {
+	factor = 1000
+	
+	modifier = {
+		factor = 10
+		num_culture_provinces < 20
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 30
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 40
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 50
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 60
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 70
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 80
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 90
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 100
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 110
+	}
+	modifier = { # Boost groups with many individual cultures somewhat
+		factor = 1.5
+		OR = {
+			culture_group = first_men
+			culture_group = valyrian
+		}
+		NOT = {
+			has_alternate_start_setting = {
+				setting = culture
+				option = full_random
+			}
+		}
+	}
+	modifier = { # Boost groups with very many individual cultures even more
+		factor = 7
+		OR = {
+			culture_group = andal
+			culture_group = free_cities
+		}
+		NOT = {
+			has_alternate_start_setting = {
+				setting = culture
+				option = full_random
+			}
+		}
+	}
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+	modifier = {
+		factor = 14
+		OR = {
+			culture_group = horse_group
+			culture_group = cat_group
+			culture_group = bear_group
+			culture_group = hedgehog_group
+			culture_group = duck_group
+			culture_group = dog_group
+			culture_group = dragon_group
+			culture_group = elephant_group
+		}
+		OR = {
+			has_alternate_start_parameter = { key = special_culture value = animal_kingdoms } 
+			has_alternate_start_parameter = { key = special_culture value = all } 
+		}
+	}
+	modifier = {
+		factor = 14
+		OR = {
+			culture_group = winter_group
+			culture_group = old_races
+			culture_group = islander_group
+		}
+		OR = {
+			has_alternate_start_parameter = { key = special_culture value = mythological } 
+			has_alternate_start_parameter = { key = special_culture value = all } 
+		}
+	}
+	modifier = {
+		factor = 0.5
+		NOR = {
+			culture_group = horse_group
+			culture_group = cat_group
+			culture_group = bear_group
+			culture_group = hedgehog_group
+			culture_group = duck_group
+			culture_group = dog_group
+			culture_group = dragon_group
+			culture_group = elephant_group
+			culture_group = winter_group
+			culture_group = old_races
+			culture_group = islander_group
+		}
+		OR = {
+			has_alternate_start_parameter = { key = special_culture value = animal_kingdoms } 
+			has_alternate_start_parameter = { key = special_culture value = mythological } 
+			has_alternate_start_parameter = { key = special_culture value = all } 
+		}
+	}
+}
+
+culture_spread = {
+	factor = 1000
+	
+	modifier = {
+		factor = 10
+		num_culture_provinces < 3
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 5
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 10
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 15
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 20
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 25
+	}
+	modifier = {
+		factor = 0.8
+		num_culture_provinces > 30
+	}
+	
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}
+
+religion_group_spawn = {
+	factor = 1000
+	modifier = {
+		factor = 0.001
+		any_religion_distance < 200
+	}
+	modifier = {
+		factor = 0.1
+		any_religion_distance < 350
+	}
+	modifier = { # No starting on islands, except major islands
+		factor = 0
+		is_island = yes
+		NOT = { region = world_westeros }
+		NOT = { region = world_summer_islands }
+		NOT = { region = world_ibben }
+		NOT = { region = world_moraq }
+		NOT = { region = world_sothoryos }
+		NOT = { region = world_leng }
+	}
+}
+
+religion_group_spread = {
+	factor = 1000
+	
+	modifier = {
+		factor = 10
+		num_religion_provinces < 5
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 20
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 40
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 60
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 80
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 100
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 120
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 140
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 160
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 180
+	}
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}
+
+religion_spread = {
+	factor = 1000
+	
+	modifier = {
+		factor = 10
+		num_religion_provinces < 2
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 10
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 20
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 30
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 40
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 50
+	}
+	modifier = {
+		factor = 0.8
+		num_religion_provinces > 60
+	}
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}
+
+dejure_kingdom_spread = {
+	factor = 100
+	modifier = {
+		factor = 5
+		distance = { where = FROM value < 100 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 200 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 300 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 400 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 500 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 600 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 700 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 800 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 900 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 1000 }
+	}
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}
+
+dejure_empire_spread = {
+	factor = 100
+	modifier = {
+		factor = 5
+		distance = { where = FROM value < 100 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 200 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 300 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 400 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 500 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 600 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 700 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 800 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 900 }
+	}
+	modifier = {
+		factor = 0.6
+		distance = { where = FROM value > 1000 }
+	}
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}
+
+holy_site_spread = {
+	factor = 100
+	# We want three holy sites within the religion's borders, and two outside
+	modifier = {
+		factor = 0
+		NOT = { religion = FROM }
+		FROM = { num_holy_sites_generated < 1 }
+	}
+	modifier = {
+		factor = 0.01
+		NOT = { religion = FROM }
+		NOT = { parent_religion = { religion = FROM } }
+		FROM = { num_holy_sites_generated < 3 }
+	}
+	modifier = {
+		factor = 0.001
+		NOT = { religion_group = FROM }
+		FROM = { num_holy_sites_generated < 3 }
+	}
+	modifier = {
+		factor = 0.001
+		FROM = { num_holy_sites_generated >= 3 }
+		religion = FROM
+	}
+	# Stay near our borders
+	modifier = {
+		factor = 2
+		religion_group = FROM
+	}
+	# Avoid clustering
+	modifier = {
+		factor = 0 # We simply never want to be adjacent to a holy site
+		any_neighbor_province = {
+			is_holy_site = FROM
+		}
+	}
+	modifier = {
+		factor = 0
+		holy_site_distance = { target = FROM value < 100 }
+	}
+	modifier = {
+		factor = 0.01
+		holy_site_distance = { target = FROM value < 200 }
+	}
+	modifier = {
+		factor = 0.1
+		holy_site_distance = { target = FROM value < 300 }
+		FROM = { NOT = { religion_group = pagan_group } }
+	}
+	modifier = {
+		factor = 20
+		holy_site_distance = { target = FROM value > 500 }
+		FROM = { num_holy_sites_generated > 0 }
+	}
+	modifier = { # Pagan sites tend to be closer
+		factor = 30
+		holy_site_distance = { target = FROM value < 350 }
+		FROM = { religion_group = pagan_group }
+	}
+	modifier = {
+		factor = 0 # We use this as a proxy for religion distance, because religion distance is expensive to calculate
+		NOT = { religion = FROM }
+		NAND = { 
+			parent_religion = { religion = FROM }
+			FROM = { num_holy_sites_generated >= 3 } # Heresies can put their 3rd holy site in their parent religion
+		}
+		FROM = { num_holy_sites_generated > 0 }
+		holy_site_distance = { target = FROM value > 400 }
+	}
+	# Sharing some holy sites with parent religion is neat
+	modifier = {
+		factor = 100
+		FROM = {
+			parent_religion = {
+				ROOT = {
+					is_holy_site = PREV
+				}
+			}
+		}
+	}
+}
+
+holding_spread = {
+	factor = 100
+	# Don't cross Seas too often
+	modifier = {
+		factor = 0.2
+		region = world_westeros
+		FROM = { NOT = { region = world_westeros } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_westeros }
+		FROM = { region = world_westeros }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_iron_isles
+		FROM = { NOT = { region = world_iron_isles } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_iron_isles }
+		FROM = { region = world_iron_isles }
+	}
+	modifier = {
+		factor = 0.2
+		region = world_summer_islands
+		FROM = { NOT = { region = world_summer_islands } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { region = world_summer_islands }
+		FROM = { region = world_summer_islands }
+	}
+	modifier = {
+		factor = 0.2
+		OR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			NOR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		NOR = {
+			region = world_sothoryos
+			region = world_basilisk_isles
+		}	
+		FROM = { 
+			OR = {
+				region = world_sothoryos
+				region = world_basilisk_isles
+			}
+		}
+	}
+	modifier = {
+		factor = 0.2
+		province_id = 626 #Naath
+		FROM = { NOT = { province_id = 626 } }
+	}
+	modifier = {
+		factor = 0.2
+		NOT = { province_id = 626 }
+		FROM = { province_id = 626 }
+	}
+	##
+}

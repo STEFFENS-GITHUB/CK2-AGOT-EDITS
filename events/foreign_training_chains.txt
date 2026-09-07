@@ -1,0 +1,1218 @@
+########################################
+###Written by Ogaburan aka Ran Miller###
+########################################
+
+###################################
+####Forgein Training & Wards#######
+namespace = foreign_training
+###################################
+
+#foreign_training.1 - Ward - Braavosi (Martial).
+#foreign_training.2 - Guardian - Braavosi (Martial).
+#foreign_training.3 - Ward notification - Refused.
+#foreign_training.4 - Ward notification - Accepted.
+#foreign_training.5 - Ward - Pentosi (Stewardship).
+#foreign_training.6 - Guardian - Pentosi (Stewardship).
+#foreign_training.7 - Ward - Tyroshi (Diplomacy).
+#foreign_training.8 - Guardian - Tyroshi (Diplomacy).
+#foreign_training.9 - Braavosian Traning.
+
+##############################
+
+#foreign_training.1 - Ward - Braavosi (Martial)
+# On-action: on_yearly_childhood_pulse (80)
+character_event = {
+	id = foreign_training.1
+	desc = "EVTDESCforeign_training.1" 	#I hear rumors about Braavosian...
+	picture = "GFX_sirio"
+	
+	is_triggered_only = yes
+	
+	min_age = 6
+	max_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_epidemic = no
+		is_ill = no
+		has_severe_disability_trigger = no
+		NOT = { trait = dwarf }
+		NOT = { is_weak_trigger = yes }
+		NOT = { trait = wildling }
+		NOT = { culture = moon_clansman }
+		NOT = { culture_group = free_cities }
+		liege = { NOT = { culture_group = free_cities } }
+		NOT = { trait = master_warrior }
+		OR = { 
+			father = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			} 
+			mother = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			}
+			guardian = {
+				higher_tier_than = DUKE
+			}
+			higher_tier_than = DUKE
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			OR = {
+				has_character_modifier = martial_education
+				has_focus = focus_ed_martial
+			}
+		}
+		modifier = {
+			factor = 0.3
+			is_female = yes
+			female_get_masculine_event_trigger = no
+		}
+		modifier = {
+			factor = 0.1
+			is_female = no
+			female_warrior_culture_trigger = yes
+		}
+	}
+	
+	immediate = {
+		#find trainer
+		random_character = {
+			limit = {
+				age = 16
+				is_female = no
+				culture = braavosi
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				is_ruler = no
+				prisoner = no
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = maester }
+				NOT = { trait = slave }
+				NOT = { has_character_flag = faceless_man }
+				NOT = { has_character_modifier = foreign_trainer }				
+				NOT = { liege = { is_close_relative = PREV } }
+				NOT = { liege = { dynasty = PREV } }
+				is_councillor = no
+				NOT = { is_voter = yes }
+				NAND = {
+					has_minor_title = title_bodyguard
+					opinion = { who = liege value = 0 }
+				}
+				NOT = { liege = { regent = { character = PREVPREV } } }
+				NOT = { has_character_flag = wants_varangian }
+				NOT = { trait = red_priest }
+				NOT = { liege = { is_theocracy = yes } }
+				
+				is_ill = no
+				NOT = { trait = imbecile }
+				NOT = { has_severe_disability_trigger = yes }
+			}
+			save_event_target_as = foreign_trainer
+			break = yes
+		}
+		if = {
+			limit = { 470 = { culture = braavosi } }
+			470 = {
+				owner = {
+					create_random_soldier = {
+						female = no
+						dynasty = none
+						random_traits = yes									
+						religion = PREV
+						culture = braavosi
+					}	
+					new_character = {
+						random_list = {
+							85 = { add_trait = skilled_warrior }
+							15 = { add_trait = master_warrior }
+						}
+						save_event_target_as = foreign_trainer
+						
+						remove_trait = weak
+						remove_trait = slow
+						remove_trait = imbecile
+						remove_trait = dull
+						
+						remove_lifestyle_trait_effect = yes
+						add_trait = duelist	
+						random_list = { # Flavor Randomization
+							35 = { 
+								# Nothing
+							}
+							15 = {
+								change_martial = 2
+							}
+							10 = {
+								trigger = { NOT = { trait = strong } }
+								add_trait = robust
+							}
+							5 = {
+								change_martial = 4
+							}
+							5 = {
+								if = {
+									limit = {
+										has_dlc = "Reapers"
+									}
+									add_trait = one_eyed
+								}
+							}
+							5 = { 
+								trigger = { 
+									is_smart_incl_genius_trigger = no
+								}
+								add_trait = shrewd
+							}
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+					}
+				}
+			}	
+			break = yes
+		}
+		random_character = {
+			limit = {
+				age = 16
+				is_female = no
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+				OR = {
+					trait = skilled_warrior
+					trait = master_warrior
+				}
+				is_ruler = no
+				prisoner = no
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = maester }
+				NOT = { trait = slave }
+				NOT = { has_character_flag = faceless_man }
+				NOT = { has_character_modifier = foreign_trainer }				
+				NOT = { liege = { is_close_relative = PREV } }
+				NOT = { liege = { dynasty = PREV } }
+				is_councillor = no
+				NOT = { is_voter = yes }
+				NAND = {
+					has_minor_title = title_bodyguard
+					opinion = { who = liege value = 0 }
+				}
+				NOT = { liege = { regent = { character = PREVPREV } } }
+				NOT = { has_character_flag = wants_varangian }
+				NOT = { trait = red_priest }
+				NOT = { liege = { is_theocracy = yes } }
+				
+				is_ill = no
+				NOT = { trait = imbecile }
+				NOT = { has_severe_disability_trigger = yes }
+			}
+			save_event_target_as = foreign_trainer
+			break = yes
+		}
+		random_playable_ruler = {
+			limit = {
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+			}
+			create_random_soldier = {
+				female = no
+				dynasty = none
+				random_traits = yes
+				religion = THIS
+				culture = THIS
+			}	
+			new_character = {
+				random_list = {
+					85 = { add_trait = skilled_warrior }
+					15 = { add_trait = master_warrior }
+				}
+				save_event_target_as = foreign_trainer
+				
+				remove_trait = weak
+				remove_trait = slow
+				remove_trait = imbecile
+				remove_trait = dull
+				
+				remove_lifestyle_trait_effect = yes
+				add_trait = duelist
+				random_list = { # Flavor Randomization
+					35 = { 
+						# Nothing
+					}
+					15 = {
+						change_martial = 2
+					}
+					10 = {
+						trigger = { NOT = { trait = strong } }
+						add_trait = robust
+					}
+					5 = {
+						change_martial = 4
+					}
+					5 = {
+						if = {
+							limit = {
+								has_dlc = "Reapers"
+							}
+							add_trait = one_eyed
+						}
+					}
+					5 = { 
+						trigger = { 
+							is_smart_incl_genius_trigger = no
+						}
+						add_trait = shrewd
+					}
+				}
+				if = {
+					limit = { religion = the_seven }
+					knight_character_effect = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "OK"
+		show_portrait = event_target:foreign_trainer
+		hidden_tooltip = { 
+			if = {
+				limit = { 
+					father = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				father = {
+					character_event = { id = foreign_training.2 } 
+				} 
+			}	
+			else_if = {
+				limit = { 
+					mother = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				mother = {
+					character_event = { id = foreign_training.2 } 
+				} 
+			}
+			else = {
+				guardian = {
+					character_event = { id = foreign_training.2 } 
+				} 
+			}				
+		}
+	}
+}
+
+#foreign_training.2 - Guardian - Braavosi (Martial).
+character_event = {
+	id = foreign_training.2
+	desc = "EVTDESCforeign_training.2" 	#To hire or not ot hire... that is the question.
+	picture = "GFX_sirio"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAforeign_training.2" #Refuse
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = proud
+					trait = greedy
+					trait = zealous
+				}
+			}
+			modifier = {
+				factor = 0
+				trait = humble
+			}
+		}
+		show_portrait = event_target:foreign_trainer
+		prestige = 15
+		if = {
+			limit = { 
+				NOT = { personality_traits = 5 } 
+				NOT = { trait = proud }
+				NOT = { trait = humble }
+			}
+			random = {
+				chance = 25
+				add_trait = proud
+				hidden_tooltip = { character_event = { id = 38261 } }
+			}	
+		}		
+		FROM = { hidden_tooltip = { character_event = { id = foreign_training.3 } } }
+	}
+	
+	option = {
+		name = "EVTOPTBforeign_training.2" # I will pay
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 5
+				OR = {
+					trait = duelist
+					trait = ambitious
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = yes }
+			scaled_wealth = { value = -0.2 min = -50 max = -150 }
+		}	
+		event_target:foreign_trainer = {
+			if = {
+				limit = { ROOT = { is_ruler = yes } }
+				move_character = ROOT
+			}
+			if = {
+				limit = { ROOT = { is_ruler = no } }
+				ROOT = { liege = { reverse_banish = PREVPREV } }
+			}					
+			hidden_tooltip = { 
+				wealth = 50 
+				add_character_modifier = {
+					name = foreign_trainer
+					duration = 100
+				}	
+			}	
+		}
+		FROM = {
+			if = {
+				limit = { trait = skilled_warrior }
+				random = {
+					chance = 5
+					hidden_tooltip = { 
+						save_event_target_as = ward_fighter
+						ROOT = { character_event = { id = trait_notification.22 } }
+					}
+					tooltip = { add_trait = master_warrior }
+				}
+			}
+			if = {
+				limit = { trait = trained_warrior }
+				random = {
+					chance = 20
+					hidden_tooltip = { 
+						save_event_target_as = ward_fighter
+						ROOT = { character_event = { id = trait_notification.22 } }
+					}
+					tooltip = { add_trait = skilled_warrior }
+				}
+			}
+			if = {
+				limit = { trait = poor_warrior }
+				random = {
+					chance = 50
+					hidden_tooltip = { 
+						save_event_target_as = ward_fighter
+						ROOT = { character_event = { id = trait_notification.22 } }
+					}
+					tooltip = { add_trait = trained_warrior }
+				}	
+			}
+			if = {
+				limit = { 
+					NOR = {
+						trait = poor_warrior 
+						trait = trained_warrior 
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}
+				hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				tooltip = { add_trait = poor_warrior }
+			}
+			if = {
+				limit = { NOT = { lifestyle_traits = 1 } }
+				random = {
+					chance = 20
+					add_trait = duelist
+				}
+			}
+			if = {
+				limit = { 
+					NOT = { personality_traits = 5 } 
+					NOT = { trait = brave }
+					NOT = { trait = craven }
+					NOT = { trait = timid }
+				}
+				random = {
+					chance = 30
+					add_trait = brave
+					hidden_tooltip = {
+						ROOT = { character_event = { id = 38170 } } 
+						character_event = { id = 38270 }
+					}
+				}
+			}
+			hidden_tooltip = {character_event = { id = foreign_training.4 }} #Notification
+			#hidden_tooltip = {character_event = { id = foreign_training.9 days=90 }} #Training
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 5
+			}
+		}
+   	}
+}
+
+#foreign_training.3 - Ward notification - Refused.
+character_event = {
+	id = foreign_training.3
+	desc = "EVTDESCforeign_training.3" 	# Guardian didn't wanna pay.
+	picture = "GFX_sad_aria"
+	
+	is_triggered_only = yes
+	
+	option = { name = "OK" }
+}
+
+#foreign_training.4 - Ward notification - Accepted.
+character_event = {
+	id = foreign_training.4
+	desc = "EVTDESCforeign_training.4" # Guardian did pay.
+	picture = "GFX_evt_guardian"
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "Ok" 
+		if = {
+			limit  = { FROM = { is_ruler = no } }
+			scaled_wealth = { value = -0.2 min = -50 max = -150 }	
+		}	
+		event_target:foreign_trainer = {
+			reverse_opinion = {
+				modifier = opinion_mentor	
+				who = ROOT
+				years = 25
+			}
+			tooltip = { show_portrait = yes }
+		}
+	}
+}
+
+#foreign_training.5 - Ward - Pentosi (Stewardship).
+# On-action: on_yearly_childhood_pulse (80)
+character_event = {
+	id = foreign_training.5
+	desc = "EVTDESCforeign_training.5" #Pentosi Teacher (Stewardship)
+	picture = "GFX_magistrate"
+	
+	is_triggered_only = yes
+	
+	min_age = 6
+	max_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_epidemic = no
+		is_ill = no
+		NOT = { is_dumb_trigger = yes }
+		NOT = { trait = imbecile }
+		NOT = { trait = inbred }
+		NOT = { trait = charitable }
+		NOT = { culture_group = free_cities }
+		NOT = { trait = wildling }
+		NOT = { culture = moon_clansman }
+		liege = { NOT = { culture_group = free_cities } }
+		OR = { 
+			father = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			} 
+			mother = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			}
+			guardian = {
+				higher_tier_than = DUKE
+			}
+			higher_tier_than = DUKE
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			OR = {
+				has_character_modifier = steward_education
+				has_focus = focus_ed_stewardship
+			}
+		}
+	}
+	
+	immediate = {
+		#find trainer
+		random_character = {
+			limit = {
+				age = 16
+				is_female = no
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				liege = { NOT = { culture_group = ROOT } }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+				stewardship = 14
+				OR = {
+					trait = indulgent_wastrel
+					trait = thrifty_clerk
+					trait = fortune_builder
+					trait = midas_touched
+				}
+				is_ruler = no
+				prisoner = no
+				NOT = { trait = incapable }
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = maester }
+				NOT = { trait = slave }
+				NOT = { has_character_flag = faceless_man }
+				NOT = { has_character_modifier = foreign_trainer }				
+				NOT = { liege = { is_close_relative = PREV } }
+				NOT = { liege = { dynasty = PREV } }
+				is_councillor = no
+				NOT = { is_voter = yes }
+				NOT = { liege = { regent = { character = PREVPREV } } }
+				NOT = { has_character_flag = wants_varangian }
+				NOT = { trait = red_priest }
+				NOT = { liege = { is_theocracy = yes } }
+				
+				is_ill = no
+				NOT = { trait = infirm }
+				NOT = { is_dumb_trigger = yes }
+				NOT = { trait = imbecile }
+			}
+			save_event_target_as = foreign_trainer
+			break = yes
+		}
+		random_playable_ruler = {
+			limit = {
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+			}
+			capital_scope = {
+				create_random_steward = {
+					female = no
+					dynasty = none
+					random_traits = yes
+					trait = midas_touched
+					religion = THIS
+					culture = THIS
+				}	
+				new_character = {
+					save_event_target_as = foreign_trainer
+					
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					
+					remove_lifestyle_trait_effect = yes
+					
+					random_list = { # Flavor Randomization
+						35 = { 
+							# Nothing
+						}
+						15 = {
+							change_stewardship = 2
+						}
+						10 = {
+							add_trait = gardener
+						}
+						10 = {
+							add_trait = architect
+						}
+						10 = {
+							add_trait = administrator
+						}
+						10 = {
+							change_stewardship = 4
+						}
+						5 = {
+							change_stewardship = 6
+						}
+						5 = {
+							trigger = { 
+								is_smart_incl_genius_trigger = no
+							}
+							add_trait = shrewd
+						}
+					}
+					if = {
+						limit = { 
+							culture_group = hyrkoon_group
+						}
+						add_trait = eunuch
+					}	
+					while = {
+						limit = { NOT = { stewardship = 12 } }
+						change_stewardship = 1
+					}
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = "OK"
+		show_portrait = event_target:foreign_trainer
+		hidden_tooltip = { 
+			if = {
+				limit = { 
+					father = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				father = {
+					character_event = { id = foreign_training.6 } 
+				} 
+			}	
+			else_if = {
+				limit = { 
+					mother = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				mother = {
+					character_event = { id = foreign_training.6 } 
+				} 
+			}
+			else = {
+				guardian = {
+					character_event = { id = foreign_training.6 } 
+				} 
+			}				
+		}
+	}
+}
+
+#foreign_training.6 - Guardian - Pentosi (Stewardship).
+character_event = {
+	id = foreign_training.6
+	desc = "EVTDESCforeign_training.6" #To hire or not ot hire... that is the question.
+	picture = "GFX_magistrate"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAforeign_training.2" #Refuse - bloody forgeiner schum!
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = proud
+					trait = greedy
+					trait = zealous
+					trait = temperate
+				}
+			}
+		}
+		show_portrait = event_target:foreign_trainer
+		prestige = 15
+		if = {
+			limit = { 
+				NOT = { personality_traits = 5 } 
+				NOT = { trait = proud }
+				NOT = { trait = humble }
+			}
+			random = {
+				chance = 25
+				add_trait = proud
+				hidden_tooltip = { character_event = { id = 38261 } }
+			}	
+		}		
+		FROM = { hidden_tooltip = { character_event = { id = foreign_training.3 } } }	
+	}
+	
+	option = {
+		name = "EVTOPTBforeign_training.2" # Accept (Pay)
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				OR = {
+					trait = indulgent_wastrel
+					trait = thrifty_clerk
+					trait = fortune_builder
+					trait = midas_touched
+					trait = ambitious
+					trait = gluttonous
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = yes }
+			scaled_wealth = { value = -0.2 min = -50 max = -150 }	
+		}	
+		event_target:foreign_trainer = {
+			if = {
+				limit = { ROOT = { is_ruler = yes } }
+				move_character = ROOT
+			}
+			if = {
+				limit = { ROOT = { is_ruler = no } }
+				ROOT = { liege = { reverse_banish = PREVPREV } }
+			}					
+			hidden_tooltip = { 
+				wealth = 50 
+				add_character_modifier = {
+					name = foreign_trainer
+					duration = 100
+				}	
+			}	
+		}
+		random_list = {
+			20 = {}
+			30 = {FROM =  {change_stewardship = 1}}
+			30 = {FROM =  {change_stewardship = 2}}
+			20 = {FROM =  {change_stewardship = 3}}
+		}
+		FROM = {
+			if = {
+				limit = { 
+					NOT = { trait = charitable } 
+					NOT = { trait = greedy } 
+					NOT = { trait = indolent }
+					NOT = { personality_traits = 5 } 
+				}
+				random = {
+					chance = 30				
+					add_trait = greedy
+					hidden_tooltip = {
+						ROOT = { character_event = { id = 38152 } } 
+						character_event = { id = 38252 }
+					}
+				}
+			}	
+			if = {
+				limit = { 
+					NOT = { trait = slothful } 
+					NOT = { trait = diligent } 
+					NOT = { trait = indolent }
+					NOT = { personality_traits = 5 } 
+				}
+				random = {
+					chance = 30
+					add_trait = diligent
+					hidden_tooltip = {
+						ROOT = { 
+							character_event = {
+								id = 38256
+							}
+						} 
+						character_event = {
+							id = 38156
+						}
+					}
+				}
+			}
+			if = {
+				limit = { trait = indolent }
+				remove_trait = indolent
+			}
+		}	
+			
+		FROM = {
+			hidden_tooltip = {character_event = { id = foreign_training.4 } }
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 5
+			}
+		}
+   	}
+}
+
+#foreign_training.7 - Ward - Tyroshi (Diplomacy).
+# On-action: on_yearly_childhood_pulse (80)
+character_event = {
+	id = foreign_training.7
+	desc = "EVTDESCforeign_training.7" #I hear roumors about sexy Tyroshi
+	picture = "GFX_tyroshi"
+	
+	is_triggered_only = yes
+	
+	min_age = 6
+	max_age = 16
+	capable_only = yes
+	prisoner = no
+	
+	trigger = {
+		has_epidemic = no
+		is_ill = no
+		NOT = { trait = wroth }
+		NOT = { culture_group = free_cities }
+		NOT = { trait = wildling }
+		NOT = { culture = moon_clansman }
+		liege = { NOT = { culture_group = free_cities } }
+		OR = { 
+			father = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			} 
+			mother = { 
+				is_alive = yes
+				higher_tier_than = DUKE
+			}
+			guardian = {
+				higher_tier_than = DUKE
+			}
+			higher_tier_than = DUKE
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 2
+			OR = {
+				has_character_modifier = court_education
+				has_focus = focus_ed_diplomacy
+			}
+		}
+	}
+	
+	immediate = {
+		#find trainer
+		random_character = {
+			limit = {
+				age = 16
+				is_female = no
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				liege = { NOT = { culture_group = ROOT } }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+				diplomacy = 14
+				OR = {
+					trait = naive_appeaser
+					trait = underhanded_rogue
+					trait = charismatic_negotiator
+					trait = grey_eminence
+				}
+				is_ruler = no
+				prisoner = no
+				NOT = { trait = incapable }
+				NOT = { trait = nightswatch }
+				NOT = { trait = kingsguard }
+				NOT = { trait = maester }
+				NOT = { trait = slave }
+				NOT = { has_character_flag = faceless_man }
+				NOT = { has_character_modifier = foreign_trainer }				
+				NOT = { liege = { is_close_relative = PREV } }
+				NOT = { liege = { dynasty = PREV } }
+				is_councillor = no
+				NOT = { is_voter = yes }
+				NOT = { liege = { regent = { character = PREVPREV } } }
+				NOT = { has_character_flag = wants_varangian }
+				NOT = { trait = red_priest }
+				NOT = { liege = { is_theocracy = yes } }
+				
+				is_ill = no
+				NOT = { trait = infirm }
+				NOT = { is_dumb_trigger = yes }
+				NOT = { trait = imbecile }
+			}
+			save_event_target_as = foreign_trainer
+			break = yes
+		}
+		random_playable_ruler = {
+			limit = {
+				is_within_diplo_range = ROOT
+				NOT = { culture_group = ROOT }
+				NOT = { trait = wildling }
+				NOT_mythical_creature_trigger = yes
+			}
+			capital_scope = {
+				create_random_diplomat = {
+					female = no
+					dynasty = none
+					random_traits = yes
+					trait = grey_eminence
+					religion = THIS
+					culture = THIS
+				}	
+				new_character = {
+					save_event_target_as = foreign_trainer
+					
+					remove_trait = slow
+					remove_trait = imbecile
+					remove_trait = dull
+					
+					remove_lifestyle_trait_effect = yes
+					
+					random_list = { # Flavor Randomization
+						35 = { 
+							# Nothing
+						}
+						15 = {
+							change_diplomacy = 2
+						}
+						10 = {
+							add_trait = poet
+						}
+						10 = {
+							add_trait = socializer
+						}
+						10 = {
+							add_trait = gamer
+						}
+						10 = {
+							add_trait = falconer
+						}
+						10 = {
+							change_diplomacy = 4
+						}
+						5 = {
+							change_diplomacy = 6
+						}
+						5 = {
+							trigger = { 
+								is_smart_incl_genius_trigger = no
+							}
+							add_trait = shrewd
+						}
+					}
+					if = {
+						limit = { 
+							culture_group = hyrkoon_group	
+						}
+						add_trait = eunuch
+					}	
+					while = {
+						limit = { NOT = { diplomacy = 12 } }
+						change_diplomacy = 1
+					}
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = "OK" 
+		show_portrait = event_target:foreign_trainer
+		hidden_tooltip = { 
+			if = {
+				limit = { 
+					father = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				father = {
+					character_event = { id = foreign_training.8 } 
+				} 
+			}	
+			else_if = {
+				limit = { 
+					mother = {
+						is_alive = yes
+						higher_tier_than = DUKE
+					}
+				}
+				mother = {
+					character_event = { id = foreign_training.8 } 
+				} 
+			}
+			else = {
+				guardian = {
+					character_event = { id = foreign_training.8 } 
+				} 
+			}				
+		}
+	}
+
+}
+
+#foreign_training.8 - Guardian - Tyroshi (Diplomacy).
+character_event = {
+	id = foreign_training.8
+	desc = "EVTDESCforeign_training.8" #To hire or not ot hire... that is the question.
+	picture = "GFX_tyroshi"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAforeign_training.2" #Refuse
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				OR = {
+					trait = proud
+					trait = greedy
+					trait = zealous
+				}
+			}
+		}
+		show_portrait = event_target:foreign_trainer
+		prestige = 15
+		if = {
+			limit = { 
+				NOT = { personality_traits = 5 } 
+				NOT = { trait = proud }
+				NOT = { trait = humble }
+			}
+			random = {
+				chance = 25
+				add_trait = proud
+				hidden_tooltip = { character_event = { id = 38261 } }
+			}	
+		}		
+		FROM = { hidden_tooltip = { character_event = { id = foreign_training.3 } } }
+	}
+	
+	option = {
+		name = "EVTOPTBforeign_training.2" # I will pay		
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 5
+				OR = {
+					trait = poet
+					trait = ambitious
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = yes }
+			scaled_wealth = { value = -0.2 min = -50 max = -150 }	
+		}	
+		event_target:foreign_trainer = {
+			if = {
+				limit = { ROOT = { is_ruler = yes } }
+				move_character = ROOT
+			}
+			if = {
+				limit = { ROOT = { is_ruler = no } }
+				ROOT = { liege = { reverse_banish = PREVPREV } }
+			}					
+			hidden_tooltip = { 
+				wealth = 50 
+				add_character_modifier = {
+					name = foreign_trainer
+					duration = 100
+				}	
+			}	
+		}
+		random_list = {
+			20 = {}
+			30 = {FROM =  {change_diplomacy = 1}}
+			30 = {FROM =  {change_diplomacy = 2}}
+			20 = {FROM =  {change_diplomacy = 3}}
+		}
+		
+		FROM = {
+			if = {
+				limit = { 
+					NOT = { trait = gregarious } 
+					NOT = { trait = shy }
+					NOT = { trait = timid }
+					NOT = { personality_traits = 5 } 
+				}
+				random = {
+					chance = 60				
+					add_trait = gregarious
+					hidden_tooltip = {
+						ROOT = { character_event = { id = 38165 } } 
+						character_event = { id = 38265 }
+					}
+				}
+			}	
+			if = {
+				limit = { trait = timid }
+				remove_trait = timid
+			}
+		}	
+		FROM = {
+			hidden_tooltip = {character_event = { id = foreign_training.4 } }
+			opinion = {
+				modifier = opinion_happy_with_guardian
+				who = ROOT
+				years = 2
+			}	
+		}
+   	}
+}
+
+# #foreign_training.9 - Braavosian Traning
+# character_event = {
+	# id = foreign_training.9
+	# desc = "EVTDESCforeign_training.9" 	# Waterdancing
+	# picture = "GFX_sirio"
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "Ok"
+		# if = {
+			# limit = { trait = skilled_warrior }
+			# random = {
+				# chance = 10
+				# hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				# tooltip = { add_trait = master_warrior }
+			# }
+		# }
+		# if = {
+			# limit = { trait = trained_warrior }
+			# random = {
+				# chance = 20
+				# hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				# tooltip = { add_trait = skilled_warrior }
+			# }
+		# }
+		# if = {
+			# limit = { trait = poor_warrior }
+			# random = {
+				# chance = 45
+				# hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				# tooltip = { add_trait = trained_warrior }
+			# }
+		# }
+		# if = {
+			# limit = {
+				# not = { trait = poor_warrior  } 
+				# not = { trait = trained_warrior  } 
+				# not = { trait = skilled_warrior  } 
+				# not = { trait = master_warrior  } 
+			# }
+			# random = {
+				# chance = 60
+				# hidden_tooltip = { character_event = { id = trait_notification.21 } }
+				# tooltip = { add_trait = poor_warrior }
+			# }
+		# }
+	# }	
+# }

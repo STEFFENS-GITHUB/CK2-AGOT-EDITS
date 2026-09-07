@@ -1,0 +1,2245 @@
+namespace = harrenhal
+#Harrenhal Restoration by Fashbinder
+#I will know if you cheat, just earn it.
+
+#Start reconstruction
+character_event = {
+	id = harrenhal.1
+	desc = "EVTDESCharrenhal.1"
+	picture = "GFX_evt_castle_construction"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAharrenhal.1" 
+		#AI takes loan if shortage of cash
+		if = {
+			limit = { 
+				ai = yes 
+				NOT = { wealth = 800 }
+				NOT = { has_character_flag = loan_taken }
+				NOT = { has_character_modifier = loan_timer }
+				NOT = { has_character_flag = offended_moneylenders }
+			}
+			add_character_modifier = {
+				name = "loan_timer"
+				duration = 1825
+			}
+			set_character_flag = loan_taken
+			#600g loan
+			if = {
+				limit = {
+					monthly_income = 10
+					NOT = { monthly_income = 15 }
+				}
+				set_variable = { which = "loan_amount" value = 600 }	
+			}
+			#800g loan
+			if = {
+				limit = {
+					monthly_income = 15
+					NOT = { monthly_income = 20 }
+				}
+				set_variable = { which = "loan_amount" value = 800 }			
+			}			
+			#1000g loan
+			if = {
+				limit = {
+					monthly_income = 20	
+				}
+				set_variable = { which = "loan_amount" value = 1000 }				
+			}
+			set_character_flag = loan_amount_found
+			character_event = { id = bankruptcy.1 }
+		}
+		wealth = -800
+		107 = {
+			add_province_modifier = { 
+				name = rebuilding_harrenhal duration = -1
+			}
+			add_province_modifier = { 
+				name = debris3 duration = -1
+			}
+		}		
+	}
+	
+	option = { 
+		name = "EVTOPTBharrenhal.1" #you mad? curses and i am poor
+		ai_chance = { factor = 0 }
+	}
+}	
+#Flavour event generator, yearly pulse
+character_event = {
+	id = harrenhal.199
+
+	is_triggered_only = yes
+	only_playable = yes
+	hide_window = yes
+
+	trigger = { 
+		has_landed_title = c_harrenhal
+		107 = {	
+			has_province_modifier = rebuilding_harrenhal
+		}
+	}
+
+	immediate = {
+		random_list = {
+			500 = { 	
+			}
+			50 = { #Steward is killed	
+				modifier = {
+					factor = 0
+					job_treasurer = {
+						OR = {
+							NOT = { has_job_action = action_oversee_construction }
+							NOT = { at_location = 107 }
+						}
+					}
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = diligent }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { NOT = { learning = 5 } }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { learning = 10 }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { learning = 15 }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = paranoid }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = craven }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = brave }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = slothful }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = drunkard }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { NOT = { stewardship = 12 } }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { stewardship = 18 }
+				}
+				job_treasurer = { character_event = { id = harrenhal.2 } }
+			}
+			50 = { #Steward, more money needed (made up)	
+				modifier = {
+					factor = 0
+					job_treasurer = {
+						OR = {
+							NOT = { has_job_action = action_oversee_construction }
+							NOT = { at_location = 107 }
+							trait = honest
+							trait = honorable
+							NOR = {
+								trait = greedy
+								trait = deceitful
+								trait = ruthless
+								trait = envious
+							}
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					107 = {
+						OR = {
+							has_province_modifier = badstuff6
+							has_province_modifier = goodstuff6
+						}
+					}
+				}
+				modifier = {
+					factor = 0.5
+					trait = diligent
+				}
+				modifier = {
+					factor = 0.5
+					learning = 10
+				}
+				modifier = {
+					factor = 0.5
+					learning = 15
+				}
+				modifier = {
+					factor = 0.5
+					intrigue = 12
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = charitable }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = envious }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = slothful }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = greedy }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = deceitful }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { opinion = { who = ROOT value = 0 } }				
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { NOT = { stewardship = 12 } }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { stewardship = 18 }
+				}
+				job_treasurer = { character_event = { id = harrenhal.4 } }
+			}
+			50 = { #Steward, more money needed (real)	
+				modifier = {
+					factor = 0
+					job_treasurer = {
+						OR = {
+							NOT = { has_job_action = action_oversee_construction }
+							NOT = { at_location = 107 }
+						}
+					}
+				}
+				modifier = {
+					factor = 0
+					107 = {
+						OR = {
+							has_province_modifier = badstuff6
+							has_province_modifier = goodstuff6
+						}
+					}
+				}
+				modifier = {
+					factor = 1.5
+					job_treasurer = { NOT = { stewardship = 6 } }
+				}
+				modifier = {
+					factor = 1.5
+					job_treasurer = { NOT = { stewardship = 8 } }
+				}
+				modifier = {
+					factor = 1.5
+					job_treasurer = { NOT = { stewardship = 10 } }
+				}
+				modifier = {
+					factor = 1.5
+					job_treasurer = { NOT = { stewardship = 12 } }
+				}
+				modifier = {
+					factor = 0.66
+					job_treasurer = { stewardship = 16 }
+				}
+				modifier = {
+					factor = 0.66
+					job_treasurer = { stewardship = 18 }
+				}
+				modifier = {
+					factor = 0.66
+					job_treasurer = { stewardship = 20 }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = diligent }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = charitable }
+				}
+				modifier = {
+					factor = 0.5
+					job_treasurer = { trait = ruthless }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = greedy }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = slothful }
+				}
+				modifier = {
+					factor = 2
+					job_treasurer = { trait = drunkard }
+				}
+				job_treasurer = { character_event = { id = harrenhal.6 } }
+			}
+			50 = { #Mix blood into the mortar?
+				character_event = { id = harrenhal.10 }
+			}
+			100 = { #Put prisoners to work?
+				trigger = {
+					NOT = { trait = liberator }
+				}
+				modifier = {
+					factor = 0
+					NOT = {
+						any_courtier = {
+							OR = {
+								prisoner = yes 
+								trait = slave
+							}		
+							host = { character = ROOT }
+							age = 12
+							is_incapable = no
+							NOT = { has_severe_disability_trigger = yes }
+							NOT = { is_maimed_trigger = yes }
+						}
+					}
+				}
+				character_event = { id = harrenhal.11 }
+			}
+		}
+		#Weird stuff and sounds
+		107 = {
+			random_province_character = {
+				limit = {
+					age = 8
+					is_incapable = no
+					NOT_mythical_creature_trigger = yes					
+					in_command = no
+					NOT = { trait = wikid }
+					NOT = { trait = on_reaving }
+					OR = {
+						NOT = { has_character_flag = harrenhal_sounds }
+						had_character_flag = { flag = harrenhal_sounds days = 1200 }
+					}	
+				}
+				clr_character_flag = harrenhal_sounds
+				set_character_flag = harrenhal_sounds
+				character_event = { id = harrenhal.8 }
+			}
+		}	
+	}
+
+	option = { 
+		name = OK
+	}
+}	
+#Steward is killed		
+character_event = {
+	id = harrenhal.2
+	desc = "EVTDESCharrenhal.2"
+	picture = "GFX_evt_death"
+
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAharrenhal.2" #i slipped, tripped and landed on this brick.
+		red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = { death_reason = death_accident_fall }
+		hidden_tooltip = { liege = { letter_event = { id = harrenhal.3 } } }
+	}
+}
+letter_event = { #Inform
+	id = harrenhal.3
+	desc = "EVTDESCharrenhal.3"
+	picture = "GFX_evt_death"
+
+	is_triggered_only = yes
+
+	option = { #i will send money to his next of kin
+		name = "EVTOPTAharrenhal.3"
+		piety = 30
+		scaled_wealth = { value = -0.25 min = -10 max = -75 }
+	}
+	option = {
+		name = "EVTOPTBharrenhal.3"
+		prestige = -50
+	}
+}
+#More money needed (made up)
+character_event = {
+	id = harrenhal.4
+	desc = "EVTDESCharrenhal.4"
+	picture = "GFX_evt_council"
+
+	is_triggered_only = yes
+	
+	option = { 
+		name = "EVTOPTAharrenhal.4" #I will tell my liege I need money.
+		liege = { character_event = { id = harrenhal.5 tooltip = TOOLTIPharrenhal.5 } }
+	}
+	option = { 
+		name = "EVTOPTBharrenhal.4" #No
+		ai_chance = { factor = 0 }
+	}
+}
+character_event = { #Inform liege
+	id = harrenhal.5
+	desc = "EVTDESCharrenhal.5"
+	picture = "GFX_evt_council"
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAharrenhal.5" 
+		wealth = -200
+		hidden_tooltip = {
+			FROM = { wealth = 100 }
+		}
+	}
+	option = { 
+		name = "EVTOPTBharrenhal.5" 
+		random_list = {
+			50 = { 
+				modifier = {
+					factor = 1.33
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 1.2
+					realm_intrigue = 37
+				}
+				FROM = { #successfully imprisoned
+					imprison = ROOT
+					character_event = { id = 151 } 					
+				} 
+			} 
+			50 = { 
+				modifier = {
+					factor = 0.5
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 0.4
+					realm_intrigue = 37
+				}
+				FROM = { #avoided prison
+					if = { #Flee
+						limit = { is_ruler = no }
+						banish = yes
+						character_event = { id = 152 } 								
+					}
+					if = { #Rebel?
+						limit = { is_ruler = yes }
+						character_event = { id = 150 } 
+					}							
+				} 
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_imprisoned
+			who = FROM
+			years = 5
+		}
+	}
+	option = { 
+		name = "EVTOPTCharrenhal.5" 
+		custom_tooltip = { text = HARRENHALNOMONEY }
+		hidden_tooltip = {
+			107 = { 
+				if = {
+					limit = { has_province_modifier = badstuff5 }
+					remove_province_modifier = badstuff5
+					add_province_modifier = { name = badstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff4 }
+					remove_province_modifier = badstuff4
+					add_province_modifier = { name = badstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff3 }
+					remove_province_modifier = badstuff3
+					add_province_modifier = { name = badstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff2 }
+					remove_province_modifier = badstuff2
+					add_province_modifier = { name = badstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff1 }
+					remove_province_modifier = badstuff1
+					add_province_modifier = { name = badstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOR = {	
+							has_province_modifier = badstuff6
+							has_province_modifier = badstuff5
+							has_province_modifier = badstuff4
+							has_province_modifier = badstuff3
+							has_province_modifier = badstuff2
+						}
+					}
+					add_province_modifier = { name = badstuff1 duration = -1 }
+				}	
+			}
+		}	
+	}
+}			 
+#More money needed (real)
+character_event = {
+	id = harrenhal.6
+	desc = "EVTDESCharrenhal.6"
+	picture = "GFX_evt_council"
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAharrenhal.6" #i will tell my liege
+		liege = { character_event = { id = harrenhal.7 tooltip = TOOLTIPharrenhal.5 } }
+	}
+}
+character_event = { #Inform liege
+	id = harrenhal.7
+	desc = "EVTDESCharrenhal.7"
+	picture = "GFX_evt_council"
+
+	is_triggered_only = yes
+
+	option = { #Ok here is the money (gets goodstuff) (customtooltip)
+		name = "EVTOPTAharrenhal.7" 
+		wealth = -200
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOR = {	
+							has_province_modifier = goodstuff6
+							has_province_modifier = goodstuff5
+							has_province_modifier = goodstuff4
+							has_province_modifier = goodstuff3
+							has_province_modifier = goodstuff2
+						} 
+					}
+					add_province_modifier = { name = goodstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+	option = { 
+		name = "EVTOPTBharrenhal.7" 
+		random_list = {
+			50 = { 
+				modifier = {
+					factor = 1.33
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 1.2
+					realm_intrigue = 37
+				}
+				FROM = { #successfully imprisoned
+					imprison = ROOT
+					character_event = { id = 151 } 					
+				} 
+			} 
+			50 = { 
+				modifier = {
+					factor = 0.5
+					realm_intrigue = 25
+					NOT = { realm_intrigue = 37 } 
+				}
+				modifier = {
+					factor = 0.4
+					realm_intrigue = 37
+				}
+				FROM = { #avoided prison
+					if = { #Flee
+						limit = { is_ruler = no }
+						banish = yes
+						character_event = { id = 152 } 								
+					}
+					if = { #Rebel?
+						limit = { is_ruler = yes }
+						character_event = { id = 150 } 
+					}							
+				} 
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_imprisoned
+			who = FROM
+			years = 5
+		}
+		hidden_tooltip = {
+			107 = { 
+				if = {
+					limit = { has_province_modifier = badstuff5 }
+					remove_province_modifier = badstuff5
+					add_province_modifier = { name = badstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff4 }
+					remove_province_modifier = badstuff4
+					add_province_modifier = { name = badstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff3 }
+					remove_province_modifier = badstuff3
+					add_province_modifier = { name = badstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff2 }
+					remove_province_modifier = badstuff2
+					add_province_modifier = { name = badstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff1 }
+					remove_province_modifier = badstuff1
+					add_province_modifier = { name = badstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOR = {	
+							has_province_modifier = badstuff6
+							has_province_modifier = badstuff5
+							has_province_modifier = badstuff4
+							has_province_modifier = badstuff3
+							has_province_modifier = badstuff2
+						}
+					}
+					add_province_modifier = { name = badstuff1 duration = -1 }
+				}	
+			}
+		}
+	}
+	option = { 
+		name = "EVTOPTCharrenhal.7" 
+		custom_tooltip = { text = HARRENHALNOMONEY }
+		hidden_tooltip = {
+			107 = { 
+				if = {
+					limit = { has_province_modifier = badstuff5 }
+					remove_province_modifier = badstuff5
+					add_province_modifier = { name = badstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff4 }
+					remove_province_modifier = badstuff4
+					add_province_modifier = { name = badstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff3 }
+					remove_province_modifier = badstuff3
+					add_province_modifier = { name = badstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff2 }
+					remove_province_modifier = badstuff2
+					add_province_modifier = { name = badstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff1 }
+					remove_province_modifier = badstuff1
+					add_province_modifier = { name = badstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOR = {	
+							has_province_modifier = badstuff6
+							has_province_modifier = badstuff5
+							has_province_modifier = badstuff4
+							has_province_modifier = badstuff3
+							has_province_modifier = badstuff2
+						}
+					}
+					add_province_modifier = { name = badstuff1 duration = -1 }
+				}	
+			}
+		}
+	}
+}	
+#Weird stuff and sounds
+character_event = {
+	id = harrenhal.8
+	desc = "EVTDESCharrenhal.8"
+	picture = "GFX_evt_death"
+
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAharrenhal.8" 
+		trigger = { 
+			NOT = { trait = brave }
+			NOT = { trait = stressed }
+		}
+		if = {
+			limit = {
+				NOT = { trait = brave }
+				NOT = { trait = craven }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = brave
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}	
+		if = {
+			limit = {
+				trait = craven
+			}
+			random = {
+				chance = 33
+				remove_trait = craven
+				hidden_tooltip = { character_event = { id = 38296 } }
+			}
+		}	
+		random = {
+			chance = 80
+			add_trait = stressed
+			hidden_tooltip = { character_event = { id = 38282 } }
+		}
+	}
+	option = { 
+		name = "EVTOPTCharrenhal.8" 
+		trigger = { 
+			trait = brave 
+			NOT = { trait = stressed }
+		}
+		tooltip_info = brave
+		random = {
+			chance = 25
+			add_trait = stressed
+			hidden_tooltip = { character_event = { id = 38282 } }
+		}
+	}
+	option = { 
+		name = "EVTOPTDharrenhal.8" 
+		trigger = { 
+			trait = stressed
+			NOT = { trait = depressed }
+		}
+		tooltip_info = stressed
+		random = {
+			chance = 40
+			add_trait = depressed
+			hidden_tooltip = { character_event = { id = 38288 } }
+		}
+	}
+	option = { 
+		name = "EVTOPTEharrenhal.8" 
+		trigger = { 
+			trait = depressed
+			trait = stressed
+			NOT = { trait = lunatic }
+		}
+		tooltip_info = depressed
+		random = {
+			chance = 20
+			add_trait = lunatic
+			hidden_tooltip = { character_event = { id = 38304 } }
+		}
+	}
+	option = { 
+		name = "EVTOPTFharrenhal.8" 
+		trigger = { 
+			trait = lunatic
+			trait = stressed
+			trait = depressed
+		}
+		tooltip_info = lunatic
+		death = { death_reason = death_suicide_fall }
+	}
+	option = { #the night is dark and full of terrors
+		name = "EVTOPTBharrenhal.8" 
+		trigger = { 
+			NOT = { trait = berserker } 
+			NOT = { trait = brave }
+			NOT = { trait = stressed }
+		}
+		if = {
+			limit = {
+				NOT = { personality_traits = 6 }
+			}
+			random_list = { 
+				40 = { 
+					modifier = {
+						factor = 0
+						OR = {
+							trait = paranoid
+							trait = trusting
+						}
+					}
+					add_trait = paranoid 
+					hidden_tooltip = {
+						character_event ={
+							id = 38275 #Notify
+						}
+					}
+				}
+				40 = { 
+					modifier = {
+						factor = 0
+						trait = craven
+					}
+					add_trait = craven 
+					hidden_tooltip = {
+						character_event ={
+							id = 38257 #Notify
+						}
+					}
+				}
+				20 = { }
+			}
+		}	
+	}
+}
+#Progress made, debris removed
+character_event = {
+	id = harrenhal.9
+	desc = "EVTDESCharrenhal.9"
+	picture = "GFX_evt_castle_construction"
+	
+	only_playable = yes
+
+	trigger = { 
+		has_landed_title = c_harrenhal
+		107 = {	
+			has_province_modifier = rebuilding_harrenhal
+			OR = { 
+				has_province_modifier = debris3
+				has_province_modifier = debris2
+				has_province_modifier = debris1
+			}
+		}
+	}
+
+	mean_time_to_happen = { 
+		years = 50
+		
+		#Slavery helps
+		modifier = {
+			factor = 0.9
+			107 = { has_province_modifier = slave_modifier_1 }
+		}
+		modifier = {
+			factor = 0.85
+			107 = { has_province_modifier = slave_modifier_2 }
+		}
+		modifier = {
+			factor = 0.8
+			107 = { has_province_modifier = slave_modifier_3 }
+		}
+		modifier = {
+			factor = 0.75
+			107 = { has_province_modifier = slave_modifier_4 }
+		}
+		modifier = {
+			factor = 0.7
+			107 = { has_province_modifier = slave_modifier_5 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			107 = { has_province_modifier = goodstuff1 }
+		}
+		modifier = {
+			factor = 0.8
+			107 = { has_province_modifier = goodstuff2 }
+		}
+		modifier = {
+			factor = 0.7
+			107 = { has_province_modifier = goodstuff3 }
+		}
+		modifier = {
+			factor = 0.6
+			107 = { has_province_modifier = goodstuff4 }
+		}
+		modifier = {
+			factor = 0.5
+			107 = { has_province_modifier = goodstuff5 }
+		}
+		modifier = {
+			factor = 0.4
+			107 = { has_province_modifier = goodstuff6 }
+		}
+		modifier = {
+			factor = 1.2
+			107 = { has_province_modifier = badstuff1 }
+		}
+		modifier = {
+			factor = 1.4
+			107 = { has_province_modifier = badstuff2 }
+		}
+		modifier = {
+			factor = 1.3
+			107 = { has_province_modifier = badstuff3 }
+		}
+		modifier = {
+			factor = 1.4
+			107 = { has_province_modifier = badstuff4 }
+		}
+		modifier = {
+			factor = 1.5
+			107 = { has_province_modifier = badstuff5 }
+		}
+		modifier = {
+			factor = 1.6
+			107 = { has_province_modifier = badstuff6 }
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 14
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 16
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 20
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 22
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 24
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 26
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 28
+		}
+		modifier = {
+			factor = 0.9
+			trait = diligent
+		}
+		modifier = {
+			factor = 0.9
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.9
+			trait = ruthless
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { trait = diligent }
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { trait = ruthless }
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 14
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 16
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 18
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 20
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 22
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 24
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 26
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 28
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 30
+			}
+		}
+	}#end mtth
+
+	option = { 
+		name = "EVTOPTAharrenhal.9" 
+		trigger = { 
+			107 = { has_province_modifier = debris3 } 
+		}
+		wealth = -250
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6
+			}		
+			remove_province_modifier = debris3 	
+			add_province_modifier = { name = debris2 duration = -1 }
+			set_province_flag = important
+			clr_province_flag = important
+		}
+	}
+
+	option = { 
+		name = "EVTOPTBharrenhal.9" 
+		trigger = { 
+			107 = { has_province_modifier = debris2 } 
+		}
+		wealth = -250
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6	
+			}
+			add_province_modifier = { name = debris1 duration = -1 }
+			remove_province_modifier = debris2
+			set_province_flag = important
+			clr_province_flag = important
+		}
+	}
+
+	option = { 
+		name = "EVTOPTCharrenhal.9" 
+		trigger = { 
+			107 = { has_province_modifier = debris1 } 
+		}
+		wealth = -250	
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6	
+			}
+			add_province_modifier = { name = debris0 duration = -1 }
+			remove_province_modifier = debris1
+			set_province_flag = important
+			clr_province_flag = important
+		}
+	}
+}
+#Mix blood into the mortar?
+character_event = {
+	id = harrenhal.10
+	desc = "EVTDESCharrenhal.10"
+	picture = "GFX_evt_castle_construction"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		random_courtier = {
+			limit = {
+				prisoner = yes
+				host = { character = ROOT }
+				NOT = { is_close_relative = ROOT }
+				NOT = { dynasty = ROOT }
+				ai = yes
+			}
+			save_event_target_as = prisoner_sacrifice
+		}
+		random_courtier = {
+			limit = {
+				trait = slave
+				prisoner = no
+				has_opinion_modifier = { who = ROOT modifier = opinion_my_owner }
+			}
+			save_event_target_as = slave_sacrifice
+		}
+	}
+	
+	option = { #I have no moral objection to killing some people
+		name = "EVTOPTAharrenhal.10"
+		trigger = {
+			OR = {
+				trait = ruthless
+				trait = cruel
+				trait = arbitrary
+				trait = lunatic
+				trait = possessed
+			}
+			NOR = {
+				trait = kind
+				trait = honorable
+			}
+		}
+		ai_chance = { 
+			factor = 20
+		}	
+		custom_tooltip = { text = HARRENHALBLOOD }
+		piety = -50
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = goodstuff6
+								has_province_modifier = goodstuff5
+								has_province_modifier = goodstuff4
+								has_province_modifier = goodstuff3
+								has_province_modifier = goodstuff2
+							}
+						} 
+					}
+					add_province_modifier = { name = goodstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+	
+	option = { #Kill prisoners
+		name = "EVTOPTDharrenhal.10"
+		trigger = {
+			event_target:prisoner_sacrifice = { always = yes }
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 0.5
+				event_target:prisoner_sacrifice = {
+					is_ruler = yes
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:prisoner_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -75 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:prisoner_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:prisoner_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:prisoner_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:prisoner_sacrifice = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 0
+				event_target:prisoner_sacrifice = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+		}	
+		custom_tooltip = { text = HARRENHALBLOOD }
+		event_target:prisoner_sacrifice = {
+			hidden_tooltip = { 
+				ROOT = { 
+					save_event_target_as = executioner 
+				}
+				character_event = { id = 45342 } #Universal execution event	
+			}
+			tooltip = { show_portrait = yes }
+			death = {
+				death_reason = death_sacrificed
+				killer = ROOT
+			}
+		}
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = goodstuff6
+								has_province_modifier = goodstuff5
+								has_province_modifier = goodstuff4
+								has_province_modifier = goodstuff3
+								has_province_modifier = goodstuff2
+							}
+						} 
+					}
+					add_province_modifier = { name = goodstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+	
+	option = { #Kill slaves
+		name = "EVTOPTEharrenhal.10"
+		trigger = {
+			event_target:slave_sacrifice = { always = yes }
+		}
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 1.33
+				event_target:slave_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -75 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:slave_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -50 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:slave_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = -25 } }
+				}
+			}
+			modifier = {
+				factor = 1.33
+				event_target:slave_sacrifice = {
+					NOT = { reverse_opinion = { who = ROOT value = 0 } }
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:slave_sacrifice = {
+					reverse_opinion = { who = ROOT value = 25 }
+				}
+			}
+			modifier = {
+				factor = 0
+				event_target:slave_sacrifice = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+		}
+		custom_tooltip = { text = HARRENHALBLOOD }
+		event_target:slave_sacrifice = {
+			hidden_tooltip = { 
+				ROOT = { 
+					save_event_target_as = executioner 
+				}
+				character_event = { id = 45342 } #Universal execution event	
+			}
+			tooltip = { show_portrait = yes }
+			death = {
+				death_reason = death_sacrificed
+				killer = ROOT
+			}
+		}
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = goodstuff6
+								has_province_modifier = goodstuff5
+								has_province_modifier = goodstuff4
+								has_province_modifier = goodstuff3
+								has_province_modifier = goodstuff2
+							}
+						} 
+					}
+					add_province_modifier = { name = goodstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+
+	option = { #I will sacrafice my own blood to lift this curse
+		name = "EVTOPTBharrenhal.10"
+		trigger = {
+			NOR = {
+				trait = wounded
+				is_maimed_trigger = yes
+			}
+		}
+		ai_chance = { 
+			factor = 5
+			
+			modifier = {
+				factor = 0
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+		}
+		custom_tooltip = { text = HARRENHALBLOOD }
+		random_list = {
+			50 = { 
+				add_maimed_trait_effect = yes
+			}
+			50 = { 
+				add_trait_silently_wounded_effect = yes 
+				hidden_tooltip = {
+					character_event ={
+						id = 38280 #Notify
+					}
+				}
+			}
+		}
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = goodstuff6
+								has_province_modifier = goodstuff5
+								has_province_modifier = goodstuff4
+								has_province_modifier = goodstuff3
+								has_province_modifier = goodstuff2
+							}
+						} 
+					}
+					add_province_modifier = { name = goodstuff2 duration = -1 }
+				}
+			}
+		}
+	}
+
+	option = { 
+		name = "EVTOPTCharrenhal.10"
+		ai_chance = { 
+			factor = 20
+			modifier = {
+				factor = 2
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = zealous
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.5
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.5
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = wroth
+			}
+		}	
+		custom_tooltip = { text = HARRENHALNOMONEY }
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = badstuff5 }
+					remove_province_modifier = badstuff5
+					add_province_modifier = { name = badstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff4 }
+					remove_province_modifier = badstuff4
+					add_province_modifier = { name = badstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff3 }
+					remove_province_modifier = badstuff3
+					add_province_modifier = { name = badstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff2 }
+					remove_province_modifier = badstuff2
+					add_province_modifier = { name = badstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff1 }
+					remove_province_modifier = badstuff1
+					add_province_modifier = { name = badstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = badstuff6
+								has_province_modifier = badstuff5
+								has_province_modifier = badstuff4
+								has_province_modifier = badstuff3
+								has_province_modifier = badstuff2
+							} 
+						} 
+					}
+					add_province_modifier = { name = badstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+}
+#Put prisoners to work?
+character_event = {
+	id = harrenhal.11
+	picture = "GFX_evt_castle_construction"
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCharrenhal.11 #Illegal
+		trigger = {
+			NOT = { has_character_flag = legal_slavery }	
+		}
+	}
+	desc = {
+		text = EVTDESCharrenhal.11B #Legal
+		trigger = {
+			has_character_flag = legal_slavery		
+		}
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_full_slavery_trigger = yes
+					crownlaw_title = { has_law = slavery_3 }
+				}
+			}
+			set_character_flag = legal_slavery
+		}
+	}
+
+	option = { 
+		name = "EVTOPTAharrenhal.11"
+		trigger = { 
+			NOR = { 
+				trait = kind
+				trait = honorable
+			} 
+		}
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 0
+				trait = just
+				NOT = { has_character_flag = legal_slavery }
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+		}
+		custom_tooltip = { text = HARRENHALMONEY }
+		piety = -50
+		if = {
+			limit = { NOT = { personality_traits = 6 } }
+			random_list = {
+				30 = {
+					if = {
+						limit = { NOT = { trait = ruthless } }
+						add_trait = ruthless
+						hidden_tooltip = { character_event = { id = trait_notification.18 } }
+					}	
+				}
+				30 = {
+					if = {
+						limit = { NOT = { trait = cruel } }
+						add_trait = cruel
+						hidden_tooltip = { character_event = { id = 38259 } }
+					}
+				}
+				40 = {
+				}
+			}
+		}	
+		any_courtier = {
+			limit = { 
+				OR = {
+					prisoner = yes 
+					trait = slave
+				}	
+				host = { character = ROOT }
+				age = 12
+				is_incapable = no
+				NOT = { has_severe_disability_trigger = yes }
+				NOT = { is_maimed_trigger = yes }
+			}
+			character_event = { id = harrenhal.12 tooltip = TOOLTIPharrenhal.12 }
+		}
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = goodstuff5 }
+					remove_province_modifier = goodstuff5
+					add_province_modifier = { name = goodstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff4 }
+					remove_province_modifier = goodstuff4
+					add_province_modifier = { name = goodstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff3 }
+					remove_province_modifier = goodstuff3
+					add_province_modifier = { name = goodstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff2 }
+					remove_province_modifier = goodstuff2
+					add_province_modifier = { name = goodstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = goodstuff1 }
+					remove_province_modifier = goodstuff1
+					add_province_modifier = { name = goodstuff2 duration = -1}
+				}
+				if = {
+					limit = {
+						NOT = { 
+							OR = {	
+								has_province_modifier = goodstuff6
+								has_province_modifier = goodstuff5
+								has_province_modifier = goodstuff4
+								has_province_modifier = goodstuff3
+								has_province_modifier = goodstuff2
+							}	
+						} 
+					}
+					add_province_modifier = { name = goodstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+
+	option = { 
+		name = "EVTOPTBharrenhal.11"
+		ai_chance = {
+			factor = 50
+			modifier = {
+				factor = 3
+				trait = honorable
+			}
+			modifier = {
+				factor = 3
+				trait = kind
+			}
+			modifier = {
+				factor = 3
+				trait = just
+			}
+		}
+		custom_tooltip = { text = HARRENHALNOMONEY }
+		hidden_tooltip = {
+			107 = {
+				if = {
+					limit = { has_province_modifier = badstuff5 }
+					remove_province_modifier = badstuff5
+					add_province_modifier = { name = badstuff6 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff4 }
+					remove_province_modifier = badstuff4
+					add_province_modifier = { name = badstuff5 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff3 }
+					remove_province_modifier = badstuff3
+					add_province_modifier = { name = badstuff4 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff2 }
+					remove_province_modifier = badstuff2
+					add_province_modifier = { name = badstuff3 duration = -1}
+				}
+				if = {
+					limit = { has_province_modifier = badstuff1 }
+					remove_province_modifier = badstuff1
+					add_province_modifier = { name = badstuff2 duration = -1}
+				}
+				if = {
+					limit = { 
+						NOT = { 
+							OR = {	
+								has_province_modifier = badstuff6
+								has_province_modifier = badstuff5
+								has_province_modifier = badstuff4
+								has_province_modifier = badstuff3
+								has_province_modifier = badstuff2
+							} 
+						} 
+					}
+					add_province_modifier = { name = badstuff1 duration = -1 }
+				}
+			}
+		}
+	}
+	after = {
+		clr_character_flag = legal_slavery
+	}
+}
+character_event = { #prisoner put to work
+	id = harrenhal.12
+	desc = "EVTDESCharrenhal.12"
+	picture = "GFX_evt_into_the_dungeon"
+
+	is_triggered_only = yes
+
+	option = { #I am enslaved and put to work
+		name = "EVTOPTAharrenhal.12"
+		random = {
+			chance = 20
+			add_maimed_trait_effect = yes
+		}	
+		opinion = {
+			modifier = opinion_hate
+			who = FROM
+			years = 5
+		}
+	}
+}
+#Part of the castle has been restored
+character_event = {
+	id = harrenhal.13
+	desc = "EVTDESCharrenhal.13"
+	picture = "GFX_evt_castle_construction"
+	
+	only_playable = yes
+
+	trigger = { 
+		has_landed_title = c_harrenhal
+		107 = {	
+			has_province_modifier = rebuilding_harrenhal
+			OR = { 
+				has_province_modifier = debris0
+				has_province_modifier = hbuild1
+				has_province_modifier = hbuild2
+			}
+		}
+	}
+
+	mean_time_to_happen = { 
+		years = 50
+		
+		#Slavery helps
+		modifier = {
+			factor = 0.9
+			107 = { has_province_modifier = slave_modifier_1 }
+		}
+		modifier = {
+			factor = 0.85
+			107 = { has_province_modifier = slave_modifier_2 }
+		}
+		modifier = {
+			factor = 0.8
+			107 = { has_province_modifier = slave_modifier_3 }
+		}
+		modifier = {
+			factor = 0.75
+			107 = { has_province_modifier = slave_modifier_4 }
+		}
+		modifier = {
+			factor = 0.7
+			107 = { has_province_modifier = slave_modifier_5 }
+		}
+		
+		modifier = {
+			factor = 0.9
+			107 = { has_province_modifier = goodstuff1 }
+		}
+		modifier = {
+			factor = 0.8
+			107 = { has_province_modifier = goodstuff2 }
+		}
+		modifier = {
+			factor = 0.7
+			107 = { has_province_modifier = goodstuff3 }
+		}
+		modifier = {
+			factor = 0.6
+			107 = { has_province_modifier = goodstuff4 }
+		}
+		modifier = {
+			factor = 0.5
+			107 = { has_province_modifier = goodstuff5 }
+		}
+		modifier = {
+			factor = 0.4
+			107 = { has_province_modifier = goodstuff6 }
+		}
+		modifier = {
+			factor = 1.2
+			107 = { has_province_modifier = badstuff1 }
+		}
+		modifier = {
+			factor = 1.4
+			107 = { has_province_modifier = badstuff2 }
+		}
+		modifier = {
+			factor = 1.3
+			107 = { has_province_modifier = badstuff3 }
+		}
+		modifier = {
+			factor = 1.4
+			107 = { has_province_modifier = badstuff4 }
+		}
+		modifier = {
+			factor = 1.5
+			107 = { has_province_modifier = badstuff5 }
+		}
+		modifier = {
+			factor = 1.6
+			107 = { has_province_modifier = badstuff6 }
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 14
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 16
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 20
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 22
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 24
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 26
+		}
+		modifier = {
+			factor = 0.9
+			stewardship = 28
+		}
+		modifier = {
+			factor = 0.9
+			trait = diligent
+		}
+		modifier = {
+			factor = 0.9
+			trait = ambitious
+		}
+		modifier = {
+			factor = 0.9
+			trait = ruthless
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { trait = diligent }
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { trait = ruthless }
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 14
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 16
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 18
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 20
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 22
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 24
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 26
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 28
+			}
+		}
+		modifier = {
+			factor = 0.9
+			job_treasurer = { 
+				has_job_action = action_oversee_construction
+				stewardship = 30
+			}
+		}
+	}
+
+	option = { 
+		name = "EVTOPTAharrenhal.13" 
+		trigger = { 
+			107 = { has_province_modifier = debris0 } 
+		}
+		wealth = -300
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = debris0 
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6
+			}			
+			add_province_modifier = { name = hbuild1 duration = -1 }
+			set_province_flag = important
+			clr_province_flag = important
+		}
+	}
+
+	option = { 
+		name = "EVTOPTBharrenhal.13" 
+		trigger = { 
+			107 = { has_province_modifier = hbuild1 } 
+		}
+		wealth = -300
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = hbuild1
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6
+			}			
+			add_province_modifier = { name = hbuild2 duration = -1 }
+			set_province_flag = important
+			clr_province_flag = important
+		}
+	}
+
+	option = { 
+		name = "EVTOPTCharrenhal.13" 
+		trigger = { 
+			107 = { has_province_modifier = hbuild2 } 
+		}
+		wealth = -300
+		107 = { 
+			hidden_tooltip = {
+				remove_province_modifier = hbuild2
+				remove_province_modifier = goodstuff1 
+				remove_province_modifier = goodstuff2
+				remove_province_modifier = goodstuff3
+				remove_province_modifier = goodstuff4 
+				remove_province_modifier = goodstuff5
+				remove_province_modifier = goodstuff6
+				remove_province_modifier = badstuff1
+				remove_province_modifier = badstuff2
+				remove_province_modifier = badstuff3
+				remove_province_modifier = badstuff4
+				remove_province_modifier = badstuff5
+				remove_province_modifier = badstuff6	
+			}		
+			add_province_modifier = { name = hbuild3 duration = -1 }
+			set_province_flag = important
+			clr_province_flag = important
+		}
+		hidden_tooltip = { ROOT = { character_event = { id = harrenhal.14 } } }
+	}
+}
+#Harrenhal finished
+character_event = {
+	id = harrenhal.14
+	desc = "EVTDESCharrenhal.14"
+	picture = "GFX_KINGS_LANDING"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAharrenhal.14"
+		107 = { 
+			if = { 
+				limit = { 
+					has_province_modifier = completeharren2 
+					NOT = { has_province_modifier = debris3 }							
+				}
+				remove_province_modifier = hbuild3
+				remove_province_modifier = rebuilding_harrenhal
+				remove_province_modifier = completeharren2
+				remove_province_modifier = completeharren1
+				add_province_modifier = { name = completeharren3 duration = -1 }
+				b_kingharren3 = { remove_building = ca_harrenhal_ruins }
+			}
+			if = { 
+				limit = { 
+					has_province_modifier = completeharren1 
+					NOT = { has_province_modifier = debris3 }
+					NOT = { has_province_modifier = completeharren2 }
+				}
+				remove_province_modifier = hbuild3
+				add_province_modifier = { name = completeharren2 duration = -1 }
+				add_province_modifier = { name = debris3 duration = -1 }
+				b_kingharren2 = { remove_building = ca_harrenhal_ruins }
+			}
+			if = { 
+				limit = {
+					NOT = { has_province_modifier = completeharren1 }
+					NOT = { has_province_modifier = completeharren2 }
+					NOT = { has_province_modifier = completeharren3 }
+					NOT = { has_province_modifier = debris3 }
+				}
+				add_province_modifier = { name = completeharren1 duration = -1 }
+				add_province_modifier = { name = debris3 duration = -1 }
+				remove_province_modifier = hbuild3
+				b_kingharren1 = { remove_building = ca_harrenhal_ruins }
+			}
+		}
+		prestige = 250
+		hidden_tooltip = { #remove curse
+			any_character = {
+				limit = { has_character_modifier = curse_of_harrenhal }
+				remove_character_modifier = curse_of_harrenhal 
+			}
+		}
+	}
+}
+
+#b_kingharren1 maintenance #Infrastructure collapses in tower.
+character_event = {
+	id = harrenhal.21
+	desc = "EVTDESCharrenhal.21"
+	picture = "GFX_evt_castle_construction"
+	
+	is_triggered_only = yes
+
+	trigger = { 
+		has_landed_title = c_harrenhal
+		FROM = {
+			location = { 
+				province_id = 107 
+				NOT = { has_province_modifier = completeharren3 }
+			}
+			OR = {
+				AND = {
+					title = b_kingharren1
+					107 = { 
+						NOR = { 
+							has_province_modifier = completeharren1 
+							has_province_modifier = completeharren2
+						} 
+					}
+				}	
+				AND = {
+					title = b_kingharren2
+					107 = { NOT = { has_province_modifier = completeharren2 } }
+				}
+				title = b_kingharren3
+			}	
+			num_of_buildings = 2
+		}
+		
+	}
+
+	option = { #I wont do that again until the castle is rebuilt.
+		name = "EVTOPTAharrenhal.21"
+		FROM = {
+			destroy_random_building = yes
+			destroy_random_building = yes
+			add_building = ca_harrenhal_ruins
+		}
+	}
+}
+
+
+		

@@ -1,0 +1,570 @@
+others_invasion = {
+	name = CB_NAME_OTHERS_INVASION
+	war_name = WAR_NAME_OTHERS_INVASION
+	sprite = 7
+	truce_days = 0
+	hostile_against_others = yes
+	is_permanent = yes
+	press_claim = yes
+	can_ask_to_join_war = no
+	capturing_attacker_is_complete_victory = no
+	capturing_defender_is_complete_victory = no
+	
+	infamy_modifier = 0
+ 
+	can_use_title = { 
+		ROOT = { culture = white_walker }
+		FROM = { 
+			NOT = { culture_group = winter_group } 
+			NOT = { culture_group = unoccupied_group } 
+		}
+		OR = {
+			higher_tier_than = DUKE
+			holder = FROM
+		}
+		NOT = { controls_religion = yes }
+		NOR = {
+			has_alternate_start_parameter = { key = special_culture value = mythological } 
+			has_alternate_start_parameter = { key = special_culture value = all } 
+		}
+	}
+
+	is_valid = {
+		ROOT = {
+			culture = white_walker
+		}
+		FROM = { 
+			NOT = { culture_group = winter_group } 
+			NOT = { culture_group = unoccupied_group } 
+		}
+		NOT = { controls_religion = yes }
+	}
+	
+	on_add_title = {
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { character = FROM }
+					chronicle = {
+						entry = CHRONICLE_OTHERS_DEFENDER
+						portrait = [Root.GetID]
+					}
+					break = yes
+				}
+				if = {
+					limit = { is_liege_or_above = FROM }
+					chronicle = {
+						entry = CHRONICLE_WAR_OTHERS_DEFENDER_LIEGE
+						portrait = [From.GetID]
+					}
+				}
+			}
+		}	
+		#Invasion of The Wall triggers invasion of The Five Forts in Essos
+		if = {
+			limit = {
+				OR = {
+					title = d_the_wall
+					FROM = { trait = nightswatch }
+					FROM = { any_realm_province = { region = world_the_wall } }
+				}
+			}
+			d_winter_essos = { holder_scope = { character_event = { id = cold_winds.700 } } }
+		}
+	}
+	
+	on_success_title = {
+		hidden_tooltip = { ROOT = { add_character_modifier = { name = victory_timer duration = 3 } } }
+		custom_tooltip = {
+			text = others_invasion_succ_tip	
+			hidden_tooltip = {				
+				ROOT = {	
+					occupy_minors_of_occupied_settlements = FROM
+					gain_all_occupied_titles = FROM
+					location = {
+						county = { usurp_title_plus_barony_if_unlanded = { target = ROOT type = invasion } }
+					}
+					character_event = { id = maintenance.24 } #Mega war flag maintenance
+				}
+				if = { #If assault of the wall take the entire wall
+					limit = {
+						OR = {
+							title = d_nightswatch
+							title = d_the_wall
+						}
+					}
+					d_the_wall = {
+						any_de_jure_vassal_title = {
+							limit = { holder_scope = { same_realm = FROM } }
+							usurp_title = ROOT
+						}
+						if = {
+							limit = { holder_scope = { same_realm = FROM } }
+							usurp_title = ROOT
+						}					
+					}
+				}		
+			}
+		}
+		any_attacker = {
+			participation_scaled_prestige = 200
+		}
+		FROM = {
+			prestige = -200
+		}		
+		#Important locations fallen
+		ROOT = {
+			hidden_tooltip = {
+				character_event = { id = cold_winds.710 } #The Wall
+				character_event = { id = cold_winds.711 } #Winterfell
+				character_event = { id = cold_winds.712 } #The Eyrie
+				character_event = { id = cold_winds.713 } #Casterly Rock
+				character_event = { id = cold_winds.714 } #Harrenhal
+				character_event = { id = cold_winds.715 } #King's Landing
+				character_event = { id = cold_winds.716 } #Oldtown
+				character_event = { id = cold_winds.717 } #Storm's End
+				character_event = { id = cold_winds.718 } #Sunspear
+				#Essos
+				character_event = { id = cold_winds.719 }
+				character_event = { id = cold_winds.720 }
+				character_event = { id = cold_winds.721 }
+				character_event = { id = cold_winds.722 }
+				character_event = { id = cold_winds.723 }
+				character_event = { id = cold_winds.724 }
+				character_event = { id = cold_winds.725 }
+				character_event = { id = cold_winds.726 }
+				character_event = { id = cold_winds.727 }
+				character_event = { id = cold_winds.728 }
+				character_event = { id = cold_winds.729 }
+			}
+		}	
+	}
+	on_fail = {	
+		ROOT = { prestige = -100 }
+		any_defender = { participation_scaled_prestige = 200 }
+		hidden_tooltip = { #end winter
+			ROOT = {
+				character_event = { id = cold_winds.201 days = 1 } #check for ending of long night
+			}
+			FROM = {
+				if = { #AI may call immediate war for the dawn
+					limit = { ai = yes }
+					character_event = { id = cold_winds.705 days = 2 }						
+				}
+			}
+		}
+	}
+	on_reverse_demand = { 
+		hidden_tooltip = { FROM = { add_character_modifier = { name = victory_timer duration = 3 } } } 
+		ROOT = { prestige = -200 }
+		any_defender = { participation_scaled_prestige = 400 }
+		if = { #may end the white walkers permanently if defeated enough
+			limit = {
+				ROOT = { 
+					capital_holding = { 
+						is_occupied = yes
+						controller = { NOT = { culture_group = winter_group } }
+					}
+					NOT = { relative_power = { who = FROM power = 0.1 } }
+				}	
+			}
+			custom_tooltip = {
+				text = TOOLTIPwar_dawnSUCCESS
+				hidden_tooltip = { 
+					FROM = { 
+						save_event_target_as = white_walker_victor
+					} 
+					ROOT = {
+						character_event = { id = cold_winds.799 }				
+					}				
+				} 
+			}
+		}
+		hidden_tooltip = { 
+			ROOT = {
+				 character_event = { id = cold_winds.201 days = 1 } #check for ending of long night
+			}
+			FROM = {
+				if = { #AI may call immediate war for the dawn
+					limit = { ai = yes }
+					character_event = { id = cold_winds.705 days = 2 }						
+				}
+			}
+		}
+	}
+	
+	# ai importance placed on this CB: scope is the targeted title, ROOT is the attacking character, FROM is the defending character
+	ai_will_do = { 
+		factor = 2
+	}	
+
+	attacker_ai_victory_worth = {
+		factor = 200
+	}
+ 
+	attacker_ai_defeat_worth = {
+		factor = 100
+	}
+
+	defender_ai_victory_worth = {
+		factor = -1 # always accept
+	}
+ 
+	defender_ai_defeat_worth = {
+		factor = 100
+	}
+}
+
+war_dawn = {
+	name = "CB_NAME_WAR_DAWN"
+	war_name = "WAR_NAME_WAR_DAWN"
+	sprite = 1
+	truce_days = 0
+	hostile_against_others = no # ironically
+	can_ask_to_join_war = yes
+	attacker_can_call_allies = yes
+	is_permanent = yes
+	allow_whitepeace = no
+
+	infamy_modifier = 0
+	max_attacker_battle_score = 90
+	capturing_attacker_is_complete_victory = no
+	capturing_defender_is_complete_victory = no
+	
+	sort_priority = 9000
+	
+	can_use_gui = {
+		ROOT = {
+			OR = {
+				custom_tooltip = {
+					text = TOOLTIPISHIGHLORDTIERORGREATER
+					higher_tier_than = DUKE
+				}
+				trait = nightswatch
+				hidden_tooltip = { has_character_flag = stark_winterfell }	
+			}
+			OR = {
+				custom_tooltip = {
+					text = TOOLTIPwar_dawnCONTINENT
+					hidden_tooltip = {
+						OR = {
+							AND = {
+								capital_scope = { region = world_westeros }	
+								FROM = { has_landed_title = d_winter }
+							}
+							AND = {
+								capital_scope = { NOT = { region = world_westeros } }
+								FROM = { has_landed_title = d_winter_essos }
+							}
+						}	
+					}
+				}	
+				custom_tooltip = {
+					text = TOOLTIPwar_dawnNEIGHBOUR
+					hidden_tooltip = {
+						any_realm_province = { #must neighbour
+							any_neighbor_province = {
+								owner = {
+									OR = {
+										character = FROM
+										is_liege_or_above = FROM
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					FROM = { num_of_count_titles = 40 }
+					custom_tooltip = {
+						text = TOOLTIPwar_dawnCONTINENTCLEAR
+						hidden_tooltip = {
+							OR = {
+								AND = {
+									capital_scope = { region = world_westeros }	
+									NOT = { d_winter = { holder_scope = { demesne_size = 1 } } }
+								}
+								AND = {
+									capital_scope = { NOT = { region = world_westeros } }
+									NOT = { d_winter_essos = { holder_scope = { demesne_size = 1 } } }
+								}
+							}	
+						}
+					}
+				}
+			}	
+			NOT = { same_realm = FROM }
+		}
+	}
+		
+	can_use = {
+		has_global_flag = cold_winds
+		NOT = { has_global_flag = affc_jon_snow } # Follow event chain instead
+		FROM = {		
+			culture = white_walker
+			independent = yes
+			demesne_size = 1
+		}
+		NOR = {
+			has_alternate_start_parameter = { key = special_culture value = mythological } 
+			has_alternate_start_parameter = { key = special_culture value = all } 
+		}
+		#ROOT = {		
+			#independent = yes
+			#any_realm_province = {
+				#any_neighbor_province = {
+					#owner = { 
+						#OR = {
+							#character = FROM
+							#same_realm = FROM 
+						#}	
+					#}
+				#}
+			#}			
+		#}	
+	}
+	
+	is_valid = {
+		FROM = {
+			culture = white_walker
+			independent = yes
+		}
+	}
+	
+	on_add = {
+		e_rebels = {
+			persistent_event_target:chronicle_player = {
+				if = {
+					limit = { character = ROOT }
+					chronicle = {
+						entry = CHRONICLE_WAR_DAWN_ATTACKER
+						portrait = [From.GetID]
+					}
+					break = yes
+				}
+				if = {
+					limit = { is_liege_or_above = ROOT }
+					chronicle = {
+						entry = CHRONICLE_WAR_DAWN_ATTACKER_LIEGE
+						portrait = [Root.GetID]
+					}
+					break = yes
+				}
+				chronicle = {
+					entry = CHRONICLE_WAR_DAWN
+					portrait = [From.GetID]
+				}
+			}
+		}	
+	}
+	
+	on_success = {
+		#If Night's watch doesn't exist, victor nominates new LC
+		if = {
+			limit = {
+				FROM = { has_landed_title = d_winter }
+				d_nightswatch = { has_holder = no }					
+			}
+			hidden_tooltip = { 
+				d_nightswatch_dummy = { copy_title_history = d_nightswatch } 
+				activate_title = { status = yes title = d_nightswatch }
+			}	
+			if = { #Player has 10 days to pick their own LC
+				limit = { ROOT = { ai = no } }
+				d_nightswatch = { gain_title = ROOT }
+				d_the_wall = {
+					if = {
+						limit = { holder_scope = { same_realm = FROM } }
+						usurp_title = ROOT
+					}
+					hidden_tooltip = {
+						any_de_jure_vassal_title = {
+							limit = { holder_scope = { same_realm = FROM } }
+							usurp_title = ROOT
+						}
+					}	
+				}
+				ROOT = {
+					custom_tooltip = {
+						text = TOOLTIPPLAYERESTOREDNW
+						hidden_tooltip = { character_event = { id = nightswatch.112 days = 10 } }
+					}
+				}	
+			}
+			if = { #AI picks one immediately
+				limit = { ROOT = { ai = yes } }
+				ROOT = {
+					random_realm_character = {
+						limit = {
+							is_female = no
+							age = 16
+							is_primary_heir = no
+							NOT = { any_pretender_title = { always = yes } }
+							NOT = { any_heir_title = { always = yes } }
+							is_ruler = no
+							is_married = no
+							OR = {
+								trait = widowed
+								NOT = { num_of_children = 1 }
+							}	
+							NOT = { trait = maester }
+							NOT = { trait = kingsguard }
+							NOT = { trait = archmaester }
+							is_priest = no
+							prisoner = no
+							is_incapable = no
+							religion = PREV
+							reverse_opinion = { who = PREV value = 20 }	
+							opinion = { who = PREV value = 20 }							
+						}
+						add_trait = nightswatch
+						d_nightswatch = { gain_title = PREV }
+						set_government_type = NW_government
+					}
+					if = {
+						limit = { d_nightswatch = { has_holder = no } }
+						custom_tooltip = { text = TOOLTIPRESTORENWRANDOM }
+						hidden_tooltip = {
+							capital_scope = {
+								ROOT = {
+									create_random_steward = {
+										random_traits = yes
+										dynasty = random
+										female = no
+										culture = PREV
+										religion = PREV
+									}
+									new_character = {
+										add_trait = nightswatch
+										d_nightswatch = { gain_title = PREV }
+										set_government_type = NW_government
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			text = TOOLTIPwar_dawnSUCCESS
+			hidden_tooltip = { 
+				ROOT = { 
+					add_character_modifier = { name = victory_timer duration = 3 } 
+					save_event_target_as = white_walker_victor
+				} 
+				FROM = {
+					character_event = { id = cold_winds.799 }				
+				}				
+			} 
+		}	
+		ROOT = {
+			participation_scaled_prestige = 500	
+			religion_authority = { modifier = defeated_others }
+		}
+		hidden_tooltip = {
+			any_attacker = {
+				limit = { NOT = { character = ROOT } }
+				participation_scaled_prestige = 500	
+			}
+			FROM = { character_event = { id = cold_winds.201 days = 1 } } #check for ending of long night
+		}	
+	}
+	
+	on_fail = {
+		ROOT = { prestige = -200 }
+	}
+	
+	on_reverse_demand = {
+		ROOT = { prestige = -500 }
+		custom_tooltip = {
+			text = others_invasion_succ_tip	
+			hidden_tooltip = {				
+				FROM = {	
+					occupy_minors_of_occupied_settlements = ROOT
+					gain_all_occupied_titles = ROOT
+					location = {
+						county = { usurp_title_plus_barony_if_unlanded = { target = ROOT type = invasion } }
+					}
+					character_event = { id = maintenance.24 } #Mega war flag maintenance
+				}
+			}
+		}
+		#Important locations fallen
+		FROM = {
+			hidden_tooltip = {
+				character_event = { id = cold_winds.710 } #The Wall
+				character_event = { id = cold_winds.711 } #Winterfell
+				character_event = { id = cold_winds.712 } #The Eyrie
+				character_event = { id = cold_winds.713 } #Casterly Rock
+				character_event = { id = cold_winds.714 } #Harrenhal
+				character_event = { id = cold_winds.715 } #King's Landing
+				character_event = { id = cold_winds.716 } #Oldtown
+				character_event = { id = cold_winds.717 } #Storm's End
+				character_event = { id = cold_winds.718 } #Sunspear
+				#Essos
+				character_event = { id = cold_winds.719 }
+				character_event = { id = cold_winds.720 }
+				character_event = { id = cold_winds.721 }
+				character_event = { id = cold_winds.722 }
+				character_event = { id = cold_winds.723 }
+				character_event = { id = cold_winds.724 }
+				character_event = { id = cold_winds.725 }
+				character_event = { id = cold_winds.726 }
+				character_event = { id = cold_winds.727 }
+				character_event = { id = cold_winds.728 }
+				character_event = { id = cold_winds.729 }
+			}
+		}
+		hidden_tooltip = {
+			FROM = {
+				any_realm_province = {
+					limit = { has_province_flag = winter_wasteland }
+					add_province_modifier = {
+						name = winter_wasteland
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+	
+	attacker_ai_victory_worth = {
+		factor = 50 # always accept
+	}
+	
+	attacker_ai_defeat_worth = {
+		factor = 100
+	}
+
+	defender_ai_victory_worth = {
+		factor = -1 # always accept
+	}
+	
+	defender_ai_defeat_worth = {
+		factor = 100
+	}
+	
+	# ai importance placed on this CB: scope is the targeted title, ROOT is the attacking character, FROM is the defending character
+	ai_will_do = { 
+		factor = 150
+		#Iron Throne wont do this unless...
+		modifier = {
+			factor = 0
+			ROOT = { 
+				has_landed_title = e_iron_throne
+				NOT = {
+					OR = {
+						has_landed_title = k_north
+						culture_group = first_men
+						wildling_culture_trigger = yes
+						FROM = { completely_controls = d_the_wall }
+						trait = diligent
+						trait = zealous
+					}	
+				}
+			}
+		}			
+	}
+}
+

@@ -1,0 +1,2227 @@
+namespace = faceless
+
+
+#############
+#Faceless men & Sorrowful Men
+
+#A person asks an assasins guild for a hit
+character_event = {
+	id = faceless.1
+	desc = "EVTDESCfaceless.1"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		OR = {
+			has_landed_title = d_faceless_men 
+			has_landed_title = d_sorrowful_men 
+		}	
+		FROM = {
+			OR = {
+				has_plot = plot_kill_character
+				has_plot = plot_kill_spouse
+			}
+		}	
+	}
+	
+	immediate = {
+		diplomatic_immunity = yes 
+		if = {
+			limit = { 
+				has_landed_title = d_faceless_men 
+				religion = many_faced_god 
+			}
+			set_character_flag = faceless_man
+		}
+		#Add assassins if short
+		if = {
+			limit = {
+				has_landed_title = d_faceless_men 
+				NOT = {
+					any_courtier = {
+						religion = many_faced_god
+						intrigue = 15
+						age = 16
+						count = 10
+					}
+				}
+			}
+			random_list = {
+				50 = {
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = no
+						religion = many_faced_god
+						culture = random
+					}
+				}	
+				50 = {
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = yes
+						religion = many_faced_god
+						culture = random
+					}
+				}
+			}	
+			new_character = {
+				change_intrigue = 8
+				set_character_flag = faceless_man
+				set_immune_to_pruning = yes	
+				cultural_congenital_trait_chance_effect = yes
+				remove_trait = honorable
+				remove_trait = honest
+				remove_trait = craven
+				remove_trait = content
+				random_list =	{
+					20 = { }
+					30 = { add_trait = poor_warrior }
+					30 = { add_trait = trained_warrior }
+					20 = { add_trait = skilled_warrior }
+				}
+				check_for_defunct_culture_effect = yes
+				random = {
+					chance = 10
+					add_trait = mystic
+				}
+			}
+		}
+		if = {
+			limit = { 
+				has_landed_title = d_sorrowful_men
+				religion = qarth_warlocks
+			}
+			set_character_flag = faceless_man
+		}
+		if = {
+			limit = {
+				has_landed_title = d_sorrowful_men
+				NOT = {
+					any_courtier = {
+						religion = qarth_warlocks
+						intrigue = 15
+						age = 16
+						count = 10
+					}
+				}
+			}
+			random_list = {
+				50 = {
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = no
+						religion = qarth_warlocks
+						culture = random
+					}
+				}	
+				50 = {
+					create_random_intriguer = {
+						random_traits = yes
+						dynasty = none
+						female = yes
+						religion = qarth_warlocks
+						culture = random
+					}
+				}
+			}	
+			new_character = {
+				change_intrigue = 8
+				set_character_flag = faceless_man
+				set_immune_to_pruning = yes	
+				check_for_defunct_culture_effect = yes
+				cultural_congenital_trait_chance_effect = yes
+				remove_trait = honorable
+				remove_trait = honest
+				remove_trait = craven
+				remove_trait = content
+				random_list =	{
+					20 = { }
+					30 = { add_trait = poor_warrior }
+					30 = { add_trait = trained_warrior }
+					20 = { add_trait = skilled_warrior }
+				}
+				random = {
+					chance = 10
+					add_trait = mystic
+				}
+			}
+		}
+		#Determine Targets Rank cost
+		FROM = {
+			plot_target_char = {
+				if = {
+					limit = { tier = EMPEROR }
+					PREV = { 
+						set_character_flag = target_tier_6 
+					}
+				}
+				else_if = {
+					limit = { 
+						OR = {
+							tier = KING
+							any_claim = { tier = EMPEROR }
+							any_dynasty_member = { is_close_relative = PREV tier = EMPEROR }
+							liege = { is_close_relative = PREV tier = EMPEROR }
+							any_spouse = { tier = EMPEROR }
+						}	
+					}
+					PREV = { 
+						set_character_flag = target_tier_5
+					}
+				}
+				else_if = {
+					limit = { 
+						OR = {
+							tier = DUKE
+							trait = kingsguard
+							trait = dragon_rider
+							has_character_flag = faceless_man
+							any_claim = { tier = KING }
+							any_dynasty_member = { is_close_relative = PREV tier = KING }
+							liege = { is_close_relative = PREV tier = KING }
+							any_spouse = { tier = KING }
+							AND = {
+								OR = {
+									is_voter = yes
+									is_councillor = yes
+								}	
+								liege = { tier = EMPEROR }
+							}
+						}	
+					}
+					PREV = { 
+						set_character_flag = target_tier_4
+					}
+				}
+				else_if = {
+					limit = { 
+						OR = {
+							tier = COUNT
+							any_claim = { tier = DUKE }
+							any_dynasty_member = { is_close_relative = PREV tier = DUKE }
+							liege = { is_close_relative = PREV tier = DUKE }
+							any_spouse = { tier = DUKE }
+							AND = {
+								OR = {
+									is_voter = yes
+									is_councillor = yes
+								}	
+								liege = { tier = KING }
+							}
+						}	
+					}
+					PREV = { 
+						set_character_flag = target_tier_3
+					}
+				}
+				else_if = {
+					limit = { 
+						OR = {
+							tier = BARON
+							any_claim = { tier = COUNT }
+							any_dynasty_member = { is_close_relative = PREV tier = COUNT }
+							liege = { is_close_relative = PREV tier = COUNT }
+							any_spouse = { tier = COUNT }
+							AND = {
+								OR = {
+									is_voter = yes
+									is_councillor = yes
+								}	
+								liege = { tier = DUKE }
+							}
+						}	
+					}
+					PREV = {
+						set_character_flag = target_tier_2
+					}
+				}
+				else = {
+					PREV = { 
+						set_character_flag = target_tier_1
+					}
+				}
+			}
+			#Determine own wealth
+			if = {
+				limit = {
+					OR = {
+						yearly_income = 350
+						wealth = 700
+					}
+				}
+				set_character_flag = wealth_tier_6
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = EMPEROR
+						yearly_income = 250
+						wealth = 500
+					}
+				}
+				set_character_flag = wealth_tier_5
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = KING
+						yearly_income = 175
+						wealth = 350
+					}
+				}
+				set_character_flag = wealth_tier_4
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = DUKE
+						yearly_income = 100
+						wealth = 200
+					}
+				}
+				set_character_flag = wealth_tier_3
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						tier = COUNT
+						yearly_income = 50
+						wealth = 100
+					}
+				}
+				set_character_flag = wealth_tier_2
+			}
+			else = {
+				set_character_flag = wealth_tier_1
+			}
+		}	
+	}
+	
+	#money
+	option = {
+		name = EVTOPTAfaceless.1	
+		trigger = {
+			NOT = { character = FROM } #cant pay self
+			FROM = { wealth = 0 }
+		}
+		ai_chance = {
+			factor = 2		
+		}
+		FROM = { 
+			character_event = { id = faceless.2 } 
+		}
+	}
+	
+	#child
+	option = {
+		name = EVTOPTBfaceless.1
+		trigger = {
+			FROM = {
+				#Not valid for these target tiers
+				NOT = { has_character_flag = target_tier_5 }
+				NOT = { has_character_flag = target_tier_6 }
+				#Target tier 4 only valid for low wealth plotters
+				OR = {
+					NOT = { has_character_flag = target_tier_4 }
+					has_character_flag = wealth_tier_1
+					has_character_flag = wealth_tier_2
+					has_character_flag = wealth_tier_3
+				}
+				OR = {
+					current_heir = { #Current heir always good
+						age = 10
+						is_ruler = no
+						dynasty = PREV
+						is_child_of = PREV
+						NOT = { is_maimed_trigger = yes }
+						OR = { #Only offer to human if heir is good
+							PREV = { ai = yes }
+							is_smart_incl_genius_trigger = yes
+							is_strong_trigger = yes
+							trait = tall
+							martial = 15
+							diplomacy = 15
+							stewardship = 15
+						}
+					}
+					AND = { #Child is good for lower than tier 4
+						NOT = { has_character_flag = target_tier_4 }
+						any_child = { 
+							age = 10
+							is_ruler = no
+							dynasty = PREV
+							NOT = { is_maimed_trigger = yes }
+							OR = { #Only offer to human if child is good
+								PREV = { ai = yes }
+								is_smart_incl_genius_trigger = yes
+								is_strong_trigger = yes
+								trait = tall
+								martial = 15
+								diplomacy = 15
+								stewardship = 15
+							}
+						}
+					}	
+				}
+			}
+		}		
+		ai_chance = {
+			factor = 1
+		}
+		FROM = { 
+			character_event = { id = faceless.3 } 
+		}
+	}
+	#health
+	option = {
+		name = EVTOPTCfaceless.1
+		trigger = {
+			FROM = {
+				NOT = { age = 40 }
+				NOT = { is_maimed_trigger = yes }
+				NOT = { trait = wounded }
+				NOT = { is_crippled_trigger = yes }
+				is_ill = no
+				#Not valid for these target tiers
+				NOT = { has_character_flag = target_tier_5 }
+				NOT = { has_character_flag = target_tier_6 }
+				#Target tier 4 only valid for low wealth plotters
+				OR = {
+					NOT = { has_character_flag = target_tier_4 }
+					has_character_flag = wealth_tier_1
+					has_character_flag = wealth_tier_2
+					has_character_flag = wealth_tier_3
+				}
+			}
+		}		
+		ai_chance = {
+			factor = 1
+		}
+		FROM = { 
+			character_event = { id = faceless.4 } 
+		}
+	}
+	#piety
+	option = {
+		name = EVTOPTEfaceless.1	
+		trigger = {
+			religion = FROM
+			FROM = { 
+				OR = {
+					AND = {
+						has_character_flag = target_tier_6
+						piety = 500
+					}
+					AND = {
+						has_character_flag = target_tier_5
+						piety = 400
+					}
+					AND = {
+						has_character_flag = target_tier_4
+						piety = 300
+					}
+					AND = {
+						has_character_flag = target_tier_3
+						piety = 200
+					}
+					AND = {
+						has_character_flag = target_tier_2
+						piety = 100
+					}
+					AND = {
+						has_character_flag = target_tier_1
+						piety = 50 
+					}
+				}
+				
+			}
+		}
+		ai_chance = {
+			factor = 2		
+		}
+		FROM = { 
+			character_event = { id = faceless.599 } 
+		}
+	}
+	#nope
+	option = {
+		name = EVTOPTDfaceless.1
+		ai_chance = {
+			factor = 0.5
+		}	
+		FROM = { 
+			character_event = { id = faceless.5 } 
+		}	
+	}	
+}
+#Faceless men
+character_event = {
+	id = faceless.101
+	desc = "EVTDESCfaceless.101" #wants interact
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {	 
+		name = "EVTOPTAfaceless.101" #Accept faceless men	
+	}	
+}
+#Sorrowful Men
+character_event = {
+	id = faceless.102
+	desc = "EVTDESCfaceless.102" #wants interact
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {	 
+		name = "EVTOPTAfaceless.101" #Accept faceless men	
+	}	
+}
+
+#Faceless men want money
+character_event = {
+	id = faceless.2	
+	desc = "EVTDESCfaceless.2"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {	 
+		name = "EVTOPTAfaceless.2" #Accept faceless men money	
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 0
+				has_character_modifier = loan_timer	
+				OR = {
+					stewardship = 9
+					trait = temperate
+					NOT = { 
+						OR = {
+							trait = gluttonous 
+							trait = hedonist
+							trait = lunatic
+						}	
+					}	
+				}	
+			}
+			modifier = {
+				factor = 0.25
+				NOT = { trait = lunatic }
+				NOT = { trait = wroth }
+				plot_power = 0.75
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_1
+				NOT = { wealth = 20 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_2
+				NOT = { wealth = 50 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_3
+				NOT = { wealth = 95 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_4
+				NOT = { wealth = 165 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_5
+				NOT = { wealth = 230 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_1
+				has_character_flag = wealth_tier_6
+				NOT = { wealth = 330 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_1
+				NOT = { wealth = 50 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_2
+				NOT = { wealth = 90 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_3
+				NOT = { wealth = 190 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_4
+				NOT = { wealth = 330 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_5
+				NOT = { wealth = 500 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_2
+				has_character_flag = wealth_tier_6
+				NOT = { wealth = 750 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_1
+				NOT = { wealth = 80 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_2
+				NOT = { wealth = 165 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_3
+				NOT = { wealth = 350 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_4
+				NOT = { wealth = 600 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_5
+				NOT = { wealth = 900 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_3
+				has_character_flag = wealth_tier_6
+				NOT = { wealth = 1300 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_1
+				NOT = { wealth = 140 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_2
+				NOT = { wealth = 260 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_3
+				NOT = { wealth = 525 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_4
+				NOT = { wealth = 925 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_5
+				NOT = { wealth = 1400 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_4
+				has_character_flag = wealth_tier_6
+				NOT = { wealth = 2000 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_1
+				NOT = { wealth = 185 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_2
+				NOT = { wealth = 370 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_3
+				NOT = { wealth = 750 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_4
+				NOT = { wealth = 1400 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_5
+				NOT = { wealth = 2000 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_5
+				has_character_flag = wealth_tier_6
+				NOT = { wealth = 3000 }
+			}
+			modifier = {
+				factor = 0
+				has_character_flag = target_tier_6
+			}
+		}	
+		if = {
+			limit = { has_character_flag = target_tier_1 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -35
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 35 
+						primary_title = { change_variable = { which = hits_revenue value = 35 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -70
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 70 
+						primary_title = { change_variable = { which = hits_revenue value = 70 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -140
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 140
+						primary_title = { change_variable = { which = hits_revenue value = 140 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -250
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 250
+						primary_title = { change_variable = { which = hits_revenue value = 250 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -350
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 350 
+						primary_title = { change_variable = { which = hits_revenue value = 350 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -500
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 500
+						primary_title = { change_variable = { which = hits_revenue value = 500 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = target_tier_2 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -70
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 70
+						primary_title = { change_variable = { which = hits_revenue value = 70 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -140
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 140 
+						primary_title = { change_variable = { which = hits_revenue value = 140 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -280
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 280
+						primary_title = { change_variable = { which = hits_revenue value = 280 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -500
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 500 
+						primary_title = { change_variable = { which = hits_revenue value = 500 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -700
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 700
+						primary_title = { change_variable = { which = hits_revenue value = 700 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -1000
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1000
+						primary_title = { change_variable = { which = hits_revenue value = 1000 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = target_tier_3 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -125
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 125
+						primary_title = { change_variable = { which = hits_revenue value = 125 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -250
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 250 
+						primary_title = { change_variable = { which = hits_revenue value = 250 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -500
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 500
+						primary_title = { change_variable = { which = hits_revenue value = 500 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -875
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 875
+						primary_title = { change_variable = { which = hits_revenue value = 875 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -1225
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1225 
+						primary_title = { change_variable = { which = hits_revenue value = 1225 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -1750
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1750
+						primary_title = { change_variable = { which = hits_revenue value = 1750 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = target_tier_4 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -200
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 200
+						primary_title = { change_variable = { which = hits_revenue value = 200 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -385
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 385
+						primary_title = { change_variable = { which = hits_revenue value = 385 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -775
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 775 
+						primary_title = { change_variable = { which = hits_revenue value = 775 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -1375
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1375
+						primary_title = { change_variable = { which = hits_revenue value = 1375 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -1925
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1925
+						primary_title = { change_variable = { which = hits_revenue value = 1925 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -2750
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 2750
+						primary_title = { change_variable = { which = hits_revenue value = 2750 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = target_tier_5 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -280
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 280
+						primary_title = { change_variable = { which = hits_revenue value = 280 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -560
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 560 
+						primary_title = { change_variable = { which = hits_revenue value = 560 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -1120
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1120
+						primary_title = { change_variable = { which = hits_revenue value = 1120 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -2000
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 2000
+						primary_title = { change_variable = { which = hits_revenue value = 2000 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -2800
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 2800 
+						primary_title = { change_variable = { which = hits_revenue value = 2800 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -4000
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 4000
+						primary_title = { change_variable = { which = hits_revenue value = 4000 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { has_character_flag = target_tier_6 }
+			if = {
+				limit = { has_character_flag = wealth_tier_1 }
+				wealth = -385
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 385
+						primary_title = { change_variable = { which = hits_revenue value = 385 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_2 }
+				wealth = -770
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 770
+						primary_title = { change_variable = { which = hits_revenue value = 770 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_3 }
+				wealth = -1540
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 1540 
+						primary_title = { change_variable = { which = hits_revenue value = 1540 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_4 }
+				wealth = -2750
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 2750
+						primary_title = { change_variable = { which = hits_revenue value = 2750 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_5 }
+				wealth = -3850
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 3850 
+						primary_title = { change_variable = { which = hits_revenue value = 3850 } }
+					} 
+				}
+			}
+			if = {
+				limit = { has_character_flag = wealth_tier_6 }
+				wealth = -5500
+				hidden_tooltip = { 
+					FROM = { 
+						wealth = 5500
+						primary_title = { change_variable = { which = hits_revenue value = 5500 } }
+					} 
+				}
+			}
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_faceless_men } }
+			character_event = { id = faceless.6 }
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_sorrowful_men } }
+			character_event = { id = faceless.600 }
+		}		
+	}
+	option = {	 
+		name = {
+			text = "EVTOPTBfaceless.2" #decline faceless men
+			trigger = {
+				FROM = { culture = braavosi }
+			}
+		}	
+		name = {
+			text = "EVTOPTCfaceless.2" #decline faceless men
+			trigger = {
+				NOT = { FROM = { culture = braavosi } }
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor = 3
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+		set_character_flag = faceless_men_declined	
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+	}	
+}
+
+#Faceless men child
+character_event = {
+	id = faceless.3	
+	desc = "EVTDESCfaceless.3"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes	
+	
+	immediate = {
+		hidden_tooltip = {
+			if = {
+				limit = { #A maiming will suffice for some targets
+					OR = {
+						has_character_flag = target_tier_1
+						AND = {
+							has_character_flag = target_tier_2
+							OR = {
+								has_character_flag = wealth_tier_1
+								has_character_flag = wealth_tier_2
+								has_character_flag = wealth_tier_3
+							}
+						}
+					}
+				}
+				random = {
+					chance = 33
+					set_character_flag = maim_child
+				}
+			}
+			if = {
+				limit = { #A non heir will suffice for some
+					NOT = { has_character_flag = maim_child }
+					OR = {
+						has_character_flag = target_tier_1
+						has_character_flag = target_tier_2
+						has_character_flag = target_tier_3
+					}
+				}
+				random = {
+					chance = 50
+					set_character_flag = kill_child
+				}
+			}
+			if = {
+				limit = { #Else target the heir
+					NOT = { has_character_flag = maim_child }
+					NOT = { has_character_flag = kill_child }
+					current_heir = {
+						age = 10
+						is_ruler = no
+						dynasty = ROOT
+						is_child_of = ROOT
+						NOT = { is_maimed_trigger = yes }
+						OR = { #Only offer to human if child is good
+							ROOT = { ai = yes }
+							is_smart_incl_genius_trigger = yes
+							is_strong_trigger = yes
+							trait = tall
+							martial = 15
+							diplomacy = 15
+							stewardship = 15
+						}
+					}
+				}
+				set_character_flag = kill_heir
+			}
+			if = {
+				limit = {
+					NOT = { has_character_flag = maim_child }
+					NOT = { has_character_flag = kill_child }
+					NOT = { has_character_flag = kill_heir }
+				}
+				set_character_flag = kill_child
+			}
+		}	
+	}
+	
+	option = {		 
+		name = "EVTOPTAfaceless.3" #Accept faceless men child
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = ruthless
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = cruel
+			}
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = just
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = wroth }
+				plot_power = 0.75
+			}
+			#I like my heir
+			modifier = {
+				factor = 0
+				has_character_flag = kill_heir
+				NOT = { trait = ruthless }
+				NOT = { trait = arbitrary }
+				current_heir = {
+					reverse_opinion = { who = ROOT value = 50 }
+				}
+			}
+			#not my only son
+			modifier = {
+				factor = 0
+				NOT = {
+					any_child = { 	
+						is_female = no
+						is_alive = yes
+						OR = {
+							is_married = yes
+							is_betrothed = yes
+							can_marry = yes
+						}
+						count = 2
+					}
+				}
+			}
+			#not my only child
+			modifier = {
+				factor = 0
+				NOT = {
+					any_child = { 
+						is_alive = yes
+						OR = {
+							is_married = yes
+							is_betrothed = yes
+							can_marry = yes
+						}
+						count = 2
+					}
+				}
+			}
+		}		
+		if = {
+			limit = { 
+				OR = {
+					has_character_flag = maim_child
+					has_character_flag = kill_child
+				}	
+			}
+			random_child = {
+				limit = {
+					age = 10
+					is_ruler = no
+					dynasty = ROOT
+					NOT = { is_maimed_trigger = yes }
+					OR = { #Only offer to human if child is good
+						ROOT = { ai = yes }
+						is_smart_incl_genius_trigger = yes
+						is_strong_trigger = yes
+						trait = tall
+						martial = 15
+						diplomacy = 15
+						stewardship = 15
+					}
+				}
+				if = {
+					limit = { ROOT = { has_character_flag = maim_child } }
+					add_maimed_trait_effect = yes				
+				}	
+				if = {
+					limit = { ROOT = { has_character_flag = kill_child } }
+					tooltip = { death = yes }
+					set_character_flag = faceless_sacrifice
+					hidden_tooltip = { character_event = { id = faceless.7 } }
+				}	
+			}
+			clr_character_flag = maim_child
+			clr_character_flag = kill_child
+		}	
+		if = {
+			limit = { has_character_flag = kill_heir }
+			current_heir = {
+				tooltip = { death = yes }
+				set_character_flag = faceless_sacrifice
+				hidden_tooltip = { character_event = { id = faceless.7 } }
+			}
+			clr_character_flag = kill_heir
+		}	
+		if = {
+			limit = { FROM = { has_landed_title = d_faceless_men } }
+			character_event = { id = faceless.6 }
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_sorrowful_men } }
+			character_event = { id = faceless.600 }
+		}	
+	}
+	option = {	 
+		name = {
+			text = "EVTOPTBfaceless.3" #decline faceless men
+			trigger = {
+				FROM = { culture = braavosi }
+			}
+		}	
+		name = {
+			text = "EVTOPTCfaceless.3" #decline faceless men
+			trigger = {
+				NOT = { FROM = { culture = braavosi } }
+			}
+		}
+		ai_chance = {
+			factor = 4
+			modifier = {
+				factor = 2
+				OR = {
+					has_character_flag = kill_heir
+					has_character_flag = kill_child
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = familyperson
+			}
+			modifier = {
+				factor = 2
+				trait = honest
+			}
+		}
+		set_character_flag = faceless_men_declined	
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+		
+		clr_character_flag = maim_child
+		clr_character_flag = kill_child
+		clr_character_flag = kill_heir
+	}
+}
+#Faceless men health
+character_event = {
+	id = faceless.4
+	desc = "EVTDESCfaceless.4"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { #Castration
+				NOT = { trait = eunuch }
+				is_female = no
+				OR = {
+					has_character_flag = target_tier_1
+					AND = {
+						has_character_flag = target_tier_2
+						OR = {
+							has_character_flag = wealth_tier_1
+							has_character_flag = wealth_tier_2
+							has_character_flag = wealth_tier_3
+						}
+					}
+				}
+			}
+			random = {
+				chance = 15
+				set_character_flag = castrate
+			}
+		}
+		if = {
+			limit = { #Blinding
+				NOT = { trait = blinded }
+				NOT = { has_character_flag = castrate }
+				OR = {
+					has_character_flag = target_tier_1
+					AND = {
+						has_character_flag = target_tier_2
+						OR = {
+							has_character_flag = wealth_tier_1
+							has_character_flag = wealth_tier_2
+							has_character_flag = wealth_tier_3
+						}
+					}
+				}
+			}
+			random = {
+				chance = 15
+				set_character_flag = blind
+			}
+		}
+		if = {
+			limit = { #A non heir will suffice for some
+				NOT = { has_character_flag = castrate }
+				NOT = { has_character_flag = blind }
+				OR = {
+					has_character_flag = target_tier_1
+					has_character_flag = target_tier_2
+					has_character_flag = target_tier_3
+				}
+			}
+			random = {
+				chance = 50
+				set_character_flag = maim
+			}
+		}
+		if = {
+			limit = { #Else kill
+				NOT = { has_character_flag = castrate }
+				NOT = { has_character_flag = blind }
+				NOT = { has_character_flag = maim }
+			}
+			set_character_flag = kill
+		}
+	}
+	
+	
+	option = {	 
+		name = "EVTOPTAfaceless.4" #Accept faceless men health	
+		 ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				has_character_flag = kill
+			}
+			modifier = {
+				factor = 0
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = wroth }
+				plot_power = 0.75
+			}
+			modifier = {
+				factor = 2
+				trait = brave 
+			}
+			modifier = {
+				factor = 2
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				has_ugly_trait_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = zealous 
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+		}	
+		if = {
+			limit = { has_character_flag = castrate }
+			add_trait = eunuch
+			clr_character_flag = castrate
+		}	
+		if = {
+			limit = { has_character_flag = blind }
+			add_trait = blinded
+			clr_character_flag = blind
+		}	
+		if = {
+			limit = { has_character_flag = maim }
+			add_maimed_trait_effect = yes
+			clr_character_flag = maim
+		}	
+		if = {
+			limit = { has_character_flag = kill }
+			tooltip = { death = yes }
+		}	
+		if = {
+			limit = { FROM = { has_landed_title = d_faceless_men } }
+			character_event = { id = faceless.6 }
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_sorrowful_men } }
+			character_event = { id = faceless.600 }
+		}	
+	}
+	option = {
+		 
+		name = "EVTOPTBfaceless.4" #decline faceless men
+		 ai_chance = {
+			factor = 8	
+			modifier = {
+				factor = 2
+				is_weak_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				has_fair_trait_trigger = yes
+			}
+			modifier = {
+				factor = 2
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+		}
+		set_character_flag = faceless_men_declined
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+		
+		clr_character_flag = kill
+		clr_character_flag = maim
+		clr_character_flag = blind
+		clr_character_flag = castrate
+	}
+		
+}
+#Faceless men Nope
+character_event = {
+	id = faceless.5	
+	desc = "EVTDESCfaceless.5" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfaceless.5"
+		set_character_flag = faceless_men_declined	
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+	}
+}
+#Faceless men want piety (same religion)
+character_event = {
+	id = faceless.599
+	desc = "EVTDESCfaceless.599"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {	 
+		name = "EVTOPTAfaceless.599" #Accept faceless men piety	
+		if = {
+			limit = { has_character_flag = target_tier_1 }
+			piety = -50
+		}
+		if = {
+			limit = { has_character_flag = target_tier_2 }
+			piety = -100
+		}
+		if = {
+			limit = { has_character_flag = target_tier_3 }
+			piety = -200
+		}
+		if = {
+			limit = { has_character_flag = target_tier_4 }
+			piety = -300
+		}
+		if = {
+			limit = { has_character_flag = target_tier_5 }
+			piety = -400
+		}
+		if = {
+			limit = { has_character_flag = target_tier_6 }
+			piety = -500
+		}
+		if = { 
+			limit = { 
+				NOT = { lifestyle_traits = 1 } 
+			}
+			random = {
+				chance = 10
+				add_trait = mystic
+				hidden_tooltip = { character_event = { id = trait_notification.19 } }
+			}				
+		}
+		if = { 
+			limit = {
+				NOT = { trait = zealous } 
+				NOT = { trait = cynical }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 } }
+			}	
+		}
+		if = {
+			limit = { 	
+				NOT = { trait = stressed } 
+			}
+			random = {
+				chance = 15
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = {
+						id = 38282 #Notify Stressed
+					}
+				}
+			}
+			set_character_flag = one_beheading
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_faceless_men } }
+			character_event = { id = faceless.6 }
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_sorrowful_men } }
+			character_event = { id = faceless.600 }
+		}		
+	}
+	option = {	 
+		name = "EVTOPTBfaceless.599" #decline faceless men
+		ai_chance = {
+			factor = 0
+		}
+		set_character_flag = faceless_men_declined	
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+	}	
+}
+#Faceless men price accepted send on mission
+character_event = {
+	id = faceless.6
+	desc = "EVTDESCfaceless.6" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+		
+	option = {	
+		name = "EVTOPTAfaceless.6"
+		set_character_flag = murder_in_motion
+		plot_target_char = {
+			character_event = { id = faceless.7 tooltip = TOOLTIPfaceless.7 days = 3 }
+		}
+		if = {
+			limit = { has_character_flag = kill }
+			death = {
+				death_reason = death_accident_faceless
+				killer = FROMFROM
+			}
+		}	
+	}
+}
+#Sorrowful Man price accepted send on mission
+character_event = {
+	id = faceless.600
+	desc = "EVTDESCfaceless.600" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+		
+	option = {	
+		name = "EVTOPTAfaceless.6"
+		set_character_flag = murder_in_motion
+		plot_target_char = {
+			character_event = { id = faceless.700 tooltip = TOOLTIPfaceless.7 days = 3 }
+		}
+		if = {
+			limit = { has_character_flag = kill }
+			death = {
+				death_reason = death_accident_faceless
+				killer = FROMFROM
+			}
+		}	
+	}
+}
+#Faceless men Kills target
+character_event = {
+	id = faceless.7	
+	desc = "EVTDESCfaceless.7" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	hide_from = yes
+		
+	option = {
+		name = "EVTOPTAfaceless.7"
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { has_character_flag = faceless_sacrifice } }
+				FROM = { character_event = { id = faceless.8 } }
+			}	
+		}
+		#random_playable_ruler = {
+		#	limit = { ai = no }
+		#	character_event = { id = faceless.50 }
+		#}
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = { 
+			death_reason = death_murder_unknown
+			killer = FROM
+		}			
+	}
+}
+#Sorrowful men Kills target
+character_event = {
+	id = faceless.700	
+	desc = "EVTDESCfaceless.700" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	hide_from = yes
+		
+	option = {
+		name = "EVTOPTAfaceless.7"
+		hidden_tooltip = {
+			if = {
+				limit = { NOT = { has_character_flag = faceless_sacrifice } }
+				FROM = { character_event = { id = faceless.8 } }
+			}	
+		}
+		#random_playable_ruler = {
+		#	limit = { ai = no }
+		#	character_event = { id = faceless.50 }
+		#}
+		FROM_murder_red_god_resurrect_effect = yes #check for rhllor resurrection
+		death = { 
+			death_reason = death_murder_unknown
+			killer = FROM
+		}				
+	}
+}
+#Faceless men Done
+character_event = {
+	id = faceless.8	
+	desc = "EVTDESCfaceless.8" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAfaceless.8"
+		if = {
+			limit = { trait = honorable }
+			remove_trait = honorable
+		}
+		clr_character_flag = finding_faceless_men
+		clr_character_flag = target_tier_1
+		clr_character_flag = target_tier_2
+		clr_character_flag = target_tier_3
+		clr_character_flag = target_tier_4
+		clr_character_flag = target_tier_5
+		clr_character_flag = target_tier_6
+		clr_character_flag = wealth_tier_1
+		clr_character_flag = wealth_tier_2
+		clr_character_flag = wealth_tier_3
+		clr_character_flag = wealth_tier_4
+		clr_character_flag = wealth_tier_5
+		clr_character_flag = wealth_tier_6
+	}
+}
+
+#Faceless men Kills target (plot)
+# character_event = {
+	# id = 20800511
+	# desc = "EVTDESCfaceless.7"
+	# picture = GFX_evt_shadowy_cabal
+	# border = GFX_event_normal_frame_intrigue
+	# hide_from = yes
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = "EVTOPTA7601"
+		# plot_target_char = {
+			# death = { death_reason = death_accident }
+			# hidden_tooltip = {
+				# FROM = { character_event = { id = faceless.8 } }
+			# }
+		# }
+	# }
+# }
+#hedgeknight is a Faceless men
+character_event = {
+	id = faceless.9
+	desc = "EVTDESCfaceless.9" 
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	is_part_of_plot = yes
+	
+	trigger = {
+		OR = {
+			has_plot = plot_kill_character
+			has_plot = plot_kill_spouse
+		}
+		OR = {
+			NOT = { has_character_flag = finding_faceless_men }
+			had_character_flag = { flag = finding_faceless_men days = 75 }
+		}
+		OR = {
+			NOT = { has_character_flag = faceless_men_declined }
+			had_character_flag = { flag = faceless_men_declined days = 2920 }
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAfaceless.9"
+		plot_target_char = {
+			character_event = { id = faceless.7 tooltip = TOOLTIPfaceless.7 days = 3 }
+		}
+	}
+}
+
+####Character joins the an assasins guild###
+character_event = {
+	id = faceless.10
+
+	hide_window = yes
+	min_age = 14
+	capable_only = yes
+	prisoner = no
+	in_command = no
+	
+	trigger = {
+		is_ruler = no
+		is_primary_heir = no
+		is_married = no
+		is_betrothed = no
+		is_councillor = no
+		NOT = { is_voter = yes }
+		intrigue = 15
+		is_ill = no	
+		NOT = { liege = { has_landed_title = d_faceless_men } }
+		NOT = { liege = { has_landed_title = d_sorrowful_men } }
+		can_press_claims_trigger = yes
+		NOT = { trait = wildling }
+		NOT = { culture = moon_clansman }
+		NOT = { culture = dothraki }
+		NOT = { culture = jogos_nhai }
+		NOT = { has_character_flag = wikid_companion }
+		NOT = { has_character_modifier = maester_education }
+	}
+	
+	mean_time_to_happen = {
+		years = 150
+		
+		modifier = {
+			factor = 0.25
+			religion = many_faced_god
+		}
+		modifier = {
+			factor = 0.8
+			culture = braavosi
+		}
+		modifier = {
+			factor = 0.8
+			d_faceless_men = {
+				holder_scope = {
+					at_location = ROOT
+				}
+			}	
+		}
+		modifier = {
+			factor = 0.8
+			culture = qartheen
+		}
+		modifier = {
+			factor = 0.8
+			d_sorrowful_men = {
+				holder_scope = {
+					at_location = ROOT
+				}
+			}	
+		}
+		modifier = {
+			factor = 2
+			age = 25
+		}
+		modifier = {
+			factor = 0.9
+			intrigue  = 17
+		}
+		modifier = {
+			factor = 0.9
+			intrigue  = 19
+		}
+		modifier = {
+			factor = 0.9
+			intrigue  = 21
+		}
+		modifier = {
+			factor = 2
+			OR = { 	
+				trait = misguided_warrior
+				trait = tough_soldier
+				trait = skilled_tactician
+				trait = brilliant_strategist
+			}
+		}
+		modifier = {
+			factor = 2
+			OR = { 
+				trait = stressed
+				trait = depressed
+			}
+		}
+		modifier = {
+			factor = 0.8
+			trait = bastard
+		}
+		modifier = {
+			factor = 0.8
+			trait = celibate
+		}
+		modifier = {
+			factor = 0.8
+			trait = deceitful
+		}
+		modifier = {
+			factor = 4
+			trait = honest
+		}
+		modifier = {
+			factor = 0.8
+			trait = ruthless
+		}
+		modifier = {
+			factor = 4
+			trait = honorable
+		}
+		modifier = {
+			factor = 1.2
+			trait = hedonist
+		}
+		modifier = {
+			factor = 0.9
+			trait = duelist
+		}
+		modifier = {
+			factor = 0.9
+			trait = hunter
+		}
+		modifier = {
+			factor = 1.1
+			trait = slothful
+		}
+		modifier = {
+			factor = 0.9
+			trait = diligent
+		}
+		modifier = {
+			factor = 2
+			trait = proud
+		}
+		modifier = {
+			factor = 0.9
+			trait = humble
+		}
+		modifier = {
+			factor = 0.8
+			trait = brave
+		}
+		modifier = {
+			factor = 2
+			trait = craven
+		}
+		modifier = {
+			factor = 0.75
+			trait = ambitious
+		}
+		modifier = {
+			factor = 2
+			trait = content
+		}
+		modifier = {
+			factor = 2
+			is_pretender = yes 
+		}
+	}
+	
+	immediate = {
+		set_character_flag = faceless_man
+		if = {
+			limit = {
+				location = {
+					NOR = {
+						region = world_far_east
+						region = world_jade_sea
+						region = world_ghiscar
+						region = world_dothraki
+					}
+				}
+			}
+			d_faceless_men = {
+				holder_scope = {
+					ROOT = { move_character = PREV }
+				}
+			}
+			religion = many_faced_god
+		}	
+		if = {
+			limit = {
+				location = {
+					OR = {
+						region = world_far_east
+						region = world_jade_sea
+						region = world_ghiscar
+						region = world_dothraki
+					}
+				}
+			}
+			d_sorrowful_men = {
+				holder_scope = {
+					ROOT = { move_character = PREV }
+				}
+			}
+			religion = qarth_warlocks
+		}
+		liege = { character_event = { id = faceless.11 } } 
+	}
+
+	option = {
+		name = OK		
+	}
+}
+#Someone has left to be a faceless man
+character_event = {
+	id = faceless.11
+	desc = "EVTDESCfaceless.11"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfaceless.11" #Yes
+	}
+}	
+
+#the guild pays tax to liege
+character_event = {
+	id = faceless.12
+	desc = "EVTDESCfaceless.12"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = { 
+		OR = {
+			has_landed_title = d_faceless_men 
+			has_landed_title = d_sorrowful_men
+		}	
+		liege = { NOT = { character = ROOT } }
+		primary_title = { check_variable = { which = hits_revenue value = 50 } }
+	}
+	
+	immediate = {
+		#20% tax
+		primary_title = { 
+			ROOT = { set_variable = { which = hits_revenue which = PREV } }		
+			set_variable = { which = hits_revenue value = 0 }
+		}
+		multiply_variable = { which = hits_revenue value = 0.2 } 
+	}
+	
+	option = {
+		name = "EVTOPTAfaceless.12" 
+		liege = { character_event = { id = faceless.13 tooltip = TOOLTIPfaceless.13 } }		
+	}
+}	
+character_event = {
+	id = faceless.13
+	desc = "EVTDESCfaceless.13"
+	picture = GFX_evt_shadowy_cabal
+	border = GFX_event_normal_frame_intrigue
+	
+	is_triggered_only = yes
+	
+	immediate = {	
+		set_variable = { which = hits_revenue which = FROM } #copy FROM variable
+		FROM = {
+			multiply_variable = { which = hits_revenue value = -1 } #make FROM's variable negative
+		}
+	}
+
+	option = {
+		name = "EVTOPTAfaceless.13" 
+		wealth = hits_revenue
+		hidden_tooltip = { 
+			FROM = {
+				wealth = hits_revenue
+				set_variable = { which = hits_revenue value = 0 }
+			}
+			set_variable = { which = hits_revenue value = 0 }
+		}	
+	}
+}
+# character_event = { #Debug test
+	# id = faceless.50
+	# desc = "EVTDESCfaceless.50"
+	# picture = GFX_evt_shadowy_cabal
+	# border = GFX_event_normal_frame_intrigue
+	
+	# is_triggered_only = yes
+	
+	# option = {
+		# name = OK 
+		# FROM = { FROM = { tooltip = { show_portrait = yes } } }
+	# }	
+# }	

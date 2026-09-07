@@ -1,0 +1,531 @@
+decisions = {
+	liege_call_to_arms = {
+		is_high_prio = yes
+		only_independent = yes
+		potential = {
+			OR = {
+				is_patrician = yes
+				demesne_size = 1
+			}
+			independent = yes
+			NOT = { tier = EMPEROR }
+			primary_title = { check_variable = { which = "de_facto_empire" value = 1 } } #has a defacto empire
+			war = yes
+			is_primary_war_defender = yes
+			NOT = { has_character_flag = against_king }
+			OR = {
+				NOT = { trait = rebel_leader }
+				any_current_enemy = {
+					tier = EMPEROR
+					NOT = {
+						any_demesne_title = {
+							tier = EMPEROR #different defacto empire
+							ROOT = {
+								primary_title = {
+									NOT = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } 
+								}
+							}
+						}
+					}
+				}
+			}
+			OR = {
+				NOT = { has_character_flag = supporting_king }
+				NOT = { tier = KING }
+				has_character_flag = post_civil_war_wars
+			}
+			OR = {
+				NOT = { has_character_flag = liege_called_to_arms }
+				had_character_flag = { flag = liege_called_to_arms days = 1825 }
+			}
+			any_war = {
+				defender = { character = ROOT }
+				attacker = {
+					NOT = { is_liege_or_above = ROOT }
+					NOT = { liege_before_war = { character = ROOT } }
+					demesne_size = 1
+					OR = {
+						primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }	#no defacto empire
+						tier = EMPEROR
+						AND = {
+							any_demesne_title = {
+								tier = EMPEROR
+								ROOT = {
+									primary_title = {
+										NOT = { is_variable_equal = { which = "de_facto_empire" which = PREVPREV } } 
+									}
+								}
+							}
+							NOT = { #not at war with defacto emperor
+								any_independent_ruler = {
+									tier = EMPEROR
+									war_with = ROOT
+									any_demesne_title = {
+										tier = EMPEROR
+										ROOT = {
+											primary_title = {
+												is_variable_equal = { which = "de_facto_empire" which = PREVPREV } 
+											}
+										}
+									}
+								}
+							}
+							NAND = { #not tributary defacto emperor
+								is_tributary = yes
+								suzerain = {
+									tier = EMPEROR
+									any_demesne_title = {
+										tier = EMPEROR
+										ROOT = {
+											primary_title = {
+												is_variable_equal = { which = "de_facto_empire" which = PREVPREV } 
+											}
+										}
+									}
+								}
+							}
+						}
+					}	
+				}
+			}
+		}
+		allow = {	
+		}
+		effect = {
+			set_character_flag = liege_called_to_arms
+			character_event = { id = mega_wars.14 tooltip = EVTTOOLTIP999900922 }		
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}	
+
+targetted_decisions = {	
+	join_rebel_leader_1 = {
+		ai = no
+		is_high_prio = yes
+		ai_target_filter = none
+		filter = all
+		diplomacy_icon = GFX_join_rebel_leader_1
+		
+		from_potential = {
+			ai = no #Player only to avoid lag, AI has separate yearly pulse events
+			is_ruler = yes
+			OR = {
+				is_patrician = no #dont break republic
+				is_merchant_republic = yes
+			}
+			is_nomadic = no
+			OR = {
+				independent = no
+				primary_title = { check_variable = { which = "de_facto_empire" value = 1 } }
+			}
+			OR = {
+				had_character_flag = { flag = mega_war_decision_cooldown days = 150 }
+				NOT = { has_character_flag = mega_war_decision_cooldown }
+			}			
+			NOT = { has_character_flag = flag_crown_loyalist }
+			NOT = { in_faction = faction_liege_loyalist }
+			OR = { #High Septon must have enough authority
+				NOT = { has_landed_title = k_the_most_devout }
+				crownlaw_title = {
+					OR = {
+						has_law = investiture_law_2
+						has_law = investiture_law_3
+					}
+				}
+			}		
+			OR = {	
+				AND = { #Conditions for LPs
+					tier = KING				
+					OR = {
+						AND = {
+							war = no #Cannot already of chosen sides	
+							independent = yes
+						}	
+						liege = { 
+							tier = EMPEROR 
+							war = yes
+							primary_title = { 
+								check_variable = { which = "de_facto_empire" value = 0.9 } 
+								NOT = { has_title_flag = indep_war }
+							}
+						}
+					}	
+					NAND = { #If already flagged as supporting king cannot choose sides (will be added back to war automatically)
+						has_character_flag = supporting_king
+						civil_war = {
+							tier = EMPEROR
+							war = yes
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_with_king  }
+							primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+						}
+					}				
+				}	
+				AND = { #Conditions for vassals LPs
+					#ai = no #temp
+					lower_tier_than = KING				
+					NOT = { #Cannot be involved in a non-iron throne war
+						any_war = {
+							NOT = {
+								OR = {
+									attacker = { tier = EMPEROR trait = civil_war }
+									defender = { tier = EMPEROR trait = civil_war }
+								}
+							}
+						}
+					}
+					OR = { #Cannot already have defected
+						NOT = { independent = yes }
+						war = no
+					}
+					OR = { #Initial choice event must have occured
+						has_character_flag = supporting_king
+						has_character_flag = neutral 
+						has_character_flag = against_king 
+					}
+					OR = {
+						independent = yes #Is neutral
+						liege = { 
+							NOT = { has_character_flag = inherit_war } #Liege must not be deciding after inheriting
+							OR = { #Liege must be part of the Iron Throne
+								NOT = { has_character_flag = independant } 
+								AND = {
+									tier = EMPEROR
+									trait = civil_war
+									primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+								}
+							}	
+							OR = { #Liege must have decided their stance
+								AND = {
+									tier = EMPEROR
+									trait = civil_war
+									primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+								}
+								has_character_flag = supporting_king
+								has_character_flag = neutral 
+								has_character_flag = against_king 
+								trait = rebel_leader
+							}	
+						}
+					}
+				}	
+			}
+		}
+		potential = {
+			is_ruler = yes
+			trait = rebel_leader				
+			civil_war = {
+				tier = EMPEROR
+				war_with = PREV
+				OR = {
+					is_vassal_or_below = FROM
+					any_demesne_title = {
+						tier = EMPEROR
+						FROM = {
+							primary_title = {
+								is_variable_equal = { which = "de_facto_empire" which = PREVPREV } 
+							}
+						}
+					}
+				}
+				primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+			}	
+			FROM = { #Vassal of rebel leader cannot defect to other rebel leaders
+				OR = {
+					independent = yes
+					liege = {
+						OR = { #Vassal of rebel leader cannot defect to other rebel leaders
+							NOT = { trait = rebel_leader }
+							trait = civil_war
+							character = ROOT
+						}
+					}
+				}
+			}
+		}
+		allow = {		
+			FROM = {
+				capital_holding = { controller = { character = PREVPREV } } #Cannot change sides if capital is occupied	
+				custom_tooltip = {
+					text = TOOLTIP_join_rebel_leader_A
+					hidden_tooltip = {
+						NOT = { #not split when outside force is claiming title
+							any_realm_title = {
+								any_war = { 
+									attacker = {
+										NOT = { is_liege_or_above = ROOT_FROM }
+									}
+								}
+								#holder_scope = { war = yes }
+							}
+						}	
+					}	
+				}
+				custom_tooltip = { #not enemies
+					text = TOOLTIP_join_rebel_leader_B
+					hidden_tooltip = {
+						NAND = {
+							has_character_flag = supporting_king
+							OR = {
+								liege = { current_heir = { character = ROOT_FROM } }
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_vengeance }
+							}
+						}
+					}
+				}				
+			}
+			
+		}
+		effect = {
+			FROM = {
+				clr_character_flag = inherit_war
+				# set_character_flag = rebel_leader_1_decide
+				# if = {
+					# limit = {
+						# is_ruler = no
+						# trait = dragon_rider
+					# }
+					# set_character_flag = rebel_leader_1_dragon
+					# character_event = { id = mega_wars.21 }
+				# }
+			}
+			civil_war = {
+				limit = {
+					tier = EMPEROR
+					war_with = PREV	
+					OR = {
+						is_vassal_or_below = FROM
+						#FROM = { is_ruler = no }
+						any_demesne_title = {
+							tier = EMPEROR
+							FROM = {
+								primary_title = {
+									is_variable_equal = { which = "de_facto_empire" which = PREVPREV } 
+								}
+							}
+						}
+					}
+					primary_title = { check_variable = { which = "de_facto_empire" value = 0.9 } }
+				}
+				custom_tooltip = { text =  TOOLTIP_join_emperor }	
+				hidden_tooltip = { character_event = { id = mega_wars.22 } }				
+			}
+			custom_tooltip = { text =  TOOLTIP_join_rebel_leader }	
+			
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	mega_war_join_liege = {
+		is_high_prio = yes
+		ai_target_filter = none
+		filter = all
+		ai = no
+		diplomacy_icon = GFX_mega_war_join_liege
+		
+		from_potential = {
+			ai = no #Player only, decision is for convenience
+			is_ruler = yes
+			OR = {
+				is_patrician = no #dont break republic
+				is_merchant_republic = yes
+			}
+			is_nomadic = no
+			independent = yes
+			primary_title = { check_variable = { which = "de_facto_empire" value = 1 } }
+			OR = {
+				had_character_flag = { flag = mega_war_decision_cooldown days = 150 }
+				NOT = { has_character_flag = mega_war_decision_cooldown }
+			}			
+			NOT = { has_character_flag = flag_crown_loyalist }
+			NOT = { in_faction = faction_liege_loyalist }
+			OR = { #High Septon must have enough authority
+				NOT = { has_landed_title = k_the_most_devout }
+				crownlaw_title = {
+					OR = {
+						has_law = investiture_law_2
+						has_law = investiture_law_3
+					}
+				}
+			}	
+			war = no #Cannot already of chosen sides			
+			OR = {	
+				tier = KING	
+				AND = { #Conditions for vassals LPs
+					#ai = no #temp
+					lower_tier_than = KING				
+					NOT = { #Cannot be involved in a non-iron throne war
+						any_war = {
+							NOT = {
+								OR = {
+									attacker = { tier = EMPEROR trait = civil_war }
+									defender = { tier = EMPEROR trait = civil_war }
+								}
+							}
+						}
+					}
+					OR = { #Initial choice event must have occured
+						has_character_flag = supporting_king
+						has_character_flag = neutral 
+						has_character_flag = against_king 
+					}
+				}	
+			}
+		}
+		potential = {
+			is_ruler = yes
+			tier = EMPEROR
+			trait = civil_war		
+			any_demesne_title = {
+				tier = EMPEROR
+				check_variable = { which = "de_facto_empire" value = 0.9 }
+				FROM = {
+					primary_title = {
+						is_variable_equal = { which = "de_facto_empire" which = PREVPREV } 
+					}
+				}
+			}
+			war = yes
+			rebel_leader = {
+				war_with = PREV
+			}
+		}
+		allow = {		
+			FROM = {
+				capital_holding = { controller = { character = PREVPREV } } #Cannot change sides if capital is occupied	
+				custom_tooltip = {
+					text = TOOLTIP_join_rebel_leader_A
+					hidden_tooltip = {
+						NOT = { #not split when outside force is claiming title
+							any_realm_title = {
+								any_war = { 
+									attacker = {
+										NOT = { is_liege_or_above = ROOT_FROM }
+									}
+								}
+								#holder_scope = { war = yes }
+							}
+						}	
+					}	
+				}				
+			}	
+		}
+		effect = {
+			if = {
+				limit = {			
+					NAND = {
+						FROM = { has_character_flag = supporting_king }
+						reverse_has_opinion_modifier = { who = FROM modifier = opinion_with_king  }
+					}
+				}
+				opinion = {
+					modifier = opinion_loyal_to_crown
+					who = FROM
+					years = 10
+				}
+				hidden_tooltip = {
+					letter_event = { id = mega_wars.34 }
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						has_character_flag = against_king
+						trait = honorable
+					}
+					remove_trait = honorable
+				}
+				if = { 
+					limit = { 
+						has_character_flag = against_rebel_liege
+						lower_tier_than = KING
+					}
+					random_playable_ruler = {
+						limit = {
+							higher_tier_than = DUKE
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege }
+						}	
+						opinion = { who = ROOT modifier = opinion_traitor }
+					}
+				}
+				clr_character_flag = inherit_war
+				clr_character_flag = must_decide
+				clr_character_flag = joined_independance_war
+				set_character_flag = supporting_king
+				clr_character_flag = neutral 
+				clr_character_flag = against_king 
+				clr_character_flag = mega_war_remove_leader
+				clr_character_flag = warden_called_to_arms
+			}	
+			if = {
+				limit = {
+					is_primary_war_defender = yes
+					any_war = {
+						attacker = { trait = rebel_leader }
+						defender = { character = PREVPREV }
+					}
+				}
+				FROM = { join_defender_wars = PREV }
+			}
+			if = {
+				limit = {
+					is_primary_war_attacker = yes
+					any_war = {
+						defender = { trait = rebel_leader }
+						attacker = { character = PREVPREV }
+					}
+				}
+				FROM = { join_attacker_wars = PREV }
+			}			
+			hidden_tooltip = { #failsafe
+				FROM = { join_defender_wars = PREV }
+				FROM = { join_attacker_wars = PREV }
+				reverse_opinion = {
+					modifier = opinion_with_king
+					who = FROM
+					years = 100
+				}
+			}	
+			rebel_leader = {
+				limit = {
+					is_alive = yes
+					war_with = ROOT
+					OR = {
+						has_non_aggression_pact_with = FROM
+						is_allied_with = FROM
+					}	
+				}	
+				opinion = {
+					modifier = broke_alliance
+					who = FROM
+				}
+			}	
+			hidden_tooltip = {
+				FROM = {
+					if = {
+						limit = { tier = KING }
+						any_vassal = {
+							limit = {
+								primary_title = {
+									mercenary = no
+									holy_order = no
+								}
+							}
+							set_character_flag = supporting_king
+							clr_character_flag = neutral 
+							clr_character_flag = against_king 
+						}
+					}
+				}	
+			}			
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
+

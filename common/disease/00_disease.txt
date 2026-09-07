@@ -1,0 +1,2360 @@
+# This file holds the diseases for The Reaper's due, with all new values and effects
+# note the "rip = yes" -- this will make it so that the disease is The Reaper's Due exclusive, so that we can have both versions of the disease
+# if "rip" is not specified, the disease will be available in both version (with the same values in both) and doesn't need to be set twice
+
+bloody_flux = {
+	rip = yes
+	contagiousness = 0.25
+	outbreak_chance = 0.01
+	effect = {
+		local_tax_modifier = -0.25
+		supply_limit = -2
+		max_attrition = 0.05
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 1
+	tooltip = BLOODY_FLUX_INFO
+	months = 18
+	trait = has_bloody_flux
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_tuberculosis
+					has_character_flag = got_tuberculosis
+					trait = has_bloody_flux
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_smallpox
+					has_character_flag = got_measles
+					has_character_flag = got_typhus
+					has_character_flag = got_typhoid_fever
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_red_death
+					has_character_flag = got_old_ones_scourge
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				10 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}
+					modifier = {
+						factor = 0.1
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 5
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}				
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_tuberculosis
+					set_character_flag = developing_illness
+					character_event = { id = RIP.5015 }
+				}
+				90 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = no
+	color = { 171 84 0 }
+	
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.01
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 5
+		
+		spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.008
+
+		max_total_provinces = 20
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.005
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 20
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 45
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.002
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 45
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	disease_gfx = disease_gfx_tuberculosis
+}
+
+typhoid_fever = { # Winter Fever
+	rip = yes
+	contagiousness = 0.26
+	outbreak_chance = 0.005
+	effect = {
+		local_tax_modifier = -0.40
+		supply_limit = -3
+		max_attrition = 0.075
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 2
+	tooltip = TYPHOID_FEVER_INFO
+	months = 24
+	trait = has_typhoid_fever
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_typhoid_fever
+					has_character_flag = got_typhoid_fever
+					trait = has_typhoid_fever
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_smallpox
+					has_character_flag = got_measles
+					has_character_flag = got_typhus
+					has_character_flag = got_tuberculosis
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_red_death
+					has_character_flag = got_old_ones_scourge
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				10 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}
+					modifier = {
+						factor = 0.1
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 5
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_typhoid_fever
+					set_character_flag = developing_illness
+					character_event = { id = RIP.5016 }
+				}
+				90 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = no
+	color = { 210 210 210 }
+	
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.011
+		
+		can_outbreak = {
+			is_winter_trigger = yes
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 4
+		
+		spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.008
+		
+		can_outbreak = {
+			is_winter_trigger = yes
+		}
+
+		max_total_provinces = 17
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.005
+			
+		can_outbreak = {
+			is_winter_trigger = yes
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 17
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			is_winter_trigger = yes
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 47
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.002
+		
+		can_outbreak = {
+			is_winter_trigger = yes
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 47
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+	}
+	disease_gfx = disease_gfx_typhoid_fever
+}
+
+grey_plague = { # Camp Fever
+	rip = yes
+	contagiousness = 0.27
+	outbreak_chance = 0.0025
+	effect = {
+		local_tax_modifier = -0.40
+		supply_limit = -3
+		max_attrition = 0.075
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 3
+	tooltip = GREY_PLAGUE_INFO
+	months = 12
+	trait = has_grey_plague
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_typhus
+					has_character_flag = got_typhus
+					trait = has_grey_plague
+					trait = has_greyscale
+					trait = greyscale_scarred #immune if had greyscale before
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_smallpox
+					has_character_flag = got_measles
+					has_character_flag = got_typhoid_fever
+					has_character_flag = got_tuberculosis
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_red_death
+					has_character_flag = got_old_ones_scourge
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				10 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}
+					modifier = {
+						factor = 0.1
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 5
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_typhus
+					set_character_flag = developing_illness
+					character_event = { id = RIP.5017 }
+				}
+				90 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = no
+	color = { 150 150 150 }
+	
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0025
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 7
+		
+		spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0025
+
+		max_total_provinces = 22
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0025
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 22
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 18
+
+		max_total_provinces = 55
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 18
+
+		max_total_provinces = 55
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	disease_gfx = disease_gfx_typhus
+}
+
+bubonic_plague = {
+	rip = yes
+	contagiousness = 0.55
+	outbreak_chance = 0.0025
+	effect = {
+		local_tax_modifier = -0.75
+		supply_limit = -4
+		max_attrition = 0.075
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			10 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			90 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 4
+	tooltip = BUBONIC_PLAGUE_INFO
+	months = 18
+	trait = has_bubonic_plague
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_bubonic_plague
+					has_character_flag = got_bubonic_plague
+					trait = has_bubonic_plague
+				}
+				NOT_mythical_creature_trigger = yes
+			}
+			random_list = {
+				90 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}
+					modifier = {
+						factor = 0
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 10
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					#clr_character_flag = got_bubonic_plague #clear out other diseases
+					clr_character_flag = got_aztec_disease
+					clr_character_flag = got_smallpox
+					clr_character_flag = got_measles
+					clr_character_flag = got_typhus
+					clr_character_flag = got_typhoid_fever
+					clr_character_flag = got_tuberculosis
+					clr_character_flag = got_syphilis
+					clr_character_flag = got_pneumonia
+					clr_character_flag = got_cancer
+					clr_character_flag = got_rabies
+					clr_character_flag = got_gout
+					clr_character_flag = got_flu
+					clr_character_flag = got_dysentery
+					clr_character_flag = got_food_poisoning
+					
+					set_character_flag = got_bubonic_plague
+					set_character_flag = developing_illness
+					character_event = { id = RIP.5012 }
+				}
+				10 = { # Nothing happens
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_global_flag = black_death_happened }
+			}
+			set_global_flag = black_death_happened
+		}
+	}
+	on_province_infection = {
+		province_event = { id = RIP.10000 }
+		province_event = { id = RIP.10005 }
+		province_event = { id = RIP.11703 } #prosperity ended by epidemic
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = yes
+	color = { 255 0 0 }
+	major = yes
+	
+	timeperiod = {	# Dynamic plague outbreak
+		start_date = 760.1.1
+		end_date = 9999.1.1
+		
+		outbreak_chance = 0.0025
+		
+		can_outbreak = {
+			total_years_played = 50
+			NOT = { has_global_flag = black_death_happened }
+			has_game_rule = {
+				name = epidemics
+				value = dynamic
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		one_only = yes
+
+		province_infection_duration = 24
+	}
+	
+	timeperiod = {	# Dynamic plague outbreak, take 2 (late game)
+		start_date = 8350.1.1
+		end_date = 9999.1.1
+		
+		outbreak_chance = 0.0025
+		
+		can_outbreak = {
+			total_years_played = 300
+			has_game_rule = {
+				name = epidemics
+				value = dynamic
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		one_only = yes
+
+		province_infection_duration = 24	
+	}
+	
+	timeperiod = {	# Delayed Dynamic plague outbreak
+		start_date = 8300.1.1
+		end_date = 9999.1.1
+		
+		outbreak_chance = 0.0025
+		
+		can_outbreak = {
+			total_years_played = 25
+			NOT = { has_global_flag = black_death_happened }
+			has_game_rule = {
+				name = epidemics
+				value = delayed_dynamic
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		one_only = yes
+
+		province_infection_duration = 24	
+	}
+
+	timeperiod = {	# Dynamic historical plague
+		start_date = 8200.1.1
+		end_date = 8250.1.1
+
+		can_outbreak = {
+			NOT = { has_global_flag = black_death_happened }
+			has_game_rule = {
+				name = epidemics
+				value = dynamic
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		one_only = yes
+	}
+	
+	timeperiod = {	# Purely historical plague
+		start_date = 8209.1.1
+		end_date = 8210.1.1
+		
+		outbreak_chance = 1
+
+		can_outbreak = {
+			NOT = { has_global_flag = black_death_happened }
+			has_game_rule = {
+				name = epidemics
+				value = historical
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		one_only = yes
+		
+		outbreak_scenario = { # Classic plague
+			chance = 1
+			start_provinces = {
+				286 #Oldtown
+			}
+			excluded_regions = {
+			}
+		}
+	}
+	
+	timeperiod = {	# Dynamic plague - becomes endemic 
+		start_date = 760.1.1
+		end_date = 9999.1.1
+		
+		max_total_provinces = 35
+		
+		months = 24
+		
+		outbreak_chance = 0.00075
+		
+		can_outbreak = {			
+			had_global_flag = { flag = black_death_happened days = 18250 }
+			has_game_rule = {
+				name = epidemics
+				value = dynamic
+			}
+		}
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 10	# ignored if 0
+
+		one_only = no
+
+		province_infection_duration = 20
+		
+	}
+	
+	timeperiod = {	# Absurdly deadly plague - doesn't care if it's happened before!
+		start_date = 760.1.1
+		end_date = 9999.1.1
+		
+		months = 50
+		
+		outbreak_chance = 0.0008
+		
+		min_nb_province = 1		# ignored if 0
+		max_nb_province = 20	# ignored if 0
+
+		can_outbreak = {
+			total_years_played = 20
+			has_game_rule = {
+				name = epidemics
+				value = deadly
+			}
+		}
+		
+		one_only = no
+		
+	}
+	
+	disease_gfx = disease_gfx_bubonic_plague
+}
+small_pox = { #Pox
+	rip = yes
+	contagiousness = 0.265
+	outbreak_chance = 0.005
+	effect = {
+		local_tax_modifier = -0.15
+		supply_limit = -2
+		max_attrition = 0.04
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 6
+	tooltip = SMALL_POX_INFO
+	months = 18
+	trait = has_small_pox 
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_smallpox
+					has_character_flag = got_smallpox
+					trait = has_small_pox
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_measles
+					has_character_flag = got_typhus
+					has_character_flag = got_typhoid_fever
+					has_character_flag = got_tuberculosis
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_red_death
+					has_character_flag = got_old_ones_scourge
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				10 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}
+					modifier = {
+						factor = 0.1
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 50
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_smallpox
+					set_character_flag = developing_illness
+					character_event = { id = RIP.5019 }
+				}
+				90 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = no
+	color = { 162 54 189 }
+	
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.005
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 5
+		
+		spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.005
+
+		max_total_provinces = 30
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.005
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 30
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 24
+
+		max_total_provinces = 90
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.002
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 24
+
+		max_total_provinces = 90
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+	}
+	disease_gfx = disease_gfx_small_pox
+}
+# syphilis = {
+	# rip = yes
+	# contagiousness = 0.28
+	# outbreak_chance = 0.010
+	# effect = {
+		# local_tax_modifier = -0.5
+		# supply_limit = -3
+		# max_attrition = 0.05
+		# disease_defence = 0.2
+	# }
+	# yearly_province_pulse = {
+		# random_list = {		
+			# 90 = {
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 1
+				# }
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 2
+				# }
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 3
+				# }
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 4
+				# }
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 5
+				# }
+				# modifier = {
+					# factor = 1.1
+					# hospital_level = 6
+				# }
+			# }
+			# 10 = {
+				# modifier = {
+					# factor = 0
+					# owner = {
+						# OR = {
+							# culture_group = unoccupied_group
+							# culture_group = winter_group
+						# }
+					# }
+				# }
+				# increase_depopulation_effect = yes
+			# }
+		# }
+	# }
+	# icon = 6
+	# tooltip = AZTEC_DISEASE_INFO
+	# months = 30
+	# trait = has_aztec_disease
+	# character_infection_chances = {
+		# months = 3
+	# }
+	# on_character_infection = {
+		# if = {
+			# limit = {
+				# NOR = {
+					# has_character_flag = immune_aztec_disease
+					# has_character_flag = got_aztec_disease
+					# trait = has_aztec_disease
+					
+					# has_character_flag = got_bubonic_plague
+					# has_character_flag = got_smallpox
+					# has_character_flag = got_measles
+					# has_character_flag = got_typhus
+					# has_character_flag = got_typhoid_fever
+					# has_character_flag = got_tuberculosis
+					# has_character_flag = got_syphilis
+					# has_character_flag = got_pneumonia
+					# has_character_flag = got_cancer
+					# has_character_flag = got_rabies
+					# has_character_flag = got_gout
+					# has_character_flag = got_flu
+					# has_character_flag = got_dysentery
+					# has_character_flag = got_food_poisoning
+					# has_character_flag = got_red_death
+					# has_character_flag = got_old_ones_scourge
+				# }
+				# NOT_mythical_creature_trigger = yes
+			# }			
+			# random_list = {
+				# 10 = { # Get the disease
+					# modifier = {
+						# factor = 0
+						# has_character_modifier = in_seclusion
+					# }
+					# modifier = {
+						# factor = 0
+						# has_pilgrimage_trait_trigger = yes
+					# }
+					# modifier = {
+						# factor = 0.1
+						# AND = {
+							# is_nomadic = yes
+							# NOT = { is_unimportant_trigger = yes }
+						# }
+					# }
+					# modifier = {
+						# factor = 0.5
+						# AND = {
+							# is_tribal = yes
+							# NOT = { is_unimportant_trigger = yes }
+						# }
+					# }
+					# modifier = {
+						# factor = 5
+						# is_unimportant_trigger = yes
+					# }
+					# modifier = {
+						# factor = 0.25
+						# resistant_to_illness_trigger = yes
+					# }
+					# clr_character_flag = disease_not_serious
+					# set_character_flag = got_aztec_disease
+					# set_character_flag = developing_illness
+					# character_event = { id = RIP.5019 }
+				# }
+				# 90 = { # Nothing happens
+				# }
+			# }
+		# }
+	# }
+	# on_province_infection = {
+		# province_event = {
+			# id = RIP.11703 #prosperity ended by epidemic
+		# }
+	# }
+	# always_get_message = no
+	# color = { 207 144 89 }
+	
+	# active = no
+	
+	# timeperiod = { # Normal Outbreak
+		# start_date = 769.1.1
+		# end_date = 1452.1.1
+		
+		# outbreak_chance = 0.010
+		
+		# can_outbreak = {
+			# has_global_flag = aztec_arrival
+		# }
+		
+		# max_total_provinces = 15
+		
+		# min_nb_province = 1	# ignored if 0
+		# max_nb_province = 1	# ignored if 0
+
+		# one_only = no
+	# }
+	
+	# timeperiod = { # 'More' Normal Outbreak
+		# start_date = 769.1.1
+		# end_date = 1452.1.1
+		
+		# outbreak_chance = 0.005
+		
+		# can_outbreak = {
+			# has_global_flag = aztec_arrival
+			# has_game_rule = {
+				# name = minor_epidemics
+				# value = more
+			# }
+		# }
+		
+		# max_total_provinces = 15
+		
+		# min_nb_province = 1	# ignored if 0
+		# max_nb_province = 1	# ignored if 0
+
+		# one_only = no
+	# }
+	
+	# timeperiod = { # Major Outbreak
+		# start_date = 769.1.1
+		# end_date = 1452.1.1	
+		
+		# outbreak_chance = 0.001
+		
+		# can_outbreak = {
+			# has_global_flag = aztec_arrival
+			# NOT = {
+				# has_game_rule = {
+					# name = minor_epidemics
+					# value = fewer
+				# }
+			# }
+		# }
+		
+		# months = 36
+
+		# max_total_provinces = 92
+		
+		# min_nb_province = 2	# ignored if 0
+		# max_nb_province = 4	# ignored if 0
+
+		# one_only = no
+	# }
+	
+	# timeperiod = { # 'More' Major Outbreak
+		# start_date = 769.1.1
+		# end_date = 1452.1.1	
+		
+		# outbreak_chance = 0.001
+		
+		# can_outbreak = {
+			# has_global_flag = aztec_arrival
+			# has_game_rule = {
+				# name = minor_epidemics
+				# value = more
+			# }
+		# }
+		
+		# months = 36
+
+		# max_total_provinces = 92
+		
+		# min_nb_province = 2	# ignored if 0
+		# max_nb_province = 4	# ignored if 0
+
+		# one_only = no
+	# }
+	# disease_gfx = disease_gfx_syphilis
+# }
+
+dancing_plague = {
+	rip = yes
+	contagiousness = 0.025
+	outbreak_chance = 0.001
+	effect = {
+		city_tax_modifier = -0.1
+		supply_limit = -1
+		max_attrition = 0.01
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		
+	}
+	icon = 7
+	tooltip = DANCING_PLAGUE_INFO
+	months = 12
+	trait = dancing_plague
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				age = 12
+				NOR = {
+					has_character_flag = immune_dancing_plague
+					has_character_flag = got_dancing_plague
+					trait = dancing_plague
+					trait = incapable
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				30 = { # Get the disease
+					modifier = {
+						factor = 5
+						trait = gluttonous
+					}
+					modifier = {
+						factor = 5
+						trait = hedonist
+					}
+					modifier = {
+						factor = 0.5
+						trait = temperate
+					}
+					modifier = {
+						factor = 0.5
+						trait = gardener
+					}
+					modifier = {
+						factor = 5
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					set_character_flag = got_dancing_plague
+					character_event = { id = RIP.4002 }
+				}
+				70 = { # Nothing happens
+					set_character_flag = immune_dancing_plague
+					character_event = { id = RIP.4002 }
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		#province_event = {
+		#	id = RIP.11703 #prosperity ended by epidemic
+		#}
+	}
+	always_get_message = yes
+	color = { 71 114 255 }
+	
+	timeperiod = {
+		start_date = 769.1.1
+		end_date = 9999.1.1
+		
+		can_outbreak = {
+			has_dlc = "Reapers"
+		}
+		
+		max_total_provinces = 10
+		
+		spread_through_water = yes
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = { # Sothoryos Only
+			chance = 1
+			start_provinces = {
+				747
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	disease_gfx = disease_gfx_dancing_plague
+}
+
+old_ones_scourge = {
+	rip = yes
+	contagiousness = 0.1
+	outbreak_chance = 0.01
+	effect = {
+		local_tax_modifier = -0.33
+		supply_limit = -3
+		max_attrition = 0.1
+		local_revolt_risk = 0.1
+	}
+	yearly_province_pulse = {
+		if = {
+			limit = { 
+				has_global_flag = old_ones_scourge
+				NOT = { religion = old_ones } 
+			}
+			random = { #coverts to the old ones
+				chance = 15
+				province_event = { id = essos.160 }
+			}
+		}	
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 8
+	tooltip = OLD_ONES_SCOURGE_INFO
+	months = 36
+	trait = old_ones_scourge
+	character_infection_chances = {
+		months = 1
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				has_global_flag = old_ones_scourge
+				age = 12
+				NOR = {
+					has_character_flag = got_old_ones_scourge
+					trait = old_ones_scourge
+					has_character_flag = immune_old_ones_scourge
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_smallpox
+					has_character_flag = got_measles
+					has_character_flag = got_typhus
+					has_character_flag = got_typhoid_fever
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_red_death
+				}
+				NOT_mythical_creature_trigger = yes				
+			}			
+			random_list = {
+				25 = { # Get the disease
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_old_ones_scourge
+					set_character_flag = developing_illness
+					if = {
+						limit = { has_dlc = "Reapers" }
+						character_event = { id = essos.157 } #Symptoms
+					}
+					if = {
+						limit = { NOT = { has_dlc = "Reapers" } }
+						character_event = { id = essos.158 } #Disease develops
+					}					
+				}
+				75 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		province_event = { id = RIP.13950 days = 1 } #inform
+	}
+	always_get_message = yes
+	color = { 255 186 0 }
+	
+	timeperiod = { #Leng
+		start_date = 769.1.1
+		end_date = 9999.1.1
+		
+		can_outbreak = {
+			has_global_flag = old_ones_scourge
+			NOT = { has_global_flag = old_ones_scourge_world }
+			790 = { NOT = { disease = old_ones_scourge } }
+		}
+		outbreak_chance = 0.25 #Permanent until labyrinth is resealed
+		
+		max_total_provinces = 6
+		
+		spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 15	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = { # Leng Only
+			chance = 1
+			start_provinces = {
+				790
+			}
+			excluded_regions = {
+				world_westeros world_summer_sea world_stepstones world_free_cities world_dothraki_sea world_ibben world_ghiscar world_lhazar world_jogos_nhai world_bone_mountains world_asshai world_moraq world_qarth world_yin world_jinqi world_tiqui world_linqi world_piqui world_xin world_trader_town world_five_forts
+			}
+		}
+	}
+	timeperiod = { #Global Crisis
+		start_date = 769.1.1
+		end_date = 9999.1.1
+		
+		can_outbreak = {
+			has_global_flag = old_ones_scourge
+			has_global_flag = old_ones_scourge_world
+		}
+		outbreak_chance = 0.25 #Permanent until labyrinth is resealed
+		
+		max_total_provinces = 1000
+		
+		spread_through_water = yes
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 15	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				790
+			}
+			excluded_regions = {
+			}
+		}
+	}
+	timeperiod = { #Summer Islands (not close enough to mainland)
+		start_date = 769.1.1
+		end_date = 9999.1.1
+		
+		can_outbreak = {
+			has_global_flag = old_ones_scourge
+			has_global_flag = old_ones_scourge_world
+			417 = { disease = old_ones_scourge } #has reached volantis
+		}
+		outbreak_chance = 0.05 #Permanent until labyrinth is resealed
+		
+		max_total_provinces = 100
+		
+		spread_through_water = yes
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 15	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				500 526
+			}
+			excluded_regions = {
+			}
+		}
+	}
+	disease_gfx = disease_gfx_dancing_plague
+}
+
+red_death = {
+	rip = yes
+	contagiousness = 0.25
+	outbreak_chance = 0.0025
+	effect = {
+		local_tax_modifier = -0.8
+		supply_limit = -4
+		max_attrition = 0.05
+		disease_defence = 0.2
+	}
+	yearly_province_pulse = {
+		random_list = {		
+			92 = {
+				modifier = {
+					factor = 1.1
+					hospital_level = 1
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 2
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 3
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 4
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 5
+				}
+				modifier = {
+					factor = 1.1
+					hospital_level = 6
+				}
+			}
+			8 = {
+				modifier = {
+					factor = 0
+					owner = {
+						OR = {
+							culture_group = unoccupied_group
+							culture_group = winter_group
+						}
+					}
+				}
+				increase_depopulation_effect = yes
+			}
+		}
+	}
+	icon = 1
+	tooltip = RED_DEATH_INFO
+	months = 18
+	trait = has_red_death
+	character_infection_chances = {
+		months = 3
+	}
+	on_character_infection = {
+		if = {
+			limit = {
+				NOR = {
+					has_character_flag = immune_red_death
+					has_character_flag = got_red_death
+					trait = has_red_death
+					
+					has_character_flag = got_bubonic_plague
+					has_character_flag = got_aztec_disease
+					has_character_flag = got_smallpox
+					has_character_flag = got_measles
+					has_character_flag = got_typhus
+					has_character_flag = got_typhoid_fever
+					has_character_flag = got_syphilis
+					has_character_flag = got_pneumonia
+					has_character_flag = got_cancer
+					has_character_flag = got_rabies
+					has_character_flag = got_gout
+					has_character_flag = got_flu
+					has_character_flag = got_dysentery
+					has_character_flag = got_food_poisoning
+					has_character_flag = got_old_ones_scourge
+				}
+				NOT_mythical_creature_trigger = yes
+			}			
+			random_list = {
+				10 = { # Get the disease
+					modifier = {
+						factor = 0
+						has_character_modifier = in_seclusion
+					}		
+					modifier = {
+						factor = 0
+						has_pilgrimage_trait_trigger = yes
+					}					
+					modifier = {
+						factor = 0.1
+						AND = {
+							is_nomadic = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 0.5
+						AND = {
+							is_tribal = yes
+							NOT = { is_unimportant_trigger = yes }
+						}
+					}
+					modifier = {
+						factor = 5
+						is_unimportant_trigger = yes
+					}
+					modifier = {
+						factor = 0.2
+						culture = brindlemen
+					}
+					modifier = {
+						factor = 0.25
+						resistant_to_illness_trigger = yes
+					}
+					clr_character_flag = disease_not_serious
+					set_character_flag = got_red_death
+					set_character_flag = developing_illness
+					character_event = { id = sothoryos.6 }
+				}
+				90 = { # Nothing happens
+				}
+			}
+		}
+	}
+	on_province_infection = {
+		owner = {
+			character_event = { id = sothoryos.2 }
+		}
+		any_province_character = {
+			limit = {
+				ai = no
+				NOT = { ROOT = { owner = { character = PREVPREV } } }
+			}
+			character_event = { id = sothoryos.2 }
+		}
+		province_event = {
+			id = RIP.11703 #prosperity ended by epidemic
+		}
+		if = { #Potentially destroy colony
+			limit = {				
+				has_province_flag = ruined_province
+				has_province_flag = colony_province
+			}
+			random = {
+				chance = 7
+				province_event = { id = sothoryos.3 days = 180 random = 100 }
+			}
+		}
+		if = { #Potentially destroy non-colony
+			limit = {	
+				NAND = {
+					has_province_flag = ruined_province
+					has_province_flag = colony_province
+				}	
+			}
+			random = {
+				chance = 1
+				modifier = {
+					factor = 0.25
+				}
+				province_event = { id = sothoryos.3 days = 180 random = 100 }
+			}
+		}
+	}
+	always_get_message = no
+	color = { 167 5 5 }
+	
+	#Sothoryos
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0015
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 5
+		
+		#spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				735 736 738 739 740 741 746
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands world_basilisk_isles
+			}
+		}
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+
+		max_total_provinces = 10
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				735 736 738 739 740 741 746
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.001
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 10
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				735 736 738 739 740 741 746
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.00075
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 50
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				735 736 738 739 740 741 746
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.00075
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 50
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				735 736 738 739 740 741 746
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	#Bailisk Isles
+	timeperiod = { # Minor Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0008
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+
+		max_total_provinces = 5
+		
+		#spread_through_water = no
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				742 743 744 747 749 750 751 752 753 754
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+
+	timeperiod = { # Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0008
+
+		max_total_provinces = 10
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				742 743 744 747 749 750 751 752 753 754
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	timeperiod = { # 'More' Normal Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0004
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+
+		max_total_provinces = 10
+		
+		min_nb_province = 1	# ignored if 0
+		max_nb_province = 1	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				742 743 744 747 749 750 751 752 753 754
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands 
+			}
+		}
+	}
+	
+	timeperiod = { # Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0004
+		
+		can_outbreak = {
+			NOT = {
+				has_game_rule = {
+					name = minor_epidemics
+					value = fewer
+				}
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 50
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				742 743 744 747 749 750 751 752 753 754
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	timeperiod = { # 'More' Major Outbreak
+		start_date = 769.1.1
+		end_date = 9999.1.1	
+		
+		outbreak_chance = 0.0002
+		
+		can_outbreak = {
+			has_game_rule = {
+				name = minor_epidemics
+				value = more
+			}
+		}
+		
+		months = 36
+
+		max_total_provinces = 50
+		
+		min_nb_province = 2	# ignored if 0
+		max_nb_province = 4	# ignored if 0
+
+		one_only = no
+		
+		outbreak_scenario = {
+			chance = 1
+			start_provinces = {
+				742 743 744 747 749 750 751 752 753 754
+			}
+			excluded_regions = {
+				world_westeros world_essos world_summer_islands
+			}
+		}
+	}
+	
+	disease_gfx = disease_gfx_tuberculosis
+}

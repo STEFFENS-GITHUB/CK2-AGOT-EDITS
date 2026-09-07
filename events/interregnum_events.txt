@@ -1,0 +1,4053 @@
+namespace = interregnum
+
+#######################
+###Interregnum#####
+#######################
+#Liege died without an heir- Interregnum
+character_event = {
+	id = interregnum.1	
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		is_in_interregnum_trigger = yes
+		#variable "lord_paramount_status" #1 = lord paramount, 2 = interregnum
+		NOT = { has_character_flag = called_interregnum_council }
+	}
+	
+	desc = {
+		text = "EVTDESCinterregnum.1"
+		trigger = { 
+			NOT = { has_character_flag = suspended_interregnum_council } 
+			NOT = { FROM = { has_character_flag = incapable_lord_protector } }
+			FROM = { is_alive = no }
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.1B"
+		trigger = { 
+			NOT = { has_character_flag = suspended_interregnum_council } 
+			NOT = { FROM = { has_character_flag = incapable_lord_protector } }
+			FROM = { is_alive = yes } #presumably deposed
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.1C"
+		trigger = { has_character_flag = suspended_interregnum_council }
+	}
+	desc = {
+		text = "EVTDESCinterregnum.1D"
+		trigger = { FROM = { has_character_flag = incapable_lord_protector } }
+	}
+	
+	immediate = {
+		#Make sure interregnum titles are marked
+		any_demesne_title = {
+			limit = { has_title_flag = interregnum_title }
+			set_variable = { which = "lord_paramount_status" value = 2 }
+			clr_title_flag = interregnum_title
+		}
+		#Move iron throne capital to king's landing
+		if = { 
+			limit = {
+				primary_title = { title = e_iron_throne }
+				NOT = { has_global_flag = KL_not_capital }
+				capital_holding = { location = { NOT = { province_id = 226 } } }
+				has_landed_title = b_red_keep
+				is_feudal = yes	 		
+				c_kings_landing = { 
+					location = { 
+						has_province_flag = kings_landing_established
+					}
+				}
+			}
+			b_red_keep = { 
+				ROOT = { capital = PREV }
+			}
+		}
+		#Set government type and title
+		if = { 
+			limit = {
+				NOT = { government = feudal_government_LP }
+				is_in_interregnum_trigger = yes
+			}
+			set_government_type = feudal_government_LP
+			#remove special titles
+			if = {
+				limit = {
+					primary_title = {
+						OR = {
+							title = k_wolfswoodTK
+							title = k_barrowlandsTK
+							title = k_theneckTK
+							title = k_dreadfortTK
+							title = k_winterfellTK
+							title = k_riverrunTK
+							title = k_dragonstone
+							title = k_duskendaleTK
+							title = k_shipbreakerTK
+						}
+					}	
+				}
+				remove_special_character_title = yes
+			}
+		}
+		if = { # Because name_tier breaks localisaitons
+			limit = { 
+				OR = {
+					has_landed_title = e_iron_throne
+					has_landed_title = e_first_men
+					has_landed_title = e_north
+					has_landed_title = e_iron_isles
+					has_landed_title = e_vale
+					has_landed_title = e_westerlands
+					has_landed_title = e_reach
+					has_landed_title = e_stormlands
+					has_landed_title = e_dorne
+					has_landed_title = e_riverlands
+					has_landed_title = e_three_daughters
+					tier = KING
+				}
+				OR = {
+					NOT = { culture_group = valyrian }
+					culture = high_valyrian
+				}
+			}
+			if = {
+				limit = { is_female = no }
+				set_special_character_title = LORD_PROTECTOR
+			}
+			if = {
+				limit = { is_female = yes }
+				set_special_character_title = LADY_PROTECTOR
+			}
+		}
+		# Law maintenance
+		any_demesne_title = { #interregnums always have feudal elective
+			limit = { 
+				tier = ROOT
+				is_variable_equal = { which = "lord_paramount_status" value = 2 }
+				NOT = { has_law = succ_feudal_elective }
+			}
+			add_law = succ_feudal_elective
+		}
+		primary_title = {	#interregnums always have full council power
+			if = {
+				limit = { has_law = law_voting_power_0 }
+				add_law = law_voting_power_1
+				set_title_flag = interregnum_law_voting_power_0
+			}
+			if = {
+				limit = { has_law = diplomacy_voting_power_0 }
+				add_law = diplomacy_voting_power_1
+				set_title_flag = interregnum_diplomacy_voting_power_0
+			}
+			if = {
+				limit = { has_law = titles_voting_power_0 }
+				add_law = titles_voting_power_1
+				set_title_flag = interregnum_titles_voting_power_0
+			}
+			if = {
+				limit = { has_law = justice_voting_power_0 }
+				add_law = justice_voting_power_1
+				set_title_flag = interregnum_justice_voting_power_0
+			}			
+		}
+		recalc_succession = yes
+		clr_character_flag = interregnum_regent
+		clr_character_flag = interregnum_councillor
+		clr_character_flag = interregnum_castellan	
+		
+		#Remove erroneous claimants	from lord protector's succession
+		primary_title = {
+			save_event_target_as = interregnum_primary_title
+			any_character = { 
+				limit = { 
+					has_claim = PREV 
+					OR = {
+						vassal_of = ROOT
+						is_close_relative = ROOT
+					}
+					NOT = {
+						event_target:interregnum_primary_title = { 
+							any_previous_holder = { 
+								OR = {
+									dynasty = PREVPREV
+									character = PREVPREV
+									is_close_relative = PREVPREV
+									any_child_even_if_dead = {
+										OR = {
+											character = PREVPREVPREV
+											any_child_even_if_dead = {
+												character = PREVPREVPREVPREV
+											}
+										}
+									}
+								}
+							} 
+						}
+					}
+				}
+				event_target:interregnum_primary_title = { remove_claim = PREV }
+			}
+		}	
+		#If incapable of being lord protector, find new one
+		if = { 
+			limit = {
+				OR = {
+					is_incapable = yes
+					is_adult = no
+					prisoner = yes
+				}
+			}
+			current_heir = {
+				if = {
+					limit = {
+						is_liege_or_above = ROOT
+						NOR = {
+							is_incapable = yes
+							is_adult = no
+							prisoner = yes
+							tier = BARON
+						}								
+					}
+					save_event_target_as = new_lord_protector
+					break = yes
+				}
+			}
+			#Councillors of the Old King
+			random_realm_character = {
+				limit = {
+					has_character_flag = interregnum_regent
+					NOR = {
+						is_incapable = yes
+						is_adult = no
+						prisoner = yes
+					}
+					OR = {
+						is_ruler = no
+						is_feudal = yes
+					}
+				}
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+			random_realm_character = {
+				limit = {
+					has_character_flag = interregnum_castellan
+					NOR = {
+						is_incapable = yes
+						is_adult = no
+						prisoner = yes
+					}
+					OR = {
+						is_ruler = no
+						is_feudal = yes
+					}
+				}
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+			random_realm_character = {
+				limit = {
+					has_character_flag = interregnum_councillor
+					NOR = {
+						is_incapable = yes
+						is_adult = no
+						prisoner = yes
+					}
+					OR = {
+						is_ruler = no
+						is_feudal = yes
+					}
+				}
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+			#Councillors of the Lord Protector				
+			job_castellan = {
+				if = {
+					limit = { higher_tier_than = BARON is_feudal = yes }
+					save_event_target_as = new_lord_protector
+					break = yes
+				}
+			}
+			regent = {
+				if = {
+					limit = { higher_tier_than = BARON is_feudal = yes }
+					save_event_target_as = new_lord_protector
+					break = yes
+				}
+			}
+			random_courtier = {
+				limit = { 
+					higher_tier_than = BARON 
+					OR = {
+						is_councillor = yes
+						is_voter = yes
+					}
+					OR = {
+						is_ruler = no
+						is_feudal = yes
+					}
+				}
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+			#Most powerful vassal
+			random_vassal = {
+				limit = {
+					NOR = {
+						is_incapable = yes
+						is_adult = no
+						prisoner = yes
+						tier = BARON
+					}
+					is_feudal = yes
+					NOT = {
+						ROOT = {
+							any_vassal = {
+								NOR = {
+									is_incapable = yes
+									is_adult = no
+									prisoner = yes
+									tier = BARON
+								}
+								is_feudal = yes
+								relative_power = { who = PREVPREV power = 1.01 }
+							}
+						}	
+					}
+				}
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+			current_heir = {
+				save_event_target_as = new_lord_protector
+				break = yes
+			}
+		}
+		#If interregnum has just started, can offer peace to claimants
+		if = {
+			limit = { NOT = { has_character_flag = suspended_interregnum_council } }
+			any_war = {
+				if = {
+					limit = {
+						attacker = { has_claim = event_target:interregnum_primary_title }
+						defender = { character = ROOT }
+					}
+					attacker = { character_event = { id = interregnum.15 days = 2 } }
+				}	
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAinterregnum.1" #Call a great council
+		trigger = {
+			war = no
+			OR = {
+				NOT = { tier = EMPEROR }
+				NOT = { trait = civil_war }
+			}
+			NOR = {
+				is_incapable = yes
+				is_adult = no
+				prisoner = yes
+			}
+		}
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 5
+				trait = honorable
+			}
+			modifier = {
+				factor = 5
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honest
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 2
+				trait = charitable
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+		}
+		set_character_flag = called_interregnum_council
+		clr_character_flag = suspended_interregnum_council
+		custom_tooltip = {
+			text = TOOLTIPinterregnum.1COUNCIL
+			hidden_tooltip = {
+				primary_title = { 
+					any_character = { #mark all claimants	
+						limit = { 
+							has_claim = PREV 
+							can_press_claims_trigger = yes
+							OR = {
+								NOT = { has_global_flag = roberts_rebellion_interregnum }
+								ROOT = { NOT = { has_landed_title = e_iron_throne } }
+								NOT = { dynasty = 496 }
+							}
+							NOT = { has_character_modifier = deposed_AGOT }
+						}
+						set_character_flag = interregnum_title_claimant
+						clr_character_flag = interregnum_title_candidate
+						add_trait = dead_target
+					}
+				}
+				any_realm_lord = {
+					clr_character_flag = interregnum_title_candidate
+				}
+				any_courtier = {
+					clr_character_flag = interregnum_title_candidate
+				}
+				character_event = { id = interregnum.2 }
+			}
+		}
+		FROM = { clr_character_flag = incapable_lord_protector }
+		hidden_tooltip = { character_event = { id = interregnum.199 days = 365 } } #check again in a year (failsafe)
+	}
+	
+	option = {
+		name = "EVTOPTBinterregnum.1" #Usurp the crown
+		trigger = {
+			NOT = { trait = honorable }
+			OR = {
+				has_character_flag = interregnum_title_claimant
+				NOT = { trait = just }
+			}
+			NOR = {
+				is_incapable = yes
+				is_adult = no
+				prisoner = yes
+			}
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 0.1
+				tier = EMPEROR
+				trait = civil_war
+			}
+			modifier = {
+				factor = 5
+				has_character_flag = interregnum_title_claimant
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}		
+		}
+		custom_tooltip = {
+			text = TOOLTIPinterregnum.1USURP
+			hidden_tooltip = {
+				any_demesne_title = {
+					limit = {
+						tier = ROOT
+						is_variable_equal = { which = "lord_paramount_status" value = 2 }
+					}
+					succession = primogeniture
+				}
+				primary_title = { 
+					set_variable = { which = "lord_paramount_status" value = 0 } 
+					if = {
+						limit = { has_title_flag = interregnum_law_voting_power_0 }
+						add_law = law_voting_power_0
+						clr_title_flag = interregnum_law_voting_power_0
+					}
+					if = {
+						limit = { has_title_flag = interregnum_diplomacy_voting_power_0 }
+						add_law = diplomacy_voting_power_0
+						clr_title_flag = interregnum_diplomacy_voting_power_0
+					}
+					if = {
+						limit = { has_title_flag = interregnum_titles_voting_power_0 }
+						add_law = titles_voting_power_0
+						clr_title_flag = interregnum_titles_voting_power_0
+					}
+					if = {
+						limit = { has_title_flag = interregnum_justice_voting_power_0 }
+						add_law = justice_voting_power_0
+						clr_title_flag = interregnum_justice_voting_power_0
+					}		
+				}
+				set_government_type = feudal_government
+				clr_character_flag = interregnum_title_claimant
+				any_realm_character = { 
+					limit = { has_character_flag = interregnum_regent }
+					clr_character_flag = interregnum_regent 
+				}
+				any_realm_character = { 
+					limit = { has_character_flag = interregnum_councillor }
+					clr_character_flag = interregnum_councillor
+				}
+				any_realm_character = { 
+					limit = { has_character_flag = interregnum_castellan }
+					clr_character_flag = interregnum_castellan
+				}	
+				any_player = {
+					limit = { 
+						OR = {
+							is_liege_or_above = ROOT
+							is_within_diplo_range = ROOT
+						}
+						NOT = { character = ROOT }
+					}
+					letter_event = { id = interregnum.5 days = 1 }
+				}
+				recalc_succession = yes
+				if = {
+					limit = {
+						has_global_flag = roberts_rebellion_interregnum
+						has_landed_title = e_iron_throne
+					}
+					clr_global_flag = roberts_rebellion_interregnum
+				}	
+				any_courtier = {
+					limit = {
+						prisoner = yes
+						host = { character = ROOT }
+						has_character_flag = interregnum_prisoner
+					}
+					clr_character_flag = interregnum_prisoner
+				}
+				any_artifact = {
+					limit = { has_artifact_flag = interregnum_artifact }
+					clr_artifact_flag = interregnum_artifact
+				}
+				any_courtier = {
+					limit = {
+						liege = { character = ROOT }
+						is_ruler = no
+						has_character_flag = interregnum_hostage
+					}
+					clr_character_flag = interregnum_hostage
+				}
+				remove_special_character_title = yes
+				#Royal Proclamations
+				if = {
+					limit = { tier = EMPEROR }
+					character_event = { id = royal_proclamations.998 }
+				}
+				character_event = { id = dynamic_coa.1 } #apply dynamic CoA				
+				#Transfer debts
+				save_event_target_as = debt_inheritor 
+				random_demesne_title = {
+					limit = { has_title_flag = interregnum_debt_title }
+					save_event_target_as = debt_capital
+					inherit_debt_effect = yes
+					clr_title_flag = interregnum_debt_title
+				}
+				#Adjust title history to remove lord protectors
+				any_demesne_title = {
+					limit = { 
+						tier = ROOT
+						persistent_event_target:history_title = { always = yes }
+					}				
+					copy_title_history = persistent_event_target:history_title
+				}
+			}
+		}
+		change_variable = { which = "tyrant" value = 25 } 
+		hidden_tooltip = { character_event = { id = maintenance.1 } }#tyrant trait
+		primary_title = {
+			any_character = {
+				limit = { 
+					has_claim = PREV 
+					can_press_claims_trigger = yes
+					NOT = { character = ROOT }
+					NOT = { has_character_modifier = deposed_AGOT }
+				}
+				opinion = { who = ROOT modifier = opinion_usurped_title }
+			}
+		}
+		FROM = { clr_character_flag = incapable_lord_protector }
+		clr_character_flag = suspended_interregnum_council
+	}
+	
+	option = {
+		name = "EVTOPTCinterregnum.1" #Wait
+		trigger = {
+			NOR = {
+				is_incapable = yes
+				is_adult = no
+				prisoner = yes
+			}
+		}
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 4
+				war = yes
+			}
+			modifier = {
+				factor = 2
+				war = yes
+				trait = diligent
+			}
+			modifier = {
+				factor = 0
+				war = no
+				NOR = {
+					trait = arbitrary
+					trait = ruthless
+					trait = ambitious
+				}
+			}
+			modifier = {
+				factor = 0
+				war = no
+				OR = {
+					trait = just
+					trait = honorable
+				}
+			}
+			modifier = {
+				factor = 5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = greedy
+			}
+			modifier = {
+				factor = 2
+				trait = deceitful
+			}
+		}
+		if = { #Vassals only accept this during times of war
+			limit = { 
+				war = no
+				OR = {
+					NOT = { tier = EMPEROR }
+					NOT = { trait = civil_war }
+				}
+			}
+			any_vassal = {	
+				opinion = { who = ROOT modifier = opinion_suspended_council }
+			}
+		}
+		primary_title = {
+			any_character = {
+				limit = { 
+					has_claim = PREV 
+					can_press_claims_trigger = yes
+					OR = {
+						ROOT = { war = yes }
+						is_ruler = no
+						NOT = { vassal_of = ROOT } 
+					}
+					NOT = { character = ROOT }
+					NOT = { has_character_modifier = deposed_AGOT }
+				}
+				opinion = { who = ROOT modifier = opinion_suspended_council }
+			}
+		}
+		prestige = -75
+		FROM = { clr_character_flag = incapable_lord_protector }
+		hidden_tooltip = {
+			any_realm_lord = {
+				limit = { ai = no }
+				letter_event = { id = interregnum.11 days = 1 }
+			}
+			clr_character_flag = called_interregnum_council
+			set_character_flag = suspended_interregnum_council
+			character_event = { id = interregnum.199 days = 365 } #check again in a year
+		}
+	}
+	
+	option = {
+		name = "EVTOPTDinterregnum.1" #Incapable of leading, lose post
+		trigger = {
+			OR = {
+				is_incapable = yes
+				is_adult = no
+				prisoner = yes
+			}
+		}
+		remove_special_character_title = yes
+		set_character_flag = incapable_lord_protector
+		FROM = { clr_character_flag = incapable_lord_protector }
+		event_target:new_lord_protector = {
+			tooltip = { ROOT = { abdicate_to = PREV } }
+			hidden_tooltip = {
+				clr_character_flag = called_interregnum_council
+				character_event = { id = interregnum.1 days = 1 }
+				ROOT = {
+					any_demesne_title = {
+						limit = {
+							is_variable_equal = { which = "lord_paramount_status" value = 2 }
+						}			
+						gain_title = PREVPREV
+						if = {
+							limit = { ROOT = { has_character_flag = interregnum_title_claimant } }
+							add_pressed_claim = ROOT
+						}
+					}
+					any_courtier = {
+						limit = {
+							prisoner = yes
+							host = { character = ROOT }
+							has_character_flag = interregnum_prisoner
+						}
+						move_character = PREVPREV
+					}
+					any_artifact = {
+						limit = { has_artifact_flag = interregnum_artifact }
+						transfer_artifact = { from = ROOT to = PREVPREV }
+						clr_artifact_flag = interregnum_artifact
+					}
+					any_courtier = {
+						limit = {
+							liege = { character = ROOT }
+							is_ruler = no
+							has_character_flag = interregnum_hostage
+						}
+						move_character = PREVPREV
+					}
+					clr_character_flag = interregnum_title_claimant
+					clr_character_flag = suspended_interregnum_council
+					clr_character_flag = called_interregnum_council
+				}
+			}
+		}
+	}
+}
+character_event = { #Yearly interregnum check
+	id = interregnum.199	
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { is_in_interregnum_trigger = yes }
+	
+	immediate = {		
+		if = {
+			limit = {			
+				NOT = { has_character_flag = called_interregnum_council }
+			}
+			character_event = { id = interregnum.1 }
+			break = yes
+		}
+		character_event = { id = interregnum.199 days = 365 } #check again in a year
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #Find candidates
+	id = interregnum.2
+	desc = "EVTDESCinterregnum.2"
+	border = GFX_event_normal_frame_war
+	picture = GFX_great_council
+	
+	is_triggered_only = yes
+	
+	trigger = { is_in_interregnum_trigger = yes }
+
+	immediate = { #Find 4 claimants
+		#Lord Protector has claim
+		if = {
+			limit = { has_character_flag = interregnum_title_claimant }
+			set_character_flag = interregnum_title_candidate
+			save_event_target_as = interregnum_claimant_1
+		}
+		primary_title = {
+			#Claimants who agreed to a peace to attend council
+			while = {
+				limit = { always = yes }
+				count = 4
+				dead_target = {
+					limit = {
+						has_character_flag = interregnum_title_claimant
+						has_character_flag = interregnum_war_claimant
+						has_claim = PREV
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					clr_character_flag = interregnum_war_claimant
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			#Primary strong claim candidates
+			while = {
+				limit = { always = yes }
+				count = 4
+				dead_target = {
+					limit = {
+						has_character_flag = interregnum_title_claimant
+						has_strong_claim = PREV
+						OR = {
+							higher_tier_than = COUNT
+							AND = {
+								NOT = { 
+									any_sibling = {
+										is_older_than = PREV
+										has_character_flag = interregnum_title_claimant
+										OR = {
+											character = ROOT
+											has_strong_claim = PREVPREV
+										}	
+									}
+								}
+								NOT = { 
+									father_even_if_dead = {
+										OR = {
+											AND = {
+												has_character_flag = interregnum_title_claimant
+												OR = {
+													character = ROOT
+													has_strong_claim = PREVPREV
+												}
+											}
+											any_sibling = {
+												is_older_than = PREVPREV
+												has_character_flag = interregnum_title_claimant
+												OR = {
+													character = ROOT
+													has_strong_claim = PREVPREVPREV
+												}	
+											}
+										}	
+									}
+								}
+							}	
+						}
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			#Other strong claim candidates
+			while = {
+				limit = { always = yes }
+				count = 4
+				dead_target = {
+					limit = {
+						has_character_flag = interregnum_title_claimant
+						has_strong_claim = PREV
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			#Primary weak claim candidates
+			while = {
+				limit = { always = yes }
+				count = 4
+				dead_target = {
+					limit = {
+						has_character_flag = interregnum_title_claimant
+						has_claim = PREV
+						OR = {
+							higher_tier_than = COUNT
+							AND = {
+								NOT = { 
+									any_sibling = {
+										is_older_than = PREV
+										has_character_flag = interregnum_title_claimant
+										OR = {
+											character = ROOT
+											has_claim = PREVPREV
+										}
+									}
+								}
+								NOT = { 
+									father_even_if_dead = {
+										OR = {
+											AND = {
+												has_character_flag = interregnum_title_claimant
+												OR = {
+													character = ROOT
+													has_claim = PREVPREV
+												}
+											}
+											any_sibling = {
+												is_older_than = PREVPREV
+												has_character_flag = interregnum_title_claimant
+												OR = {
+													character = ROOT
+													has_claim = PREVPREVPREV
+												}	
+											}
+										}	
+									}
+								}
+							}	
+						}
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			#Other weak claim candidates
+			while = {
+				limit = { always = yes }
+				count = 4
+				dead_target = {
+					limit = {
+						has_character_flag = interregnum_title_claimant
+						has_claim = PREV
+						NOT = { has_character_flag = interregnum_title_candidate }
+						OR = {
+							higher_tier_than = COUNT
+							NOR = { #no existing relative candidates
+								any_sibling = {
+									is_older_than = PREV
+									has_character_flag = interregnum_title_claimant
+									has_character_flag = interregnum_title_candidate
+								} 
+								father_even_if_dead = {
+									has_character_flag = interregnum_title_claimant
+									has_character_flag = interregnum_title_candidate	
+								}
+								mother_even_if_dead = {
+									has_character_flag = interregnum_title_claimant
+									has_character_flag = interregnum_title_candidate	
+								}
+							}	
+						}
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+		}
+		#Other positions filled by vassals if less than 3 claimants
+		if = {
+			limit = { 
+				NOT = { event_target:interregnum_claimant_3 = { always = yes } }
+			}			
+			#Lord Protector
+			if = {
+				limit = { NOT = { has_character_flag = interregnum_title_candidate } }
+				set_character_flag = interregnum_title_candidate
+				if = {
+					limit = { event_target:interregnum_claimant_3 = { always = yes } }
+					save_event_target_as = interregnum_claimant_4
+					break = yes
+				}
+				else_if = {
+					limit = { event_target:interregnum_claimant_2 = { always = yes } }
+					save_event_target_as = interregnum_claimant_3
+				}
+				else_if = {
+					limit = { event_target:interregnum_claimant_1 = { always = yes } }
+					save_event_target_as = interregnum_claimant_2
+				}
+				else = {
+					save_event_target_as = interregnum_claimant_1
+				}
+			}	
+			
+			###Special Roberts Rebellion Canidates###
+			if = {
+				limit = {
+					ROOT = { 
+						has_global_flag = roberts_rebellion_interregnum
+						has_landed_title = e_iron_throne 
+					}
+				}
+				clr_global_flag = roberts_rebellion_interregnum
+				k_north = {
+					holder_scope = {
+						if = {
+							limit = {
+								is_adult = yes
+								is_incapable = no
+								has_character_flag = interregnum_claimant_RR
+								can_press_claims_trigger = yes
+								NOT = { has_character_flag = interregnum_title_candidate }
+							}
+							clr_character_flag = interregnum_claimant_RR
+							set_character_flag = interregnum_title_candidate
+							if = {
+								limit = { event_target:interregnum_claimant_3 = { always = yes } }
+								save_event_target_as = interregnum_claimant_4
+								break = yes
+							}
+							else_if = {
+								limit = { event_target:interregnum_claimant_2 = { always = yes } }
+								save_event_target_as = interregnum_claimant_3
+							}
+							else_if = {
+								limit = { event_target:interregnum_claimant_1 = { always = yes } }
+								save_event_target_as = interregnum_claimant_2
+							}
+							else = {
+								save_event_target_as = interregnum_claimant_1
+							}
+						}
+					}	
+				}
+				k_vale = {
+					holder_scope = {
+						if = {
+							limit = {
+								is_adult = yes
+								is_incapable = no
+								has_character_flag = interregnum_claimant_RR
+								can_press_claims_trigger = yes
+								NOT = { has_character_flag = interregnum_title_candidate }
+							}
+							clr_character_flag = interregnum_claimant_RR
+							set_character_flag = interregnum_title_candidate
+							if = {
+								limit = { event_target:interregnum_claimant_3 = { always = yes } }
+								save_event_target_as = interregnum_claimant_4
+								break = yes
+							}
+							else_if = {
+								limit = { event_target:interregnum_claimant_2 = { always = yes } }
+								save_event_target_as = interregnum_claimant_3
+							}
+							else_if = {
+								limit = { event_target:interregnum_claimant_1 = { always = yes } }
+								save_event_target_as = interregnum_claimant_2
+							}
+							else = {
+								save_event_target_as = interregnum_claimant_1
+							}
+						}
+					}	
+				}
+				while = {
+					limit = { always = yes }
+					count = 3
+					random_vassal = {
+						limit = {
+							tier = KING
+							is_adult = yes
+							is_incapable = no
+							has_character_flag = interregnum_claimant_RR
+							can_press_claims_trigger = yes
+							NOT = { has_character_flag = interregnum_title_candidate }
+						}
+						clr_character_flag = interregnum_claimant_RR
+						set_character_flag = interregnum_title_candidate
+						if = {
+							limit = { event_target:interregnum_claimant_3 = { always = yes } }
+							save_event_target_as = interregnum_claimant_4
+							break = yes
+						}
+						else_if = {
+							limit = { event_target:interregnum_claimant_2 = { always = yes } }
+							save_event_target_as = interregnum_claimant_3
+						}
+						else_if = {
+							limit = { event_target:interregnum_claimant_1 = { always = yes } }
+							save_event_target_as = interregnum_claimant_2
+						}
+						else = {
+							save_event_target_as = interregnum_claimant_1
+						}
+					}
+				}	
+			}	
+			###
+			
+			#Most powerful vassal
+			random_vassal = {
+				limit = {
+					is_feudal = yes
+					prisoner = no
+					is_adult = yes
+					is_incapable = no
+					NOT = {
+						ROOT = {
+							any_vassal = {
+								is_feudal = yes
+								prisoner = no
+								is_adult = yes
+								is_incapable = no
+								relative_power = { who = PREVPREV power = 1.01 }
+								NOT = { has_character_flag = interregnum_title_candidate }
+							}
+						}	
+					}
+					NOT = { has_character_flag = interregnum_title_candidate }
+				}
+				set_character_flag = interregnum_title_candidate
+				if = {
+					limit = { event_target:interregnum_claimant_3 = { always = yes } }
+					save_event_target_as = interregnum_claimant_4
+					break = yes
+				}
+				else_if = {
+					limit = { event_target:interregnum_claimant_2 = { always = yes } }
+					save_event_target_as = interregnum_claimant_3
+				}
+				else_if = {
+					limit = { event_target:interregnum_claimant_1 = { always = yes } }
+					save_event_target_as = interregnum_claimant_2
+				}
+				else = {
+					save_event_target_as = interregnum_claimant_1
+				}
+			}
+			#Regent/Councillors
+			while = {
+				limit = { always = yes }
+				count = 4
+				random_realm_character = {
+					limit = {
+						liege = { character = ROOT }
+						can_press_claims_trigger = yes
+						OR = {
+							has_character_flag = interregnum_regent
+							has_character_flag = interregnum_castellan
+							has_character_flag = interregnum_councillor
+						}	
+						OR = {
+							is_feudal = yes
+							is_ruler = no
+						}	
+						NOT = { trait = eunuch }
+						prisoner = no
+						is_adult = yes
+						is_incapable = no
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					preferred_limit = {
+						has_character_flag = interregnum_regent
+					}
+					preferred_limit = {
+						has_character_flag = interregnum_castellan
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			#Other vassals
+			while = {
+				limit = { always = yes }
+				count = 3
+				random_vassal = {
+					limit = {
+						among_most_powerful_vassals = 3
+						is_feudal = yes
+						prisoner = no
+						is_adult = yes
+						is_incapable = no
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}	
+			while = {
+				limit = { always = yes }
+				count = 3
+				random_vassal = {
+					limit = {
+						among_most_powerful_vassals = 6
+						is_feudal = yes
+						prisoner = no
+						is_adult = yes
+						is_incapable = no
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}
+			while = {
+				limit = { always = yes }
+				count = 3			
+				random_vassal = {
+					limit = {
+						is_feudal = yes
+						prisoner = no
+						is_adult = yes
+						is_incapable = no
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}
+			#Other randoms
+			while = {
+				limit = { always = yes }
+				count = 3
+				random_realm_character = {
+					limit = {
+						OR = {
+							is_feudal = yes
+							is_ruler = no
+						}	
+						OR = {
+							is_councillor = yes
+							prestige = 250
+						}
+						can_inherit_titles_trigger = yes
+						NOT = { dynasty = 0 }
+						prisoner = no
+						is_adult = yes
+						is_incapable = no
+						NOT = { has_character_flag = interregnum_title_candidate }
+					}
+					set_character_flag = interregnum_title_candidate
+					if = {
+						limit = { event_target:interregnum_claimant_3 = { always = yes } }
+						save_event_target_as = interregnum_claimant_4
+						break = yes
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_2 = { always = yes } }
+						save_event_target_as = interregnum_claimant_3
+					}
+					else_if = {
+						limit = { event_target:interregnum_claimant_1 = { always = yes } }
+						save_event_target_as = interregnum_claimant_2
+					}
+					else = {
+						save_event_target_as = interregnum_claimant_1
+					}
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAinterregnum.2"
+		hidden_tooltip = {			
+			character_event = { id = interregnum.6 days = 5 } #Vote
+			character_event = { id = interregnum.7 days = 8 } #Count votes
+			set_variable = { which = interregnum_voters value = 0 }
+			any_realm_character = { #Find voters 
+				limit = {				
+					is_incapable = no
+					prisoner = no
+					is_adult = yes
+					OR = {
+						has_character_flag = interregnum_title_candidate
+						has_character_flag = interregnum_title_claimant
+						has_character_flag = interregnum_regent	
+						has_character_flag = interregnum_councillor
+						has_character_flag = interregnum_castellan
+						can_use_dragon_abilities_trigger = yes
+						AND = { 
+							OR = {
+								is_voter = yes
+								is_councillor = yes
+							}
+							liege = { character = ROOT }
+						}
+						AND = { #Important vassals vote
+							is_ruler = yes
+							OR = {
+								liege = { character = ROOT }
+								AND = {
+									OR = {
+										is_voter = yes
+										is_councillor = yes
+									}
+									liege = { liege = { character = ROOT } }
+								}
+								OR = {
+									higher_tier_than = COUNT
+									ROOT = { NOT = { realm_size = 450 } }
+								}	
+								is_close_relative = ROOT
+								
+							}
+							OR = {
+								NOT = { tier = BARON }
+								AND = { 
+									OR = {
+										is_voter = yes
+										is_councillor = yes
+									}
+									liege = { character = ROOT }
+								}
+								is_close_relative = ROOT
+							}
+						}
+						AND = { #Closely related dynasts
+							dynasty = ROOT
+							is_close_relative = ROOT
+							OR = { #Welcome genders depends on succession law
+								ROOT = { primary_title = { has_law = true_cognatic_succession } }
+								ROOT = { current_heir = { character = PREVPREV } }
+								AND = {
+									is_female = no
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = agnatic_succession 
+												has_law = cognatic_succession 
+											}	
+										} 
+									}
+								}
+								AND = {
+									is_female = yes
+									ROOT = { 
+										primary_title = { 
+											OR = {
+												has_law = enatic_succession
+												has_law = enatic_cognatic_succession
+											}	
+										} 
+									}
+								}
+							}
+						}	
+					}	
+				}
+				ROOT = { change_variable = { which = interregnum_voters value = 1 } }
+				set_character_flag = interregnum_voter
+				character_event = { id = interregnum.6 days = 5 }
+			}
+			if = { #If a shortage of voters, add all realm lords
+				limit = { NOT = { check_variable = { which = interregnum_voters value = 20 } } }
+				any_realm_lord = { #Find voters 
+					limit = {	
+						NOT = { has_character_flag = interregnum_voter }
+						is_incapable = no
+						prisoner = no
+						is_adult = yes	
+					}
+					set_character_flag = interregnum_voter
+					character_event = { id = interregnum.6 days = 5 }
+				}			
+			}
+			set_variable = { which = interregnum_voters value = 0 }
+			primary_title = {
+				any_character = {
+					limit = { 
+						trait = dead_target
+						has_claim = PREV 
+					}
+					clr_character_flag = interregnum_title_claimant
+					remove_trait = dead_target
+				}
+			}
+			any_realm_character = { 
+				limit = { has_character_flag = interregnum_regent }
+				clr_character_flag = interregnum_regent 
+			}
+			any_realm_character = { 
+				limit = { has_character_flag = interregnum_councillor }
+				clr_character_flag = interregnum_councillor
+			}
+			any_realm_character = { 
+				limit = { has_character_flag = interregnum_castellan }
+				clr_character_flag = interregnum_castellan
+			}
+		}
+		event_target:interregnum_claimant_1 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+				hidden_tooltip = { 
+					letter_event = { id = interregnum.4 days = 1 } 
+					set_variable = { which = "great_council_votes" value = 0 }
+				}
+			}
+		}
+		event_target:interregnum_claimant_2 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+				hidden_tooltip = { 
+					letter_event = { id = interregnum.4 days = 1 } 
+					set_variable = { which = "great_council_votes" value = 0 }
+				}
+			}
+		}
+		event_target:interregnum_claimant_3 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+				hidden_tooltip = { 
+					letter_event = { id = interregnum.4 days = 1 } 
+					set_variable = { which = "great_council_votes" value = 0 }
+				}
+			}
+		}
+		event_target:interregnum_claimant_4 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+				hidden_tooltip = { 
+					letter_event = { id = interregnum.4 days = 1 } 
+					set_variable = { which = "great_council_votes" value = 0 }
+				}
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { has_character_flag = interregnum_title_candidate }
+				set_variable = { which = "great_council_votes" value = 0 }
+			}
+			any_player = {
+				limit = { 
+					OR = {
+						is_liege_or_above = ROOT
+						is_within_diplo_range = ROOT
+					}
+					NOT = { character = ROOT }
+				}
+				letter_event = { id = interregnum.3 days = 1 }
+			}
+		}	
+	}
+}	
+#Realm informed of great council
+letter_event = {
+	id = interregnum.3
+		
+	desc = {
+		text = "EVTDESCinterregnum.3"
+		trigger = { 
+			is_liege_or_above = FROM
+			FROMFROMFROM = { 
+				NOT = { character = ROOT_FROM } 
+				is_alive = no
+			} 
+		}
+	}	
+	desc = {
+		text = "EVTDESCinterregnum.3B"
+		trigger = {
+			is_liege_or_above = FROM
+			FROMFROMFROM = { 
+				NOT = { character = ROOT_FROM } 
+				is_alive = yes
+			} 
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.3C"
+		trigger = { 
+			is_liege_or_above = FROM
+			FROMFROMFROM = { 
+				character = ROOT_FROM
+			} 
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.3D"
+		trigger = { 
+			NOT = { is_liege_or_above = FROM }
+		}
+	}
+	
+	trigger = { FROM = { is_in_interregnum_trigger = yes } }
+	
+	is_triggered_only = yes
+
+	option = {
+		name = {
+			text = "EVTOPTAinterregnum.3"	
+			trigger = { is_liege_or_above = FROM }
+		}	
+		name = {
+			text = "EVTOPTAinterregnum.3B"	
+			trigger = { NOT = { is_liege_or_above = FROM } }
+		}	
+		event_target:interregnum_claimant_1 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_2 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_3 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_4 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+	}
+}
+#Inform candidate
+letter_event = {
+	id = interregnum.4
+	desc = "EVTDESCinterregnum.4"
+	
+	is_triggered_only = yes
+	
+	trigger = { NOT = { character = FROM } }
+	
+	immediate = {
+		#Diplomatic immunity to prevent imprisonment shenanigans
+		clear_delayed_event = { id = trial.500 }
+		diplomatic_immunity = yes
+		character_event = { id = trial.500 days = 365 }
+		
+		#AI calls in favors
+		if = {
+			limit = { ai = yes }
+			FROM = {
+				any_realm_character = {
+					limit = {
+						owes_favor_to = ROOT
+						has_character_flag = interregnum_voter
+						NOT = { has_character_flag = interregnum_title_candidate }
+						NOT = { has_character_modifier = election_support_called }
+						NOT = { has_character_flag = favor_vote_called }
+					}					
+					ROOT = { save_event_target_as = favor_vote_caller }
+					set_character_flag = favor_vote_called
+					character_event = { id = ZE.8165 days = 2 random = 2 }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = "EVTOPTAinterregnum.4"	
+		event_target:interregnum_claimant_1 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_2 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_3 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+		event_target:interregnum_claimant_4 = { 
+			custom_tooltip = {
+				text = TOOLTIPinterregnumcandidate
+			}
+		}
+	}
+}
+#Realm informed of lord protector usurping crown
+letter_event = {
+	id = interregnum.5
+
+	desc = {
+		text = "EVTDESCinterregnum.5"
+		trigger = { 
+			is_liege_or_above = FROM
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.5A"
+		trigger = { 
+			NOT = { is_liege_or_above = FROM }
+		}
+	}
+	
+	is_triggered_only = yes
+
+	option = {
+		name = {
+			text = "EVTOPTAinterregnum.5"	
+			trigger = { is_liege_or_above = FROM }
+		}	
+		name = {
+			text = "EVTOPTAinterregnum.5A"	
+			trigger = { NOT = { is_liege_or_above = FROM } }
+		}
+	}
+}
+#Cast vote
+character_event = { 
+	id = interregnum.6
+	desc = "EVTDESCinterregnum.6"
+	border = GFX_event_normal_frame_war
+	picture = GFX_great_council
+	
+	is_triggered_only = yes
+	
+	trigger = { FROM = { is_alive = yes } }
+	
+	desc = {
+		text = EVTDESCinterregnum.6
+		trigger = {
+			NOT = { has_character_flag = deciding_vote }
+		}
+	}
+	
+	desc = {
+		text = EVTDESCinterregnum.6B
+		trigger = {
+			has_character_flag = deciding_vote
+		}
+	}
+	
+	fail_trigger_effect = {
+		clr_character_flag = interregnum_voter
+	}
+	
+	option = {
+		name = EVTOPTAinterregnum.6 #SELF
+		trigger = {			
+			OR = {
+				event_target:interregnum_claimant_1 = { character = ROOT }
+				event_target:interregnum_claimant_2 = { character = ROOT }
+				event_target:interregnum_claimant_3 = { character = ROOT }
+				event_target:interregnum_claimant_4 = { character = ROOT }
+			}
+			NOR = { #favor has not been called on someone else
+				has_opinion_modifier = { who = event_target:interregnum_claimant_1 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_2 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_3 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_4 modifier = opinion_supporting_in_election }
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {	
+				factor = 0.5
+				trait = craven
+			}
+			modifier = {	
+				factor = 0.1
+				trait = content
+			}
+			modifier = {	
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {	
+				factor = 0.5
+				trait = shy
+			}
+			modifier = {	
+				factor = 0.5
+				trait = slothful
+			}
+			modifier = {	
+				factor = 2
+				trait = gregarious
+			}
+			modifier = {	
+				factor = 2
+				trait = authoritative
+			}
+			modifier = {	
+				factor = 2
+				trait = wroth
+			}
+			modifier = {	
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {	
+				factor = 2
+				trait = brave
+			}
+			modifier = {	
+				factor = 2
+				trait = diligent
+			}
+		}
+		change_variable = { which = "great_council_votes" value = 1 }
+	}
+	option = {
+		name = EVTOPTBinterregnum.6 
+		trigger = {  
+			event_target:interregnum_claimant_1 = { 
+				is_alive = yes 
+				NOT = { character = ROOT }
+			}
+			OR = {
+				NOT = { has_character_flag = deciding_vote }
+				has_character_flag = interregnum_claimant_4
+			}
+			NOR = { #favor has not been called on someone else
+				has_opinion_modifier = { who = event_target:interregnum_claimant_2 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_3 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_4 modifier = opinion_supporting_in_election }
+			}
+		}
+		ai_chance = {
+			factor = 10
+			
+			modifier = {	#Close relative held title
+				factor = 2
+				FROM = {
+					primary_title = {
+						any_previous_holder = {
+							event_target:interregnum_claimant_1 = {
+								OR = {
+									sibling = PREV
+									is_child_of = PREV
+								}
+							}	
+						}
+					}	
+				}	
+			}
+			modifier = {	#Dont want republic
+				factor = 0
+				event_target:interregnum_claimant_1 = { is_merchant_republic = yes }	
+				NAND = {
+					is_patrician = yes
+					vassal_of = event_target:interregnum_claimant_1
+				}
+				OR = {
+					is_patrician = yes
+					AND = {
+						NOT = { culture_group = free_cities }	
+						NOT = { culture = yunkaii }
+						NOT = { culture = astapori }
+						NOT = { culture = meereenese }
+						NOT = { culture = qartheen }
+						NOT = { culture = asshai }
+					}	
+				}	
+			}
+			
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_1 = { 
+					character = FROM
+					has_character_flag = interregnum_title_claimant
+				}
+			}
+			modifier = {	
+				factor = 2
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_1 = { has_strong_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.5
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_1 = { has_weak_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = enatic_succession
+							has_law = enatic_cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_1 = { is_female = yes }
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = agnatic_succession
+							has_law = cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_1 = { is_female = no }
+			}
+			
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_1 = { is_female = yes }
+				OR = {
+					culture_group = andal
+					culture_group = first_men
+				}	
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_1 = { is_female = yes }
+				agnatic_culture_trigger = yes	
+			}
+			
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { is_close_relative = ROOT } 
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { dynasty = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { is_child_of = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { is_parent_of = ROOT }
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { is_married = ROOT } 
+			}
+			
+			modifier = {	
+				factor = 0.75
+				event_target:interregnum_claimant_1 = { NOT = { religion = ROOT } } 
+			}
+			modifier = {	
+				factor = 0.44
+				event_target:interregnum_claimant_1 = { NOT = { religion_group = ROOT } } 
+			}			
+			modifier = {	
+				factor = 0.33
+				event_target:interregnum_claimant_1 = { 
+					NOT = { culture = high_valyrian } 
+					NOT = { culture_group = ROOT } 
+				} 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_1 = { NOT = { age = 5 } } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_1 = { NOT = { age = 10 } } 
+			}
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_1 = { can_use_dragon_abilities_trigger = yes } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_1 = { trait = lunatic }	
+			}
+			modifier = {	
+				factor = 0.1
+				event_target:interregnum_claimant_1 = { 
+					OR = {
+						trait = incapable
+						trait = inbred
+						trait = imbecile
+						is_dumb_trigger = yes
+					}	
+				}	
+			}
+			
+			#Stats
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { diplomacy = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { diplomacy = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { diplomacy = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { martial = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { martial = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { martial = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { stewardship = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { stewardship = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_1 = { stewardship = 18 }	
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { stewardship = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { stewardship = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { martial = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { martial = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { diplomacy = 6 } }
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_1 = { NOT = { diplomacy = 2 } }
+			}
+			
+			modifier = {	
+				factor = 0
+				event_target:interregnum_claimant_1 = { NOT = { reverse_opinion = { who = ROOT value = -45 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_1 = { NOT = { reverse_opinion = { who = ROOT value = -30 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_1 = { NOT = { reverse_opinion = { who = ROOT value = -15 } } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 15 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 30 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 45 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 60 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 75 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_1 = { reverse_opinion = { who = ROOT value = 90 } }	
+			}
+		}
+		event_target:interregnum_claimant_1 = { 
+			change_variable = { which = "great_council_votes" value = 1 }
+		}			
+	}
+	option = {
+		name = EVTOPTCinterregnum.6 
+		trigger = {  
+			event_target:interregnum_claimant_2 = { 
+				is_alive = yes 
+				NOT = { character = ROOT }
+			}
+			OR = {
+				NOT = { has_character_flag = deciding_vote }
+				has_character_flag = interregnum_claimant_4
+			}
+			NOR = { #favor has not been called on someone else
+				has_opinion_modifier = { who = event_target:interregnum_claimant_1 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_3 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_4 modifier = opinion_supporting_in_election }
+			}
+		}
+		ai_chance = {
+			factor = 10
+								
+			modifier = {	#Close relative held title
+				factor = 2
+				FROM = {
+					primary_title = {
+						any_previous_holder = {
+							event_target:interregnum_claimant_2 = {
+								OR = {
+									sibling = PREV
+									is_child_of = PREV
+								}
+							}	
+						}
+					}	
+				}	
+			}
+			modifier = {	#Dont want republic
+				factor = 0
+				event_target:interregnum_claimant_2 = { is_merchant_republic = yes }	
+				NAND = {
+					is_patrician = yes
+					vassal_of = event_target:interregnum_claimant_2
+				}
+				OR = {
+					is_patrician = yes
+					AND = {
+						NOT = { culture_group = free_cities }	
+						NOT = { culture = yunkaii }
+						NOT = { culture = astapori }
+						NOT = { culture = meereenese }
+						NOT = { culture = qartheen }
+						NOT = { culture = asshai }
+					}	
+				}	
+			}
+			
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_2 = { 
+					character = FROM
+					has_character_flag = interregnum_title_claimant
+				}
+			}
+			modifier = {	
+				factor = 2
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_2 = { has_strong_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.5
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_2 = { has_weak_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = enatic_succession
+							has_law = enatic_cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_2 = { is_female = yes }
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = agnatic_succession
+							has_law = cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_2 = { is_female = no }
+			}
+			
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_2 = { is_female = yes }
+				OR = {
+					culture_group = andal
+					culture_group = first_men
+				}	
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_2 = { is_female = yes }
+				agnatic_culture_trigger = yes	
+			}
+			
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { is_close_relative = ROOT } 
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { dynasty = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { is_child_of = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { is_parent_of = ROOT }
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { is_married = ROOT } 
+			}
+			
+			modifier = {	
+				factor = 0.75
+				event_target:interregnum_claimant_2 = { NOT = { religion = ROOT } } 
+			}
+			modifier = {	
+				factor = 0.44
+				event_target:interregnum_claimant_2 = { NOT = { religion_group = ROOT } } 
+			}			
+			modifier = {	
+				factor = 0.33
+				event_target:interregnum_claimant_2 = { 
+					NOT = { culture = high_valyrian } 
+					NOT = { culture_group = ROOT } 
+				} 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_2 = { NOT = { age = 5 } } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_2 = { NOT = { age = 10 } } 
+			}
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_2 = { can_use_dragon_abilities_trigger = yes } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_2 = { trait = lunatic }	
+			}
+			modifier = {	
+				factor = 0.1
+				event_target:interregnum_claimant_2 = { 
+					OR = {
+						trait = incapable
+						trait = inbred
+						trait = imbecile
+						is_dumb_trigger = yes
+					}	
+				}	
+			}
+			
+			#Stats
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { diplomacy = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { diplomacy = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { diplomacy = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { martial = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { martial = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { martial = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { stewardship = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { stewardship = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_2 = { stewardship = 18 }	
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { stewardship = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { stewardship = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { martial = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { martial = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { diplomacy = 6 } }
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_2 = { NOT = { diplomacy = 2 } }
+			}
+			
+			
+			modifier = {	
+				factor = 0
+				event_target:interregnum_claimant_2 = { NOT = { reverse_opinion = { who = ROOT value = -45 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_2 = { NOT = { reverse_opinion = { who = ROOT value = -30 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_2 = { NOT = { reverse_opinion = { who = ROOT value = -15 } } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 15 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 30 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 45 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 60 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 75 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_2 = { reverse_opinion = { who = ROOT value = 90 } }	
+			}
+		}
+		event_target:interregnum_claimant_2 = { 
+			change_variable = { which = "great_council_votes" value = 1 }
+		}			
+	}
+	option = {
+		name = EVTOPTDinterregnum.6 
+		trigger = {  
+			event_target:interregnum_claimant_3 = { 
+				is_alive = yes 
+				NOT = { character = ROOT }
+			}
+			OR = {
+				NOT = { has_character_flag = deciding_vote }
+				has_character_flag = interregnum_claimant_4
+			}
+			NOR = { #favor has not been called on someone else
+				has_opinion_modifier = { who = event_target:interregnum_claimant_1 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_2 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_4 modifier = opinion_supporting_in_election }
+			}
+		}
+		ai_chance = {
+			factor = 10
+								
+			modifier = {	#Close relative held title
+				factor = 2
+				FROM = {
+					primary_title = {
+						any_previous_holder = {
+							event_target:interregnum_claimant_3 = {
+								OR = {
+									sibling = PREV
+									is_child_of = PREV
+								}
+							}	
+						}
+					}	
+				}	
+			}
+			modifier = {	#Dont want republic
+				factor = 0
+				event_target:interregnum_claimant_3 = { is_merchant_republic = yes }	
+				NAND = {
+					is_patrician = yes
+					vassal_of = event_target:interregnum_claimant_3
+				}
+				OR = {
+					is_patrician = yes
+					AND = {
+						NOT = { culture_group = free_cities }	
+						NOT = { culture = yunkaii }
+						NOT = { culture = astapori }
+						NOT = { culture = meereenese }
+						NOT = { culture = qartheen }
+						NOT = { culture = asshai }
+					}	
+				}	
+			}
+			
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_3 = { 
+					character = FROM
+					has_character_flag = interregnum_title_claimant
+				}
+			}
+			modifier = {	
+				factor = 2
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_3 = { has_strong_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.5
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_3 = { has_weak_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = enatic_succession
+							has_law = enatic_cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_3 = { is_female = yes }
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = agnatic_succession
+							has_law = cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_3 = { is_female = no }
+			}
+			
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_3 = { is_female = yes }
+				OR = {
+					culture_group = andal
+					culture_group = first_men
+				}	
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_3 = { is_female = yes }
+				agnatic_culture_trigger = yes		
+			}
+			
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { is_close_relative = ROOT } 
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { dynasty = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { is_child_of = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { is_parent_of = ROOT }
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { is_married = ROOT } 
+			}
+			
+			modifier = {	
+				factor = 0.75
+				event_target:interregnum_claimant_3 = { NOT = { religion = ROOT } } 
+			}
+			modifier = {	
+				factor = 0.44
+				event_target:interregnum_claimant_3 = { NOT = { religion_group = ROOT } } 
+			}			
+			modifier = {	
+				factor = 0.33
+				event_target:interregnum_claimant_3 = { 
+					NOT = { culture = high_valyrian } 
+					NOT = { culture_group = ROOT } 
+				} 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_3 = { NOT = { age = 5 } } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_3 = { NOT = { age = 10 } } 
+			}
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_3 = { can_use_dragon_abilities_trigger = yes } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_3 = { trait = lunatic }	
+			}
+			modifier = {	
+				factor = 0.1
+				event_target:interregnum_claimant_3 = { 
+					OR = {
+						trait = incapable
+						trait = inbred
+						trait = imbecile
+						is_dumb_trigger = yes
+					}	
+				}	
+			}
+			
+			#Stats
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { diplomacy = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { diplomacy = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { diplomacy = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { martial = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { martial = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { martial = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { stewardship = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { stewardship = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_3 = { stewardship = 18 }	
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { stewardship = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { stewardship = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { martial = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { martial = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { diplomacy = 6 } }
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_3 = { NOT = { diplomacy = 2 } }
+			}
+			
+			
+			modifier = {	
+				factor = 0
+				event_target:interregnum_claimant_3 = { NOT = { reverse_opinion = { who = ROOT value = -45 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_3 = { NOT = { reverse_opinion = { who = ROOT value = -30 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_3 = { NOT = { reverse_opinion = { who = ROOT value = -15 } } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 15 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 30 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 45 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 60 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 75 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_3 = { reverse_opinion = { who = ROOT value = 90 } }	
+			}
+		}
+		event_target:interregnum_claimant_3 = { 
+			change_variable = { which = "great_council_votes" value = 1 }
+		}			
+	}
+	option = {
+		name = EVTOPTEinterregnum.6 
+		trigger = {  
+			event_target:interregnum_claimant_4 = { 
+				is_alive = yes 
+				NOT = { character = ROOT }
+			}
+			OR = {
+				NOT = { has_character_flag = deciding_vote }
+				has_character_flag = interregnum_claimant_4
+			}
+			NOR = { #favor has not been called on someone else
+				has_opinion_modifier = { who = event_target:interregnum_claimant_1 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_2 modifier = opinion_supporting_in_election }
+				has_opinion_modifier = { who = event_target:interregnum_claimant_3 modifier = opinion_supporting_in_election }
+			}
+		}
+		ai_chance = {
+			factor = 10
+								
+			modifier = {	#Close relative held title
+				factor = 2
+				FROM = {
+					primary_title = {
+						any_previous_holder = {
+							event_target:interregnum_claimant_4 = {
+								OR = {
+									sibling = PREV
+									is_child_of = PREV
+								}
+							}	
+						}
+					}	
+				}	
+			}
+			modifier = {	#Dont want republic
+				factor = 0
+				event_target:interregnum_claimant_4 = { is_merchant_republic = yes }	
+				NAND = {
+					is_patrician = yes
+					vassal_of = event_target:interregnum_claimant_4
+				}
+				OR = {
+					is_patrician = yes
+					AND = {
+						NOT = { culture_group = free_cities }	
+						NOT = { culture = yunkaii }
+						NOT = { culture = astapori }
+						NOT = { culture = meereenese }
+						NOT = { culture = qartheen }
+						NOT = { culture = asshai }
+					}	
+				}	
+			}
+			
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_4 = { 
+					character = FROM
+					has_character_flag = interregnum_title_claimant
+				}
+			}
+			modifier = {	
+				factor = 2
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_4 = { has_strong_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.5
+				FROM = {
+					primary_title = {
+						event_target:interregnum_claimant_4 = { has_weak_claim = PREV }
+					}	
+				}	
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = enatic_succession
+							has_law = enatic_cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_4 = { is_female = yes }
+			}
+			modifier = {	
+				factor = 1.66
+				FROM = {
+					primary_title = {
+						OR = {
+							has_law = agnatic_succession
+							has_law = cognatic_succession
+						}
+					}
+				}	
+				event_target:interregnum_claimant_4 = { is_female = no }
+			}
+			
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_4 = { is_female = yes }
+				OR = {
+					culture_group = andal
+					culture_group = first_men
+				}	
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_4 = { is_female = yes }
+				agnatic_culture_trigger = yes		
+			}
+			
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { is_close_relative = ROOT } 
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { dynasty = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { is_child_of = ROOT } 
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { is_parent_of = ROOT }
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { is_married = ROOT } 
+			}
+			
+			modifier = {	
+				factor = 0.75
+				event_target:interregnum_claimant_4 = { NOT = { religion = ROOT } } 
+			}
+			modifier = {	
+				factor = 0.44
+				event_target:interregnum_claimant_4 = { NOT = { religion_group = ROOT } } 
+			}			
+			modifier = {	
+				factor = 0.33
+				event_target:interregnum_claimant_4 = { 
+					NOT = { culture = high_valyrian } 
+					NOT = { culture_group = ROOT } 
+				} 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_4 = { NOT = { age = 5 } } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_4 = { NOT = { age = 10 } } 
+			}
+			modifier = {	
+				factor = 2
+				event_target:interregnum_claimant_4 = { can_use_dragon_abilities_trigger = yes } 
+			}
+			modifier = {	
+				factor = 0.25
+				event_target:interregnum_claimant_4 = { trait = lunatic }	
+			}
+			modifier = {	
+				factor = 0.1
+				event_target:interregnum_claimant_4 = { 
+					OR = {
+						trait = incapable
+						trait = inbred
+						trait = imbecile
+						is_dumb_trigger = yes
+					}	
+				}	
+			}
+			
+			#Stats
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { diplomacy = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { diplomacy = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { diplomacy = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { martial = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { martial = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { martial = 18 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { stewardship = 10 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { stewardship = 14 }	
+			}
+			modifier = {	
+				factor = 1.25
+				event_target:interregnum_claimant_4 = { stewardship = 18 }	
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { stewardship = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { stewardship = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { martial = 6 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { martial = 2 }	}
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { diplomacy = 6 } }
+			}
+			modifier = {	
+				factor = 0.8
+				event_target:interregnum_claimant_4 = { NOT = { diplomacy = 2 } }
+			}
+			
+			modifier = {	
+				factor = 0
+				event_target:interregnum_claimant_4 = { NOT = { reverse_opinion = { who = ROOT value = -45 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_4 = { NOT = { reverse_opinion = { who = ROOT value = -30 } } }	
+			}
+			modifier = {	
+				factor = 0.66
+				event_target:interregnum_claimant_4 = { NOT = { reverse_opinion = { who = ROOT value = -15 } } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 15 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 30 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 45 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 60 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 75 } }	
+			}
+			modifier = {	
+				factor = 1.5
+				event_target:interregnum_claimant_4 = { reverse_opinion = { who = ROOT value = 90 } }	
+			}
+		}
+		event_target:interregnum_claimant_4 = { 
+			change_variable = { which = "great_council_votes" value = 1 }
+		}			
+	}
+	after = {
+		clr_character_flag = interregnum_voter
+	}
+}	
+#Calculate winner
+character_event = {
+	id = interregnum.7
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		clr_character_flag = deciding_vote
+		#Check which canidates are running
+		if = {
+			limit = { event_target:interregnum_claimant_1 = { is_alive = yes } }
+			set_character_flag = interregnum_claimant_1
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_2 = { is_alive = yes } }
+			set_character_flag = interregnum_claimant_2
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_3 = { is_alive = yes } }
+			set_character_flag = interregnum_claimant_3
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_4 = { is_alive = yes } }
+			set_character_flag = interregnum_claimant_4
+		}
+		
+		if = {
+			limit = { event_target:interregnum_claimant_1 = { is_alive = no } }
+			clear_event_target = interregnum_claimant_1
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_2 = { is_alive = no } }
+			clear_event_target = interregnum_claimant_2
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_3 = { is_alive = no } }
+			clear_event_target = interregnum_claimant_3
+		}
+		if = {
+			limit = { event_target:interregnum_claimant_4 = { is_alive = no } }
+			clear_event_target = interregnum_claimant_4
+		}
+		
+		#Eliminate candidates, check if they don't have >= votes than at least one other candidate
+		if = { #1
+			limit = {
+				OR = {
+					event_target:interregnum_claimant_2 = { ROOT = { event_target:interregnum_claimant_1 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_3 = { ROOT = { event_target:interregnum_claimant_1 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_4 = { ROOT = { event_target:interregnum_claimant_1 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+				}
+			}
+			clr_character_flag = interregnum_claimant_1
+		}
+		if = { #2
+			limit = {
+				OR = {
+					event_target:interregnum_claimant_1 = { ROOT = { event_target:interregnum_claimant_2 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_3 = { ROOT = { event_target:interregnum_claimant_2 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_4 = { ROOT = { event_target:interregnum_claimant_2 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+				}
+			}
+			clr_character_flag = interregnum_claimant_2
+		}
+		if = { #3
+			limit = {
+				OR = {
+					event_target:interregnum_claimant_2 = { ROOT = { event_target:interregnum_claimant_3 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_1 = { ROOT = { event_target:interregnum_claimant_3 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_4 = { ROOT = { event_target:interregnum_claimant_3 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+				}
+			}
+			clr_character_flag = interregnum_claimant_3
+		}
+		if = { #4
+			limit = {
+				OR = {
+					event_target:interregnum_claimant_2 = { ROOT = { event_target:interregnum_claimant_4 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_3 = { ROOT = { event_target:interregnum_claimant_4 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+					event_target:interregnum_claimant_1 = { ROOT = { event_target:interregnum_claimant_4 = { NOT = { check_variable = { which = "great_council_votes" which = PREVPREV } } } } }
+				}
+			}
+			clr_character_flag = interregnum_claimant_4
+		}
+		if = { #If tied, king casts deciding vote
+			limit = {
+				calc_true_if = {
+					amount = 2
+					has_character_flag = interregnum_claimant_1
+					has_character_flag = interregnum_claimant_2
+					has_character_flag = interregnum_claimant_3
+					has_character_flag = interregnum_claimant_4
+				}
+			}
+			set_character_flag = deciding_vote
+			character_event = { id = interregnum.6 } #cast deciding vote
+			character_event = { id = interregnum.7 days = 3 } #re-iterate this event once deciding vote is cast
+		}
+		else = { #If no tie, winner is declared
+			primary_title = { save_event_target_as = interregnum_title } #for loc
+			capital_scope = { save_event_target_as = interregnum_capital } #for loc
+			if = {
+				limit = { has_character_flag = interregnum_claimant_1 }
+				event_target:interregnum_claimant_1 = { character_event = { id = interregnum.8 } }
+			}
+			if = {
+				limit = { has_character_flag = interregnum_claimant_2 }
+				event_target:interregnum_claimant_2 = { character_event = { id = interregnum.8 } }
+			}
+			if = {
+				limit = { has_character_flag = interregnum_claimant_3 }
+				event_target:interregnum_claimant_3 = { character_event = { id = interregnum.8 } }
+			}
+			if = {
+				limit = { has_character_flag = interregnum_claimant_4 }
+				event_target:interregnum_claimant_4 = { character_event = { id = interregnum.8 } }
+			}
+		}
+		event_target:interregnum_claimant_1 = { clr_character_flag = interregnum_title_candidate }
+		event_target:interregnum_claimant_2 = { clr_character_flag = interregnum_title_candidate }
+		event_target:interregnum_claimant_3 = { clr_character_flag = interregnum_title_candidate }
+		event_target:interregnum_claimant_4 = { clr_character_flag = interregnum_title_candidate }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #ping to winner
+	id = interregnum.8
+	desc = EVTDESCinterregnum.8
+	picture = GFX_great_council
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		if = {
+			limit = { NOT = { character = FROM } }
+			FROM = { character_event = { id = interregnum.9 days = 1 } }
+		}	
+	}
+	
+	option = {
+		name = EVTOPTAinterregnum.8
+		prestige = 200	
+		custom_tooltip = { 
+			text = TOOLTIPinterregnum.8
+			hidden_tooltip = {
+				if = {
+					limit = { character = FROM }	
+					if = {
+						limit = { ai = yes } #Player has choice to give away titles
+						any_realm_lord = {
+							any_demesne_title = {
+								limit = {
+									is_variable_equal = { which = "lord_paramount_status" value = 2 }
+								}
+								set_variable = { which = "lord_paramount_status" value = 0 }				
+								FROM = { gain_title = PREV }
+								succession = primogeniture
+							}
+						}
+					}	
+					any_demesne_title = {
+						limit = {
+							is_variable_equal = { which = "lord_paramount_status" value = 2 }
+						}
+						set_variable = { which = "lord_paramount_status" value = 0 }				
+						succession = primogeniture
+					}
+					primary_title = {
+						if = {
+							limit = { has_title_flag = interregnum_law_voting_power_0 }
+							add_law = law_voting_power_0
+							clr_title_flag = interregnum_law_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_diplomacy_voting_power_0 }
+							add_law = diplomacy_voting_power_0
+							clr_title_flag = interregnum_diplomacy_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_titles_voting_power_0 }
+							add_law = titles_voting_power_0
+							clr_title_flag = interregnum_titles_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_justice_voting_power_0 }
+							add_law = justice_voting_power_0
+							clr_title_flag = interregnum_justice_voting_power_0
+						}
+					}
+					if = {
+						limit = { is_merchant_republic = no }
+						set_government_type = feudal_government 
+					}	
+					any_player = {
+						limit = { 
+							OR = {
+								is_liege_or_above = ROOT
+								is_within_diplo_range = ROOT
+							}
+							NOT = { character = ROOT }
+						}
+						character_event = { id = interregnum.10 days = 1 }
+					}	
+					clr_character_flag = called_interregnum_council
+					if = {
+						limit = {
+							primary_title = { title = e_iron_throne }
+							NOT = { has_global_flag = KL_not_capital }
+							capital_holding = { location = { NOT = { province_id = 226 } } }
+							has_landed_title = b_red_keep
+							is_feudal = yes	 		
+							c_kings_landing = { 
+								location = { 
+									has_province_flag = kings_landing_established
+								}
+							}
+						}
+						b_red_keep = { 
+							ROOT = { capital = PREV }
+						}
+					}
+					any_courtier = {
+						limit = {
+							prisoner = yes
+							host = { character = ROOT }
+							has_character_flag = interregnum_prisoner
+						}
+						clr_character_flag = interregnum_prisoner
+					}
+					any_artifact = {
+						limit = { has_artifact_flag = interregnum_artifact }
+						clr_artifact_flag = interregnum_artifact
+					}
+					any_courtier = {
+						limit = {
+							liege = { character = ROOT }
+							is_ruler = no
+							has_character_flag = interregnum_hostage
+						}
+						clr_character_flag = interregnum_hostage
+					}					
+					character_event = { id = royal_proclamations.998 days = 1 } #Royal Proclamations
+					character_event = { id = dynamic_coa.1 } #apply dynamic CoA				
+					#Transfer debts
+					save_event_target_as = debt_inheritor 
+					random_demesne_title = {
+						limit = { has_title_flag = interregnum_debt_title }
+						save_event_target_as = debt_capital
+						inherit_debt_effect = yes
+						clr_title_flag = interregnum_debt_title
+					}
+					event_target:interregnum_claimant_1 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_2 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_3 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_4 = { diplomatic_immunity = no }
+					#Adjust title history to remove lord protectors
+					any_demesne_title = {
+						limit = { 
+							tier = ROOT
+							persistent_event_target:history_title = { always = yes }
+						}				
+						copy_title_history = persistent_event_target:history_title
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					ai = no
+					character = FROM
+				}
+			}
+			if = {
+				limit = { FROM = { has_character_flag = interregnum_claimant_1 } }
+				event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				FROM = { clr_character_flag = interregnum_claimant_1 }
+			}		
+			if = {
+				limit = { FROM = { has_character_flag = interregnum_claimant_2 } }
+				event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				FROM = { clr_character_flag = interregnum_claimant_2 }
+			}
+			if = {
+				limit = { FROM = { has_character_flag = interregnum_claimant_3 } }
+				event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				FROM = { clr_character_flag = interregnum_claimant_3 }
+			}
+			if = {
+				limit = { FROM = { has_character_flag = interregnum_claimant_4 } }
+				event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+				FROM = { clr_character_flag = interregnum_claimant_4 }
+			}
+			recalc_succession = yes
+			clr_character_flag = interregnum_title_claimant
+			remove_special_character_title = yes
+		}	
+	}
+}
+#End of council
+character_event = {
+	id = interregnum.9
+	desc = EVTDESCinterregnum.9
+	picture = GFX_great_council
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		any_player = {
+			limit = { 
+				OR = {
+					is_liege_or_above = ROOT
+					is_within_diplo_range = ROOT
+				}
+				NOT = { character = ROOT }
+				NOT = { character = FROM }
+			}
+			character_event = { id = interregnum.10 days = 1 }
+		}	
+		clr_character_flag = called_interregnum_council
+		remove_special_character_title = yes
+	}
+	
+	option = {
+		name = EVTOPTAinterregnum.9
+		custom_tooltip = { 
+			text = TOOLTIPinterregnum.9 
+			hidden_tooltip = {
+				#If theocracy/republic, abdicate first
+				if = {
+					limit = { 
+						ai = yes
+						is_landed = yes
+						OR = {
+							is_republic = yes
+							is_theocracy = yes
+						}
+						is_merchant_republic = no
+					}
+					abdicate = yes
+				}
+				#
+				
+				any_realm_lord = {
+					any_demesne_title = {
+						limit = {
+							is_variable_equal = { which = "lord_paramount_status" value = 2 }
+						}
+						set_variable = { which = "lord_paramount_status" value = 0 }				
+						FROM = { gain_title = PREV }
+						succession = primogeniture
+					}
+				}
+				any_demesne_title = {
+					limit = {
+						is_variable_equal = { which = "lord_paramount_status" value = 2 }
+					}
+					set_variable = { which = "lord_paramount_status" value = 0 }				
+					FROM = { gain_title = PREV }
+					succession = primogeniture
+					if = {
+						limit = { 
+							tier = FROM 
+							ROOT = { has_character_flag = interregnum_title_claimant }
+						}
+						add_pressed_claim = ROOT
+					}
+				}
+				FROM = { 
+					##Make sure new holder has at least one province
+					if = {
+						limit = {
+							OR = {
+								NOT = { demesne_size = 1 }
+								NOT = { num_of_count_titles = 1 }
+							}
+						}
+						primary_title = {
+							capital_scope = {
+								county = {
+									if = {
+										limit = {
+											holder_scope = {
+												demesne_size = 2
+												is_liege_or_above = ROOT_FROM
+											}
+										}
+										gain_title = ROOT_FROM
+									}
+								}
+							}
+						}
+						if = {
+							limit = { NOT = { num_of_count_titles = 1 } }
+							random_realm_lord = {
+								limit = { num_of_count_titles = 2 }
+								random_demesne_title = {
+									limit = {
+										tier = COUNT
+										is_titular = no
+										controls_religion = no
+										location = { is_capital = no }
+									}
+									gain_title = ROOT_FROM
+								}
+							}
+							if = {
+								limit = { NOT = { num_of_count_titles = 1 } }
+								random_realm_lord = {
+									limit = { tier = COUNT }
+									random_demesne_title = {
+										limit = {
+											tier = COUNT
+											is_titular = no
+											controls_religion = no
+										}
+										gain_title = ROOT_FROM
+									}
+								}
+								if = {
+									limit = { NOT = { num_of_count_titles = 1 } }
+									random_realm_lord = {
+										limit = { 
+											any_demesne_title = {
+												tier = COUNT
+												is_titular = no
+												controls_religion = no
+											}	
+										}
+										random_demesne_title = {
+											limit = {
+												tier = COUNT
+												is_titular = no
+												controls_religion = no
+											}
+											gain_title = ROOT_FROM
+										}
+									}
+								}
+							}
+						}
+					}
+					##
+					if = {
+						limit = { is_merchant_republic = no }
+						set_government_type = feudal_government 
+					}
+					recalc_succession = yes
+					if = {
+						limit = {
+							primary_title = { title = e_iron_throne }
+							NOT = { has_global_flag = KL_not_capital }
+							capital_holding = { location = { NOT = { province_id = 226 } } }
+							has_landed_title = b_red_keep
+							is_feudal = yes	 		
+							c_kings_landing = { 
+								location = { 
+									has_province_flag = kings_landing_established
+								}
+							}
+						}
+						b_red_keep = { 
+							holder_scope = { capital = PREV }
+						}
+					}
+					primary_title = {
+						if = {
+							limit = { has_title_flag = interregnum_law_voting_power_0 }
+							add_law = law_voting_power_0
+							clr_title_flag = interregnum_law_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_diplomacy_voting_power_0 }
+							add_law = diplomacy_voting_power_0
+							clr_title_flag = interregnum_diplomacy_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_titles_voting_power_0 }
+							add_law = titles_voting_power_0
+							clr_title_flag = interregnum_titles_voting_power_0
+						}
+						if = {
+							limit = { has_title_flag = interregnum_justice_voting_power_0 }
+							add_law = justice_voting_power_0
+							clr_title_flag = interregnum_justice_voting_power_0
+						}
+					}
+					character_event = { id = royal_proclamations.998 days = 1 } #Royal Proclamations
+					character_event = { id = dynamic_coa.1 } #apply dynamic CoA
+					#Transfer debts
+					save_event_target_as = debt_inheritor 
+					random_demesne_title = {
+						limit = { has_title_flag = interregnum_debt_title }
+						save_event_target_as = debt_capital
+						inherit_debt_effect = yes
+						clr_title_flag = interregnum_debt_title
+					}
+					event_target:interregnum_claimant_1 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_2 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_3 = { diplomatic_immunity = no }
+					event_target:interregnum_claimant_4 = { diplomatic_immunity = no }
+					#Adjust title history to remove lord protectors
+					any_demesne_title = {
+						limit = { 
+							tier = ROOT_FROM 
+							persistent_event_target:history_title = { always = yes }
+						}				
+						copy_title_history = persistent_event_target:history_title
+					}
+				}
+				if = {
+					limit = { NOT = { vassal_of = FROM } }
+					set_defacto_liege = FROM
+				}
+				clr_character_flag = interregnum_title_claimant
+				any_courtier = {
+					limit = {
+						prisoner = yes
+						host = { character = ROOT }
+						has_character_flag = interregnum_prisoner
+					}
+					prisoner = no
+					imprison = FROM
+					clr_character_flag = interregnum_prisoner
+				}
+				any_artifact = {
+					limit = { has_artifact_flag = interregnum_artifact }
+					transfer_artifact = { from = ROOT to = FROM }
+					clr_artifact_flag = interregnum_artifact
+				}
+				any_courtier = {
+					limit = {
+						liege = { character = ROOT }
+						is_ruler = no
+						has_character_flag = interregnum_hostage
+					}
+					move_character = FROM
+					clr_character_flag = interregnum_hostage
+				}
+			}
+		}
+		#Become regent if needed
+		if = {
+			limit = {
+				FROM = {
+					OR = {
+						is_adult = no
+						prisoner = yes
+						is_incapable = yes
+					}
+				}
+			}
+			gain_regency_effect = yes
+		}
+		if = {
+			limit = { has_character_flag = interregnum_claimant_1 }
+			event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			clr_character_flag = interregnum_claimant_1
+		}		
+		if = {
+			limit = { has_character_flag = interregnum_claimant_2 }
+			event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			clr_character_flag = interregnum_claimant_2
+		}
+		if = {
+			limit = { has_character_flag = interregnum_claimant_3 }
+			event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			clr_character_flag = interregnum_claimant_3
+		}
+		if = {
+			limit = { has_character_flag = interregnum_claimant_4 }
+			event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+			clr_character_flag = interregnum_claimant_4
+		}
+		recalc_succession = yes		
+	}
+}
+#Inform End of council
+character_event = {
+	id = interregnum.10
+	picture = GFX_great_council
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	desc = {
+		text = "EVTDESCinterregnum.10"
+		trigger = { 
+			is_liege_or_above = FROMFROM
+		}
+	}
+	desc = {
+		text = "EVTDESCinterregnum.10A"
+		trigger = { 
+			NOT = { is_liege_or_above = FROMFROM }
+		}
+	}
+	
+	option = {
+		name = {
+			text = "EVTOPTAinterregnum.10"	
+			trigger = { is_liege_or_above = FROMFROM }
+		}	
+		name = {
+			text = "OK"	
+			trigger = { NOT = { is_liege_or_above = FROMFROM } }
+		}
+		FROM = { tooltip = { show_portrait = yes } }
+		event_target:interregnum_claimant_1 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+		event_target:interregnum_claimant_2 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+		event_target:interregnum_claimant_3 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+		event_target:interregnum_claimant_4 = { custom_tooltip = { text = TOOLTIPinterregnum.9B } }
+	}
+}	
+#Realm informed great council suspended
+letter_event = {
+	id = interregnum.11
+	desc = "EVTDESCinterregnum.11"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAinterregnum.11"	
+	}
+}
+#Interregnum title usurped, clear interregnum status
+character_event = {
+	id = interregnum.12
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { FROM = { is_variable_equal = { which = "lord_paramount_status" value = 2 } } }
+	
+	immediate = { 
+		FROM = { 
+			set_variable = { which = "lord_paramount_status" value = 0 } 
+			if = {
+				limit = { has_title_flag = interregnum_law_voting_power_0 }
+				add_law = law_voting_power_0
+				clr_title_flag = interregnum_law_voting_power_0
+			}
+			if = {
+				limit = { has_title_flag = interregnum_diplomacy_voting_power_0 }
+				add_law = diplomacy_voting_power_0
+				clr_title_flag = interregnum_diplomacy_voting_power_0
+			}
+			if = {
+				limit = { has_title_flag = interregnum_titles_voting_power_0 }
+				add_law = titles_voting_power_0
+				clr_title_flag = interregnum_titles_voting_power_0
+			}
+			if = {
+				limit = { has_title_flag = interregnum_justice_voting_power_0 }
+				add_law = justice_voting_power_0
+				clr_title_flag = interregnum_justice_voting_power_0
+			}
+			succession = primogeniture
+			if = {
+				limit = {
+					has_global_flag = roberts_rebellion_interregnum
+					title = e_iron_throne
+				}
+				clr_global_flag = roberts_rebellion_interregnum
+			}
+		} 
+		if = {
+			limit = { 
+				independent = yes
+				higher_tier_than = DUKE
+				NOT = { is_in_interregnum_trigger = yes } 
+			}
+			any_realm_lord = {
+				any_demesne_title = {
+					limit = {
+						is_variable_equal = { which = "lord_paramount_status" value = 2 }
+					}
+					set_variable = { which = "lord_paramount_status" value = 0 }				
+					ROOT = { gain_title = PREV }
+					succession = primogeniture
+				}
+			}
+			any_demesne_title = {
+				limit = {
+					is_variable_equal = { which = "lord_paramount_status" value = 2 }
+				}
+				set_variable = { which = "lord_paramount_status" value = 0 }				
+				succession = primogeniture
+			}		
+		}	
+		recalc_succession = yes
+		FROMFROM = {
+			if = {
+				limit = { NOT = { is_in_interregnum_trigger = yes } }
+				any_demesne_title = {
+					limit = {
+						is_variable_equal = { which = "lord_paramount_status" value = 2 }
+					}
+					set_variable = { which = "lord_paramount_status" value = 0 }				
+					succession = primogeniture
+				}
+				any_courtier = {
+					limit = {
+						prisoner = yes
+						host = { character = ROOT }
+						has_character_flag = interregnum_prisoner
+					}
+					clr_character_flag = interregnum_prisoner
+					imprison = ROOT
+				}
+				any_artifact = {
+					limit = { has_artifact_flag = interregnum_artifact }
+					transfer_artifact = { from = PREV to = ROOT }
+					clr_artifact_flag = interregnum_artifact
+				}
+				any_courtier = {
+					limit = {
+						liege = { character = ROOT }
+						is_ruler = no
+						has_character_flag = interregnum_hostage
+					}
+					clr_character_flag = interregnum_hostage
+					move_character = ROOT
+				}
+				remove_special_character_title = yes
+				recalc_succession = yes
+			}
+			if = {
+				limit = { NOT = { has_character_flag = interregnum_title_claimant } }
+				ROOT_FROM = { remove_claim = PREV }
+			}
+			clr_character_flag = interregnum_title_claimant
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}		
+#Offer peace to claimants who are at war
+character_event = { #ping to claimant
+	id = interregnum.15
+	
+	is_triggered_only = yes
+	hide_window = yes
+	only_rulers = yes
+	
+	trigger = { 
+		FROM = { 
+			is_ruler = yes
+			is_in_interregnum_trigger = yes
+			war_with = ROOT
+		} 
+	}
+	
+	immediate = { 
+		FROM = { 
+			character_event = { id = interregnum.16 }
+		} 
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = { #Lord Protector decides
+	id = interregnum.16
+	desc = EVTDESCinterregnum.16
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAinterregnum.16 #yes
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honest
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				any_war = {
+					defender = { character = ROOT }
+					attacker = { character = FROM }
+					war_score = 25
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_war = {
+					defender = { character = ROOT }
+					attacker = { character = FROM }
+					NOT = { war_score = -49 }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_war = {
+					defender = { character = ROOT }
+					attacker = { character = FROM }
+					NOT = { war_score = -80 }
+				}
+			}
+		}
+		FROM = { letter_event = { id = interregnum.17 tooltip = EVTTOOLTIPinterregnum.17 days = 4 } }
+	}
+	option = {
+		name = EVTOPTBinterregnum.16 #no
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				OR = {
+					trait = honorable
+					opinion = { who = FROM value = 25 }
+					any_war = {
+						defender = { character = ROOT }
+						attacker = { character = FROM }
+						war_score = 50
+					}
+				}
+			}
+		}
+	}
+}	
+letter_event = { #Claimant responds
+	id = interregnum.17
+	desc = EVTDESCinterregnum.17
+	
+	is_triggered_only = yes
+	only_rulers = yes
+	
+	trigger = { 
+		FROM = { 
+			is_ruler = yes
+			is_in_interregnum_trigger = yes
+			war_with = ROOT
+		} 
+	}
+
+	option = {
+		name = EVTOPTAinterregnum.17 #yes
+		ai_chance = {
+			factor = 75
+			modifier = {
+				factor = 3
+				trait = just
+			}
+			modifier = {
+				factor = 2
+				trait = honest
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = content
+			}
+			modifier = {
+				factor = 0.5
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 0.5
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.5
+				trait = ambitious
+			}
+			modifier = {
+				factor = 0.5
+				trait = stubborn
+			}
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 1.75
+				opinion = { who = FROM value = 0 }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -24 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -49 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -74 } }
+			}
+			modifier = {
+				factor = 0.6
+				NOT = { opinion = { who = FROM value = -99 } }
+			}
+			modifier = {
+				factor = 2
+				any_war = {
+					attacker = { character = ROOT }
+					defender = { character = FROM }
+					NOT = { war_score = -40 }
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_war = {
+					attacker = { character = ROOT }
+					defender = { character = FROM }
+					war_score = 50
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_war = {
+					attacker = { character = ROOT }
+					defender = { character = FROM }
+					war_score = 80
+				}
+			}
+		}
+		set_character_flag = interregnum_war_claimant #gives priority in a council
+		tooltip = {
+			any_war = {
+				limit = {
+					attacker = { character = ROOT }
+					defender = { character = FROM }
+				}
+				end_war = whitepeace
+			}
+		}
+		hidden_tooltip = {
+			if = {
+				limit = { FROM = { tier = EMPEROR } }
+				remove_trait = rebel_leader
+				clr_character_flag = rebel_leader
+				clr_character_flag = against_king
+				set_character_flag = supporting_king
+				any_vassal = {
+					clr_character_flag = against_king
+					set_character_flag = supporting_king
+				}
+				opinion = { modifier = opinion_with_king who = FROM years = 100 }
+				any_playable_ruler = {
+					limit = {
+						has_character_flag = against_king
+						has_opinion_modifier = { modifier = opinion_with_rebel_leader who = ROOT }
+					}
+					clr_character_flag = against_king
+					set_character_flag = supporting_king
+					any_vassal = {
+						clr_character_flag = against_king
+						set_character_flag = supporting_king
+					}
+					remove_opinion = { modifier = opinion_with_rebel_leader who = ROOT }
+					opinion = { modifier = opinion_with_king who = FROM years = 100 }
+				}
+			}		
+		}
+		FROM = { letter_event = { id = interregnum.18 tooltip = EVTTOOLTIPinterregnum.18 } }
+	}
+	option = {
+		name = EVTOPTBinterregnum.17 #no
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 0
+				OR = {
+					trait = honorable
+					any_war = {
+						defender = { character = FROM }
+						attacker = { character = ROOT }
+						NOT = { war_score = -74 }
+					}
+				}
+			}
+		}
+		hidden_tooltip = { FROM = { letter_event = { id = interregnum.19 } } }
+	}
+}	
+letter_event = { #inform accept
+	id = interregnum.18
+	desc = EVTDESCinterregnum.18
+	
+	is_triggered_only = yes
+
+	option = {
+		name = OK
+		any_war = {
+			limit = {
+				defender = { character = ROOT }
+				attacker = { character = FROM }
+			}
+			end_war = whitepeace
+		}
+		hidden_tooltip = {
+			if = { #call great council event
+				limit = { war = no }
+				character_event = { id = interregnum.1 days = 20 }
+			}
+		}
+	}
+}	
+letter_event = { #inform reject
+	id = interregnum.19
+	desc = EVTDESCinterregnum.19
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTAinterregnum.19
+	}
+}

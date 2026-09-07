@@ -1,0 +1,2493 @@
+###########################################
+#                                         #
+# Way of Life scholarship events          #
+#                                         #
+# ID WoL.6000-WoL.6999                    #
+#                                         #
+###########################################
+
+# Written by Tobias Bodlund
+
+namespace = WoL
+
+###########################################
+# Building observatory                    #
+# ID WoL.6000-WoL.6099                    #
+###########################################
+
+# Confirm building
+character_event = {
+	id = WoL.6000
+	desc = EVTDESC_WoL_6000
+	picture = GFX_evt_construction_site
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6000
+		hidden_tooltip = { character_event = { id = WoL.6010 days = 180 } }
+	}
+}
+
+# Observatory is ready
+character_event = {
+	id = WoL.6010
+	desc = EVTDESC_WoL_6010
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6010
+		hidden_tooltip = { character_event = { id = WoL.6020 days = 180 } }
+		clr_character_flag = building_observatory
+		set_character_flag = built_observatory
+		add_character_modifier = {
+			name = studying_the_stars
+			duration = -1
+		}
+	}
+}
+
+# Split event - heliocentrism or weird?
+character_event = {
+	id = WoL.6020
+	desc = EVTDESC_WoL_6020
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6020
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				trait = cynical
+			}
+		}
+		prestige = 10
+		hidden_tooltip = { character_event = { id = WoL.6100 days = 180 } } # Heliocentrism - how do the celestial bodies move?
+	}
+	option = {
+		name = EVTOPTB_WoL_6020
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 10
+				trait = possessed
+			}
+			modifier = {
+				factor = 10
+				trait = lunatic
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+		}
+		trigger = {
+			magic_returned_trigger = yes
+		}
+		prestige = 5
+		hidden_tooltip = { character_event = { id = WoL.6300 days = 180 } } # Weird - maybe there's someone out there
+	}
+}
+
+###########################################
+# Heliocentric studies                    #
+# ID WoL.6100-WoL.6299                    #
+###########################################
+
+# Starts believing in heliocentrist theory
+character_event = {
+	id = WoL.6100
+	desc = EVTDESC_WoL_6100
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6100
+		#military_techpoints = 30
+		if = {
+			limit = { 
+				NOT = { trait = cynical } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = cynical
+				hidden_tooltip = {
+					character_event = {
+						id = 38258 #Notify Cynical
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { 
+				NOT = { trait = diligent } 
+				NOT = { trait = slothful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = diligent
+				hidden_tooltip = {
+					character_event = {
+						id = 38256 #Notify Diligent
+					}
+				}
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6110 days = 180 } }
+	}
+}
+
+# Research more expensive than expected, need new equipment
+character_event = {
+	id = WoL.6110
+	desc = EVTDESC_WoL_6110
+	picture = GFX_evt_scientist
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6110 # Buy what's needed and continue research
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { wealth = 30 }
+			}
+		}
+		if = {
+			limit = { has_character_flag = owns_observatory_equipment }
+			custom_tooltip = {
+				text = CUSTOM_TOOLTIP_OWNS_OBSERVATORY_EQUIPMENT
+			}
+		}
+		if = {
+			limit = { NOT = { has_character_flag = owns_observatory_equipment } }
+			set_character_flag = owns_observatory_equipment
+			wealth = -30
+		}
+		hidden_tooltip = { character_event = { id = WoL.6120 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6110  # Abandon research
+		ai_chance = {
+			factor = 1
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Friend or family member worries about dangerous research
+character_event = {
+	id = WoL.6120
+	
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					any_courtier = {
+						ai = yes
+						is_adult = yes
+						trait = zealous
+						at_location = ROOT
+						OR = {
+							mother = { character = ROOT }
+							father = { character = ROOT }
+							is_parent_of = ROOT
+							AND = {
+								any_sibling = { character = ROOT }
+								NOT = { is_rival = ROOT }
+							}
+							is_friend = ROOT
+						}
+						NOT = { trait = dragon }
+					}
+				}
+			}
+			character_event = { id = WoL.6130 days = 180 }
+			break = yes                                         # NOTE
+		}
+		
+		random_courtier = {
+			limit = {
+				is_adult = yes
+				trait = zealous
+				at_location = ROOT
+				OR = {
+					mother = { character = ROOT }
+					father = { character = ROOT }
+					is_parent_of = ROOT
+					AND = {
+						any_sibling = { character = ROOT }
+						NOT = { is_rival = ROOT }
+					}
+					is_friend = ROOT
+				}
+				NOT = { trait = dragon }
+			}
+			character_event = { id = WoL.6121 } # Friend or family is worried
+			break = yes  
+		}
+		
+		character_event = { id = WoL.6130 days = 180 } #none found, continue chain
+	}
+}
+
+# Friend or family bounce event
+character_event = {
+	id = WoL.6121
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	immediate = {
+		FROM = { character_event = { id = WoL.6122 } }
+	}
+}
+
+# Respond to worried friend/relative
+character_event = {
+	id = WoL.6122
+	desc = EVTDESC_WoL_6122
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6122 # Don't worry
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = stressed }
+				NOT = { trait = brave }
+				NOT = { trait = lunatic }
+			}
+			random = {
+				chance = 10
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = {
+						id = 38282 #Notify Stressed
+					}
+				}
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_worried
+			who = FROM
+			years = 2
+		}
+		hidden_tooltip = { character_event = { id = WoL.6130 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6122  # Get your nose out of my business!
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+		}
+		prestige = 30
+		reverse_opinion = {
+			modifier = opinion_angry
+			who = FROM
+			years = 2
+		}
+		hidden_tooltip = { character_event = { id = WoL.6130 days = 180 } }
+	}
+	option = {
+		name = EVTOPTC_WoL_6122 # Alright, I'll stop it (lies)
+		trigger = {
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+		}
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { 
+				NOT = { trait = deceitful } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = deceitful
+				hidden_tooltip = {
+					character_event = {
+						id = 38255 #Notify Deceitful
+					}
+				}
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6130 days = 180 } }
+	}
+}
+
+# Work is great stimulus to knowledge about how world works
+character_event = {
+	id = WoL.6130
+	desc = EVTDESC_WoL_6130
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6130
+		change_learning = 1
+		hidden_tooltip = { character_event = { id = WoL.6140 days = 180 } }
+	}
+}
+
+# Technical problems with observations - persist or give up?
+character_event = {
+	id = WoL.6140
+	desc = EVTDESC_WoL_6140
+	picture = GFX_evt_scientist
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}	
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6140 # Persist!
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = slothful
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = diligent } 
+				NOT = { trait = slothful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = diligent
+				hidden_tooltip = {
+					character_event = {
+						id = 38256 #Notify Diligent
+					}
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 10
+				add_trait = stressed
+				hidden_tooltip = {
+					character_event = {
+						id = 38282 #Notify Stressed
+					}
+				}
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6150 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6140 # Give up on this silly pursuit
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = diligent
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				NOT = { trait = diligent }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = slothful
+				hidden_tooltip = {
+					character_event = {
+						id = 38251 #Notify Slothful
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				trait = diligent
+			}
+			remove_trait = diligent
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Religious authorities find out
+character_event = {
+	id = WoL.6150
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				religion_head = { is_alive = yes }
+				religion_head = { ai = yes }
+			}
+			religion_head = {
+				character_event = { id = WoL.6151 } # Religious head opines
+			}
+			break = yes
+		}
+		character_event = { id = WoL.6160 } # Else skip to next
+	}
+}
+
+# Religious head
+character_event = {
+	id = WoL.6151
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	immediate = {
+		FROM = { letter_event = { id = WoL.6152 } }
+	}
+}
+
+# A letter from religious head - respond
+letter_event = {
+	id = WoL.6152
+	desc = EVTDESC_WoL_6152
+	border = GFX_event_letter_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6152 # Tell them to get lost
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = craven
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = cynical
+			}
+		}
+		prestige = 50
+		piety = -50
+		if = {
+			limit = { 
+				NOT = { trait = brave } 
+				NOT = { personality_traits = 6 }
+				NOT = { trait = craven }
+			}
+			random = {
+				chance = 33
+				add_trait = brave
+				hidden_tooltip = { character_event = { id = 38270 } }
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_angry
+			who = FROM
+			years = 10
+		}
+		add_character_modifier = {
+			name = annoyed_religious
+			years = 2
+		}
+		hidden_tooltip = { character_event = { id = WoL.6160 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6152 # The best answer is silence
+		ai_chance = {
+			factor = 1
+		}
+		piety = -20
+		reverse_opinion = {
+			modifier = opinion_irritated
+			who = FROM
+			years = 5
+		}
+		hidden_tooltip = { character_event = { id = WoL.6160 days = 180 } }
+	}
+	option = {
+		name = EVTOPTC_WoL_6152 # Stop my heretical research
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				trait = zealous
+			}
+		}
+		reverse_opinion = {
+			modifier = opinion_pleased
+			who = FROM
+			years = 3
+		}
+		add_character_modifier = {
+			name = religious_appreciate
+			years = 2
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Work Gives even more amazing knowledge
+character_event = {
+	id = WoL.6160
+	desc = EVTDESC_WoL_6160
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6160
+		change_learning = 1
+		#military_techpoints = 100
+		hidden_tooltip = { character_event = { id = WoL.6170 days = 180 } }
+	}
+}
+
+# Breakthrough - you have proven that the earth is round and revolves around the sun!
+character_event = {
+	id = WoL.6170
+	desc = EVTDESC_WoL_6170
+	picture = GFX_evt_scientist
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6170 # Publish findings
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				trait = brave
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = cynical
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+		}		
+		any_realm_character = {
+			limit = {
+				OR = {
+					is_priest = yes
+					trait = zealous
+				}
+				NOT = { trait = dragon }
+			}
+			opinion = {
+				modifier = opinion_heretic
+				who = ROOT
+				years = 5
+			}
+		}
+		prestige = 300
+		if = {
+			limit = { NOT = { lifestyle_traits = 1 } }
+			remove_character_modifier = studying_the_stars
+			add_trait = astronomer
+		}
+		if = {
+			limit = { has_nickname = no }
+			random_list = {
+				10 = {
+					give_nickname = nick_the_wise
+				}
+				10 = {
+					give_nickname = nick_the_able
+				}
+				10 = {
+					give_nickname = nick_the_scholar
+				}
+				10 = {
+					give_nickname = nick_priest_hater
+				}
+			}
+		}
+		add_character_modifier = {
+			name = annoyed_religious
+			years = -1
+		}
+	}
+	option = {
+		name = EVTOPTB_WoL_6170 # Keep it secret but continue dedicating myself to knowledge
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 3
+				trait = craven
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = content
+			}
+		}
+		if = {
+			limit = { NOT = { lifestyle_traits = 1 } }
+			remove_character_modifier = studying_the_stars
+			add_trait = astronomer
+		}
+	}
+	option = {
+		name = EVTOPTC_WoL_6170 # Very interesting but I'm done with this
+		ai_chance = {
+			factor = 0.5
+			modifier = {
+				factor = 3
+				trait = slothful
+			}
+		}
+		remove_character_modifier = studying_the_stars
+		add_character_modifier = {
+			name = heliocentrist_scholar
+			duration = -1
+		}
+	}
+	option = {
+		name = EVTOPTD_WoL_6170 # This is heretical - I must burn it!
+		trigger = { 
+			NOT = { trait = cynical } 
+		}
+		ai_chance = {
+			factor = 0.5
+			modifier = {
+				factor = 5
+				trait = zealous
+			}
+		}
+		remove_character_modifier = studying_the_stars
+		if = {
+			limit = {
+				NOT = { trait = zealous }
+				NOT = { personality_traits = 6 }
+			}	
+			random = {
+				chance = 33
+				add_trait = zealous
+				hidden_tooltip = { character_event = { id = 38269 }  }
+			}
+		}	
+	}
+}
+
+
+###########################################
+# Weird studies                           #
+# ID WoL.6300-WoL.6499                    #
+###########################################
+
+# Starts believing in cosmic "things" out there
+character_event = {
+	id = WoL.6300
+	desc = EVTDESC_WoL_6300
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	only_playable = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6300
+		if = {
+			limit = { 
+				NOT = { trait = paranoid } 
+				NOT = { trait = trusting }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = paranoid
+				hidden_tooltip = {
+					character_event = { id = 38275 days = 3 } # Paranoid gained
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = diligent } 
+				NOT = { trait = slothful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = diligent
+				hidden_tooltip = { character_event = { id = 38256 } } #notify
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6310 days = 180 } }
+	}
+}
+
+# Research more expensive than expected, need new equipment
+character_event = {
+	id = WoL.6310
+	desc = EVTDESC_WoL_6110
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6110 # Buy what's needed and continue research
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { wealth = 30 }
+			}
+		}
+		if = {
+			limit = { has_character_flag = owns_observatory_equipment }
+			custom_tooltip = {
+				text = CUSTOM_TOOLTIP_OWNS_OBSERVATORY_EQUIPMENT
+			}
+		}
+		if = {
+			limit = { NOT = { has_character_flag = owns_observatory_equipment } }
+			set_character_flag = owns_observatory_equipment
+			wealth = -30
+		}
+		hidden_tooltip = { character_event = { id = WoL.6320 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6110  # Abandon research
+		ai_chance = {
+			factor = 1
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Friend or family member worries about dangerous research
+character_event = {
+	id = WoL.6320
+	
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					any_courtier = {
+						ai = yes
+						trait = zealous
+						at_location = ROOT
+						OR = {
+							mother = { character = ROOT }
+							father = { character = ROOT }
+							is_parent_of = ROOT
+							AND = {
+								any_sibling = { character = ROOT }
+								NOT = { is_rival = ROOT }
+							}
+							is_friend = ROOT
+						}
+						NOT = { trait = dragon }
+					}
+				}
+			}
+			character_event = { id = WoL.6329 days = 180 }
+			break = yes                                         # NOTE
+		}
+		
+		random_courtier = {
+			limit = {
+				trait = zealous
+				at_location = ROOT
+				OR = {
+					mother = { character = ROOT }
+					father = { character = ROOT }
+					is_parent_of = ROOT
+					AND = {
+						any_sibling = { character = ROOT }
+						NOT = { is_rival = ROOT }
+					}
+					is_friend = ROOT
+				}
+				NOT = { trait = dragon }
+			}
+			character_event = { id = WoL.6321 } # Friend or family is worried
+			break = yes
+		}
+		
+		hidden_tooltip = { character_event = { id = WoL.6329 days = 180 } } #none found
+	}
+}
+
+# Friend or family bounce event
+character_event = {
+	id = WoL.6321
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	immediate = {
+		FROM = { character_event = { id = WoL.6322 } }
+	}
+}
+
+# Respond to worried friend/relative
+character_event = {
+	id = WoL.6322
+	desc = EVTDESC_WoL_6322
+	picture = GFX_evt_courtiers_talking
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6322 # Don't worry
+		reverse_opinion = {
+			modifier = opinion_worried
+			who = FROM
+			years = 2
+		}
+		hidden_tooltip = { character_event = { id = WoL.6329 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6322  # I am communing with other worlds here!
+		prestige = 30
+		reverse_opinion = {
+			modifier = opinion_afraid
+			who = FROM
+			years = 2
+		}
+		hidden_tooltip = { character_event = { id = WoL.6329 days = 180 } }
+	}
+	option = {
+		name = EVTOPTC_WoL_6322 # Alright, I'll stop it (lies)
+		trigger = {
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+		}
+		if = {
+			limit = { 
+				NOT = { trait = deceitful } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = deceitful
+				hidden_tooltip = {
+					character_event = {
+						id = 38255 #Notify Deceitful
+					}
+				}
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6329 days = 180 } }
+	}
+}
+
+# Research needs more info, hears about strange scholar in arab desert, decides to travel there
+character_event = {
+	id = WoL.6329
+
+	hide_window = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				OR = {
+					has_regent = yes
+					in_command = yes
+					has_character_flag = do_not_disturb
+				}
+			}
+			repeat_event = { id = WoL.6329 days = 30 } # Fire again with no scope changes
+			break = yes
+		}
+		character_event = { id = WoL.6330 }
+	}
+}
+
+character_event = {
+	id = WoL.6330
+	desc = EVTDESC_WoL_6330
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	hide_from = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6330 # Go there and see him
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { scaled_wealth = 0.3 }
+			}
+		}
+		scaled_wealth = { value = -0.2 min = -10 max = -100 }
+		hidden_tooltip = { narrative_event = { id = WoL.6331 days = 90 } }
+		set_character_flag = do_not_disturb
+	}
+	option = {
+		name = EVTOPTB_WoL_6330  # Abandon research, this is too much
+		trigger = { NOT = { trait = berserker } }
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { 
+				NOT = { trait = craven } 
+				NOT = { trait = brave }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Meets strange arab scholar, speaks late hours, he tells you of Abdul the Mad and offers to sell you a copy of the strange book that killed him
+narrative_event = {
+	id = WoL.6331
+	desc = EVTDESC_WoL_6331
+	title = EVTTITLE_WoL_6331
+	picture = GFX_evt_lunatic
+	border = GFX_event_narrative_frame_religion
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA_WoL_6331 # Buy it!
+		ai_chance = {
+			factor = 0
+		}
+		#culture_techpoints = 30
+		wealth = -100
+		add_artifact = necronomicon
+		new_artifact = { set_artifact_flag = heirloom_@PREV }
+		clr_character_flag = do_not_disturb
+		hidden_tooltip = { character_event = { id = WoL.6340 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6331  # No thanks
+		ai_chance = {
+			factor = 1
+		}
+		#culture_techpoints = 30
+		clr_character_flag = do_not_disturb
+		hidden_tooltip = { character_event = { id = WoL.6340 days = 180 } }
+	}
+}
+
+# Weird death event for owner of Necronomicon (on action on_death)
+character_event = {
+	id = WoL.6335
+
+	hide_window = yes
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_artifact = necronomicon
+	}
+
+	immediate = {
+		destroy_artifact = necronomicon
+		current_heir = {
+			character_event = { id = WoL.6336 days = 7 }
+		}
+	}
+}
+
+# Heir hears of predecessor's library being raided and strange book disappeared, servants dead in a most horrible and strange way
+character_event = {
+	id = WoL.6336
+	desc = EVTDESC_WoL_6336
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTA_WoL_6336
+	}
+}
+
+# Weird - disturbances in observatory - persist or give up?
+character_event = {
+	id = WoL.6340
+	desc = EVTDESC_WoL_6340
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6340 # Persist!
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { 
+				NOT = { trait = diligent } 
+				NOT = { trait = slothful }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = diligent
+				hidden_tooltip = { character_event = { id = 38256 } }
+			}
+		}
+		if = {
+			limit = { NOT = { trait = stressed } }
+			random = {
+				chance = 20
+				add_trait = stressed
+				hidden_tooltip = { character_event = { id = 38282 } }
+			}
+		}
+		if = {
+			limit = { has_artifact = necronomicon }
+			hidden_tooltip = { character_event = { id = WoL.6350 days = 180 } }
+			break = yes
+		}
+		hidden_tooltip = { character_event = { id = WoL.6360 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6340 # Give up on this silly pursuit
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = diligent
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				NOT = { trait = diligent }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = slothful
+				hidden_tooltip = {
+					character_event = {
+						id = 38251 #Notify Slothful
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = { trait = slothful }
+				trait = diligent
+			}
+			remove_trait = diligent
+		}
+		remove_character_modifier = studying_the_stars
+	}
+}
+
+# Starts going weird in studies of Necronomicon - choose to go deeper or lunatic or not
+character_event = {
+	id = WoL.6350
+	desc = EVTDESC_WoL_6350
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6350 # Leave it on the shelf, it's too scary
+		#culture_techpoints = 20
+		hidden_tooltip = { character_event = { id = WoL.6360 days = 180 } }
+	}
+	option = {
+		name = EVTOPTB_WoL_6350 # Go deeper
+		#culture_techpoints = 200
+		if = {
+			limit = { NOT = { trait = lunatic } }
+			random = {
+				chance = 30
+				add_trait = lunatic
+				hidden_tooltip = { character_event = { id = 38304 } }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = paranoid } 
+				NOT = { trait = trusting } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 33
+				add_trait = paranoid
+				hidden_tooltip = { character_event = { id = 38275 } }
+			}
+		}
+		if = {
+			limit = { has_nickname = no }
+			random_list = {
+				10 = {
+					give_nickname = nick_the_scholar
+				}
+				10 = {
+					give_nickname = nick_the_strange
+				}
+				10 = {
+					give_nickname = nick_the_reader
+				}
+				10 = {
+					give_nickname = nick_the_accursed
+				}
+				10 = {
+					give_nickname = nick_the_black
+				}
+			}
+		}
+		hidden_tooltip = { character_event = { id = WoL.6360 days = 180 } }
+	}
+}
+
+# Studies makes you feel more knowledgeable and wise
+character_event = {
+	id = WoL.6360
+	desc = EVTDESC_WoL_6360
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6360
+		change_learning = 1
+		#culture_techpoints = 100
+		hidden_tooltip = { character_event = { id = WoL.6370 days = 180 } }
+	}
+}
+
+# Breakthrough - you KNOW things!
+character_event = {
+	id = WoL.6370
+	desc = EVTDESC_WoL_6370
+	picture = GFX_evt_comet
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {		
+			has_focus = focus_scholarship
+			trait = astronomer
+		}
+		prisoner = no
+		NOT = { trait = incapable }
+	}
+
+	option = {
+		name = EVTOPTA_WoL_6370 # Keep it secret but continue dedicating myself to knowledge
+		if = {
+			limit = { NOT = { lifestyle_traits = 1 } }
+			remove_character_modifier = studying_the_stars
+			random_list = {
+				80 = { add_trait = astronomer }
+				20 = { add_trait = mystic }
+			}	
+		}
+		if = {
+			limit = { has_nickname = no }
+			random_list = {
+				10 = {
+					give_nickname = nick_the_scholar
+				}
+				10 = {
+					give_nickname = nick_the_strange
+				}
+			}
+		}
+	}
+	option = {
+		name = EVTOPTB_WoL_6370 # Very interesting but there are other things in life
+		remove_character_modifier = studying_the_stars
+		add_character_modifier = {
+			name = weird_scholar
+			duration = -1
+		}
+	}
+}
+
+###AGOT event: offered to buy book
+character_event = { #trigger for non way of life users
+	id = WoL.6550
+	
+	is_triggered_only = yes	
+	hide_window = yes
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	lacks_dlc = "Way of Life"
+	
+	trigger = {
+		OR = {
+			learning = 12
+			trait = scholar
+			trait = erudite
+		}	
+		wealth = 25
+		NOT = { #max six basic books
+			any_artifact = {
+				count = 6				
+				has_artifact_flag = book
+				quality == 1
+			}
+		}
+		NOT = { trait = blinded }
+		NOT = { trait = blinded_age }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 3
+			trait = scholar
+		}
+		modifier = {
+			factor = 2
+			trait = erudite
+		}
+		
+		modifier = {
+			factor = 2
+			trait = diligent
+		}
+		modifier = {
+			factor = 1.5
+			trait = humble
+		}
+		modifier = {
+			factor = 0.5
+			trait = proud
+		}
+		modifier = {
+			factor = 0.25
+			trait = slothful
+		}
+	}
+	
+	immediate = {
+		character_event = { id = WoL.6552 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #trigger for way of life users
+	id = WoL.6551
+	
+	is_triggered_only = yes	
+	hide_window = yes
+	only_playable = yes
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	
+	trigger = {
+		has_focus = focus_scholarship
+		wealth = 25
+		NOT = { #max six basic books
+			any_artifact = {
+				count = 6				
+				has_artifact_flag = book
+				quality == 1
+			}
+		}
+		NOT = { trait = blinded }
+		NOT = { trait = blinded_age }
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		modifier = {
+			factor = 3
+			trait = scholar
+		}
+		modifier = {
+			factor = 2
+			trait = erudite
+		}
+		
+		modifier = {
+			factor = 0.5
+			trait = proud
+		}
+	}
+	
+	immediate = {
+		character_event = { id = WoL.6552 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = WoL.6552
+	desc = EVTDESC_WoL_6552
+	picture = GFX_evt_ritual_scroll
+	border = GFX_event_normal_frame_religion
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		#Pick random book to buy
+		random_list = {
+			10 = {
+				trigger = {
+					year = 8260
+					c_77036 = { #Jaehaerys II
+						is_alive = no
+						age = 30
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_account_of_ninepenny_kings } }
+				}
+				set_character_flag = book_account_of_ninepenny_kings
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_annals_of_the_black_centaur } }
+				}
+				set_character_flag = book_annals_of_the_black_centaur
+			}
+			10 = {
+				trigger = {
+					year = 7996
+					NOT = { any_artifact = { artifact_type = book_battle_and_sieges_of_cob } }
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_battle_and_sieges_of_cob
+			}
+			10 = {
+				trigger = {
+					year = 8290
+					c_88122 = { age = 30 } #Marwyn
+					NOT = { any_artifact = { artifact_type = book_of_lost_books } }
+				}
+				set_character_flag = book_of_lost_books
+			}
+			10 = {
+				trigger = {
+					religion = the_seven
+					NOT = { any_artifact = { artifact_type = book_seven_pointed_star } }
+					NOT = { trait = cynical }
+				}
+				modifier = {
+					factor = 10
+					trait = zealous
+				}
+				set_character_flag = book_seven_pointed_star
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_children_of_summer } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = summer_islander
+						any_vassal = { culture = summer_islander }
+					}
+				}
+				set_character_flag = book_children_of_summer
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_chronicles_of_longsister } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = sisterman
+						any_vassal = { culture = sisterman }
+					}
+				}
+				set_character_flag = book_chronicles_of_longsister
+			}
+			10 = {
+				trigger = {
+					year = 8158
+					c_77036 = { #Daeron I
+						age = 10
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_conquest_of_dorne } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						dynasty = 496						
+						any_vassal = { culture_group = dornish }
+					}
+				}
+				set_character_flag = expensive_book
+				set_character_flag = book_conquest_of_dorne
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_consideration_of_history } }
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_consideration_of_history
+			}
+			10 = {
+				trigger = {
+					year = 8130
+					c_77015 = { #Aegon III
+						age = 10
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_dod_true_telling } }
+				}
+				set_character_flag = book_dod_true_telling
+			}
+			10 = {
+				trigger = {
+					year = 8150
+					NOT = { any_artifact = { artifact_type = book_dragonkin } }
+				}
+				modifier = {
+					factor = 5
+					dynasty = 496
+				}
+				set_character_flag = expensive_book
+				set_character_flag = book_dragonkin
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_the_edge_of_the_world } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = skagosi
+						any_vassal = { culture = skagosi }
+					}
+				}
+				set_character_flag = book_the_edge_of_the_world
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_fire_upon_the_grass } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = dothraki
+						any_vassal = { culture = dothraki }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_fire_upon_the_grass
+			}
+			10 = {
+				trigger = {
+					year = 7950
+					NOT = { any_artifact = { artifact_type = book_the_glory_of_volantis } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = eastern_valyrian
+						culture = volantene
+						any_vassal = { culture = eastern_valyrian }
+						any_vassal = { culture = volantene }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_the_glory_of_volantis
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_hardhome } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						wildling_culture_trigger = yes
+						any_vassal = { wildling_culture_trigger = yes }
+					}
+				}
+				set_character_flag = book_hardhome
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_history_of_the_ironborn } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = iron_isles_culture
+						any_vassal = { culture_group = iron_isles_culture }
+					}
+				}
+				set_character_flag = book_history_of_the_ironborn
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_history_of_kings_btw } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						wildling_culture_trigger = yes
+						any_vassal = { wildling_culture_trigger = yes }
+					}
+				}
+				set_character_flag = book_history_of_kings_btw
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_history_of_rhoynish_wars } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = rhoynar
+						any_vassal = { culture = rhoynar }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_history_of_rhoynish_wars
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_jade_compendium } }
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = expensive_book
+				set_character_flag = book_jade_compendium
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_justice_and_injustice } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = first_men
+						any_vassal = { culture_group = first_men }
+					}
+				}
+				set_character_flag = book_justice_and_injustice
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_kin_of_the_stag } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = stormlander
+						any_vassal = { culture = stormlander }
+					}
+				}
+				set_character_flag = book_kin_of_the_stag
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_the_life_of_triarch_belicho } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = eastern_valyrian
+						any_vassal = { culture = eastern_valyrian }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_the_life_of_triarch_belicho
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_lineages_of_westeros } }
+				}
+				modifier = {
+					factor = 5
+					capital_scope = { region = world_westeros }
+				}
+				set_character_flag = expensive_book
+				set_character_flag = book_lineages_of_westeros
+			}
+			10 = {
+				trigger = {
+					religion = the_seven
+					NOT = { any_artifact = { artifact_type = book_lives_of_the_high_septons } }
+				}
+				set_character_flag = book_lives_of_the_high_septons
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_ten_thousand_ships } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = dornish
+						any_vassal = { culture_group = dornish }
+					}
+				}
+				set_character_flag = book_ten_thousand_ships
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_mountain_and_vale } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = valeman
+						culture = moon_clansman
+						any_vassal = { culture = valeman }
+						any_vassal = { culture = moon_clansman }
+					}
+				}
+				set_character_flag = book_mountain_and_vale
+			}
+			10 = {
+				trigger = {
+					year = 8100
+					26052 = { #Corlys Velaryon
+						age = 40
+					}
+					NOT = { any_artifact = { artifact_type = book_the_nine_voyages } }
+				}
+				set_character_flag = book_the_nine_voyages
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_old_places_of_the_trident } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						religion = old_gods
+						any_vassal = { religion = old_gods }
+					}
+				}
+				set_character_flag = book_old_places_of_the_trident
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_on_miasmas } }
+				}
+				set_character_flag = book_on_miasmas
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_origins_of_the_iron_bank } }
+					has_global_flag = iron_bank_founded
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = braavosi
+						any_vassal = { culture = braavosi }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_origins_of_the_iron_bank
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_passages_of_the_dead  } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						is_old_gods_religion_trigger = yes
+						any_vassal = { is_old_gods_religion_trigger = yes }
+					}
+				}
+				set_character_flag = book_passages_of_the_dead 
+			}
+			10 = {
+				trigger = {
+					year = 8130
+					c_77015 = { #Aegon III
+						age = 10
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_the_princess_and_the_queen } }
+				}
+				set_character_flag = book_the_princess_and_the_queen
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_the_reckoning_of_time } }
+				}
+				set_character_flag = book_the_reckoning_of_time
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_the_red_book } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = ghiscari_group
+						any_vassal = { culture_group = ghiscari_group }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_the_red_book
+			}
+			10 = {
+				trigger = {
+					year = 8200
+					c_77023 = { #Daeron II
+						age = 10
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_the_red_dragon_and_the_black } }
+				}
+				set_character_flag = book_the_red_dragon_and_the_black
+			}
+			10 = {
+				trigger = {
+					year = 8125
+					c_77009 = { #Viserys I
+						age = 10
+						e_iron_throne = { any_previous_holder = { character = PREVPREV } }
+					}
+					NOT = { any_artifact = { artifact_type = book_the_rogue_prince } }
+				}
+				set_character_flag = book_the_rogue_prince
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_rubies_and_iron } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = hyrkoon_group
+						any_vassal = { culture_group = hyrkoon_group }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_rubies_and_iron
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_song_of_the_sea } }
+				}
+				set_character_flag = book_song_of_the_sea
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_songs_the_drowned_men_sing } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						is_drowned_god_religion_trigger = yes
+						any_vassal = { is_drowned_god_religion_trigger = yes }
+					}
+				}
+				set_character_flag = book_songs_the_drowned_men_sing
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_strange_stone } }
+				}
+				set_character_flag = book_strange_stone
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_true_history } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture_group = andal
+						any_vassal = { culture_group = andal }
+					}
+				}
+				set_character_flag = book_true_history
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_watchers_on_the_wall } }
+				}
+				set_character_flag = book_watchers_on_the_wall
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_wed_to_the_sea } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = half_southron
+						any_vassal = { culture = half_southron }
+						has_landed_title = c_whiteharbor
+					}
+				}
+				set_character_flag = book_wed_to_the_sea
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_winter_kings } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						northman_culture_trigger = yes
+						any_vassal = { northman_culture_trigger = yes }
+						dynasty = 59
+					}
+				}
+				set_character_flag = book_winter_kings
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_wonders_made_by_man } }
+				}
+				set_character_flag = expensive_book
+				set_character_flag = book_wonders_made_by_man
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_remnants_of_the_dragonlords } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = volantene
+						any_vassal = { culture = volantene }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { NOT = { region = world_westeros } }
+				}
+				set_character_flag = book_remnants_of_the_dragonlords
+			}
+			10 = {
+				trigger = {
+					year = 8090
+					NOT = { any_artifact = { artifact_type = book_triumphs_and_defeats } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = stormlander
+						any_vassal = { culture = stormlander }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { region = world_westeros }
+				}
+				set_character_flag = book_triumphs_and_defeats
+			}
+			10 = {
+				trigger = {
+					year = 7980
+					NOT = { any_artifact = { artifact_type = book_true_account_addam_duskendales_journeys } }
+				}
+				set_character_flag = book_true_account_addam_duskendales_journeys
+			}
+			10 = {
+				trigger = {
+					year = 8009
+					NOT = { any_artifact = { artifact_type = book_inventories } }
+				}
+				modifier = {
+					factor = 5
+					has_ambition = obj_obtain_valyrian_sword
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { region = world_westeros }
+				}
+				set_character_flag = book_inventories
+			}
+			10 = {
+				trigger = {
+					NOT = { any_artifact = { artifact_type = book_the_measures_of_the_days } }
+				}
+				set_character_flag = book_the_measures_of_the_days
+			}
+			10 = {
+				trigger = {
+					year = 8263
+					c_696969100 = { age = 50 } #Pycelle
+					NOT = { any_artifact = { artifact_type = book_observations_stepstones } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = westerman
+						any_vassal = { culture = westerman }
+					}
+				}
+				modifier = {
+					factor = 3
+					capital_scope = { region = world_westeros }
+				}
+				set_character_flag = book_observations_stepstones
+			}
+			10 = {
+				trigger = {
+					year = 7950
+					NOT = { any_artifact = { artifact_type = book_before_the_dragons } }
+				}
+				modifier = {
+					factor = 5
+					OR = {
+						culture = pentosi
+						any_vassal = { culture = pentosi }
+						culture = lorathi
+						any_vassal = { culture = lorathi }
+					}
+				}
+				modifier = {
+					factor = 3
+					NOT = { capital_scope = { region = world_westeros } }
+				}
+				set_character_flag = book_before_the_dragons
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTA_WoL_6552 # Buy the book
+		ai_chance = {
+			factor = 1
+		}
+		scholar_trait_chance_effect = yes
+		if = {
+			limit = { has_character_flag = book_account_of_ninepenny_kings }			
+			clr_character_flag = book_account_of_ninepenny_kings
+			add_artifact = book_account_of_ninepenny_kings
+		}
+		else_if = {
+			limit = { has_character_flag = book_annals_of_the_black_centaur }			
+			clr_character_flag = book_annals_of_the_black_centaur
+			add_artifact = book_annals_of_the_black_centaur
+		}
+		else_if = {
+			limit = { has_character_flag = book_battle_and_sieges_of_cob }			
+			clr_character_flag = book_battle_and_sieges_of_cob
+			add_artifact = book_battle_and_sieges_of_cob
+		}
+		else_if = {
+			limit = { has_character_flag = book_of_lost_books }			
+			clr_character_flag = book_of_lost_books
+			add_artifact = book_of_lost_books
+		}
+		else_if = {
+			limit = { has_character_flag = book_seven_pointed_star }			
+			clr_character_flag = book_seven_pointed_star
+			add_artifact = book_seven_pointed_star
+		}
+		else_if = {
+			limit = { has_character_flag = book_children_of_summer }			
+			clr_character_flag = book_children_of_summer
+			add_artifact = book_children_of_summer
+		}
+		else_if = {
+			limit = { has_character_flag = book_chronicles_of_longsister }			
+			clr_character_flag = book_chronicles_of_longsister
+			add_artifact = book_chronicles_of_longsister
+		}
+		else_if = {
+			limit = { has_character_flag = book_conquest_of_dorne }			
+			clr_character_flag = book_conquest_of_dorne
+			add_artifact = book_conquest_of_dorne
+		}
+		else_if = {
+			limit = { has_character_flag = book_consideration_of_history }			
+			clr_character_flag = book_consideration_of_history
+			add_artifact = book_consideration_of_history
+		}
+		
+		else_if = {
+			limit = { has_character_flag = book_dod_true_telling }			
+			clr_character_flag = book_dod_true_telling
+			add_artifact = book_dod_true_telling
+		}
+		else_if = {
+			limit = { has_character_flag = book_dragonkin }			
+			clr_character_flag = book_dragonkin
+			add_artifact = book_dragonkin
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_edge_of_the_world }			
+			clr_character_flag = book_the_edge_of_the_world
+			add_artifact = book_the_edge_of_the_world
+		}
+		else_if = {
+			limit = { has_character_flag = book_fire_upon_the_grass }			
+			clr_character_flag = book_fire_upon_the_grass
+			add_artifact = book_fire_upon_the_grass
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_glory_of_volantis }			
+			clr_character_flag = book_the_glory_of_volantis
+			add_artifact = book_the_glory_of_volantis
+		}
+		else_if = {
+			limit = { has_character_flag = book_hardhome }			
+			clr_character_flag = book_hardhome
+			add_artifact = book_hardhome
+		}
+		else_if = {
+			limit = { has_character_flag = book_history_of_the_ironborn }			
+			clr_character_flag = book_history_of_the_ironborn
+			add_artifact = book_history_of_the_ironborn
+		}
+		else_if = {
+			limit = { has_character_flag = book_history_of_kings_btw }			
+			clr_character_flag = book_history_of_kings_btw
+			add_artifact = book_history_of_kings_btw
+		}
+		else_if = {
+			limit = { has_character_flag = book_history_of_rhoynish_wars }			
+			clr_character_flag = book_history_of_rhoynish_wars
+			add_artifact = book_history_of_rhoynish_wars
+		}
+		else_if = {
+			limit = { has_character_flag = book_jade_compendium }			
+			clr_character_flag = book_jade_compendium
+			add_artifact = book_jade_compendium
+		}
+		else_if = {
+			limit = { has_character_flag = book_justice_and_injustice }			
+			clr_character_flag = book_justice_and_injustice
+			add_artifact = book_justice_and_injustice
+		}
+		else_if = {
+			limit = { has_character_flag = book_kin_of_the_stag }			
+			clr_character_flag = book_kin_of_the_stag
+			add_artifact = book_kin_of_the_stag
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_life_of_triarch_belicho }			
+			clr_character_flag = book_the_life_of_triarch_belicho
+			add_artifact = book_the_life_of_triarch_belicho
+		}
+		else_if = {
+			limit = { has_character_flag = book_lineages_of_westeros }			
+			clr_character_flag = book_lineages_of_westeros
+			add_artifact = book_lineages_of_westeros
+		}
+		else_if = {
+			limit = { has_character_flag = book_lives_of_the_high_septons }			
+			clr_character_flag = book_lives_of_the_high_septons
+			add_artifact = book_lives_of_the_high_septons
+		}
+		else_if = {
+			limit = { has_character_flag = book_ten_thousand_ships }			
+			clr_character_flag = book_ten_thousand_ships
+			add_artifact = book_ten_thousand_ships
+		}
+		else_if = {
+			limit = { has_character_flag = book_mountain_and_vale }			
+			clr_character_flag = book_mountain_and_vale
+			add_artifact = book_mountain_and_vale
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_nine_voyages }			
+			clr_character_flag = book_the_nine_voyages
+			add_artifact = book_the_nine_voyages
+		}
+		else_if = {
+			limit = { has_character_flag = book_on_miasmas }			
+			clr_character_flag = book_on_miasmas
+			add_artifact = book_on_miasmas
+		}
+		else_if = {
+			limit = { has_character_flag = book_origins_of_the_iron_bank }			
+			clr_character_flag = book_origins_of_the_iron_bank
+			add_artifact = book_origins_of_the_iron_bank
+		}
+		else_if = {
+			limit = { has_character_flag = book_passages_of_the_dead }			
+			clr_character_flag = book_passages_of_the_dead
+			add_artifact = book_passages_of_the_dead
+		}
+		else_if = {
+			limit = { has_character_flag = bbook_the_princess_and_the_queen }			
+			clr_character_flag = book_the_princess_and_the_queen
+			add_artifact = book_the_princess_and_the_queen
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_reckoning_of_time }			
+			clr_character_flag = book_the_reckoning_of_time
+			add_artifact = book_the_reckoning_of_time
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_red_book }			
+			clr_character_flag = book_the_red_book
+			add_artifact = book_the_red_book
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_red_dragon_and_the_black }			
+			clr_character_flag = book_the_red_dragon_and_the_black
+			add_artifact = book_the_red_dragon_and_the_black
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_rogue_prince }			
+			clr_character_flag = book_the_rogue_prince
+			add_artifact = book_the_rogue_prince
+		}
+		else_if = {
+			limit = { has_character_flag = book_rubies_and_iron }			
+			clr_character_flag = book_rubies_and_iron
+			add_artifact = book_rubies_and_iron
+		}
+		else_if = {
+			limit = { has_character_flag = book_song_of_the_sea }			
+			clr_character_flag = book_song_of_the_sea
+			add_artifact = book_song_of_the_sea
+		}
+		else_if = {
+			limit = { has_character_flag = book_songs_the_drowned_men_sing }			
+			clr_character_flag = book_songs_the_drowned_men_sing
+			add_artifact = book_songs_the_drowned_men_sing
+		}
+		else_if = {
+			limit = { has_character_flag = book_strange_stone }			
+			clr_character_flag = book_strange_stone
+			add_artifact = book_strange_stone
+		}
+		else_if = {
+			limit = { has_character_flag = book_true_history }			
+			clr_character_flag = book_true_history
+			add_artifact = book_true_history
+		}
+		else_if = {
+			limit = { has_character_flag = book_watchers_on_the_wall }			
+			clr_character_flag = book_watchers_on_the_wall
+			add_artifact = book_watchers_on_the_wall
+		}
+		else_if = {
+			limit = { has_character_flag = book_wed_to_the_sea }			
+			clr_character_flag = book_wed_to_the_sea
+			add_artifact = book_wed_to_the_sea
+		}
+		else_if = {
+			limit = { has_character_flag = book_winter_kings }			
+			clr_character_flag = book_winter_kings
+			add_artifact = book_winter_kings
+		}
+		else_if = {
+			limit = { has_character_flag = book_wonders_made_by_man }			
+			clr_character_flag = book_wonders_made_by_man
+			add_artifact = book_wonders_made_by_man
+		}
+		
+		else_if = {
+			limit = { has_character_flag = book_remnants_of_the_dragonlords }			
+			clr_character_flag = book_remnants_of_the_dragonlords
+			add_artifact = book_remnants_of_the_dragonlords
+		}
+		else_if = {
+			limit = { has_character_flag = book_triumphs_and_defeats }			
+			clr_character_flag = book_triumphs_and_defeats
+			add_artifact = book_triumphs_and_defeats
+		}
+		else_if = {
+			limit = { has_character_flag = book_true_account_addam_duskendales_journeys }			
+			clr_character_flag = book_true_account_addam_duskendales_journeys
+			add_artifact = book_true_account_addam_duskendales_journeys
+		}
+		else_if = {
+			limit = { has_character_flag = book_inventories }			
+			clr_character_flag = book_inventories
+			add_artifact = book_inventories
+		}
+		else_if = {
+			limit = { has_character_flag = book_the_measures_of_the_days }			
+			clr_character_flag = book_the_measures_of_the_days
+			add_artifact = book_the_measures_of_the_days
+		}
+		else_if = {
+			limit = { has_character_flag = book_observations_stepstones }			
+			clr_character_flag = book_observations_stepstones
+			add_artifact = book_observations_stepstones
+		}
+		else_if = {
+			limit = { has_character_flag = book_before_the_dragons }			
+			clr_character_flag = book_before_the_dragons
+			add_artifact = book_before_the_dragons
+		}
+		
+		
+		if = {
+			limit = { has_character_flag = expensive_book }			
+			wealth = -50
+			clr_character_flag = expensive_book
+		}
+		else = {
+			wealth = -25
+		}	
+	}
+	option = {
+		name = EVTOPTB_WoL_6552  # No
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+

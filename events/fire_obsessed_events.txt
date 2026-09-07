@@ -1,0 +1,446 @@
+namespace = fire_obsessed
+#crazy targs, rhllor, or people who have simply read about it can get this
+#Fire!!!!
+character_event = {
+	id = fire_obsessed.1
+	desc = "EVTDESCfire_obsessed.1"
+	picture = "GFX_valyria_dragon" 
+	
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		OR = {
+			is_divine_blood_dynasty_trigger = yes
+			religion = rhllor
+			has_character_modifier = reading_valyrian_books
+		}
+		NOT = { trait = fire_obsessed }
+		NOT = { has_character_flag = read_about_fire }			
+		#NOT = { any_courtier = { limit = { has_character_modifier = pyromancer } } }
+	}
+	
+	mean_time_to_happen = {
+		years = 900
+		modifier = {
+			factor = 0.001
+			has_character_modifier = reading_valyrian_books
+		}
+		modifier = {
+			factor = 0.15
+			trait = lunatic
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAfire_obsessed.1"  #send for an alchemist
+		ai_chance = {
+			factor = 70
+		}
+		set_character_flag = read_about_fire
+		location = {
+			ROOT = {
+				create_random_steward = {
+					random_traits = yes
+					dynasty = none
+					female = no
+					age = 32
+					culture = PREV
+					trait = fire_obsessed
+					attributes = {
+						intrigue = 12
+						martial = 2
+					}
+				}
+			}
+		}	
+		hidden_tooltip = {
+			new_character = {
+	 			add_character_modifier = { 
+					name = pyromancer
+					duration = -1
+				}
+	 		}
+			character_event = { id = fire_obsessed.2 days = 10 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBfire_obsessed.1"  #fire is dangerous
+		ai_chance = {
+			factor = 30
+		}
+		remove_character_modifier = reading_valyrian_books
+	}
+}
+
+#Fire obssesed
+character_event = {
+	id = fire_obsessed.2
+	desc = "EVTDESCfire_obsessed.2"
+	picture = "GFX_fire_obsessed" 
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = "EVTOPTAfire_obsessed.2"  #
+		add_trait = fire_obsessed
+		any_courtier = {
+			limit = { has_character_modifier = pyromancer }
+			ROOT = {
+				opinion = {
+					modifier = opinion_pyromancer
+					who = PREV
+					years = 100
+				}
+			}
+		}
+		remove_character_modifier = reading_valyrian_books
+	}
+}
+
+#Burn him alive!
+character_event = {
+	id = fire_obsessed.3
+	desc = "EVTDESCfire_obsessed.3"
+	picture = "GFX_burn_alive" 
+	
+	is_triggered_only = yes	
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAfire_obsessed.3"  #burn him!
+		# ai_chance = {
+			# factor = 50 
+			# modifier = {
+				# factor = 20
+				# trait = cruel
+			# }
+			# modifier = {
+				# factor = 5
+				# trait = impaler
+			# }
+			# modifier = {
+				# factor = 3
+				# trait = lunatic
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = wroth
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = arbitrary
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = possessed
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = paranoid
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = ruthless
+			# }
+			# modifier = { #kind does not cancel out the crazy
+				# factor = 0.2
+				# trait = kind
+			# }
+			# modifier = {
+				# factor = 3
+				# religion = rhllor
+			# }
+		# }
+		
+		#hidden_tooltip = {
+			FROMFROM = {
+				if = { 
+					limit = { 
+						father = { 
+							NOT = { character = ROOT } 
+							is_alive = yes 
+						}  		
+					}
+					father = {
+						character_event = { id = fire_obsessed.4 days = 1 tooltip = EVTTOOLTIPfire_obsessed.4 }
+					}
+				}
+				if = {
+					limit = { 
+						mother = { 
+							NOT = { character = ROOT } 
+							is_alive = yes 
+						} 
+					}
+					mother = {
+						character_event = { id = fire_obsessed.4 days = 1 tooltip = EVTTOOLTIPfire_obsessed.4}
+					}
+				}
+				any_dynasty_member = {
+					limit = { 
+						is_close_relative = ROOT_FROMFROM  
+						NOT = { any_child = { character = ROOT_FROMFROM } }
+						NOT = { character = ROOT }  
+					}
+					character_event = { id = fire_obsessed.4 days = 1 tooltip = EVTTOOLTIPfire_obsessed.4}
+				}	
+				spouse = {
+					if = { 
+						limit = { 
+							NOT = { character = ROOT } 
+							is_alive = yes 
+							OR = {
+								NOT = { dynasty = ROOT_FROMFROM }
+								NOT = { is_close_relative = ROOT_FROMFROM }
+							}
+						}
+						character_event = { id = fire_obsessed.4 days = 1 tooltip = EVTTOOLTIPfire_obsessed.4}
+					}
+				}
+				#add_trait = burned_alive
+			}	
+		#}
+	}
+	
+	# option = {
+		# name = "EVTOPTBfire_obsessed.3"  #mercy
+		# ai_chance = {
+			# factor = 95
+			# modifier = {
+				# factor = 0.2
+				# trait = cruel
+			# }
+			# modifier = {
+				# factor = 10
+				# trait = kind
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = patient
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = just
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = honorable
+			# }
+			# modifier = {
+				# factor = 2
+				# trait = trusting
+			# }
+			# modifier = {
+				# factor = 0.2
+				# religion = rhllor
+			# }
+		# }
+	# }
+}
+
+#Burned alive!
+character_event = {
+	id = fire_obsessed.4
+	desc = "EVTDESCfire_obsessed.4"
+	picture = "GFX_burn_alive" 
+	
+	is_triggered_only = yes	
+	
+	option = {
+		name = "EVTOPTAfire_obsessed.4"  #
+		opinion = {
+			modifier = opinion_burned_closed_relative
+			who = FROM
+			years = 25
+		}
+	}
+}
+#Drive off winter with wildfire!
+character_event = {
+	id = fire_obsessed.5
+	desc = "EVTDESCfire_obsessed.5"
+	picture = "GFX_fire_obsessed" 
+	
+	is_triggered_only = yes
+	only_playable = yes
+	min_age = 16
+	capable_only = yes
+	prisoner = no
+
+	trigger = {
+		trait = fire_obsessed
+		demesne_size = 1		
+		capital_scope = {
+			has_province_modifier = alchemist_guild
+			OR = {
+				has_province_modifier = asoiaf_normal_winter
+				has_province_modifier = asoiaf_harsh_winter
+			}	
+			NOT = { has_province_modifier = wildfire_outbreak }
+			NOT = { has_province_modifier = wildfire_display }
+		}
+	}
+	
+	weight_multiplier = {
+		factor = 1
+		
+		modifier = {
+			factor = 10
+			trait = lunatic
+		}
+		modifier = {
+			factor = 2
+			trait = possessed
+		}
+		modifier = {
+			factor = 3
+			capital_scope = { has_province_modifier = asoiaf_harsh_winter }
+		}
+		
+		modifier = {
+			factor = 0.5
+			learning = 14
+		}
+		modifier = {
+			factor = 0.5
+			learning = 10
+		}
+		modifier = {
+			factor = 2
+			NOT = { learning = 4 }
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAfire_obsessed.5" #Yes!
+		ai_chance = {
+			factor = 50
+			
+			modifier = {
+				factor = 2
+				trait = possessed
+			}
+			modifier = {
+				factor = 10
+				trait = lunatic
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			
+			modifier = {
+				factor = 0.5
+				trait = cynical
+			}
+			modifier = {
+				factor = 2
+				trait = zealous
+			}
+			
+			modifier = {
+				factor = 0.5
+				learning = 14
+			}
+			modifier = {
+				factor = 0.5
+				learning = 10
+			}
+			modifier = {
+				factor = 2
+				NOT = { learning = 4 }
+			}
+		}
+		wealth = -40	
+		custom_tooltip = {
+			text = TOOLTIPfire_obsessed.5
+			hidden_tooltip = {
+				random_list = {
+					80 = { character_event = { id = fire_obsessed.6 days = 3 } }
+					20 = { character_event = { id = fire_obsessed.7 days = 3 } } #accident
+				}
+			}			
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTBfire_obsessed.5"  #fire is dangerous
+		ai_chance = {
+			factor = 50
+		}
+	}
+}
+character_event = { #Wildfire lit
+	id = fire_obsessed.6
+	desc = "EVTDESCfire_obsessed.6"
+	picture = "GFX_evt_wildfire" 
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfire_obsessed.6"
+		prestige = 100
+		capital_scope = {
+			add_province_modifier = {
+				name = wildfire_display
+				duration = 730
+			}
+		}
+	}
+}	
+character_event = { #Accident
+	id = fire_obsessed.7
+	desc = "EVTDESCfire_obsessed.7"
+	picture = GFX_evt_wildfire_city
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAfire_obsessed.7"
+		prestige = -100
+		capital_scope = {
+			add_province_modifier = {
+				name = wildfire_outbreak
+				duration = 365
+			}
+		}
+		random_list = {
+			50 = { 
+			}
+			30 = { 
+				if = {
+					limit = {
+						NOT = { trait = wounded }
+						NOT = { is_maimed_trigger = yes }
+					}
+					add_trait_silently_wounded_effect = yes 
+					hidden_tooltip = {
+						character_event = {
+							id = 38280 #Notify
+						}
+					}
+				}	
+			}
+			15 = { 
+				if = {
+					limit = {
+						NOT = { is_maimed_trigger = yes }
+					}
+					mangle_effect = yes
+				}	
+			}
+			5 = { 
+				red_god_resurrect_effect = yes #check for rhllor resurrection
+				death = { death_reason = death_accident_wildfire }
+			}
+		}
+	}
+}	

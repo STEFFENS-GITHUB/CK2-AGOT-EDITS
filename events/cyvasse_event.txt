@@ -1,0 +1,952 @@
+######################
+###Written by Rodri###
+######################
+
+character_event = { #courtier wants to teach me civasse
+	id = 250910
+	
+	is_triggered_only = yes
+	hide_window = yes	
+
+	ai = no
+	min_age = 16
+	prisoner = no
+	capable_only = yes
+	in_command = no
+	
+	trigger = {		
+		any_courtier = { 
+			OR = {
+				trait = gregarious 
+				trait = gamer
+			}	
+			opinion = { who = ROOT value = 0 }
+			NOT = { trait = incapable }
+			at_location = ROOT
+			prisoner = no
+			age = 16
+			NOT = { trait = dragon }
+		}	
+		is_nomadic = no
+		NOT = { has_character_flag = cyvasse_asked }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		#add modifiers
+		modifier = {
+			factor = 2
+			trait = gamer
+		}
+		modifier = {
+			factor = 5
+			has_focus = focus_carousing
+		}
+		modifier = {
+			factor = 2
+			trait = gregarious
+		}
+		modifier = {
+			factor = 5
+			has_ambition = obj_improve_learning
+		}
+		modifier = {
+			factor = 5
+			has_ambition = obj_improve_intrigue
+		}	
+		modifier = {
+			factor = 0.5
+			trait = shy
+		}
+	}
+
+	immediate = {
+		random_courtier = {
+			limit = {
+				OR = {
+					trait = gregarious 
+					trait = gamer
+				}
+				opinion = { who = ROOT value = 0 }
+				NOT = { trait = incapable }
+				at_location = ROOT
+				prisoner = no
+				age = 16
+				NOT = { trait = dragon }
+			}
+			character_event = { id = 250909 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #courtier wants to teach me civasse
+	id = 250909
+	
+	hide_window = yes	
+	is_triggered_only = yes
+	
+	immediate = {
+		set_character_flag = cyvasse_master
+		if = {
+			limit = { 
+				is_ruler = no
+				NOT = { lifestyle_traits = 1 } 
+			}
+			random = {
+				chance = 25
+				add_trait = gamer
+			}	
+		}
+		FROM = {
+			set_character_flag = cyvasse_asked
+			character_event = { id = 250900 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = { #courtier wants to teache me civasse
+	id = 250900
+	desc = "EVTDESC250900"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTA250900"
+		ai_chance = {
+			factor = 33
+			
+			modifier = {
+				factor = 0
+				has_focus = focus_carousing
+			}
+			modifier = {
+				factor = 0
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = shy
+			}
+			modifier = {
+				factor = 3
+				trait = proud
+			}
+			modifier = {
+				factor = 3
+				trait = wroth
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = slothful
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_spurned
+				who = ROOT
+				months = 12
+			}
+		}	
+		if = {
+			limit = {
+				NOT = { trait = proud }
+				NOT = { trait = humble }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = proud
+				hidden_tooltip = { character_event = { id = 38261 } }
+			}
+		}
+		if = {
+			limit = {
+				trait = humble
+			}
+			random = {
+				chance = 20
+				remove_trait = humble
+				hidden_tooltip = {
+					character_event ={
+						id = 38312 #Notify
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = "EVTOPTB250900"
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 10
+				has_ambition = obj_improve_learning
+			}
+			modifier = {
+				factor = 3
+				trait = gamer
+			}
+			modifier = {
+				factor = 3
+				trait = gregarious
+			}
+			modifier = {
+				factor = 3
+				trait = humble
+			}
+			modifier = {
+				factor = 3
+				trait = patient
+			}
+			modifier = {
+				factor = 3
+				trait = kind
+			}
+		}
+		FROM = {
+			opinion = {
+				modifier = opinion_satisfied
+				who = ROOT
+				months = 12
+			}
+			hidden_tooltip = { character_event = { id = 250908 days = 3 } }	#first I tell master yes / then we play
+		}
+	}
+	option = {
+		name = "EVTOPTC250900"
+		ai_chance = {
+			factor = 33
+			modifier = {
+				factor = 10
+				has_ambition = obj_improve_intrigue
+			}
+			modifier = {
+				factor = 3
+				trait = gamer
+			}
+			modifier = {
+				factor = 3
+				trait = gregarious
+			}
+			modifier = {
+				factor = 3
+				trait = ambitious
+			}
+			modifier = {
+				factor = 3
+				trait = deceitful
+			}
+			modifier = {
+				factor = 3
+				trait = diligent
+			}
+		}
+		# change_intrigue = 1 will give it after 
+		if = { 
+			limit = { intrigue = 10 }
+			hidden_tooltip = { character_event = { id = 250902 days = 3 } }		
+		}
+		if = { 
+			limit = { NOT = { intrigue = 10 } }
+			hidden_tooltip = { character_event = { id = 250903 days = 3 } }		
+		}
+	}
+}
+
+character_event = { #we play civasse
+	id = 250908
+	desc = "EVTDESC250908"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = "player wont see this narrative reason"
+		FROM = {
+			character_event = { id = 250901 }
+		}		
+	}
+}
+
+character_event = { #we play civasse
+	id = 250901
+	desc = "EVTDESC250901"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = {
+		name = "EVTOPTA250901"
+		hidden_tooltip = {
+			random_list = {
+				50 = {
+					modifier = {
+						factor = 3
+						trait = gamer
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = learning
+							value = 3
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = learning
+							value = 5
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = learning
+							value = 7
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = learning
+							value = 9
+						}
+					}
+					character_event = { id = 250905 days = 3 } #character wins
+				}
+				50 = {
+					modifier = {
+						factor = 3
+						FROM = { trait = gamer }
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = learning
+								value = 3
+							}
+						}	
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = learning
+								value = 5
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = learning
+								value = 7
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = learning
+								value = 9
+							}
+						}
+					}
+					character_event = { id = 250904 days = 3 } #master wins
+				}
+			}
+		}
+	}
+	option = {
+		name = {
+			text = "EVTOPTB250901" #pretty girl distract
+			trigger = {
+				FROM = {
+					OR = {
+						is_female = no
+						trait = homosexual
+					}
+					OR = {
+						is_female = yes
+						NOT = { trait = homosexual }
+					}
+				}
+			}
+		}	
+		name = {
+			text = "EVTOPTC250901" #pretty boy distract
+			trigger = {
+				FROM = {
+					OR = {
+						is_female = yes
+						trait = homosexual
+					}
+					OR = {
+						is_female = no
+						NOT = { trait = homosexual }
+					}
+				}
+			}
+		}
+		trigger = {
+			any_courtier = {
+				is_married = no
+				OR = {			
+					AND = {
+						same_sex = FROM
+						FROM = { trait = homosexual }
+					}
+					AND = {
+						NOT = { same_sex = FROM }
+						FROM = { NOT = { trait = homosexual } }
+					}
+				}
+				age = 16
+				NOT = { age = 22 }
+				NOT = { is_close_relative = ROOT }
+				NOT = { trait = dragon }
+				dynasty = 0
+				opinion = { who = ROOT value = 0 }
+				NOT = { trait = incapable }
+				intrigue = 6
+			}
+			NOT = { trait = honorable }
+			NOT = { trait = honest }
+		}
+		random_courtier = {
+			limit = {
+				is_married = no
+				OR = {			
+					AND = {
+						same_sex = FROM
+						FROM = { trait = homosexual }
+					}
+					AND = {
+						NOT = { same_sex = FROM }
+						FROM = { NOT = { trait = homosexual } }
+					}
+				}
+				age = 16
+				NOT = { age = 22 }
+				NOT = { is_close_relative = ROOT }
+				NOT = { trait = dragon }
+				dynasty = 0
+				opinion = { who = ROOT value = 0 }
+				NOT = { trait = incapable }
+				intrigue = 6
+			}
+			tooltip = { show_portrait = yes }
+			save_event_target_as = cyvasse_distraction
+		}
+		hidden_tooltip = {
+			random_list = {
+				50 = {
+					modifier = {
+						factor = 3
+						trait = gamer
+					}
+					modifier = {
+						factor = 3
+						FROM = { trait = lustful }
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = intrigue
+							value = 3
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = intrigue
+							value = 5
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = intrigue
+							value = 7
+						}
+					}
+					modifier = {
+						factor = 1.5
+						attribute_diff = {
+							character = FROM
+							attribute = intrigue
+							value = 9
+						}
+					}
+					character_event = { id = 250907 days = 3 } #character wins
+				}
+				50 = {
+					modifier = {
+						factor = 3
+						FROM = { trait = gamer }
+					}
+					modifier = {
+						factor = 3
+						FROM = { trait = chaste }
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = intrigue
+								value = 3
+							}
+						}	
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = intrigue
+								value = 5
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = intrigue
+								value = 7
+							}
+						}
+					}
+					modifier = {
+						factor = 1.5
+						FROM = {
+							attribute_diff = {
+								character = ROOT
+								attribute = intrigue
+								value = 9
+							}
+						}
+					}
+					character_event = { id = 250906 days = 3 } #master wins
+				}
+			}
+		}
+	}
+}
+character_event = { #reaction to lost game
+	id = 250904
+	desc = "EVTDESC250904"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = { # LOST - was a good game
+		name = "EVTOPTA250904"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = temperate
+			}		
+		}
+		FROM = {
+			FROM = {
+				opinion = {
+					modifier = opinion_satisfied
+					who = ROOT
+					months = 12
+				}
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = temperate } 
+				NOT = { trait = gluttonous } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = temperate
+				lose_weight_medium_effect = yes
+				weight_trait_check_effect = yes
+				hidden_tooltip = { character_event = { id = 38276 } }
+			}	
+		}
+	}
+	
+	option = { # LOST - rage quit!!!
+		name = "EVTOPTB250904"
+		trigger = {
+			NOT = { trait = patient }
+		}	
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}			
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = patient
+			}
+		}
+		FROM = {
+			FROM = {
+				opinion = {
+					modifier = opinion_worried
+					who = ROOT
+					months = 12
+				}
+			}
+		}
+		if = {
+			limit = { 
+				not = { trait = wroth } 
+				not = { trait = patient } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = wroth
+				hidden_tooltip = { character_event = { id = 38254 } }
+			}	
+		}
+	}	
+}
+character_event = { #reaction to won game
+	id = 250905
+	desc = "EVTDESC250905"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	only_playable = yes
+	show_from_from = yes
+	
+	option = { # WON - was a good game
+		name = "EVTOPTA250905"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = temperate
+			}
+			modifier = {
+				factor = 4
+				trait = humble
+			}			
+		}
+		FROM = {
+			FROM = {
+				opinion = {
+					modifier = opinion_satisfied
+					who = ROOT
+					months = 12
+				}
+			}
+		}
+		if = {
+			limit = { 
+				has_character_modifier = apprentice_boardgamer
+				NOT = { lifestyle_traits = 1 } 
+			}
+			add_trait = gamer
+		}
+		if = {
+			limit = {
+				has_focus = focus_carousing
+				NOT = { has_character_modifier = apprentice_boardgamer }
+				NOT = { trait = gamer }
+			}
+			add_character_modifier = {
+				name = apprentice_boardgamer
+				days = -1
+			}
+		}
+		if = {
+			limit = { 
+				not = { trait = humble } 
+				NOT = { trait = proud }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = humble
+				hidden_tooltip = { character_event = { id = 38260  } }
+			}	
+		}
+		prestige = 10
+	}
+	
+	option = { # won - IN YOUR FACE!!!!
+		name = "EVTOPTB250905"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}			
+			modifier = {
+				factor = 0
+				trait = honorable
+			}
+			modifier = {
+				factor = 0
+				trait = patient
+			}
+		}
+		FROM = {
+			FROM = {
+				opinion = {
+					modifier = opinion_mocked
+					who = ROOT
+				}
+			}
+		}
+		if = {
+			limit = { 
+				has_character_modifier = apprentice_boardgamer
+				NOT = { lifestyle_traits = 1 } 
+			}
+			add_trait = gamer
+		}
+		if = {
+			limit = {
+				has_focus = focus_carousing
+				NOT = { has_character_modifier = apprentice_boardgamer }
+				NOT = { trait = gamer }
+			}
+			add_character_modifier = {
+				name = apprentice_boardgamer
+				days = -1
+			}
+		}		
+		if = {
+			limit = { 
+				not = { trait = wroth } 
+				NOT = { trait = patient }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = wroth
+				hidden_tooltip = { character_event = { id = 38254 } }
+			}	
+		}
+	}	
+}
+
+character_event = { #reaction to lost game / cheat
+	id = 250906
+	desc = "EVTDESC250906"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = { # lost - should let my spymaster plan to win
+		name = "EVTOPTA250906"
+		ai_chance = {
+			factor = 1
+		}
+		prestige = -25
+		change_intrigue = -1		
+	}
+	
+	option = { # lost - girl will suffer!!!!
+		name = "EVTOPTB250906"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}			
+			modifier = {
+				factor = 0
+				trait = kind
+			}
+			modifier = {
+				factor = 0
+				trait = patient
+			}
+		}
+		prestige = -25
+		change_intrigue = -1	
+		if = {
+			limit = { 
+				not = { trait = cruel } 
+				NOT = { trait = kind }
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 20
+				add_trait = cruel
+				hidden_tooltip = { character_event = { id = 38259 } }
+			}	
+		}
+		if = {
+			limit = {  trait = kind } 
+			random = {
+				chance = 20
+				remove_trait = kind
+				hidden_tooltip = { character_event = { id = 38307 } }
+			}	
+		}
+		event_target:cyvasse_distraction = {
+			add_trait = stressed
+			random = {
+				chance = 5
+				add_trait_silently_wounded_effect = yes
+			}
+		}
+	}	
+}
+character_event = { #reaction to won game / cheat
+	id = 250907
+	desc = "EVTDESC250907"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = { # won - fscinating scheeming
+		name = "EVTOPTA250907"
+		ai_chance = {
+			factor = 1
+		}	
+		prestige = 25
+		change_intrigue = 1
+	}
+	
+	option = { # won - wow 
+		name = "EVTOPTB250907"
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 4
+				trait = lustful
+			}
+			modifier = {
+				factor = 4
+				trait = arbitrary
+			}			
+			modifier = {
+				factor = 0
+				trait = just
+			}
+		}
+		trigger = {
+			event_target:cyvasse_distraction = {
+				OR = {			
+					AND = {
+						same_sex = ROOT
+						trait = homosexual
+						ROOT = { trait = homosexual }
+					}
+					AND = {
+						NOT = { same_sex = ROOT }
+						NOT = { trait = homosexual }
+						ROOT= { NOT = { trait = homosexual } }
+					}
+				}
+				NOT = { trait = chaste }
+				NOT = { trait = slave }
+				NOT = { trait = eunuch }
+				NOT = { trait = celibate }
+			}
+			NOT = { trait = chaste }
+			NOT = { trait = eunuch }
+			NOT = { trait = celibate }
+		}
+		prestige = 25
+		change_intrigue = 1
+		event_target:cyvasse_distraction = {
+			add_lover = ROOT
+		}
+	}
+}
+character_event = { 
+	id = 250902
+	desc = "EVTDESC250902"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = { # ok
+		name = "EVTOPTA250902"
+		prestige = 25
+	}
+}
+character_event = { 
+	id = 250903
+	desc = "EVTDESC250903"
+	picture = GFX_evt_brothel
+	
+	is_triggered_only = yes
+	
+	only_playable = yes
+	
+	option = { # ok
+		name = "EVTOPTA250903"
+		prestige = -25
+		random = {
+			chance = 5
+			add_trait_silently_wounded_effect = yes
+			hidden_tooltip = {
+				character_event ={
+					id = 38280 #Notify
+				}
+			}
+		}
+	}
+}

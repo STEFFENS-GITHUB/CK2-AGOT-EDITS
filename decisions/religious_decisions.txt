@@ -1,0 +1,1021 @@
+###########################################
+#
+# Religious Decisions for Sons of Abraham
+#
+###########################################
+# Written by Henrik Fåhraeus
+###########################################
+
+decisions = {
+
+	restore_pope_in_rome = {
+		is_high_prio = yes
+		only_independent = yes
+		potential = {
+			is_playable = yes
+			independent = yes
+			has_dlc = "Sons of Abraham"
+			
+			religion = the_seven
+			OR = {
+				AND = {
+					has_global_flag = great_sept_built
+					b_great_sept_of_baelor = {
+						holder_scope = {
+							NOT = { has_landed_title = k_the_most_devout }
+							OR = {
+								character = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+					}
+				}	
+				AND = {
+					NOT = { has_global_flag = great_sept_built }
+					b_starry_sept = {
+						holder_scope = {
+							NOT = { has_landed_title = k_the_most_devout }
+							OR = {
+								character = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+					}
+				}	
+			}	
+			k_the_most_devout = {
+				holder_scope = {
+					NOT = { war_with = ROOT }
+				}
+			}	
+		}
+		
+		allow = {
+			war = no
+			k_the_most_devout = {
+				holder_scope = {
+					war = no
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_my_title } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_usurped_title } }
+				}
+			}	
+		}
+		
+		effect = {
+			piety = 400		
+			if = {
+				limit = {
+					has_global_flag = great_sept_built
+					b_great_sept_of_baelor = {
+						holder_scope = {
+							NOT = { has_landed_title = k_the_most_devout }
+							OR = {
+								character = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+					}
+				}
+				k_the_most_devout = {
+					holder_scope = {
+						b_great_sept_of_baelor = {
+							grant_title = PREV
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_restored_to_rome
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = great_sept_built }	
+					b_starry_sept = {
+						holder_scope = {
+							NOT = { has_landed_title = k_the_most_devout }
+							OR = {
+								character = ROOT
+								is_liege_or_above = ROOT
+							}
+						}
+					}
+				}
+				k_the_most_devout = {
+					holder_scope = {
+						b_starry_sept = {
+							grant_title = PREV
+						}
+						opinion = {
+							who = ROOT
+							modifier = opinion_restored_to_rome
+						}
+					}
+				}
+			}
+			k_the_most_devout = {
+				holder_scope = {
+					e_rebels = {
+						persistent_event_target:chronicle_player = {
+							if = {
+								limit = { 
+									OR = {		
+										character = ROOT
+										dynasty = ROOT
+										is_liege_or_above = ROOT
+										capital_scope = { region = world_westeros }
+										religion = the_seven
+									}
+								}
+								chronicle = {
+									entry = CHRONICLE_RESTORED_HIGH_SEPTON
+									portrait = [PrevPrev.GetID]
+								}	
+							}
+						}
+					}	
+				}
+			}	
+		}
+		
+		ai_check_interval = 3
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	
+	restore_faith_militant = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = {
+			has_landed_title = k_the_most_devout
+			OR = {
+				NOT = { is_title_active = d_warriors_sons }
+				NOT = { is_title_active = d_poor_fellows }
+			}
+			OR = {
+				AND = {
+					independent = yes
+					k_the_most_devout = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+				}
+				AND = {
+					independent = no
+					liege = {
+						NOT = { character = ROOT }
+						crownlaw_title = { 
+							OR = {
+								has_law = investiture_law_2
+								has_law = investiture_law_3
+							}
+						}	
+					}
+				}
+			}			
+		}
+		
+		allow = { war = no }
+		
+		effect = {	
+			narrative_event = { id = religious.200 tooltip = TOOLTIPreligious.200 }
+			set_character_flag = faith_militant_restored_by_decision
+		}
+		
+		ai_check_interval = 3
+		
+		ai_will_do = {
+			factor = 1
+		}
+	}	
+	
+	renounce_piracy = {
+		#only_playable = yes
+		potential = {
+			#is_ruler = yes
+			OR = {
+				religion = pirate
+				religion = corsair
+			}	
+			NOT = { has_character_flag = reounced_piracy }
+		}
+		allow = {
+			OR = {
+				AND = {
+					custom_tooltip = {
+						text = TOOLTIPISHIGHLORDTIERORGREATER
+						higher_tier_than = DUKE
+					}
+					custom_tooltip = {
+						text = TOOLTIPINDEPENDENTCONDITION
+						hidden_tooltip = {
+							independent = yes
+							OR = {
+								tier = EMPEROR
+								primary_title = { NOT = { check_variable = { which = "de_facto_empire" value = 1 } } }
+							}	
+						}
+					}
+					realm_size = 150
+				}
+				AND = {
+					independent = no
+					NOT = { any_liege = { trait = pirate } }
+					capital_scope = {
+						NOR = {
+							religion = pirate
+							religion = corsair
+						}
+					}
+				}
+				hidden_tooltip = {
+					AND = {
+						is_ruler = no
+						liege = { 
+							NOR = {
+								trait = pirate
+								religion = pirate
+								religion = corsair
+							}
+						} 
+					}
+				}	
+			}	
+			NOT = { trait = zealous }
+			war = no		
+		}
+		effect = {
+			set_character_flag = renounced_piracy
+			remove_trait = pirate
+			character_event = { id = pirate.25 }
+			if = {
+				limit = { is_ruler = yes }
+				custom_tooltip = {
+					text = TOOLTIPrenounce_pirate_courtiers # Vassals and Courtiers can convert
+					hidden_tooltip = {
+						any_realm_character = {
+							limit = {
+								OR = {
+									religion = pirate
+									religion = corsair
+								}
+								NOT = { character = ROOT }
+								can_change_religion = yes
+							}
+							character_event = { id = pirate.30 days = 4 }
+						}
+					}
+				}
+				any_demesne_title = {
+					limit = {
+						tier = BARON
+						holding_type = castle
+						has_building = ca_asoiaf_pirateshipyard
+					}
+					if = {
+						limit = { has_building = ca_asoiaf_pirateshipyard_5 }
+						add_building = ca_shipyard_4
+						hidden_tooltip = {
+							add_building = ca_shipyard_3
+							add_building = ca_shipyard_2
+							add_building = ca_shipyard_1
+						}
+						add_building = ca_town_4
+						hidden_tooltip = {
+							add_building = ca_town_3
+							add_building = ca_town_2
+							add_building = ca_town_1
+						}
+						add_building = ca_militia_barracks_3
+						hidden_tooltip = {
+							add_building = ca_militia_barracks_2
+							add_building = ca_militia_barracks_1
+						}
+						add_building = ca_barracks_6
+						hidden_tooltip = {
+							add_building = ca_barracks_5
+							add_building = ca_barracks_4
+							add_building = ca_barracks_3
+							add_building = ca_barracks_2
+							add_building = ca_barracks_1
+						}
+						remove_building = ca_asoiaf_pirateshipyard_5
+						hidden_tooltip = {
+							remove_building = ca_asoiaf_pirateshipyard_4
+							remove_building = ca_asoiaf_pirateshipyard_3
+							remove_building = ca_asoiaf_pirateshipyard_2
+							remove_building = ca_asoiaf_pirateshipyard
+						}
+					}
+					if = {
+						limit = { 
+							has_building = ca_asoiaf_pirateshipyard_4 
+							NOT = { has_building = ca_asoiaf_pirateshipyard_5 }
+						}
+						add_building = ca_shipyard_4
+						hidden_tooltip = {
+							add_building = ca_shipyard_3
+							add_building = ca_shipyard_2
+							add_building = ca_shipyard_1
+						}
+						add_building = ca_town_3
+						hidden_tooltip = {
+							add_building = ca_town_2
+							add_building = ca_town_1
+						}
+						add_building = ca_militia_barracks_3
+						hidden_tooltip = {
+							add_building = ca_militia_barracks_2
+							add_building = ca_militia_barracks_1
+						}
+						add_building = ca_barracks_6
+						hidden_tooltip = {
+							add_building = ca_barracks_5
+							add_building = ca_barracks_4
+							add_building = ca_barracks_3
+							add_building = ca_barracks_2
+							add_building = ca_barracks_1
+						}
+						remove_building = ca_asoiaf_pirateshipyard_4
+						hidden_tooltip = {
+							remove_building = ca_asoiaf_pirateshipyard_3
+							remove_building = ca_asoiaf_pirateshipyard_2
+							remove_building = ca_asoiaf_pirateshipyard
+						}
+					}
+					if = {
+						limit = { 
+							has_building = ca_asoiaf_pirateshipyard_3
+							NOT = { has_building = ca_asoiaf_pirateshipyard_4 }
+						}
+						add_building = ca_shipyard_3
+						hidden_tooltip = {
+							add_building = ca_shipyard_2
+							add_building = ca_shipyard_1
+						}
+						add_building = ca_town_3
+						hidden_tooltip = {
+							add_building = ca_town_2
+							add_building = ca_town_1
+						}
+						add_building = ca_militia_barracks_3
+						hidden_tooltip = {
+							add_building = ca_militia_barracks_2
+							add_building = ca_militia_barracks_1
+						}
+						add_building = ca_barracks_5
+						hidden_tooltip = {
+							add_building = ca_barracks_4
+							add_building = ca_barracks_3
+							add_building = ca_barracks_2
+							add_building = ca_barracks_1
+						}
+						remove_building = ca_asoiaf_pirateshipyard_3
+						hidden_tooltip = {
+							remove_building = ca_asoiaf_pirateshipyard_2
+							remove_building = ca_asoiaf_pirateshipyard
+						}
+					}
+					if = {
+						limit = { 
+							has_building = ca_asoiaf_pirateshipyard_2
+							NOT = { has_building = ca_asoiaf_pirateshipyard_3 }
+						}
+						add_building = ca_shipyard_2
+						hidden_tooltip = {
+							add_building = ca_shipyard_1
+						}
+						add_building = ca_town_2
+						hidden_tooltip = {
+							add_building = ca_town_1
+						}
+						add_building = ca_militia_barracks_2
+						hidden_tooltip = {
+							add_building = ca_militia_barracks_1
+						}
+						add_building = ca_barracks_4
+						hidden_tooltip = {
+							add_building = ca_barracks_3
+							add_building = ca_barracks_2
+							add_building = ca_barracks_1
+						}
+						remove_building = ca_asoiaf_pirateshipyard_2
+						hidden_tooltip = {
+							remove_building = ca_asoiaf_pirateshipyard
+						}
+					}
+					if = {
+						limit = { 
+							has_building = ca_asoiaf_pirateshipyard
+							NOT = { has_building = ca_asoiaf_pirateshipyard_2 }
+						}
+						add_building = ca_shipyard_1
+						add_building = ca_town_1
+						add_building = ca_militia_barracks_1
+						add_building = ca_barracks_3
+						hidden_tooltip = {
+							add_building = ca_barracks_2
+							add_building = ca_barracks_1
+						}
+						remove_building = ca_asoiaf_pirateshipyard
+					}
+				}
+				religion_authority = {
+					modifier = ruler_converted_from
+				}
+			}	
+			tooltip = {
+				if = {
+					limit = { trait = cynical }
+					add_trait = sympathy_pirate_group
+				}
+				if = {
+					limit = { 
+						NOT = { trait = cynical }
+						NOT = { trait = zealous }
+					}
+					random = {
+						chance = 50
+						add_trait = sympathy_pirate_group
+					}	
+				}
+			}
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1000
+			
+			modifier = {
+				factor = 0
+				higher_tier_than = DUKE
+				OR = {
+					any_vassal = { 
+						trait = pirate
+						NOT = { tier = BARON }
+					}
+					trait = ruthless
+					trait = greedy
+					trait = arbitrary
+				}
+			}
+			modifier = {
+				factor = 0
+				top_liege = { is_allowed_to_loot = yes }
+			}
+			modifier = {
+				factor = 0
+				capital_scope = {
+					OR = {
+						region = world_stepstones
+						region = world_basilisk_isles
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				is_ruler = no
+				liege = {
+					capital_scope = {
+						OR = {
+							region = world_stepstones
+							region = world_basilisk_isles
+						}
+					}
+				}	
+			}
+			modifier = {
+				factor = 0	
+				OR = {
+					trait = ruthless
+					trait = greedy
+					trait = arbitrary
+					has_slavery_culture_trigger = yes
+				}				
+				capital_holding = {
+					OR = {
+						has_building = ca_asoiaf_pirateshipyard_5
+						has_building = ca_asoiaf_pirateshipyard_4
+						has_building = ca_asoiaf_pirateshipyard_3
+					}
+				}			
+			}
+		}
+	}
+	restore_high_priest_in_volantis = {
+		is_high_prio = yes
+		only_playable = yes
+		potential = {
+			is_playable = yes
+			OR = {
+				religion = rhllor
+				has_landed_title = k_volantis
+			}	
+			d_rhllor = {
+				holder_scope = {
+					NOT = { has_landed_title = c_templelordoflight }
+					religion = rhllor
+					OR = {
+						is_liege_or_above = ROOT
+						independent = yes
+					}	
+				}	
+			}
+			c_templelordoflight = {
+				holder_scope = {
+					OR = {
+						character = ROOT
+						is_liege_or_above = ROOT
+					}
+				}
+			}							
+		}
+		
+		allow = {
+			war = no
+			d_rhllor = {
+				holder_scope = {
+					war = no
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_revoked_my_title } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_usurped_title } }
+					OR = {
+						is_liege_or_above = ROOT
+						NOT = { demesne_size = 1 }
+					}
+				}
+			}	
+		}
+		
+		effect = {
+			if = {
+				limit = { religion = rhllor }
+				piety = 400	
+			}	
+			d_rhllor = {
+				holder_scope = {
+					c_templelordoflight = {
+						grant_title = PREV
+					}
+					opinion = {
+						who = ROOT
+						modifier = opinion_restored_to_rome
+					}
+					if = {
+						limit = {
+							NOT = { liege = { character = ROOT } } 
+							lower_tier_than = ROOT
+						}
+						set_defacto_liege = ROOT
+					}
+				}
+			}
+			any_vassal = {
+				limit = { 
+					religion = rhllor 
+					NOT = { has_landed_title = d_rhllor }
+				}
+				opinion = {
+					who = ROOT
+					modifier = opinion_restored_high_priest
+				}
+			}
+			d_rhllor = {
+				holder_scope = {
+					e_rebels = {
+						persistent_event_target:chronicle_player = {
+							if = {
+								limit = { 
+									OR = {		
+										character = ROOT
+										dynasty = ROOT
+										is_liege_or_above = ROOT
+										capital_scope = { region = world_volantis }
+										religion = rhllor
+									}
+								}
+								chronicle = {
+									entry = CHRONICLE_RESTORED_HIGH_PRIEST
+									portrait = [PrevPrev.GetID]
+								}	
+							}
+						}
+					}	
+				}
+			}	
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { religion = rhllor }
+				d_rhllor = {
+					holder_scope = {
+						NOT = { reverse_opinion = { who = ROOT value = -19 } }
+					}
+				}	
+			}
+			modifier = {
+				factor = 0
+				d_rhllor = {
+					holder_scope = {
+						OR = {
+							NOT = { opinion = { who = ROOT value = -49 } }
+							NOT = { reverse_opinion = { who = ROOT value = -49 } }
+							prisoner = yes
+							is_rival = ROOT
+						}
+					}
+				}	
+			}
+		}
+	}
+	
+	claim_religion_head_title = {
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			is_playable = yes
+			demesne_size = 1
+			OR = {			
+				religion = thenn_rel
+				is_theocracy = yes
+			}	
+			rightful_religious_head_scope = { 
+				NOT = { character = ROOT }
+				NOT = {
+					any_demesne_title = {
+						controls_religion = yes
+						claimed_by = ROOT
+					}
+				}
+			}	
+		}
+		
+		allow = {
+			piety = 250
+			prestige = 250
+			OR = {
+				independent = yes
+				NOT = { any_liege = { religion = ROOT } }
+			}	
+			rightful_religious_head_scope = {
+				OR = {
+					lower_tier_than = ROOT
+					NOT = { demesne_size = 1 }
+				}	
+			}
+			NOT = { is_inaccessible_trigger = yes }			
+		}
+		
+		effect = {
+			rightful_religious_head_scope = {
+				random_demesne_title = {
+					limit = { controls_religion = yes }
+					if = {
+						limit = { holder_scope = { demesne_size = 1 } }
+						add_claim = ROOT
+						holder_scope = {
+							opinion = {
+								who = ROOT
+								modifier = opinion_claimed_my_title
+							}
+						}
+					}	
+					if = {
+						limit = { holder_scope = { NOT = { demesne_size = 1 } } }
+						usurp_title = ROOT
+					}	
+				}	
+			}				
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	
+	close_the_labyrinths = { 
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			is_playable = yes
+			has_global_flag = old_ones_scourge	
+		}
+		
+		allow = {
+			has_landed_title = k_leng			
+			any_demesne_province = { region = world_leng }	
+			NOT = { trait = lunatic }
+			OR = {
+				piety = 500
+				diplomacy = 12
+			}
+			is_adult = yes
+			prisoner = no
+			is_incapable = no
+			war = no
+		}
+		
+		effect = {
+			character_event = { id = essos.149 tooltip = TOOLTIPessos.149 }	
+			prestige = 750
+			if = {
+				limit = { religion = old_ones }
+				piety = -500
+			}
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 0.15
+			modifier = {
+				factor = 100
+				NOT = { religion = old_ones }
+			}
+			modifier = {
+				factor = 0
+				religion = old_ones
+				trait = zealous
+			}
+			modifier = {
+				factor = 2
+				trait = kind
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = just
+			}
+			modifier = {
+				factor = 0.25
+				trait = cruel
+			}
+			modifier = {
+				factor = 0.25
+				trait = ruthless
+			}
+			modifier = {
+				factor = 0.25
+				trait = arbitrary
+			}
+		}
+	}
+	massacre_foreigners = { 
+		is_high_prio = yes
+		only_playable = yes
+		
+		potential = {
+			is_playable = yes
+			demesne_size = 1
+			has_global_flag = old_ones_scourge	
+			religion = old_ones
+		}
+		
+		allow = {
+			OR = {
+				trait = lunatic
+				trait = old_ones_scourge
+			}
+			is_adult = yes
+			prisoner = no
+			is_incapable = no
+			any_demesne_province = {
+				NOT = { has_province_modifier = massacred_foreigners }
+				NOT = { has_province_modifier = massacred_foreigners_lite }
+				any_province_holding = { NOT = { holding_type = nomad } }
+			}
+			hidden_tooltip = { NOT = { has_character_flag = massacred_foreigners } }
+		}
+		
+		effect = {
+			character_event = { id = essos.161 tooltip = TOOLTIPessos.161 }
+			set_character_flag = massacred_foreigners
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 0.15
+			modifier = {
+				factor = 100
+				trait = zealous
+			}
+			modifier = {
+				factor = 100
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					trait = kind
+					trait = honorable
+					trait = just
+				}
+				NOT = { trait = zealous }
+				NOT = { trait = lunatic }				
+			}
+			modifier = {
+				factor = 3
+				trait = cruel
+			}
+			modifier = {
+				factor = 3
+				trait = ruthless
+			}
+			modifier = {
+				factor = 3
+				trait = arbitrary
+			}
+		}
+	}
+	choose_syncretic_faith = {
+		only_playable = yes
+		potential = {
+			OR = {
+				religion = moonsingers
+				religion = valyrian_rel
+				has_religion_feature = religion_syncretic
+				has_religion_feature = religion_feature_valyrian_rel
+				has_religion_feature = religion_feature_moonsingers
+				AND = {
+					NOT = { has_dlc = "Holy Fury" }
+					OR = {
+						religion = moonsingers_reformed
+						religion = valyrian_rel_reformed
+					}
+				}
+			}
+			NAND = {
+				ai = yes
+				has_chosen_syncretic_faith_trigger = yes
+			}
+		}
+		allow = {
+			conditional_tooltip = {
+				trigger = { NOT = { has_chosen_syncretic_faith_trigger = yes } }
+				piety = 20
+			}
+			conditional_tooltip = {
+				trigger = { has_chosen_syncretic_faith_trigger = yes }
+				piety = 50
+			}
+			NOT = { trait = zealous }
+		}
+		effect = {
+			if = {
+				limit = { 
+					has_chosen_syncretic_faith_trigger = yes
+				}
+				piety = -50
+				hidden_tooltip = {
+					remove_character_modifier = syncretic_faith_westerosi_religion
+					remove_character_modifier = syncretic_faith_wildling_religion
+					remove_character_modifier = syncretic_faith_drowned_god_group
+					remove_character_modifier = syncretic_faith_essos_group
+					remove_character_modifier = syncretic_faith_sarnor_rel
+					remove_character_modifier = syncretic_faith_qarth_rel
+					remove_character_modifier = syncretic_faith_ghiscar_rel
+					remove_character_modifier = syncretic_faith_far_east_group
+					remove_character_modifier = syncretic_faith_ibben_rel
+					remove_character_modifier = syncretic_faith_dothraki_rel_group
+					remove_character_modifier = syncretic_faith_jogos_rel_group
+					remove_character_modifier = syncretic_faith_lhazar_rel_group
+					remove_character_modifier = syncretic_faith_summer_rel_group
+					remove_character_modifier = syncretic_faith_pirate_group
+					remove_character_modifier = syncretic_faith_islands_rel
+					remove_character_modifier = syncretic_faith_sothoryos_rel_group
+					remove_character_modifier = syncretic_faith_pagan_group
+				}
+			}
+			else = { piety = -20 }
+			if = {
+				limit = { ai = no }
+				set_character_flag = syncretic_faith_pg_1
+			}
+			character_event = { id = religious.65 }
+			
+		}
+		ai_check_interval = 3
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	bearded_priest_flagellate = {
+		only_rulers = yes
+		potential = {
+			government = theocratic_feudal_government
+			religion = bearded_priests
+			is_adult = yes
+		}
+		allow = {
+			is_incapable = no
+			has_regent = no
+			prisoner = no
+			NOT = { has_character_modifier = bearded_priest_flagellated }
+			NOT = { trait = wounded }
+		}
+		effect = {			
+			character_event = { id = free_cities.227 tooltip = TOOLTIPfree_cities.227 }		
+			add_character_modifier = {
+				name = bearded_priest_flagellated
+				duration = 1825
+			}
+			tooltip = {
+				piety = 50		
+				random = {
+					chance = 20
+					add_trait_wounded_effect = yes
+				}
+			}	
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				trait = cynical
+			}
+			modifier = {
+				factor = 0.1
+				trait = craven
+			}
+		}
+	}
+	craft_a_weirwood_weapon = {
+		only_playable = yes
+		potential = {
+			is_ruler = yes
+			demesne_size = 1
+			is_old_gods_religion_trigger = yes
+			NOT = {
+				any_artifact = { 
+					has_artifact_flag = weirwood_artifact
+				}
+			}
+			NOT = { has_character_flag = crafting_a_weirwood_weapon }
+		}
+		allow = {
+			has_regent = no
+			wealth = 200
+			piety = 100
+			prisoner = no
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			set_character_flag = crafting_a_weirwood_weapon
+			custom_tooltip = {
+				text = craft_a_weirwood_weapontt
+				hidden_effect = {
+					character_event = { id = religious.88 }
+				}
+			}
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.12
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					war = yes
+					NOT = { wealth = 150 }
+				}	
+			}
+			modifier = {
+				factor = 0
+				has_character_modifier = loan_timer
+				OR = {
+					stewardship = 9
+					trait = temperate
+					NOT = { 
+						OR = {
+							trait = gluttonous 
+							trait = hedonist
+							trait = slothful
+						}	
+					}	
+				}	
+			}
+			modifier = {
+				factor = 5
+				OR = {
+					trait = ambitious
+					trait = proud
+					trait = zealous
+					trait = greensight
+				}	
+			}
+			modifier = {
+				factor = 0.1
+				OR = {
+					trait = content
+					trait = humble
+					trait = cynical
+				}	
+			}
+		}
+	}
+}

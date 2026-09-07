@@ -1,0 +1,5066 @@
+# New events by Galle
+namespace = battle
+
+### Pre-Battlefield-Duel Events
+# battle.1	Begin Battlefield Duel Chain
+# battle.2	Defender: Fight or Run?
+# battle.3	Attacker: Fight or Run? (Begin Duel)
+# battle.4	Defender Runs
+# battle.5	Attacker Runs
+# battle.6	Defender Calls Kingsguard
+# battle.7	Attacker versus Kingsguard - Fight or Run? (Begin Duel)
+# battle.8	Attacker or Defender Runs From Kingsguard
+# battle.9	Attacker Calls Kingsguard
+# battle.10	Defender versus Kingsguard - Fight or Run? (Begin Duel)
+### Post-Battlefield-Duel Events
+# battle.11	(End Duel) Victor Killed Opponent
+# battle.12	(End Duel) Victor Takes Opponent Hostage
+# battle.13	Opponent Imprisoned
+# battle.14	(End Duel) Opponent Killed Kingsguard - Original Opponent Reacts
+# battle.15	Victor Attacks Original Opponent (Begin Duel)
+# battle.16	Kingsguard Killed Opponent - Original Opponent Reacts
+# battle.17	Kingsguard Beat Opponent - Original Opponent Takes Opponent Hostage
+
+#On-action combat event: Killed in action
+character_event = {
+	id = 242
+	desc = EVTDESC242	
+	picture = GFX_evt_death
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { trait = berserker }
+		NOT = { trait = white_walker }
+	}
+
+	weight_multiplier = {
+		days = 1
+		
+		bad_soldier_outcome_score = yes							
+	}
+	
+	immediate = {
+		#Check if Rhllor saves character
+		if = {
+			limit = { 
+				religion = rhllor 
+				OR = {
+					trait = resurrected_by_rhllor
+					AND = {
+						OR = { 	
+							trait = favored_by_rhllor
+							trait = chosen_by_rhllor				
+						}
+						OR = {
+							check_variable = { which = "red_god_magic" value = 10 }
+							magic_returned_trigger = yes
+						}
+					}
+				}	
+			}
+			random = {
+				chance = 10
+				modifier = {
+					factor = 2
+					trait = resurrected_by_rhllor
+				}
+				modifier = {
+					factor = 2
+					trait = chosen_by_rhllor
+				}
+				modifier = {
+					factor = 2
+					magic_returned_trigger = yes
+				}
+				modifier = {
+					factor = 1.33
+					check_variable = { which = "red_god_magic" value = 1 }
+				}
+				modifier = {
+					factor = 1.5
+					check_variable = { which = "red_god_magic" value = 5 }
+				}
+				set_character_flag = rhllor_resurrected
+			}
+		}
+		#Check if maester saves character
+		if = {
+			limit = {
+				has_character_flag = necromancy_target
+				magic_returned_trigger = yes
+				NOT = { has_character_flag = rhllor_resurrected }
+				persistent_event_target:necromancer = {
+					has_character_modifier = necromancer_maester
+					is_alive = yes
+					prisoner = no
+					is_incapable = no
+					OR = {
+						at_location = PREV
+						NOT = { is_inaccessible_trigger = yes }
+					}
+				}
+			}
+			set_character_flag = maester_resurrected
+		}
+		hidden_tooltip = {
+			any_player = {
+				limit = {
+					OR = {
+						any_current_enemy = { character = ROOT }
+						is_liege_or_above = ROOT
+						is_liege_of = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						is_friend = ROOT
+						is_rival = ROOT
+						is_lover = ROOT
+						is_allied_with = ROOT
+						has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege }	
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					}
+					NOT = { character = ROOT }
+				}
+				character_event = { id = battle.750 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		trigger = {
+			NOT = { has_character_flag = rhllor_resurrected }
+			NOT = { has_character_flag = maester_resurrected }
+		}
+		FROM = {
+			if = {
+				limit = { 
+					NOR = { 
+						is_vassal_or_below = ROOT
+						character = ROOT
+					}
+				}
+				ROOT = {
+					death = {
+						death_reason = death_battle
+						killer = PREV
+					}
+				}
+				hidden_tooltip = { character_event = { id = 249 } }
+				break = yes
+			}
+		}	
+		FROMFROM = {
+			if = {
+				limit = { 
+					NOR = { 
+						is_vassal_or_below = ROOT
+						character = ROOT
+					}
+				}
+				ROOT = {
+					death = {
+						death_reason = death_battle
+						killer = PREV
+					}
+				}
+				hidden_tooltip = { character_event = { id = 249 } }
+				break = yes
+			}
+		}	
+		death = {
+			death_reason = death_battle
+		}
+	}
+
+	option = {
+		name = "EVTOPTBred_priest.10"
+		trigger = {
+			has_character_flag = rhllor_resurrected
+		}
+		character_event = { id = red_priest.38 tooltip = CUSTOMTOOLTIPrhllor_saved_me }
+		clr_character_flag = rhllor_resurrected
+		
+	}	
+	option = {
+		name = "EVTOPTmaester_resurrected"
+		trigger = {
+			has_character_flag = maester_resurrected
+		}
+		character_event = { id = maester.105 tooltip = CUSTOMTOOLTIPmaester_saved_me }
+		clr_character_flag = maester_resurrected
+	}	
+}
+
+#On-action combat event: Wounded in action
+character_event = {
+	id = 243
+	desc = EVTDESC243
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { trait = wounded }
+		can_be_maimed_trigger = yes
+		NOT = { trait = berserker }
+		NOT = { trait = white_walker }
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		bad_soldier_outcome_score = yes			
+	}
+	
+	immediate = {
+		if = {
+			limit = { NOT = { has_character_flag = eye_injury } }
+			random = {
+				chance = 1
+				set_character_flag = new_eye_injury
+			}
+		}	
+	}
+	
+	option = {
+		name = CURSES
+		add_trait_silently_wounded_effect = yes
+		if = {
+			limit = { has_character_flag = new_eye_injury } 
+			clr_character_flag = new_eye_injury
+			add_trait = one_eyed
+		}
+	}
+}
+
+#On-action combat event: Maimed in action
+character_event = {
+	id = 244
+	desc = EVTDESC244
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	
+	
+	trigger = {
+		NOT = { is_maimed_trigger = yes }
+		NOT = { trait = mangled }
+		NOR = { 
+			trait = one_eyed
+			trait = one_handed 
+			trait = one_legged 
+			trait = disfigured
+		}
+		NOT = { trait = berserker }
+		NOT = { trait = white_walker }
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		bad_soldier_outcome_score = yes			
+	}
+	
+	option = {
+		name = CURSES
+		add_maimed_trait_effect = yes
+		hidden_tooltip = {
+			any_player = {
+				limit = {
+					OR = {
+						any_current_enemy = { character = ROOT }
+						is_liege_or_above = ROOT
+						is_liege_of = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						is_friend = ROOT
+						is_rival = ROOT
+						is_lover = ROOT
+						is_allied_with = ROOT
+						has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege }	
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					}
+					NOT = { character = ROOT }
+				}
+				character_event = { id = battle.751 }
+			}
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_MAIMED_BATTLE
+				picture = GFX_evt_battle
+			}
+		}
+	}
+}
+
+#On-action combat event: Serious head injury in action
+character_event = {
+	id = 245
+	#desc = EVTDESC245
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+			
+	desc = {
+		picture = GFX_evt_battle
+		text = EVTDESC245
+		trigger = { has_character_flag = wounded_incapable }
+	}
+	desc = {
+		picture = GFX_evt_battle
+		text = 245.d2
+		trigger = { has_character_flag = wounded_disfigured }
+	}
+	
+	trigger = {
+		NOT = { trait = incapable }
+		NOT = { trait = white_walker }
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		bad_soldier_outcome_score = yes		
+	}
+	
+	immediate = {
+		if = {
+			limit = {
+				has_dlc = "Reapers"
+			}
+			random_list = {
+				60 = {
+					modifier = {
+						factor = 0
+						trait = disfigured						
+					}
+					set_character_flag = wounded_disfigured
+				}
+				40 = {
+					set_character_flag = wounded_incapable
+				}
+			}
+		}
+	}
+	
+
+	option = {
+		name = CURSES
+		if = {
+			limit = {
+				NOT = {
+					has_dlc = "Reapers"
+				}
+			}
+			add_trait = incapable
+			break = yes
+		}
+		if = {
+			limit = {
+				has_dlc = "Reapers"
+				has_character_flag = wounded_disfigured
+			}
+			add_trait = disfigured 
+			add_trait = severely_injured 
+			resolve_severely_injured_effect = yes
+			clr_character_flag = wounded_disfigured
+			break = yes
+		}
+		if = {
+			limit = {
+				has_character_flag = wounded_incapable
+			}
+			add_trait = incapable
+			clr_character_flag = wounded_incapable
+		}
+		hidden_tooltip = {
+			any_player = {
+				limit = {
+					OR = {
+						any_current_enemy = { character = ROOT }
+						is_liege_or_above = ROOT
+						is_liege_of = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						is_friend = ROOT
+						is_rival = ROOT
+						is_lover = ROOT
+						is_allied_with = ROOT
+						has_opinion_modifier = { who = ROOT modifier = opinion_de_facto_liege }	
+						has_opinion_modifier = { who = ROOT modifier = opinion_with_rebel_leader }
+					}
+					NOT = { character = ROOT }
+				}
+				character_event = { id = battle.752 }
+			}
+		}
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_INCAPABLE_BATTLE
+				picture = GFX_evt_battle
+			}
+		}
+	}
+}
+
+#On-action combat event: Character skill improves
+character_event = {
+	id = 246
+	desc = EVTDESC246
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	
+	trigger = {
+		in_command = yes
+		is_alive = yes
+		OR = {
+			trait = misguided_warrior
+			trait = tough_soldier
+			trait = skilled_tactician
+		}
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EXCELLENT
+		if = {
+			limit = {
+				trait = skilled_tactician
+			}
+			remove_trait = skilled_tactician
+			add_trait = brilliant_strategist
+		}
+		if = {
+			limit = {
+				trait = tough_soldier
+			}
+			remove_trait = tough_soldier
+			add_trait = skilled_tactician
+		}
+		if = {
+			limit = {
+				trait = misguided_warrior
+			}
+			remove_trait = misguided_warrior
+			add_trait = tough_soldier
+		}
+	}
+}
+
+#On-action combat event: Flat improvement to martial skill
+character_event = {
+	id = 247
+	desc = EVTDESC247
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	in_command = yes
+	
+	trigger = {
+		is_alive = yes
+		NOT = { martial = 10 }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EXCELLENT
+		change_martial = 1
+	}
+}
+
+#On-action combat event: Tech Increase in Capital #AGOT: changed to increase martial
+character_event = {
+	id = 248
+	desc = EVTDESC248
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		is_landed = yes
+		OR = {
+			trait = brilliant_strategist
+			trait = skilled_tactician
+		}
+		NOT = { trait = white_walker }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 3
+			has_focus = focus_scholarship
+		}
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EXCELLENT
+		add_character_modifier = {
+			name = war_knowledge
+			duration = 730
+		}	
+	}
+}
+
+#Opponent is informed that enemy commander has been killed
+character_event = {
+	id = 249
+	desc = EVTDESC249
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+	}
+
+	option = {
+		name = EVTOPTA249
+	}
+}
+# #Opponent is informed that enemy commander has been killed
+# character_event = {
+	# id = 253
+	# desc = EVTDESC253
+	# picture = GFX_evt_battle
+	# border = GFX_event_normal_frame_war
+	
+	# is_triggered_only = yes
+
+	# trigger = {
+		# is_alive = yes
+	# }
+
+	# option = {
+		# name = ALAS
+	# }
+# }
+#Liege informed vaassal has been killed
+character_event = {
+	id = battle.750
+	desc = EVTDESCbattle.750
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	ai = no
+	
+	trigger = {
+		OR = {
+			war_with = FROM
+			is_liege_or_above = FROM
+			is_liege_of = FROM
+			dynasty = FROM
+			is_close_relative = FROM
+			is_married = FROM
+			is_friend = FROM
+			is_rival = FROM
+			is_lover = FROM
+			is_allied_with = FROM
+			has_opinion_modifier = { who = FROM modifier = opinion_de_facto_liege }	
+			has_opinion_modifier = { who = FROM modifier = opinion_with_rebel_leader }
+		}
+		NOT = { character = FROM }
+	}
+
+	option = {
+		name = EVTOPTAbattle.750
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+#Liege informed vaassal has been maimed
+character_event = {
+	id = battle.751
+	desc = EVTDESCbattle.751
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	ai = no
+	
+	trigger = {
+		OR = {
+			war_with = FROM
+			is_liege_or_above = FROM
+			is_liege_of = FROM
+			dynasty = FROM
+			is_close_relative = FROM
+			is_married = FROM
+			is_friend = FROM
+			is_rival = FROM
+			is_lover = FROM
+			is_allied_with = FROM
+			has_opinion_modifier = { who = FROM modifier = opinion_de_facto_liege }	
+			has_opinion_modifier = { who = FROM modifier = opinion_with_rebel_leader }
+		}
+		NOT = { character = FROM }
+	}
+
+	option = {
+		name = EVTOPTAbattle.751
+		tooltip = { FROM = { add_maimed_trait_effect = yes } }
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+#Liege informed vaassal has been made incapable
+character_event = {
+	id = battle.752
+	desc = EVTDESCbattle.752
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	ai = no
+	
+	trigger = {
+		OR = {
+			war_with = FROM
+			is_liege_or_above = FROM
+			is_liege_of = FROM
+			dynasty = FROM
+			is_close_relative = FROM
+			is_married = FROM
+			is_friend = FROM
+			is_rival = FROM
+			is_lover = FROM
+			is_allied_with = FROM
+			has_opinion_modifier = { who = FROM modifier = opinion_de_facto_liege }	
+			has_opinion_modifier = { who = FROM modifier = opinion_with_rebel_leader }
+		}
+		NOT = { character = FROM }
+	}
+
+	option = {
+		name = EVTOPTAbattle.752
+		tooltip = { FROM = { add_trait = incapable } }
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+
+#On-action combat event: Becoming Brave
+character_event = {
+	id = 270
+	desc = EVTDESC270
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		NOT = { trait = brave }
+		NOT = { trait = craven }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {			
+			factor = 0.05
+			personality_traits = 6 
+		}
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EXCELLENT
+		add_trait = brave
+		add_blood_splatter_effect = yes
+	}
+}
+
+#On-action combat event: Becoming Craven
+character_event = {
+	id = 271
+	desc = EVTDESC271
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		NOT = { trait = brave }
+		NOT = { trait = craven }
+		NOT = { trait = berserker }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		modifier = {
+			factor = 0.05
+			personality_traits = 6 		
+		}
+		bad_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = CURSES
+		add_trait = craven
+	}
+}
+
+#On-action combat event: Becoming Wroth
+character_event = {
+	id = 272
+	desc = EVTDESC272
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		NOT = { trait = wroth }
+		NOT = { trait = patient }
+		NOT = { personality_traits = 6 }
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+
+	option = {
+		name = CURSES
+		add_trait = wroth
+		add_blood_splatter_effect = yes
+	}
+}
+
+#On-action combat event: Becoming Patient
+character_event = {
+	id = 273
+	desc = EVTDESC273
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	
+	trigger = {
+		is_alive = yes
+		NOT = { trait = wroth }
+		NOT = { trait = patient }
+		NOT = { personality_traits = 6 }
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+
+	option = {
+		name = EXCELLENT
+		add_trait = patient
+	}
+}
+
+#On-action battle_won: Heroism shown.
+character_event = {
+	id = 260
+	hide_window = yes
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		NOT = { trait = white_walker }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+	
+	immediate = {
+		random_list = {
+			16 = { character_event = { id = 262 } }
+			16 = { character_event = { id = 263 } }
+			16 = { character_event = { id = 264 } }
+			16 = { character_event = { id = 265 } }
+			16 = { character_event = { id = 266 } }
+			16 = { character_event = { id = 267 } }
+		}
+		if = {
+			limit = {
+				OR = {
+					is_ruler = no
+					liege = {
+						NOT = { character = ROOT }
+						FROM = {
+							OR = {
+								war_with = PREV
+								reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }
+								liege = { war_with = PREVPREV }
+								liege = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_looted } }
+							}
+						}
+					}
+				}
+			}
+			set_character_flag = commander_for_liege
+			change_variable = { which = "services_rendered" value = 1 }
+		}	
+		if = {
+			limit = { 
+				has_nickname = no 
+				location = { NOT = { has_province_flag = prohibited_nickname_location } }
+			}
+			random_list = {
+				500 = { 
+					modifier = {
+						factor = 2
+						higher_tier_than = DUKE #less likely for high rank characters
+					}
+				}
+				10 = { give_nickname = nick_of_the_hero_of_location }
+				10 = { give_nickname = nick_of_the_lion_of_location }
+				10 = { give_nickname = nick_of_the_sword_of_location }
+				10 = { give_nickname = nick_of_the_star_of_location }
+				10 = { give_nickname = nick_of_the_fist_of_location }
+				10 = { 
+					modifier = {
+						factor = 0
+						NOT = {
+							OR = {
+								dynasty = 496 #targaryen
+								dynasty = 57 #blackfyre
+								can_use_dragon_abilities_trigger = yes
+							}
+						}
+					}
+					give_nickname = nick_of_the_dragon_of_location 
+				}
+				25 = { 
+					modifier = {
+						factor = 0
+						NOT = { dynasty = 59 } #Stark
+					}
+					give_nickname = nick_of_the_wolf_of_location 
+				}
+				10 = { give_nickname = nick_of_the_demon_of_location }
+				10 = { give_nickname = nick_of_the_shield_of_location }
+				10 = {
+					modifier = {
+						factor = 0
+						OR = {
+							culture_group = andal
+							culture_group = first_men
+							culture_group = iron_isles_culture
+						}
+					}
+					give_nickname = nick_of_the_spear_of_location 
+				}
+				10 = { give_nickname = nick_of_the_axe_of_location }
+				10 = { give_nickname = nick_of_the_hammer_of_location }
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+	}
+}
+
+
+#On-action battle_won: Soldier Distinguishes himself.
+character_event = {
+	id = 261
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	hide_from = yes
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESC261
+		trigger = {
+			NOT = { female_warrior_culture_trigger = yes }
+			NOR = {
+				has_character_modifier = good_battle_omen
+				has_character_modifier = bad_battle_omen
+			}
+		}
+	}
+	
+	desc = {
+		text = EVTDESC261B
+		trigger = {
+			female_warrior_culture_trigger = yes
+			NOR = {
+				has_character_modifier = good_battle_omen
+				has_character_modifier = bad_battle_omen
+			}
+		}
+	}
+	desc = {
+		trigger = {
+			has_dlc = "Mystics"
+			has_character_modifier = good_battle_omen
+		}
+		text = EVTDESC261_good_battle_omen
+	}
+	desc = {
+		trigger = {
+			has_dlc = "Mystics"
+			has_character_modifier = bad_battle_omen
+		}
+		text = EVTDESC261_bad_battle_omen
+	}
+
+	
+	trigger = {
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 1.5
+			trait = patient
+		}		
+		modifier = {
+			factor = 1.5
+			trait = just
+		}		
+		modifier = {
+			factor = 1.5
+			trait = diligent
+		}		
+		modifier = {
+			factor = 0.2
+			trait = deceitful
+		}		
+		modifier = {
+			factor = 0.2
+			trait = arbitrary
+		}	
+		modifier = {
+			factor = 2
+			has_character_modifier = good_battle_omen
+		}
+		modifier = {
+			factor = 0.9
+			has_character_modifier = bad_battle_omen
+		}		
+	}
+	
+	immediate = {
+		capital_scope = {
+			ROOT = {
+				if = {
+					limit = {
+						NOT = { female_warrior_culture_trigger = yes }	
+					}
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = random
+						female = no
+						religion = PREV
+						culture = PREV
+					}		
+				}	
+				else = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = random
+						female = yes
+						religion = PREV
+						culture = PREV
+					}		
+				}	
+				new_character = {
+					save_event_target_as = soldier_target
+					
+					add_blood_splatter_effect = yes
+					remove_trait = weak
+					remove_trait = imbecile
+					remove_trait = dwarf
+					remove_trait = clubfooted
+					remove_trait = hunchback
+					remove_trait = inbred
+					remove_trait = craven		
+					random_list = {
+						75 = { add_trait = trained_warrior }
+						20 = { add_trait = skilled_warrior }
+						5 = { add_trait = master_warrior }
+					}
+					random_list = {
+						40 = { }
+						10 = { add_trait = strong }
+						10 = { add_trait = tall }
+						10 = { add_trait = brave }
+						10 = { remove_trait = slow add_trait = quick }
+					}
+					if = {
+						limit = { has_knighthood_religion_trigger = yes }
+						knight_character_effect = yes
+					}				
+				}
+			}
+		}
+	}
+
+	option = {
+		name = EXCELLENT
+		trigger = {
+			NOR = {
+				has_character_modifier = good_battle_omen
+				has_character_modifier = bad_battle_omen
+			}
+		}
+		event_target:soldier_target = {
+			prestige = 50
+		}	
+	}
+	option = {
+		name = 261_OPTA
+		trigger = {
+			has_dlc = "Mystics"
+			has_character_modifier = good_battle_omen
+		}
+		event_target:soldier_target = {
+			prestige = 50
+		}
+		upgrade_seer_modifier_effect = yes
+		
+	}
+	option = {
+		name = 261_OPTB
+		trigger = {
+			has_dlc = "Mystics"
+			has_character_modifier = bad_battle_omen
+		}
+		event_target:soldier_target = {
+			prestige = 50
+		}
+		downgrade_seer_modifier_effect = yes	
+	}
+	after = {
+		#remove_scrying_omen_modifiers_effect = yes
+	}
+}
+# Heroism Shown 1
+character_event = {
+	id = 262
+	desc = EVTDESC262
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+# Heroism Shown 2
+character_event = {
+	id = 263
+	desc = EVTDESC263
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+# Heroism Shown 3
+character_event = {
+	id = 264
+	desc = EVTDESC264
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+# Heroism Shown 4
+character_event = {
+	id = 265
+	desc = EVTDESC265
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+# Heroism Shown 5
+character_event = {
+	id = 266
+	desc = EVTDESC266
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+# Heroism Shown 6
+character_event = {
+	id = 267
+	desc = EVTDESC267
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTA262
+		if = {
+			limit = { tier = EMPEROR }
+			prestige = 100
+		}
+		if = {
+			limit = { tier = KING }
+			prestige = 75
+		}
+		if = {
+			limit = { tier = DUKE }
+			prestige = 50
+		}
+		if = {
+			limit = { tier = COUNT }
+			prestige = 30
+		}
+		if = {
+			limit = { tier = BARON }
+			prestige = 20
+		}
+		if = {
+			limit = { is_ruler = no }
+			prestige = 10
+		}
+		if = {
+			limit = {
+				has_character_flag = commander_for_liege
+			}	
+			liege = {
+				opinion = {
+					modifier = opinion_service_rendered
+					who = ROOT
+					years = 3
+				}
+			}
+			clr_character_flag = commander_for_liege
+		}
+	}
+}
+
+
+#On-action battle_lost: Imprisoned by the enemy
+character_event = {
+	id = 250
+	title = captured_in_battle
+	desc = EVTDESC250
+	picture = GFX_evt_into_the_dungeon
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		is_alive = yes
+		prisoner = no
+		NOT = {
+			character = FROM
+		}
+		NOT = { trait = white_walker }
+	}
+	
+	weight_multiplier = {
+		days = 1
+		
+		bad_soldier_outcome_score = yes	
+		modifier = {
+			factor = 0.5
+			tier = duke
+		}
+		modifier = {
+			factor = 0.25
+			tier = king
+		}
+		modifier = {
+			factor = 0.125
+			tier = emperor
+		}
+		
+		modifier = {
+			FROM = { trait = norse_leader }
+			factor = 1.5
+		}
+		
+		modifier = {
+			factor = 2 # if the enemy leader has a particular bloodline
+			FROM = {
+				any_owned_bloodline = {
+					has_bloodline_flag = bloodline_fearsome
+				}
+			}
+		}
+		modifier = {
+			factor = 3 # if the enemy leader was a warrior lodge member
+			FROM = {
+				is_member_of_any_warrior_lodge_trigger = yes
+				society_rank > 1 #Must be rank 2 or higher
+			}
+		}
+		
+		modifier = {
+			factor = 0.5 # has a wonder upgrade that allows you to run away easier
+			any_realm_wonder = {
+				has_wonder_upgrade = upgrade_hidden_passageways
+			}
+		}
+	}
+	
+	immediate = {
+		save_event_target_as = home_commander
+		save_event_target_as = captured_commander
+		location = { save_event_target_as = battlefield_location }
+		FROM = { save_event_target_as = enemy_liege }
+		#You are captured...
+		imprison = event_target:enemy_liege #ROOT is imprisoned *by* enemy_liege.
+	}
+	
+	option = {
+		name = CURSES
+		tooltip = {
+			imprison = FROM		
+			any_ward = {
+				limit = { 
+					at_location = FROM 
+					NOT = { trait = dragon }
+				}
+				imprison = FROM
+			}
+		}	
+		set_character_flag = captured_in_battle
+		hidden_tooltip = {
+			FROM = {
+				character_event = { 
+					id = 50020 # imprisoned_events.txt
+				}
+			}
+		}
+	}
+}
+
+# Leading attacker dies, will never trigger from code
+letter_event = {
+	id = 251
+	is_triggered_only = yes
+	border = GFX_event_letter_frame_war
+	
+	trigger = {
+		ai = no
+	}
+
+	desc = EVTDESC251
+
+	option = {
+		name = OK
+	}
+}
+
+# Leading defender dies, will never trigger from code
+letter_event = {
+	id = 252
+	desc = EVTDESC251
+	border = GFX_event_letter_frame_war
+	
+	is_triggered_only = yes
+
+	trigger = {
+		ai = no
+	}
+	
+	option = {
+		name = OK
+	}
+}
+
+#Marshal: Unnecessary violence
+character_event = {
+	id = 255
+	desc = EVTDESC255
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_war
+	
+	capable_only = yes
+	
+	is_triggered_only = yes
+	war = yes
+	in_command = yes
+	has_job_title = yes
+	
+	trigger = {	
+		has_job_title = job_marshal
+		trait = cruel
+		NOT = { trait = honorable }
+	}
+	
+	weight_multiplier = {
+		days = 1
+	}
+	
+	option = {
+		name = EVTOPTA255
+		prestige = -20
+		piety = -20
+		hidden_tooltip = {
+			liege = {
+				character_event = {
+					id = 256
+				}
+			}
+		}
+	}
+}
+
+#Liege: Marshal used unnecessary violence
+character_event = {
+	id = 256
+	desc = EVTDESC256
+	picture = GFX_evt_torture
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	only_capable = yes
+	prisoner = no
+	min_age = 14
+	
+	trigger = {
+		NOT = { is_inaccessible_trigger = yes }
+	}
+
+	option = {
+		name = EVTOPTA256 #That's the cruelty of war
+		if = {
+			limit = { higher_tier_than = DUKE }
+			prestige = -40
+		}	
+		if = {
+			limit = { tier = DUKE }
+			prestige = -20
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			prestige = -10
+		}
+	}
+	option = {
+		name = EVTOPTB256 #Disapprove of his conduct
+		opinion = {
+			modifier = opinion_disapprove
+			who = FROM
+			years = 5
+		}
+	}
+	option = {
+		name = EVTOPTC256 #He's right, we should terrorise our enemy
+		trigger = {
+			NOT = { trait = kind }
+		}
+		opinion = {
+			modifier = opinion_approves
+			who = FROM
+			years = 5
+		}
+		if = {
+			limit = { higher_tier_than = DUKE }
+			prestige = -80
+		}	
+		if = {
+			limit = { tier = DUKE }
+			prestige = -40
+		}
+		if = {
+			limit = { lower_tier_than = DUKE }
+			prestige = -20
+		}
+		if = {
+			limit = { 
+				NOT = { trait = cruel } 
+				NOT = { personality_traits = 6 }
+			}
+			random = {
+				chance = 25
+				add_trait = cruel
+				hidden_tooltip = {
+					character_event ={
+						id = 38259 #Notify Cruel
+					}
+				}
+			}
+		}	
+	}
+}
+
+
+### Combat Trait Events
+
+# Event 1
+character_event = {
+	id = 96500
+	desc = EVTDESC96500
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		can_have_more_leadership_traits = yes
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EVTOPTK96500 # Jungle Terrain Specialization
+		trigger = {
+			location = { terrain = jungle }
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = jungle_terrain_leader
+	}
+	option = {
+		name = EVTOPTL96500 # War elephants
+		trigger = {
+			location = {
+				OR = {
+					culture_group = moraqi_group
+					culture_group = yi_ti_group
+					culture = volantene
+					culture = eastern_valyrian
+					culture_group = ghiscari_group
+					culture_group = qarth_group
+					culture_group = jade_islands_group
+				}
+			}
+			NOT = { trait = war_elephant_leader }
+		}
+		add_trait = war_elephant_leader
+	}
+	option = {
+		name = EVTOPTA96500 # Rough Terrain Specialization
+		trigger = {
+			OR = {
+				location = { terrain = forest }
+				location = { terrain = hills }
+			}
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = rough_terrain_leader
+	}
+	option = {
+		name = EVTOPTB96500 # Flat Terrain Specialization
+		trigger = {
+			OR = {
+				location = { terrain = plains }
+				location = { terrain = farmlands }
+				location = { terrain = steppe }
+			}
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = flat_terrain_leader
+	}
+	option = {
+		name = EVTOPTC96500 # Mountain Terrain Specialization
+		trigger = {
+			location = { terrain = mountain }
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = mountain_terrain_leader
+	}
+	option = {
+		name = EVTOPTD96500 # Desert Terrain Leader
+		trigger = {
+			location = { terrain = desert }
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = desert_terrain_leader
+	}
+	option = {
+		name = EVTOPTE96500 # Cavalry
+		trigger = {
+			NOR = { 
+				trait = cavalry_leader
+				trait = heavy_infantry_leader
+				trait = light_foot_leader
+			}
+		}
+		add_trait = cavalry_leader
+	}
+	option = {
+		name = EVTOPTF96500 # Light Infantry
+		trigger = {
+			NOR = { 
+				trait = cavalry_leader
+				trait = heavy_infantry_leader
+				trait = light_foot_leader
+			}
+		}
+		add_trait = light_foot_leader
+	}
+	option = {
+		name = EVTOPTG96500 # Heavy Infantry
+		trigger = {
+			NOR = { 
+				trait = cavalry_leader
+				trait = heavy_infantry_leader
+				trait = light_foot_leader
+			}
+		}
+		add_trait = heavy_infantry_leader
+	}
+}
+
+# Event 2
+character_event = {
+	id = 96501
+	desc = EVTDESC96500
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		can_have_more_leadership_traits = yes
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+
+	option = { # Organizer
+		name = EVTOPTA96502
+		trigger = {
+			NOT = { 
+				trait = organizer
+			}
+		}
+		add_trait = organizer
+	}
+	option = { # Experimenter
+		name = EVTOPTB96502
+		trigger = {
+			NOT = { 
+				trait = experimenter
+			}
+		}
+		add_trait = experimenter
+	}
+	option = { # Holy Warrior
+		name = EVTOPTC96502
+		trigger = {
+			trait = zealous
+			NOR = { 
+				trait = holy_warrior
+				trait = cynical
+			}
+		}
+		add_trait = holy_warrior
+	}
+	option = { # Unyielding
+		name = EVTOPTD96502
+		trigger = {
+			NOT = { 
+				trait = unyielding_leader
+			}
+		}
+		add_trait = unyielding_leader
+	}
+}
+
+# Event 3
+character_event = {
+	id = 96502
+	desc = EVTDESC96500
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		can_have_more_leadership_traits = yes
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+	
+	option = {
+		name = EVTOPTH96500 # Aggressive
+		trigger = {
+			NOR = { 
+				trait = defensive_leader
+				trait = aggressive_leader
+			}
+		}
+		add_trait = aggressive_leader
+	}
+	option = {
+		name = EVTOPTI96500 # Defensive
+		trigger = {
+			NOR = { 
+				trait = defensive_leader
+				trait = aggressive_leader
+			}
+		}
+		add_trait = defensive_leader
+	}
+	option = {
+		name = EVTOPTJ96500 # Inspiring
+		trigger = {
+			NOR = { 
+				trait = inspiring_leader
+				trait = back_seat_leader
+			}
+		}
+		add_trait = inspiring_leader
+	}
+	option = { # Trickster
+		name = EVTOPTH96501
+		trigger = {
+			NOT = { 
+				trait = trickster
+			}
+		}
+		add_trait = trickster
+	}
+	option = {
+		name = EVTOPTZ96500 # Leads from rear
+		trigger = {
+			NOR = { 
+				trait = inspiring_leader
+				trait = back_seat_leader
+			}
+		}
+		add_trait = back_seat_leader
+	}
+}
+
+# Event 4
+character_event = {
+	id = 96503
+	desc = EVTDESC96500
+	picture = GFX_evt_battle
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { 
+		can_have_more_leadership_traits = yes
+		is_alive = yes
+	}
+	
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+
+	option = {
+		name = EVTOPTA96500 # Rough Terrain Specialization
+		trigger = {
+			OR = {
+				location = { terrain = forest }
+				location = { terrain = hills }
+			}
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = rough_terrain_leader
+	}
+	option = {
+		name = EVTOPTB96500 # Flat Terrain Specialization
+		trigger = {
+			OR = {
+				location = { terrain = plains }
+				location = { terrain = farmlands }
+				location = { terrain = steppe }
+			}
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = flat_terrain_leader
+	}
+	option = {
+		name = EVTOPTC96500 # Mountain Terrain Specialization
+		trigger = {
+			location = { terrain = mountain }
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = mountain_terrain_leader
+	}
+	option = {
+		name = EVTOPTD96500 # Desert Terrain Leader
+		trigger = {
+			location = { terrain = desert }
+			NOR = { 
+				trait = rough_terrain_leader
+				trait = flat_terrain_leader
+				trait = mountain_terrain_leader
+				trait = desert_terrain_leader
+				trait = jungle_terrain_leader
+			}
+		}
+		add_trait = desert_terrain_leader
+	}
+	option = { # Flanker
+		name = EVTOPTI96501
+		trigger = {
+			NOT = { 
+				trait = flanker
+			}
+		}
+		add_trait = flanker
+	}
+	option = { # Narrow flank leader
+		name = EVTOPTJ96501
+		trigger = {
+			OR = {
+				location = { terrain = mountain }
+				location = { terrain = hills }
+				location = { terrain = forest }
+			}
+			NOT = { 
+				trait = narrow_flank_leader
+			}
+		}
+		add_trait = narrow_flank_leader
+	}
+	option = { # Siege leader
+		name = EVTOPTK96501
+		trigger = {
+			siege = {
+				is_attacker = yes
+			}
+			NOT = { 
+				trait = siege_leader
+			}
+		}
+		add_trait = siege_leader
+	}
+}
+
+# battle.1	Begin Battlefield Duel Chain
+character_event = { # Battlefield Duel Start
+	id = battle.1
+	desc = "EVTDESCbattle.1"
+	border = "GFX_event_normal_frame_war"
+	picture = GFX_evt_battle
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		# Target lock
+		if = {
+			limit = { 
+				is_ruler = yes
+				war = yes
+				# liege = { 
+					# OR = {
+						# war = no 
+						# character = ROOT
+					# }	
+				# }
+			}
+			random_current_enemy = {
+				limit = {
+					OR = {
+						AND = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+						}
+						any_realm_character = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}	
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+				random_realm_character = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+						NOT = { is_liege_or_above = ROOT }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+			}
+			random_playable_ruler = {
+				limit = {
+					war_with = ROOT
+					OR = {
+						AND = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+						}
+						any_realm_character = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+				random_realm_character = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+						NOT = { is_liege_or_above = ROOT }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+			}
+		}
+		if = {
+			limit = { 
+				liege = { NOT = { character = ROOT } }				
+			}
+			liege = {
+				random_current_enemy = {
+					limit = {
+						OR = {
+							AND = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+							any_realm_character = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+						}	
+					}
+					if = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+					random_realm_character = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+				}
+				random_playable_ruler = {
+					limit = {
+						war_with = PREV
+						OR = {
+							AND = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+							any_realm_character = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+						}
+					}
+					if = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+					random_realm_character = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = yes }
+			random_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_looted }
+					OR = {
+						AND = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						any_realm_character = {						
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+					}
+				}
+				if = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+						NOT = { is_liege_or_above = ROOT }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+				random_realm_character = {
+					limit = {
+						in_battle = yes
+						at_location = ROOT
+						prisoner = no
+						is_alive = yes		
+						NOT = { character = ROOT }						
+						NOT = { can_use_dragon_abilities_trigger = yes }
+						NOT = { culture_group = unoccupied_group }
+						NOT = { has_character_modifier = battlefield_fight }
+						NOT = { is_liege_or_above = ROOT }
+					}
+					if = {
+						limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+						random = {
+							chance = 60
+							character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+							break = yes
+						}
+					}
+					character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+					break = yes
+				}
+			}
+		}	
+		if = {
+			limit = { 
+				liege = { NOT = { character = ROOT } }				
+			}
+			liege = {
+				random_opinion_modifier_target = {
+					limit = {
+						reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }
+						OR = {
+							AND = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+							any_realm_character = {						
+								in_battle = yes
+								at_location = ROOT
+								prisoner = no
+								is_alive = yes		
+								NOT = { character = ROOT }
+								NOT = { can_use_dragon_abilities_trigger = yes }
+								NOT = { culture_group = unoccupied_group }
+								NOT = { has_character_modifier = battlefield_fight }
+								NOT = { is_liege_or_above = ROOT }
+							}
+						}
+					}
+					if = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+					random_realm_character = {
+						limit = {
+							in_battle = yes
+							at_location = ROOT
+							prisoner = no
+							is_alive = yes		
+							NOT = { character = ROOT }						
+							NOT = { can_use_dragon_abilities_trigger = yes }
+							NOT = { culture_group = unoccupied_group }
+							NOT = { has_character_modifier = battlefield_fight }
+							NOT = { is_liege_or_above = ROOT }
+						}
+						if = {
+							limit = { ROOT = { can_use_dragon_abilities_trigger = yes } }
+							random = {
+								chance = 60
+								character_event = { id = dragon.33 tooltip = "EVTTOOLTIPbattle.2" }
+								break = yes
+							}
+						}
+						character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+						break = yes
+					}
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.1"
+		#hidden_tooltip = {
+			#event_target:battle_duel_target = {
+				#character_event = { id = battle.2 tooltip = "EVTTOOLTIPbattle.2" }
+			#}
+		#}	
+	}
+}
+# battle.2	Defender: Fight or Run?
+character_event = {
+	id = battle.2
+	desc = "EVTDESCbattle.2"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { is_liege_or_above = FROM }
+	}
+	
+	immediate = {
+		FROM = { add_character_modifier = { name = battlefield_fight duration = 20 } }
+		add_character_modifier = { name = battlefield_fight duration = 20 }
+		clear_event_target = kingsguard_protector
+		clear_event_target = bodyguard_protector
+		if = {
+			limit = {
+				is_ruler = yes
+				OR = {
+					has_landed_title = e_iron_throne
+					kingsguard = { liege = { character = ROOT } }
+				}
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					OR = {
+						AND = {
+							liege = { character = ROOT }
+							has_opinion_modifier = { who = ROOT modifier = loan_kingsguard }
+						}
+						ROOT = { has_landed_title = e_iron_throne }
+					}	
+					NOT = { trait = wounded }
+					NOT = { has_severe_disability_trigger = yes }	
+					OR = {
+						location = { ROOT = { capital_scope = { province_id = PREVPREV } } }
+						at_location = ROOT
+					}	
+					NOR = {
+						war_with = ROOT
+						any_liege = { war_with = ROOT }
+					}
+				}
+				save_event_target_as = kingsguard_protector
+			}
+		}
+		if = {
+			limit = {
+				is_ruler = yes
+			}
+			random_courtier = {
+				limit = {
+					is_alive = yes
+					OR = {
+						has_minor_title = title_bodyguard
+						has_minor_title = title_bloodrider
+					}	
+					liege = { character = ROOT }
+					OR = {
+						at_location = ROOT
+						in_command = no
+					}	
+					NOT = { trait = wounded }
+					NOT = { has_severe_disability_trigger = yes }	
+				}
+				save_event_target_as = bodyguard_protector
+			}
+		}
+		#chance of not being able to flee
+		random = {
+			chance = 15
+			modifier = {
+				factor = 0.25
+				trait = back_seat_leader
+			}		
+			modifier = {
+				factor = 2
+				trait = aggressive_leader
+			}	
+			modifier = {
+				factor = 2
+				trait = duelist
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = craven
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			set_character_flag = cannot_flee_battle_duel
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.2" #Fight
+		FROM = { character_event = { id = battle.3 tooltip = "EVTTOOLTIPbattle.3" } }
+		ai_chance = {
+			factor = 100
+			
+			modifier = { #Avoid fights
+				factor = 0
+				NOT = { combat_rating = -50 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 70 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 120 }
+			}
+			
+			modifier = {
+				factor = 3
+				trait = duelist
+			}
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBbattle.2" #run
+		trigger = { 
+			NOT = { trait = berserker } 
+			NOT = { has_character_flag = cannot_flee_battle_duel }
+		}
+		hidden_tooltip = { FROM = { character_event = { id = battle.4 } } }		
+		remove_character_modifier = battlefield_fight
+		if = {
+			limit = { 
+				NOT = { trait = craven } 
+				NOT = { trait = brave } 
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { 
+				trait = brave
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				remove_trait = brave
+				# hidden_tooltip = {
+					# character_event ={
+						# id = 38257 #Notify
+					# }
+				# }
+			}	
+		}
+		morale = -0.1
+		ai_chance = {
+			factor = 100
+			
+			modifier = {
+				factor = 0
+				trait = white_walker
+			}
+			modifier = {
+				factor = 0
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 120 } }
+			}
+			
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCbattle.3" #kingsguard
+		trigger = {
+			is_ruler = yes
+			event_target:kingsguard_protector = { is_alive = yes }
+		}		
+		remove_character_modifier = battlefield_fight
+		event_target:kingsguard_protector = {
+			add_character_modifier = {
+				name = battlefield_fight
+				duration = 20
+			}	
+			character_event = { id = battle.6 tooltip = "EVTTOOLTIPbattle.6" }
+		}
+		ai_chance = {
+			factor = 100
+			
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				event_target:kingsguard_protector = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 10
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 120 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 100 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 80 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 70 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 60 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 50 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 40 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 30 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 20 } }
+			}			
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 120 } }
+			}			
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCbattle.3" #bodyguard
+		trigger = {
+			is_ruler = yes
+			event_target:bodyguard_protector = { is_alive = yes }
+		}	
+		remove_character_modifier = battlefield_fight
+		event_target:bodyguard_protector = {
+			add_character_modifier = {
+				name = battlefield_fight
+				duration = 20
+			}	
+			character_event = { id = battle.6 tooltip = "EVTTOOLTIPbattle.6" }
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				event_target:bodyguard_protector = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 10
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 120 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 100 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 80 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 70 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 60 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 50 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 40 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 30 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 20 } }
+			}			
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 120 } }
+			}
+		}
+	}
+	after = {
+		clr_character_flag = cannot_flee_battle_duel
+	}
+}
+# battle.3	Attacker: Fight or Run? (Begin Duel)
+character_event = {
+	id = battle.3
+	desc = "EVTDESCbattle.3"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		clear_event_target = kingsguard_protector
+		clear_event_target = bodyguard_protector
+		if = {
+			limit = {
+				is_ruler = yes
+				OR = {
+					has_landed_title = e_iron_throne
+					kingsguard = { liege = { character = ROOT } }
+				}
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					OR = {
+						AND = {
+							liege = { character = ROOT }
+							has_opinion_modifier = { who = ROOT modifier = loan_kingsguard }
+						}
+						ROOT = { has_landed_title = e_iron_throne }
+					}	
+					NOT = { trait = wounded }
+					NOT = { has_severe_disability_trigger = yes }	
+					OR = {
+						location = { ROOT = { capital_scope = { province_id = PREVPREV } } }
+						at_location = ROOT
+					}	
+					NOR = {
+						war_with = ROOT
+						any_liege = { war_with = ROOT }
+					}
+				}
+				save_event_target_as = kingsguard_protector
+			}
+		}
+		if = {
+			limit = {
+				is_ruler = yes
+			}
+			random_courtier = {
+				limit = {
+					is_alive = yes
+					OR = {
+						has_minor_title = title_bodyguard
+						has_minor_title = title_bloodrider
+					}	
+					liege = { character = ROOT }
+					OR = {
+						at_location = ROOT
+						in_command = no
+					}	
+					NOT = { trait = wounded }
+					NOT = { has_severe_disability_trigger = yes }	
+				}
+				save_event_target_as = bodyguard_protector
+			}
+		}
+		#chance of not being able to flee
+		random = {
+			chance = 15
+			modifier = {
+				factor = 0.25
+				trait = back_seat_leader
+			}	
+			modifier = {
+				factor = 2
+				trait = aggressive_leader
+			}			
+			modifier = {
+				factor = 2
+				trait = duelist
+			}
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 0.5
+				trait = craven
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			set_character_flag = cannot_flee_battle_duel
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.3" #fight
+		
+		# Set context flags for duel
+		set_character_flag = duel_context_battle
+		FROM = { set_character_flag = duel_context_battle }
+		set_character_flag = flag_battlefield_duel
+		FROM = { set_character_flag = flag_battlefield_duel }
+		set_character_flag = duel_can_be_draw
+		FROM = { set_character_flag = duel_can_be_draw }
+		
+		# Begin duel
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+		ai_chance = {
+			factor = 100
+			modifier = { #Avoid fights
+				factor = 0
+				NOT = { combat_rating = -50 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 70 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 120 }
+			}
+			
+			modifier = {
+				factor = 3
+				trait = duelist
+			}
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBbattle.3" #run
+		trigger = { 
+			NOT = { trait = berserker } 
+			NOT = { has_character_flag = cannot_flee_battle_duel }
+		}
+		hidden_tooltip = { FROM = { character_event = { id = battle.5 } } }
+		remove_character_modifier = battlefield_fight
+		if = {
+			limit = { 
+				NOT = { trait = craven } 
+				NOT = { trait = brave } 
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { 
+				trait = brave
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				remove_trait = brave
+				# hidden_tooltip = {
+					# character_event ={
+						# id = 38257 #Notify
+					# }
+				# }
+			}	
+		}
+		morale = -0.1
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				trait = white_walker
+			}
+			modifier = {
+				factor = 0
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 120 } }
+			}
+			
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCbattle.3" #kingsguard
+		trigger = {
+			is_ruler = yes
+			event_target:kingsguard_protector = { is_alive = yes }
+		}		
+		event_target:kingsguard_protector = {
+			add_character_modifier = {
+				name = battlefield_fight
+				duration = 20
+			}
+			character_event = { id = battle.9 tooltip = "EVTTOOLTIPbattle.9" }
+		}
+		remove_character_modifier = battlefield_fight
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				event_target:kingsguard_protector = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 10
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 120 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 100 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 80 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 70 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 60 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 50 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 40 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 30 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 20 } }
+			}			
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:kingsguard_protector value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:kingsguard_protector = { combat_rating_diff = { who = FROM value = 120 } }
+			}	
+		}
+	}
+	
+	option = {
+		name = "EVTOPTCbattle.3" #bodyguard
+		trigger = {
+			is_ruler = yes
+			event_target:bodyguard_protector = { is_alive = yes }
+		}	
+		remove_character_modifier = battlefield_fight
+		event_target:bodyguard_protector = {
+			add_character_modifier = {
+				name = battlefield_fight
+				duration = 20
+			}
+			character_event = { id = battle.9 tooltip = "EVTTOOLTIPbattle.9" }
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.5
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 0
+				event_target:bodyguard_protector = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 10
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 120 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 100 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 80 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 70 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 60 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 50 } }
+			}
+			modifier = {
+				factor = 0.66
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 40 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 30 } }
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 20 } }
+			}			
+			modifier = {
+				factor = 0.75
+				FROM = { combat_rating_diff = { who = event_target:bodyguard_protector value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				event_target:bodyguard_protector = { combat_rating_diff = { who = FROM value = 120 } }
+			}
+		}
+	}
+	after = {
+		clr_character_flag = cannot_flee_battle_duel
+	}
+}
+# battle.4	Defender Runs
+character_event = {
+	id = battle.4
+	desc = "EVTDESCbattle.4"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAbattle.4"
+		remove_character_modifier = battlefield_fight
+		morale = 0.1
+	}
+}
+# battle.5	Attacker Runs
+character_event = {
+	id = battle.5
+	desc = "EVTDESCbattle.5"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAbattle.5"
+		remove_character_modifier = battlefield_fight
+		morale = 0.1
+	}
+}
+# battle.6	Defender Calls Kingsguard
+character_event = {
+	id = battle.6
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		opinion = { who = FROM modifier = opinion_kingsguard_protection }
+		FROMFROM = { character_event = { id = battle.7 } }
+	}
+	
+	option = {
+		name = OK	
+	}
+}
+# battle.7	Attacker versus Kingsguard - Fight or Run? (Begin Duel)
+character_event = {
+	id = battle.7
+	desc = "EVTDESCbattle.7"
+	picture = GFX_kingsguard
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = {
+			text = "EVTOPTAbattle.7" #Fight
+			trigger = { FROM = { trait = kingsguard } }
+		}	
+		name = {
+			text = "EVTOPTCbattle.7" #Fight
+			trigger = { FROM = { NOT = { trait = kingsguard } } }
+		}
+		name = {
+			text = "EVTOPTDbattle.7" #Fight
+			trigger = { 
+				NOT = { trait = honorable }
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+		}
+		# Set context flags for duel
+		set_character_flag = duel_context_battle
+		FROM = { set_character_flag = duel_context_battle }
+		set_character_flag = flag_battlefield_duel_vs_kingsguard
+		FROM = { set_character_flag = flag_battlefield_duel_kingsguard }
+		FROM = { set_character_flag = flag_duel_to_the_death }
+		
+		set_character_flag = duel_can_be_draw
+		FROM = { set_character_flag = duel_can_be_draw }
+		hidden_tooltip = {
+			opinion = { who = FROMFROM modifier = opinion_kingsguard_protection }
+		}
+		
+		# Begin duel
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+		
+		ai_chance = {
+			factor = 100
+			modifier = { #Avoid fights
+				factor = 0
+				NOT = { combat_rating = -50 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 70 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 120 }
+			}
+			
+			modifier = {
+				factor = 3
+				trait = duelist
+			}
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBbattle.7" #run
+		trigger = { NOT = { trait = berserker } }
+		hidden_tooltip = { FROM = { FROM = { character_event = { id = battle.8 } } } }	
+		FROM = { 
+			remove_character_modifier = battlefield_fight 
+			hidden_tooltip = {
+				remove_opinion = { who = ROOT_FROMFROM modifier = opinion_kingsguard_protection }
+			}
+		}
+		remove_character_modifier = battlefield_fight
+		if = {
+			limit = { 
+				NOT = { trait = craven } 
+				NOT = { trait = brave } 
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { 
+				trait = brave
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				remove_trait = brave
+				# hidden_tooltip = {
+					# character_event ={
+						# id = 38257 #Notify
+					# }
+				# }
+			}	
+		}
+		morale = -0.1
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				trait = white_walker
+			}
+			modifier = {
+				factor = 0
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 120 } }
+			}
+			
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+	}
+}
+# battle.8	Attacker or Defender Runs From Kingsguard
+character_event = {
+	id = battle.8
+	desc = "EVTDESCbattle.8"
+	picture = GFX_kingsguard
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAbattle.8"
+		morale = 0.1
+	}
+}
+# battle.9	Attacker Calls Kingsguard
+character_event = {
+	id = battle.9
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+		opinion = { who = FROM modifier = opinion_kingsguard_protection }
+		FROM = { FROM = { character_event = { id = battle.10 } } }
+	}
+}
+
+character_event = {
+	id = battle.10
+	desc = "EVTDESCbattle.10"
+	picture = GFX_kingsguard
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = {
+			text = "EVTOPTAbattle.7" #Fight
+			trigger = { FROM = { trait = kingsguard } }
+		}	
+		name = {
+			text = "EVTOPTCbattle.7" #Fight
+			trigger = { FROM = { NOT = { trait = kingsguard } } }
+		}
+		name = {
+			text = "EVTOPTDbattle.7" #Fight
+			trigger = { 
+				NOT = { trait = honorable }
+				NOT = { opinion = { who = FROM value = 0 } }
+			}
+		}
+		
+		# Set context flags for duel
+		set_character_flag = duel_context_battle
+		FROM = { set_character_flag = duel_context_battle }
+		set_character_flag = flag_battlefield_duel_vs_kingsguard
+		FROM = { set_character_flag = flag_battlefield_duel_kingsguard }
+		FROM = { set_character_flag = flag_duel_to_the_death }
+		
+		set_character_flag = duel_can_be_draw
+		FROM = { set_character_flag = duel_can_be_draw }
+		hidden_tooltip = {
+			opinion = { who = FROMFROM modifier = opinion_kingsguard_protection }
+		}
+		
+		# Begin duel
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+		
+		ai_chance = {
+			factor = 100
+			modifier = { #Avoid fights
+				factor = 0
+				NOT = { combat_rating = -50 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 10 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 20 }
+			}
+			modifier = {
+				factor = 1.33
+				combat_rating_diff = { who = FROM value = 30 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 40 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 50 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 60 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 70 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 80 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 100 }
+			}
+			modifier = {
+				factor = 1.5
+				combat_rating_diff = { who = FROM value = 120 }
+			}
+			
+			modifier = {
+				factor = 3
+				trait = duelist
+			}
+			modifier = {
+				factor = 4
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTBbattle.10" #run
+		trigger = { NOT = { trait = berserker } }
+		hidden_tooltip = { FROM = { FROM = { character_event = { id = battle.8 } } } }
+		remove_character_modifier = battlefield_fight
+		FROM = { 
+			remove_character_modifier = battlefield_fight 
+			hidden_tooltip = {
+				remove_opinion = { who = ROOT_FROMFROM modifier = opinion_kingsguard_protection }
+			}
+		}
+		if = {
+			limit = { 
+				NOT = { trait = craven } 
+				NOT = { trait = brave } 
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				add_trait = craven
+				hidden_tooltip = {
+					character_event ={
+						id = 38257 #Notify
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { 
+				trait = brave
+				NOT = { FROM = { combat_rating_diff = { who = ROOT value = 40 } } }
+			}
+			random = {
+				chance = 25
+				remove_trait = brave
+				# hidden_tooltip = {
+					# character_event ={
+						# id = 38257 #Notify
+					# }
+				# }
+			}	
+		}
+		morale = -0.1
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				trait = white_walker
+			}
+			modifier = {
+				factor = 0
+				FROM = { NOT = { combat_rating = -50 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 10 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 20 } }
+			}
+			modifier = {
+				factor = 1.33
+				FROM = { combat_rating_diff = { who = ROOT value = 30 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 40 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 50 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 60 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 70 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 80 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 100 } }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { combat_rating_diff = { who = ROOT value = 120 } }
+			}
+			
+			modifier = {
+				factor = 4
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = humble
+			}
+			modifier = {
+				factor = 2
+				trait = patient
+			}
+		}
+	}
+}
+### Post-Battlefield-Duel Events
+# battle.11	(End Duel) Victor Killed Opponent
+character_event = {
+	id = battle.11
+	desc = "EVTDESCbattle.11"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	option = {
+		name = "EVTOPTAbattle.11"
+		if = {
+			limit = { 
+				ai = no 
+				FROMFROM = {
+					OR = {
+						is_ruler = yes
+						liege = { is_close_relative = PREV }
+						prestige = 250
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}
+			}
+			chronicle = {
+				entry = CHRONICLE_WON_BATTLE_DUEL_KILL
+				portrait = [FromFrom.GetID]
+			}
+		}
+		morale = 0.2
+	}
+}
+# battle.12	(End Duel) Inform liege their vassal killed in combat
+character_event = {
+	id = battle.12
+	desc = "EVTDESCbattle.12"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAbattle.12"
+		show_portrait = event_target:duel_round_winner
+	}
+}
+# battle.13	Opponent Imprisoned
+character_event = {
+	id = battle.13
+	desc = "EVTDESCbattle.13"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_tooltip = {
+			liege = {
+				if = {
+					limit = {
+						ai = no
+						NOT = { character = ROOT }
+						NOT = { character = FROM }
+					}
+					character_event = { id = battle.1399 }
+				}
+			}
+		}	
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.13"
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_LOST_BATTLE_DUEL_CAPTURED
+				portrait = [From.GetID]
+			}
+		}
+		FROM = {
+			if = {
+				limit = { 
+					ai = no 
+					ROOT = {
+						OR = {
+							is_ruler = yes
+							liege = { is_close_relative = PREV }
+							prestige = 250
+							trait = skilled_warrior
+							trait = master_warrior
+						}
+					}	
+				}
+				chronicle = {
+					entry = CHRONICLE_WON_BATTLE_DUEL_HOSTAGE
+					portrait = [Root.GetID]
+				}
+			}
+		}
+		tooltip = {
+			if = {
+				limit = { FROM = { is_ruler = yes } }
+				hidden_tooltip = { character_event = { id = 50020 } } # "imprisoned_events.txt"
+				ROOT = { imprison = FROM }
+			}
+			if = {
+				limit = { FROM = { is_ruler = no } }
+				FROM = {
+					liege = { 
+						hidden_tooltip = { character_event = { id = 50020 } } # "imprisoned_events.txt"
+						ROOT = { imprison = PREV } 
+					}
+				}	
+			}
+		}
+		set_character_flag = captured_in_battle	
+	}
+}
+# battle.12	(End Duel) Inform liege their vassal was captured
+character_event = {
+	id = battle.1399
+	desc = "EVTDESCbattle.1399"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = "EVTOPTAbattle.1399"
+		FROMFROM = { show_portrait = yes }
+	}
+}
+# battle.14	(End Duel) Opponent Killed Kingsguard - Original Opponent Reacts
+character_event = {
+	id = battle.14
+	desc = "EVTDESCbattle.14"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	show_from_from = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		reverse_remove_opinion = { who = FROM modifier = opinion_kingsguard_protection }
+		reverse_remove_opinion = { who = FROMFROM modifier = opinion_kingsguard_protection }
+	}
+	
+	option = {
+		name = "EVTDESCbattle.15"
+		FROM = { character_event = { id = battle.15 tooltip = "EVTTOOLTIPbattle.15" } }
+	}
+}
+# battle.15	Victor Attacks Original Opponent (Begin Duel)
+character_event = {
+	id = battle.15
+	desc = "EVTDESCbattle.15"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	
+	immediate = {
+		add_character_modifier = {
+			name = battlefield_fight
+			duration = 20
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.15"
+		
+		# Set context flags for duel
+		set_character_flag = duel_context_battle
+		FROM = { set_character_flag = duel_context_battle }
+		set_character_flag = flag_battlefield_duel
+		FROM = { set_character_flag = flag_battlefield_duel }
+		set_character_flag = duel_can_be_draw
+		FROM = { set_character_flag = duel_can_be_draw }
+		
+		# Begin duel
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+	}
+}
+# battle.16	Kingsguard Killed Opponent - Original Opponent Reacts
+character_event = {
+	id = battle.16
+	desc = "EVTDESCbattle.16"
+	picture = GFX_kingsguard
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = {
+		if = {
+			limit = { 
+				ai = no 
+				FROMFROM = {
+					OR = {
+						is_ruler = yes
+						liege = { is_close_relative = PREV }
+						prestige = 250
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}
+			}
+			chronicle = {
+				entry = CHRONICLE_WON_BATTLE_DUEL_KILL_BODYGUARD
+				portrait = [FromFrom.GetID]
+			}
+		}
+		reverse_remove_opinion = { who = FROM modifier = opinion_kingsguard_protection }
+		reverse_remove_opinion = { who = FROMFROM modifier = opinion_kingsguard_protection }
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.16"
+		morale = 0.1
+		if = {
+			limit = { FROM = { NOT = { trait = kingsguard } } }
+			hidden_tooltip = {
+				FROM = { change_variable = { which = "services_rendered" value = 1 } }
+				opinion = {
+					modifier = opinion_service_rendered
+					who = FROM
+					years = 3
+				}
+			}
+		}
+	}
+}
+# battle.17	Kingsguard Beat Opponent - Original Opponent Takes Opponent Hostage
+character_event = {
+	id = battle.17
+	desc = "EVTDESCbattle.17"
+	picture = GFX_kingsguard
+	border = "GFX_event_normal_frame_war"
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = {
+		if = {
+			limit = { 
+				ai = no 
+				FROMFROM = {
+					OR = {
+						is_ruler = yes
+						liege = { is_close_relative = PREV }
+						prestige = 250
+						trait = skilled_warrior
+						trait = master_warrior
+					}
+				}	
+			}
+			chronicle = {
+				entry = CHRONICLE_WON_BATTLE_DUEL_HOSTAGE_BODYGUARD
+				portrait = [FromFrom.GetID]
+			}
+		}		
+		FROMFROM = {
+			if = {
+				limit = { ai = no }
+				chronicle = {
+					entry = CHRONICLE_LOST_BATTLE_DUEL_CAPTURED
+					portrait = [From.GetID]
+				}
+			}
+		}
+		reverse_remove_opinion = { who = FROM modifier = opinion_kingsguard_protection }
+		reverse_remove_opinion = { who = FROMFROM modifier = opinion_kingsguard_protection }
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.17"
+		FROMFROM = {
+			hidden_tooltip = { character_event = { id = battle.13 } }	
+			set_character_flag = captured_in_battle					
+		}
+		if = {
+			limit = { is_ruler = yes }
+			FROMFROM = { 
+				imprison = ROOT 
+				any_ward = {
+					limit = { 
+						at_location = ROOT 
+						NOT = { trait = dragon }
+					}
+					imprison = ROOT 
+					set_character_flag = captured_in_battle
+				}
+			}
+		}
+		if = {
+			limit = { is_ruler = no }
+			liege = { 
+				FROMFROM = { 
+					imprison = PREV 
+					any_ward = {
+						limit = { 
+							at_location = ROOT 
+							NOT = { trait = dragon }
+						}
+						imprison = PREVPREV
+						set_character_flag = captured_in_battle
+					}
+				} 
+			}
+		}
+		if = {
+			limit = { FROM = { NOT = { trait = kingsguard } } }
+			hidden_tooltip = {
+				FROM = { change_variable = { which = "services_rendered" value = 1 } }
+				opinion = {
+					modifier = opinion_service_rendered
+					who = FROM
+					years = 3
+				}
+			}
+		}
+	}
+}
+# Opponent and bodyguard draw
+character_event = {
+	id = battle.1799
+	desc = "EVTDESCbattle.1799"
+	picture = GFX_evt_battle
+	border = "GFX_event_normal_frame_war"
+	show_from_from = yes
+	is_triggered_only = yes
+	
+	immediate = {
+		reverse_remove_opinion = { who = event_target:battlefield_duel_opponent modifier = opinion_kingsguard_protection }
+		reverse_remove_opinion = { who = event_target:battlefield_duel_bodyguard modifier = opinion_kingsguard_protection }
+	}
+	
+	option = {
+		name = "EVTOPTAbattle.1799"	
+		if = {
+			limit = { event_target:battlefield_duel_bodyguard = { NOT = { trait = kingsguard } } }
+			hidden_tooltip = {
+				event_target:battlefield_duel_bodyguard = { change_variable = { which = "services_rendered" value = 1 } }
+				opinion = {
+					modifier = opinion_service_rendered
+					who = event_target:battlefield_duel_bodyguard
+					years = 3
+				}
+			}
+		}
+	}
+}
+#On-action combat event: Direwolf kills many men
+character_event = {
+	id = battle.18
+	desc = EVTDESCbattle.18	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.19 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.19 }
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		morale = 0.1
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.19
+	desc = EVTDESCbattle.19	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.19
+		morale = -0.1
+	}
+}
+#On-action combat event: Direwolf slain
+character_event = {
+	id = battle.20
+	desc = EVTDESCbattle.20	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.21 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.21 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		remove_trait = direwolf
+		random = {
+			chance = 50
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+		morale = -0.1
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_DIREWOLF_SLAIN
+				picture = GFX_wolf
+			}
+		}
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.21
+	desc = EVTDESCbattle.21	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.23
+		FROM = { remove_trait = direwolf }
+	}
+}
+
+#On-action combat event: Wolf kills many men
+character_event = {
+	id = battle.22
+	desc = EVTDESCbattle.22	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.23 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.23 }
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		morale = 0.1
+	}
+}
+character_event = {
+	id = battle.23
+	desc = EVTDESCbattle.23	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.23
+		morale = -0.1
+	}
+}
+#On-action combat event: Wolf slain
+character_event = {
+	id = battle.24
+	desc = EVTDESCbattle.24	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.25 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.25 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		remove_trait = wolf
+		random = {
+			chance = 50
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+		morale = -0.1
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.25
+	desc = EVTDESCbattle.25	
+	picture = "GFX_wolf"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.23
+		FROM = { remove_trait = wolf }
+	}
+}
+
+#On-action combat event: Snowbear kills many men
+character_event = {
+	id = battle.26
+	desc = EVTDESCbattle.26	
+	picture = "GFX_snowbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.27 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.27 }
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		morale = 0.1
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.27
+	desc = EVTDESCbattle.27	
+	picture = "GFX_snowbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.27
+		morale = -0.1
+	}
+}
+#On-action combat event: Snowbear slain
+character_event = {
+	id = battle.28
+	desc = EVTDESCbattle.28	
+	picture = "GFX_snowbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.29 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.29 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		remove_trait = snowbear
+		random = {
+			chance = 50
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+		morale = -0.1
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_SNOWBEAR_SLAIN
+				picture = GFX_snowbear
+			}
+		}
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.29
+	desc = EVTDESCbattle.29	
+	picture = "GFX_snowbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.27
+		FROM = { remove_trait = snowbear }
+	}
+}
+
+#On-action combat event: Bear kills many men
+character_event = {
+	id = battle.30
+	desc = EVTDESCbattle.30	
+	picture = "GFX_brownbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.31 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.31 }
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		morale = 0.1
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.31
+	desc = EVTDESCbattle.31	
+	picture = "GFX_brownbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.31
+		morale = -0.1
+	}
+}
+#On-action combat event: Bear slain
+character_event = {
+	id = battle.32
+	desc = EVTDESCbattle.32	
+	picture = "GFX_brownbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.33 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.33 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		remove_trait = brownbear
+		random = {
+			chance = 50
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+		morale = -0.1
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_BEAR_SLAIN
+				picture = GFX_brownbear
+			}
+		}
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.33
+	desc = EVTDESCbattle.33	
+	picture = "GFX_brownbear"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.31
+		FROM = { remove_trait = brownbear }
+	}
+}
+
+#On-action combat event: Shadowcat kills many men
+character_event = {
+	id = battle.34
+	desc = EVTDESCbattle.34	
+	picture = "GFX_shadowcat"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { trait = shadowcat }
+
+	weight_multiplier = {
+		days = 1
+		good_soldier_outcome_score = yes	
+	}
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.35 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.35 }
+			}
+		}
+	}
+	
+	option = {
+		name = EXCELLENT
+		morale = 0.1
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.35
+	desc = EVTDESCbattle.35	
+	picture = "GFX_shadowcat"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.35
+		morale = -0.1
+	}
+}
+#On-action combat event: Shadowcat slain
+character_event = {
+	id = battle.36
+	desc = EVTDESCbattle.36	
+	picture = "GFX_shadowcat"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	trigger = { trait = shadowcat }
+
+	weight_multiplier = {
+		days = 1
+		bad_soldier_outcome_score = yes		
+	}
+	
+	immediate = {
+		FROMFROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.37 }
+				break = yes
+			}	
+		}	
+		FROM = {
+			if = {
+				limit = { NOT = { character = ROOT } }
+				character_event = { id = battle.37 }
+			}
+		}
+	}
+	
+	option = {
+		name = ALAS
+		remove_trait = shadowcat
+		random = {
+			chance = 50
+			add_trait = depressed
+			hidden_tooltip = {
+				character_event = {
+					id = 38288 #Notify Depressed
+				}
+			}
+		}
+		morale = -0.1
+		if = {
+			limit = { ai = no }
+			chronicle = {
+				entry = CHRONICLE_SHADOWCAT_SLAIN
+				picture = GFX_shadowcat
+			}
+		}
+	}
+}
+#Inform opponent
+character_event = {
+	id = battle.37
+	desc = EVTDESCbattle.37	
+	picture = "GFX_shadowcat"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTbattle.35
+		FROM = { remove_trait = shadowcat }
+	}
+}
+
+# Battle flavour event - wounded soldier asks for death
+character_event = {
+	id = battle.40
+	desc = EVTDESCbattle.40
+	picture = "GFX_evt_battle"
+	border = GFX_event_normal_frame_war
+	
+	is_triggered_only = yes
+	
+	weight_multiplier = {
+		days = 1
+		modifier = {
+			factor = 0.15
+			trait = back_seat_leader
+		}
+		modifier = {
+			factor = 2
+			trait = aggressive_leader
+		}
+	}
+	
+	option = {
+		name = EVTOPTAbattle.40 # I will give mercy
+		trigger = {
+			NOT = { trait = impaler }
+		}
+		piety = 5
+		prestige = -5
+	}
+	option = {
+		name = EVTOPTBbattle.40 # Stand up and fight!
+		trigger = {
+			NOT = { trait = impaler }
+		}
+		piety = -5
+		prestige = 5
+	}
+	option = {
+		name = EVTOPTCbattle.40 # I'll have fun with you
+		trigger = {
+			trait = impaler
+		}
+		tooltip_info = impaler
+		custom_tooltip = { text = TOOLTIPbattle.40 }
+		piety = -20
+		prestige = 10
+	}
+}
+
+#Battle notification events for when player is commander for liege
+character_event = { #won battle
+	id = battle.50
+	desc = EVTDESCbattle.50	
+	picture = "GFX_evt_battle"
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	notification = yes
+	ai = no
+	
+	trigger = {
+		OR = {
+			has_minor_title = title_commander
+			has_job_title = job_marshal
+		}	
+		liege = {
+			NOT = { character = ROOT }
+			FROM = {
+				OR = {
+					war_with = PREV
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }
+					liege = { war_with = PREVPREV }
+					liege = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_looted } }
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = { #lost battle
+	id = battle.51
+	desc = EVTDESCbattle.51
+	picture = "GFX_evt_battle"
+	border = GFX_event_normal_frame_war
+
+	is_triggered_only = yes
+	notification = yes
+	ai = no
+	
+	trigger = {
+		OR = {
+			has_minor_title = title_commander
+			has_job_title = job_marshal
+		}
+		liege = {
+			NOT = { character = ROOT }
+			FROM = {
+				OR = {
+					war_with = PREV
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_looted }
+					liege = { war_with = PREVPREV }
+					liege = { reverse_has_opinion_modifier = { who = PREVPREV modifier = opinion_looted } }
+				}
+			}
+		}	
+	}
+
+	option = {
+		name = OK
+	}
+}

@@ -1,0 +1,1262 @@
+# Legitimacy Investigation Decisions
+
+plot_decisions = {
+	# Ultimatum - Confront Father
+	pil_confront_father = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			NOT = { has_character_flag = flag_pil_confront_father }
+			plot_target_char = {
+				father = {
+					is_alive = yes
+					is_ruler = yes
+					higher_tier_than = PREV
+				}
+			}
+		}
+		allow = {
+			check_variable = { which = "pil_evidence_count" value = 1 }
+			# custom_tooltip = { 
+				# text = HASEVIDENCE 
+				# hidden_tooltip = { check_variable = { which = "pil_evidence_count" value = 0.5 } }
+			# }	
+			num_of_plot_backers = 2
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		effect = {
+			activate_plot = yes
+			set_character_flag = flag_pil_confront_father
+			character_event = { id = pil.100 tooltip = "EVTTOOLTIPPIL100" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.04
+			}	
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 1 } }
+				NOT = {
+					OR = {
+						trait = wroth
+						AND = {
+							trait = paranoid
+							OR = {
+								trait = honest
+								trait = just
+								trait = honorable
+							}
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 2 } }
+				OR = {
+					trait = patient
+					AND = {
+						trait = trusting
+						OR = {
+							trait = honest
+							trait = just
+							trait = honorable
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames_fake }
+				
+				plot_target_char = {
+					father = {
+						OR = {
+							NOT = { is_old_gods_religion_trigger = yes }
+							trait = cynical
+						}
+					}
+				}
+				
+				NAND = {
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams_fake }
+				
+				plot_target_char = {
+					father = {
+						OR = {
+							NOT = { religion = rhllor }
+							trait = cynical
+						}
+					}
+				}
+				
+				NOT = {
+					religion = rhllor
+					trait = zealous
+				}
+			}
+		}
+	}
+	
+	# Send Messages to Vassals and Relatives
+	pil_send_ravens = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			NOT = { has_character_flag = flag_pil_send_ravens }
+			NOT = { has_character_flag = flag_pil_confront_father }
+			NOT = { has_character_flag = flag_pil_regent_sieze_throne }
+			plot_target_char = {
+				father = {
+					OR = {
+						is_alive = no
+						is_ruler = no
+						NOT = { higher_tier_than = PREV }
+					}
+				}
+				NOT = { regent = { character = ROOT } }
+			}
+		}
+		
+		allow = {
+			check_variable = { which = "pil_evidence_count" value = 1 }
+			# custom_tooltip = { 
+				# text = HASEVIDENCE 
+				# hidden_tooltip = { check_variable = { which = "pil_evidence_count" value = 0.5 } }
+			# }		
+			num_of_plot_backers = 2
+		}
+		
+		effect = {
+			hidden_tooltip = {
+				if = {
+					limit = { 
+						is_ruler = yes
+						plot_target_char = { is_liege_of = ROOT } 
+					}
+					remove_title = job_castellan
+					#remove_title = title_hand_of_the_king
+					#remove_title = title_hand_of_the_emperor
+					remove_title = job_chancellor
+					remove_title = job_marshal
+					remove_title = job_treasurer
+					remove_title = job_spymaster
+					remove_title = job_physician
+					remove_title = job_spiritual
+				}
+			}
+			activate_plot = yes
+			set_character_flag = flag_pil_send_ravens
+			character_event = { id = pil.117 tooltip = "EVTTOOLTIPPIL117" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.04
+			}	
+			
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 1 } }
+				NOT = {
+					OR = {
+						trait = wroth
+						AND = {
+							trait = paranoid
+							OR = {
+								trait = honest
+								trait = just
+								trait = honorable
+							}
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 2 } }
+				OR = {
+					trait = patient
+					AND = {
+						trait = trusting
+						OR = {
+							trait = honest
+							trait = just
+							trait = honorable
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames_fake }
+				NOT = {
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams_fake }
+				NOT = {
+					religion = rhllor
+					trait = zealous
+				}
+			}
+		}
+	}
+	
+	# Regent sieze throne
+	pil_regent_sieze_throne = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			NOT = { has_character_flag = flag_pil_send_ravens }
+			NOT = { has_character_flag = flag_pil_confront_father }
+			NOT = { has_character_flag = flag_pil_regent_sieze_throne }
+			plot_target_char = {
+				regent = { character = ROOT }
+				primary_title = { ROOT = { has_claim = PREV } }
+				NOT = {
+					mother_even_if_dead = { is_parent_of = ROOT }
+				}
+			}
+		}
+		
+		allow = {
+			check_variable = { which = "pil_evidence_count" value = 1 }
+			# custom_tooltip = { 
+				# text = HASEVIDENCE 
+				# hidden_tooltip = { check_variable = { which = "pil_evidence_count" value = 0.5 } }
+			# }	
+			plot_power = 1
+			#num_of_plot_backers = 3
+			plot_target_char = {
+				capital_scope = {
+					ROOT = { at_location = PREV }
+				}			
+			}
+			NOT = { is_inaccessible_trigger = yes }
+		}
+		
+		effect = {
+			activate_plot = yes
+			set_character_flag = flag_pil_regent_sieze_throne
+			character_event = { id = pil.122 tooltip = "EVTTOOLTIPpil.122" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0.2
+			}	
+			
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 1 } }
+				NOT = {
+					OR = {
+						trait = wroth
+						AND = {
+							trait = paranoid
+							OR = {
+								trait = honest
+								trait = just
+								trait = honorable
+							}
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { check_variable = { which = "pil_evidence_count" value = 2 } }
+				OR = {
+					trait = patient
+					AND = {
+						trait = trusting
+						OR = {
+							trait = honest
+							trait = just
+							trait = honorable
+						}
+					}
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_green_dreams
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_vision_in_flames
+					religion = rhllor
+					trait = zealous
+				}
+				NOT = {
+					has_character_flag = flag_pil_evidence_dragon_dreams
+					trait = dragon_dreams
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames }
+				NOT = { has_character_flag = flag_pil_evidence_vision_in_flames_fake }
+				NOT = {
+					is_old_gods_religion_trigger = yes
+					trait = zealous
+				}
+			}
+			
+			modifier = {
+				factor = 0
+				NOT = { has_character_flag = flag_pil_evidence_trait_present }
+				NOT = { has_character_flag = flag_pil_evidence_trait_missing }
+				NOT = { has_character_flag = flag_pil_evidence_appearance }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+				NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+				NOT = { has_character_flag = flag_pil_evidence_mother_lover }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams }
+				NOT = { has_character_flag = flag_pil_evidence_green_dreams_fake }
+				NOT = {
+					religion = rhllor
+					trait = zealous
+				}
+			}
+		}
+	}
+
+	# Fabricate Evidence - Mysterious Conception
+	pil_fabricate_conception_decision_1 = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_mysterious_conception }
+			NOT = { has_character_flag = flag_pil_evidence_mysterious_conception_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_conception_decision }			
+		}
+		allow = { 
+			NOT = { trait = just }
+			NOT = { trait = honest }
+			NOT = { trait = honorable }		
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_conception_decision
+			random_list = {
+				10 = { 
+					modifier = {
+						factor = 2.5
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 5
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 7.5
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 9
+						plot_power = 2
+					}
+					character_event = { id = pil.12 tooltip = "ACTIONSUCCEED" } 
+				}
+				90 = { 
+					modifier = {
+						factor = 0.833
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 0.555
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 0.278
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 0.111
+						plot_power = 2
+					}
+					character_event = { id = pil.13 tooltip = "ACTIONFAIL" } 
+				}
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NAND = {
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}					
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0.25
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { plot_power = 2 }
+			}
+			modifier = {
+				factor = 0.05
+				trait = patient
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+		}
+	}
+	
+	# Fabricate Evidence - Green Dreams
+	pil_fabricate_dreams_decision_1 = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			trait = greensight	
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_green_dreams }
+			NOT = { has_character_flag = flag_pil_evidence_green_dreams_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_dreams_decision }				
+		}
+		allow = { 
+			NOT = { trait = just }
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = zealous }
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_dreams_decision
+			random_list = {
+				10 = { 
+					modifier = {
+						factor = 2.5
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 5
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 7.5
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 9
+						plot_power = 2
+					}
+					character_event = { id = pil.17 tooltip = "ACTIONSUCCEED" } 
+				}
+				90 = { 
+					modifier = {
+						factor = 0.833
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 0.555
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 0.278
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 0.111
+						plot_power = 2
+					}
+					character_event = { id = pil.18 tooltip = "ACTIONFAIL" } 
+				}
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NAND = {
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}					
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cynical }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0.25
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { plot_power = 2 }
+			}
+			modifier = {
+				factor = 0.05
+				trait = patient
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+		}
+	}
+	pil_fabricate_dreams_backer_decision = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy		
+			any_plot_backer = { trait = greensight } 
+			NOT = { trait = greensight }
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_green_dreams }
+			NOT = { has_character_flag = flag_pil_evidence_green_dreams_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_dreams_decision }
+		}
+		allow = {		
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = just }
+			NAND = {
+				trait = zealous
+				is_old_gods_religion_trigger = yes			
+			}
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_dreams_decision
+			character_event = { id = pil.19 tooltip = "EVTTOOLTIPPIL19" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NOT = {
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cynical }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_plot_backer = {
+						trait = greensight
+						OR = {
+							trait = cynical
+							trait = ruthless
+							trait = arbitrary
+							trait = deceitful
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	# Fabricate Evidence - Visions
+	pil_fabricate_visions_decision_1 = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			trait = red_priest
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_vision_in_flames }
+			NOT = { has_character_flag = flag_pil_evidence_vision_in_flames_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_visions_decision }					
+		}
+		allow = { 
+			NOT = { trait = just }
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = zealous }
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_visions_decision
+			random_list = {
+				10 = { 
+					modifier = {
+						factor = 2.5
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 5
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 7.5
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 9
+						plot_power = 2
+					}
+					character_event = { id = pil.26 tooltip = "ACTIONSUCCEED" } 
+				}
+				90 = { 
+					modifier = {
+						factor = 0.833
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 0.555
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 0.278
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 0.111
+						plot_power = 2
+					}
+					character_event = { id = pil.27 tooltip = "ACTIONFAIL" } 
+				}
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NAND = {
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}					
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cynical }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0.25
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { plot_power = 2 }
+			}
+			modifier = {
+				factor = 0.05
+				trait = patient
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+		}
+	}
+	pil_fabricate_visions_backer_decision = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			any_plot_backer = { trait = red_priest }
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_vision_in_flames }
+			NOT = { has_character_flag = flag_pil_evidence_vision_in_flames_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_visions_decision }			
+			NOT = { trait = red_priest }			
+		}
+		allow = { 
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = just }
+			NAND = {
+				religion = rhllor
+				trait = zealous
+			}
+		}
+		
+		effect = {
+			set_character_flag = flag_pil_fabricate_visions_decision
+			character_event = { id = pil.28 tooltip = "EVTTOOLTIPPIL28" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NOT = {
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cynical }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_plot_backer = {
+						trait = red_priest
+						OR = {
+							trait = cynical
+							trait = ruthless
+							trait = arbitrary
+							trait = deceitful
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	# Fabricate Evidence - Dragon Dreams
+	pil_fabricate_dragon_dreams_decision_1 = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			trait = dragon_dreams	
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_dragon_dreams }
+			NOT = { has_character_flag = flag_pil_evidence_dragon_dreams_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_dragon_dreams_decision }				
+		}
+		allow = { 
+			NOT = { trait = just }
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_dragon_dreams_decision
+			random_list = {
+				10 = { 
+					modifier = {
+						factor = 2.5
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 5
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 7.5
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 9
+						plot_power = 2
+					}
+					character_event = { id = pil.43 tooltip = "ACTIONSUCCEED" } 
+				}
+				90 = { 
+					modifier = {
+						factor = 0.833
+						plot_power = 0.5
+						NOT = { plot_power = 1 }
+					}
+					modifier = {
+						factor = 0.555
+						plot_power = 1
+						NOT = { plot_power = 1.5 }
+					}
+					modifier = {
+						factor = 0.278
+						plot_power = 1.5
+						NOT = { plot_power = 2 }
+					}
+					modifier = {
+						factor = 0.111
+						plot_power = 2
+					}
+					character_event = { id = pil.44 tooltip = "ACTIONFAIL" } 
+				}
+			}
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.1
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NAND = {
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}					
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0.25
+				NOT = { plot_power = 0.5 }
+			}
+			modifier = {
+				factor = 0.5
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 2
+				NOT = { plot_power = 1.5 }
+			}
+			modifier = {
+				factor = 4
+				NOT = { plot_power = 2 }
+			}
+			modifier = {
+				factor = 0.05
+				trait = patient
+				NOT = { plot_power = 1 }
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+		}
+	}
+	pil_fabricate_dragon_dreams_backer_decision = {
+		is_high_prio = yes
+		potential = {
+			has_plot = plot_investigate_legitimacy
+			any_plot_backer = { trait = dragon_dreams } 
+			NOT = { plot_target_char = { father = { character = ROOT } } } # Cannot fabricate evidence to fool self
+			NOT = { has_character_flag = flag_pil_evidence_dragon_dreams }
+			NOT = { has_character_flag = flag_pil_evidence_dragon_dreams_fake }
+			NOT = { has_character_flag = flag_pil_fabricate_dragon_dreams_decision }			
+			NOT = { trait = dragon_dreams }			
+		}
+		allow = { 
+			NOT = { trait = honest }
+			NOT = { trait = honorable }
+			NOT = { trait = just }
+			NAND = {
+				religion_group = valyrian_rel_group
+				trait = zealous
+			}
+		}
+		effect = {
+			set_character_flag = flag_pil_fabricate_dragon_dreams_decision
+			character_event = { id = pil.45 tooltip = "EVTTOOLTIPPIL45" }
+		}
+		ai_check_interval = 2
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+				NOT = { trait = paranoid }
+				NOT = {
+					plot_target_char = {
+						ROOT = {
+							OR = {
+								any_pretender_title = { current_heir = { character = PREVPREVPREV } }
+								any_pretender_title = { holder = PREVPREV }
+								any_heir_title = { holder = PREVPREV }
+							}
+						}
+					}
+					OR = {
+						trait = ambitious
+						trait = envious
+						trait = greedy
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				NOT = { trait = deceitful }
+				NOT = { trait = arbitrary }
+				NOT = { trait = ruthless }
+				NOT = { trait = cynical }
+				NOT = { trait = lunatic }
+				NOT = { trait = possessed }
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_plot_backer = {
+						trait = dragon_dreams
+						OR = {
+							trait = cynical
+							trait = ruthless
+							trait = arbitrary
+							trait = deceitful
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+# dynasty_decisions = {
+	# denounce_suspected_bastard_dynasty = {
+		# potential = {
+			# NOT = { trait = bastard }
+			# NOT = { trait = suspected_bastard }
+			# reverse_has_opinion_modifier = { who = FROM modifier = opinion_suspected_bastard }
+		# }
+		
+		# allow = {
+			# prisoner = yes
+			# host = FROM
+		# }
+		
+		# effect = {
+			# if = {
+				# limit = {
+					# real_father = { always = no }
+					# mother = { has_lover = no }
+				# }
+				# character_event = { id = pil.103 tooltip = "EVTTOOLTIPPIL103" }
+			# }
+			# if = {
+				# limit = {
+					# OR = {
+						# real_father = { always = yes }
+						# mother = { has_lover = yes }
+					# }
+				# }
+				# character_event = { id = pil.104 tooltip = "EVTTOOLTIPPIL104" }
+			# }
+		# }
+	# }
+# }
+
+# vassal_decisions = {
+	# denounce_suspected_bastard_vassal = {
+		# potential = {
+			# NOT = { dynasty = FROM }
+			# NOT = { trait = bastard }
+			# NOT = { trait = suspected_bastard }
+			# reverse_has_opinion_modifier = { who = FROM modifier = opinion_suspected_bastard }
+		# }
+		
+		# allow = {
+			# prisoner = yes
+			# host = FROM
+		# }
+		
+		# effect = {
+			# if = {
+				# limit = {
+					# real_father = { always = no }
+					# mother = { has_lover = no }
+				# }
+				# character_event = { id = pil.103 tooltip = "EVTTOOLTIPPIL103" }
+			# }
+			# if = {
+				# limit = {
+					# OR = {
+						# real_father = { always = yes }
+						# mother = { has_lover = yes }
+					# }
+				# }
+				# character_event = { id = pil.104 tooltip = "EVTTOOLTIPPIL104" }
+			# }
+		# }
+	# }
+# }

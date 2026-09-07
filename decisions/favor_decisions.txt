@@ -1,0 +1,482 @@
+targetted_decisions = {
+	call_in_election_support = {
+		is_high_prio = yes
+		filter = realm
+		ai_target_filter = none
+		ai = no #ai uses events
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"
+			OR = {
+				AND = { #Interregnum
+					has_character_flag = interregnum_title_candidate
+					OR = {
+						has_character_flag = called_interregnum_council
+						top_liege = { has_character_flag = called_interregnum_council }
+					}
+				}	
+				top_liege = { #great council
+					has_character_flag = called_great_council 
+					reverse_has_opinion_modifier = { who = FROM modifier = opinion_great_council_candidate }
+				}
+				# AND = { #Kingsmoot
+					# has_character_flag = kingsmoot_candidate
+					# OR = {
+						# has_character_flag = kingsmoot
+						# top_liege = { has_character_flag = kingsmoot }
+					# }
+				# }	
+				AND = { #Triarchy
+					OR = {
+						trait = elephant
+						trait = tiger
+					}				
+					OR = {
+						government = triarch_merchant_republic_government
+						any_liege = { government = triarch_merchant_republic_government }
+					}
+					NAND = {
+						is_merchant_republic = yes
+						primary_title = { has_law = republic_triarch_for_life }
+					}
+					NOT = { has_minor_title = title_triarch_for_life }
+					can_press_claims_trigger = yes
+					NOT = { trait = former_slave }
+				}
+				# any_liege = { #Elective realm
+					# primary_title = {
+						# OR = {
+							# has_law = noble_oligarchy_elective
+							# has_law = succ_feudal_elective
+							# has_law = succ_kingsmoot_elective
+						# }
+						# OR = {
+							# current_heir = { character = FROM }
+							# any_pretender = { character = FROM }
+						# }
+					# }
+				# }
+			}	
+		}
+		potential = {
+			owes_favor_to = FROM
+			is_incapable = no
+			prisoner = no
+			is_adult = yes
+			 
+			OR = {
+				AND = { 
+					FROM = { has_character_flag = interregnum_title_candidate }
+					has_character_flag = interregnum_voter
+					NOT = { has_character_flag = interregnum_title_candidate }
+				}	
+				AND = { 
+					has_character_flag = attending_great_council
+					top_liege = { #great council
+						has_character_flag = called_great_council 
+						reverse_has_opinion_modifier = { who = FROM modifier = opinion_great_council_candidate }
+					}
+				}
+				# AND = { 
+					# FROM = { has_character_flag = kingsmoot_candidate }
+					# NOT = { has_character_flag = kingsmoot_candidate }
+					# OR = {
+						# can_press_claims_trigger = yes
+						# trait = drowned
+					# }
+					# OR = { #Must either follow Drowned God or be dejure part of the Kingdom
+						# is_drowned_god_religion_trigger = yes
+						# any_demesne_title = {
+							# OR = {
+								# kingdom = {
+									# has_elective_law_trigger = yes
+									# is_primary_holder_title = yes
+									# holder_scope = { is_vassal_or_below = ROOT }
+								# }
+								# empire = {
+									# has_elective_law_trigger = yes
+									# is_primary_holder_title = yes
+									# holder_scope = { is_vassal_or_below = ROOT }
+								# }				
+							# }
+						# }
+					# }
+					# OR = {
+						# is_female = no
+						# is_ruler = yes
+						# prestige = 500
+						# top_liege = { dynasty = PREV }
+					# }	
+				# }
+				AND = { 
+					FROM = { 
+						OR = {
+							trait = elephant
+							trait = tiger
+						}
+					}
+					OR = {
+						trait = elephant
+						trait = tiger
+					}
+					can_press_claims_trigger = yes
+					NOT = { trait = former_slave }
+					NOT = { has_character_flag = ignore_election }	 
+					NOT = { government = triarch_merchant_republic_government }
+					NOT = { has_minor_title = title_triarch }
+				}
+				# any_liege = { #Elective realm 
+					# primary_title = {
+						# OR = {
+							# has_law = noble_oligarchy_elective
+							# has_law = succ_feudal_elective
+							# has_law = succ_kingsmoot_elective
+						# }
+						# any_elector_character = { character = ROOT }
+						# OR = {
+							# current_heir = { character = FROM }
+							# any_pretender = { character = FROM }
+						# }
+					# }
+				# }
+			}
+		}
+		allow = {
+			NOT = { has_character_modifier = election_support_called }	
+		}
+		effect = {
+			tooltip = {
+				add_character_modifier = { name = election_support_called duration = 1095 }
+				opinion = {
+					who = FROM
+					modifier = opinion_supporting_in_election
+					months = 60
+				}
+				reverse_remove_favor = FROM
+			}	
+			FROM = { save_event_target_as = favor_vote_caller }
+			set_character_flag = favor_vote_called
+			character_event = { id = ZE.8165 }
+		}
+		ai_check_interval = 12
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	
+	favor_improve_relations = {
+		filter = all
+		ai_target_filter = realm
+		only_playable = yes
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"	
+		}
+		potential = {
+			owes_favor_to = FROM
+			liege = {
+				NOT = { character = FROM }
+				NOT = { character = ROOT }
+			}
+		}
+		allow = {
+			liege = {				
+				NOR = {
+					has_opinion_modifier = { who = FROM modifier = opinion_impressed_loyalty }
+					has_opinion_modifier = { who = FROM modifier = opinion_mildly_impressed_loyalty }
+					has_opinion_modifier = { who = FROM modifier = opinion_unimpressed_loyalty }
+				}
+				ai = yes
+			}
+			OR = {
+				is_councillor = yes
+				is_voter = yes
+				liege = { is_close_relative = PREV }
+				has_minor_title = title_appointed_regent
+			}
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_favored_being_called } }
+		}
+		effect = {
+			hidden_tooltip = {
+				opinion = { who = FROM modifier = opinion_favored_being_called months = 1 }
+			}
+			tooltip = { reverse_remove_favor = FROM }
+			character_event = { id = plot_event.16  days = 5  tooltip = "EVTTOOLTIPplot_event.16" }
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.05
+			}	
+			modifier = {
+				factor = 0
+				liege = { 
+					NOR = { 
+						is_liege_of = FROM
+						liege = { character = FROM }
+						same_liege = FROM
+						AND = {
+							independent = yes
+							relative_power = { who = FROM power = 0.5 }
+						}
+					} 
+				}
+			}			
+			modifier = {
+				factor = 0
+				liege = { NOT = { reverse_opinion = { who = FROM value = -15 } } }
+			}
+			modifier = {
+				factor = 0
+				liege = { opinion = { who = FROM value = 50 } }
+			}
+			modifier = {
+				factor = 100
+				FROM = { has_ambition = obj_befriend_liege }
+				liege = { is_liege_of = FROM }
+			}
+		}
+	}
+	favor_sabotage_job = {
+		filter = all
+		ai_target_filter = realm
+		only_playable = yes
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"	
+		}
+		potential = {
+			owes_favor_to = FROM
+		}
+		allow = {
+			is_councillor = yes
+			has_job_action = yes
+			NOT = { has_character_modifier = job_action_sabotage }
+			liege = {
+				NOT = { character = FROM }
+			}	
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_favored_being_called } }			
+		}
+		effect = {
+			hidden_tooltip = {
+				opinion = { who = FROM modifier = opinion_favored_being_called months = 1 }
+			}
+			tooltip = { reverse_remove_favor = FROM }
+			character_event = { id = plot_event.32 days = 5 tooltip = "EVTTOOLTIPplot_event.32a" }
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.05
+			}				
+			modifier = {
+				factor = 0
+				liege = { reverse_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = honorable
+						trait = honest
+					}	
+				}	
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = ruthless }	
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = deceitful }	
+			}
+		}
+	}
+	favor_embezzle_funds = {
+		filter = all
+		ai_target_filter = realm
+		only_playable = yes
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"	
+		}
+		potential = {
+			owes_favor_to = FROM
+		}
+		allow = {
+			OR = {
+				has_job_title = job_treasurer
+				has_job_title = job_castellan
+			}
+			liege = {
+				NOT = { character = FROM }
+			}	
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_favored_being_called } }
+		}
+		effect = {
+			hidden_tooltip = {
+				opinion = { who = FROM modifier = opinion_favored_being_called months = 1 }
+			}
+			tooltip = { reverse_remove_favor = FROM }
+			character_event = { id = plot_event.305 days = 5 tooltip = "EVTTOOLTIPplot_event.305" }
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0.05
+			}	
+			modifier = {
+				factor = 0
+				liege = { NOT = { yearly_income = 100 } }
+			}			
+			modifier = {
+				factor = 0
+				liege = { reverse_opinion = { who = FROM value = -25 } }
+			}
+			modifier = {
+				factor = 0
+				FROM = { 
+					OR = {
+						trait = honorable
+						trait = honest
+						trait = charitable
+					}	
+				}	
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = ruthless }	
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = deceitful }	
+			}
+			modifier = {
+				factor = 4
+				FROM = { trait = greedy }	
+			}
+		}
+	}
+	favor_find_plot = { 
+		filter = all
+		ai_target_filter = realm
+		only_playable = yes
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"	
+		}
+		potential = {
+			owes_favor_to = FROM
+		}
+		allow = {
+			custom_tooltip = {
+				text = TOOLTIPfavor_find_plot
+				hidden_tooltip = {
+					FROM = {
+						OR = {
+							any_unknown_plotter = { 
+								plot_target_char = { always = yes }
+								NOT = { has_plot = plot_rescue_prisoner }
+								NOT = { plot_is_known_by = ROOT_FROM }
+								NOT = { character = ROOT_FROM }
+								NOT = { character = ROOT }
+								same_realm = ROOT
+							}
+							any_spouse = {
+								any_unknown_plotter = {
+									plot_target_char = { always = yes }
+									NOT = { has_plot = plot_rescue_prisoner }
+									NOT = { plot_is_known_by = ROOT_FROM }
+									NOT = { character = ROOT_FROM }
+									NOT = { character = ROOT }
+									same_realm = ROOT
+								}
+							}
+							any_close_relative = {
+								OR = {
+									dynasty = ROOT_FROM
+									is_child_of = ROOT_FROM
+									is_grandchild_of = ROOT_FROM
+									is_parent_of = ROOT_FROM
+									is_grandparent_of = ROOT_FROM
+									sibling = ROOT_FROM							
+								}
+								any_unknown_plotter = {
+									plot_target_char = { always = yes }
+									NOT = { has_plot = plot_rescue_prisoner }
+									NOT = { plot_is_known_by = ROOT_FROM }
+									NOT = { character = ROOT_FROM }
+									NOT = { character = ROOT }
+									same_realm = ROOT
+								}
+							}
+						}
+					}	
+				}	
+			}	
+			OR = {
+				has_job_title = job_spymaster
+				has_job_title = job_castellan
+			}
+			liege = {
+				NOT = { character = FROM }
+			}	
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_favored_being_called } }
+		}
+		effect = {
+			hidden_tooltip = {
+				opinion = { who = FROM modifier = opinion_favored_being_called months = 1 }
+			}
+			tooltip = { reverse_remove_favor = FROM }
+			character_event = { id = plot_event.310 days = 1 tooltip = "EVTTOOLTIPplot_event.310" }
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+		}	
+	}
+	favor_reduce_tyranny = {
+		filter = all
+		ai_target_filter = realm
+		only_playable = yes
+		diplomacy_icon = GFX_CALL_IN_FAVOR_INTERACTION_icon
+		
+		from_potential = {
+			has_dlc = "Zeus"	
+		}
+		potential = {
+			owes_favor_to = FROM
+		}
+		allow = {
+			OR = {
+				has_job_title = job_chancellor
+				has_job_title = job_castellan
+			}
+			FROM = { check_variable = { which = "tyrant" value = 5 } }
+			liege = {
+				NOT = { character = FROM }
+				is_vassal_or_below = FROM
+			}	
+			NOT = { has_opinion_modifier = { who = FROM modifier = opinion_favored_being_called } }
+		}
+		effect = {
+			hidden_tooltip = {
+				opinion = { who = FROM modifier = opinion_favored_being_called months = 1 }
+			}
+			tooltip = { reverse_remove_favor = FROM }
+			character_event = { id = plot_event.320 days = 5 tooltip = "EVTTOOLTIPplot_event.320" }
+		}
+		ai_check_interval = 18
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}

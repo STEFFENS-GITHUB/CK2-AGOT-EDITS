@@ -1,0 +1,826 @@
+##########################################
+# COUNCILLOR TITLES
+##########################################
+
+#	attribute: This attribute is added to the ruler's for governance purposes
+#	viceroy: This is the Viceroy title for de jure Kingdoms
+#	allow: conditions for the character to hold the title
+#	gain_effect: fires when the title is granted
+#	lose_effect: fires when a title is lost through most causes
+#	retire_effect: fires when a title is lost due to the character stepping down, or getting a different liege
+#	death_effect: fires when a title is lost due to the character dying
+#	The other fields are all character modifiers.
+
+job_castellan = {
+	#is_treasurer = yes
+	attribute = stewardship
+	dignity = 0.5
+	is_voter = yes
+	opinion_effect = 15
+	
+	monthly_salary = 0.2
+	monthly_prestige = 0.2
+	
+	allow = {
+		can_be_castellan_trigger = yes
+	}
+	dismiss_trigger = {
+		conditional_tooltip = {
+			trigger = { FROM = { is_valyrian_freehold_trigger = yes } }
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				NOT = { has_character_flag = elected_valyrian_councillor }
+			}
+		}	
+		NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already
+	}
+	gain_effect = {
+		# if = {
+			# limit = {
+				# FROM = {
+					# tier = emperor
+					# is_feudal = yes
+					# NOT = { culture = ironborn }
+				# }
+			# }
+			# if = {
+				# limit = {
+					# FROM = {
+						# OR = {
+							# culture_group = andal
+							# culture_group = dornish
+							# culture_group = first_men
+							# culture_group = free_folk
+							# culture = summer_islander
+							# primary_title = {
+								# OR = {
+									# capital_scope = { region = world_westeros }
+									# title = e_iron_isles #These titles dont have capitals
+									# title = e_riverlands
+									# title = e_iron_throne
+								# }
+							# }
+						# }
+					# }	
+				# }
+				# give_minor_title = title_hand_of_the_king
+				# set_character_flag = hand_of_the_king
+			# }	
+			# if = {
+				# limit = {
+					# NOT = { has_character_flag = hand_of_the_king }	
+				# }
+				# give_minor_title = title_hand_of_the_emperor
+			# }
+			# clr_character_flag = hand_of_the_king			
+		# }
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			#opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}
+		any_opinion_modifier_target = { #Sponsors like promotion
+			limit = { 
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_former_council_sponsor } 
+				is_liege_or_above = FROM
+				NOT = { character = FROM }
+			}
+			remove_opinion = { who = FROM modifier = opinion_replaced_council_candidate }
+			opinion = { who = FROM modifier = opinion_approved_council_candidate }
+			reverse_opinion = { who = ROOT modifier = opinion_council_sponsor }
+			reverse_remove_opinion = { who = ROOT modifier = opinion_former_council_sponsor }
+		}
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			give_minor_title = title_first_steward
+			remove_title = title_personal_steward
+		}
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle  #to allow time for getjobtitle to work
+		}
+		if = { #Hand of the King Chronicle
+			limit = { FROM = { tier = EMPEROR } }
+			e_rebels = {
+				persistent_event_target:chronicle_player = {
+					if = { #Record Emperor's Hands of the King
+						limit = {
+							character = FROM
+						}
+						character_event = { id = CM.11502 days = 1 }
+					}
+					if = { #Inform fellow Dynasts
+						limit = {
+							dynasty = ROOT
+							NOT = { dynasty = FROM }
+							NOT = { character = ROOT }
+						}
+						character_event = { id = CM.11500 days = 1 }
+					}
+				}
+			}	
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } 
+						is_liege_or_above = FROM
+						NOT = { character = FROM }
+					}
+				}
+				FROM = { character_event = { id = council_plot.54 } }
+			}	
+		}		
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			remove_title = title_first_steward
+		}
+	}
+	retire_effect = {	
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_castellan_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_oversee_province
+	action = action_oversee_province_nomadic
+	action = action_improve_defenses
+	action = action_pacify_province
+	action = action_pacify_province_nomadic
+	action = action_improve_castle_holding
+
+	lift_fow = yes
+}
+job_chancellor = {
+	is_chancellor = yes
+	attribute = diplomacy
+	dignity = 0.33
+	is_voter = yes
+	opinion_effect = 10
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	allow = {
+		can_be_chancellor_trigger = yes
+	}
+	dismiss_trigger = {
+		conditional_tooltip = {
+			trigger = { FROM = { is_valyrian_freehold_trigger = yes } }
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				NOT = { has_character_flag = elected_valyrian_councillor }
+			}
+		}	
+		NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		# if = {
+			# limit = { FROM = { has_landed_title = d_nightswatch } }
+			# give_minor_title = title_recruiter
+		# }
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } 
+						is_liege_or_above = FROM
+						NOT = { character = FROM }
+					}
+				}
+				FROM = { character_event = { id = council_plot.54 } }
+			}	
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_chancellor_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_statecraft
+	action = action_improve_relations
+	action = action_fabricate_claims
+	action = action_clan_sentiment # Replaces Fabricate Claims for Nomads
+	action = action_sow_dissent
+	action = action_NW_recruit
+
+	lift_fow = yes
+}
+
+job_marshal = {
+	is_marshal = yes
+	attribute = martial
+	dignity = 0.33
+	is_voter = yes
+	opinion_effect = 10
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	allow = {
+		can_be_marshal_trigger = yes
+	}
+	dismiss_trigger = {
+		conditional_tooltip = {
+			trigger = { FROM = { is_valyrian_freehold_trigger = yes } }
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				NOT = { has_character_flag = elected_valyrian_councillor }
+			}
+		}
+		NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already		
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}	
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			give_minor_title = title_first_ranger
+			remove_title = title_personal_steward
+			e_rebels = {
+				persistent_event_target:chronicle_player = {
+					if = {
+						limit = {
+							dynasty = ROOT
+							NOT = { character = ROOT }
+						}
+						character_event = { id = CM.11503 days = 1 }
+					}
+				}
+			}	
+		}
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } 
+						is_liege_or_above = FROM
+						NOT = { character = FROM }
+					}
+				}
+				FROM = { character_event = { id = council_plot.54 } }
+			}	
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			remove_title = title_first_ranger
+		}
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_marshal_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_organize_army
+	action = action_assist_arrest
+	action = action_train_troops
+	action = action_train_troops_nomadic
+	action = action_advance_mil_tech
+	action = action_organize_raid # Replaces action_advance_mil_tech for Tribes
+
+	lift_fow = yes
+}
+
+job_treasurer = {
+	is_treasurer = yes
+	attribute = stewardship
+	dignity = 0.33
+	is_voter = yes
+	opinion_effect = 10
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	allow = {
+		can_be_treasurer_trigger = yes
+	}
+	dismiss_trigger = {
+		conditional_tooltip = {
+			trigger = { FROM = { is_valyrian_freehold_trigger = yes } }
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				NOT = { has_character_flag = elected_valyrian_councillor }
+			}
+		}	
+		NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}	
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			give_minor_title = title_first_builder
+			remove_title = title_personal_steward
+		}
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } 
+						is_liege_or_above = FROM
+						NOT = { character = FROM }
+					}
+				}
+				FROM = { character_event = { id = council_plot.54 } }
+			}	
+		}
+		if = {
+			limit = { FROM = { has_landed_title = d_nightswatch } }
+			remove_title = title_first_builder
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_treasurer_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_administer_realm
+	action = action_squeeze_peasants
+	#action = action_settle_tribe # Replaces action_squeeze_peasants for Tribes
+	action = action_collect_tribute # Replaces action_squeeze_peasants for Nomads
+	action = action_oversee_construction
+	#action = action_advance_eco_tech
+	action = action_build_legend # Replaces action_advance_eco_tech for Tribes
+
+	lift_fow = yes
+}
+
+job_spymaster = {
+	is_spymaster = yes
+	attribute = intrigue
+	dignity = 0.3
+	is_voter = yes
+	opinion_effect = 10
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.1
+	
+	allow = {
+		can_be_spymaster_trigger = yes
+	}
+	dismiss_trigger = {
+		conditional_tooltip = {
+			trigger = { FROM = { is_valyrian_freehold_trigger = yes } }
+			custom_tooltip = {
+				text = TOOLTIPVALYRIANCOUNCILLOR
+				NOT = { has_character_flag = elected_valyrian_councillor }
+			}
+		}
+		NOT = { has_character_modifier = negotiated_council_postion } #not negotiated themselves the position already
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}	
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }
+			if = {
+				limit = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_council_sponsor } 
+						is_liege_or_above = FROM
+						NOT = { character = FROM }
+					}
+				}
+				FROM = { character_event = { id = council_plot.54 } }
+			}	
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_spymaster_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_uncover_plots
+	action = action_uncover_plots_offmap	# Replaces action_uncover_plots if mystics is activated.	
+	action = action_organize_spies
+	action = action_sabotage_province
+	action = action_study_technology
+
+	lift_neighbor_fow = yes
+}
+
+job_physician = { #maester
+	attribute = learning
+	dignity = 0.25
+	is_voter = yes
+	opinion_effect = 10
+	#show_as_title = yes
+	
+	monthly_salary = 0.1
+	monthly_prestige = 0.075
+	
+	allow = {
+		can_be_physician_trigger = yes
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}	
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+		character_event = { id = maester.40 days = 1 } #set correct job action
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }	
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_physician_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	#action = action_tutor_children
+	#action = action_improve_rel_relations
+	action = action_serve_court
+	#action = action_advance_cul_tech
+	#action = action_tend_to_wounded
+	
+	lift_fow = yes
+}
+job_spiritual = { 
+	is_spiritual = yes
+	attribute = learning
+	dignity = 0.33
+	is_voter = yes
+	opinion_effect = 10
+	#show_as_title = yes
+	
+	monthly_salary = 0.1
+	monthly_piety = 0.25
+	
+	allow = {
+		can_be_spiritual_trigger = yes
+	}
+	gain_effect = {
+		if = {
+			limit = { has_opinion_modifier = { who = FROM modifier = opinion_fired_from_council } }
+			remove_opinion = { who = FROM modifier = opinion_fired_from_council }
+			opinion = { who = FROM modifier = opinion_job_security_concerns }
+		}	
+		# if = {
+			# limit = {
+				# trait = slave
+				# NOT = { has_character_flag = flag_not_for_sale }
+			# }
+			# set_character_flag = flag_councillor_not_for_sale
+			# set_character_flag = flag_not_for_sale
+		# }
+		if = {
+			limit = { ai = no }
+			character_event = { id = CM.11501 days = 1 } #chronicle 
+		}
+	}
+	lose_effect = {		
+		if = {
+			limit = { 
+				liege = { character = FROM } 
+				NAND = {
+					in_command = yes
+					is_looting = yes
+				}
+				is_incapable = no
+				prisoner = no
+				NOT = { is_inaccessible_trigger = yes }
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			if = {
+				limit = { ai = no }
+				letter_event = { id = 45344 } #inform
+			}
+			opinion = { who = FROM modifier = opinion_fired_from_council }	
+		}
+		# if = {
+			# limit = { has_character_flag = flag_councillor_not_for_sale }
+			# clr_character_flag = flag_councillor_not_for_sale
+			# clr_character_flag = flag_not_for_sale
+		# }
+	}
+	retire_effect = {
+		if = {
+			limit = {
+				NOT = {
+					age = 65
+				}
+				health = 3
+				NOT = {
+					is_sick_or_injured_trigger = yes
+				}
+				can_be_spiritual_trigger = yes
+				had_global_flag = { flag = scenario_initialised days = 2 } #stop day 0 firings
+			}
+			
+			FROM = { 
+				opinion = { who = ROOT modifier = opinion_resigned_from_council }
+			}
+		}
+	}
+	
+	action = action_hunt_heretics
+	action = action_inquisition
+	action = action_charity
+	action = action_build_zeal # Tribal replacement for 'action_advance_cul_tech'
+
+	lift_fow = yes
+}

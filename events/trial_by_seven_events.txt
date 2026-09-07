@@ -1,0 +1,2795 @@
+namespace = trial_by_seven
+# By blackninja993
+
+narrative_event = {
+	id = trial_by_seven.1
+	title = EVTTITLEtrial_by_seven_1
+	picture = GFX_evt_trial_by_seven
+	
+	is_triggered_only = yes
+
+	###Desc###
+	
+	# The prisoner
+	desc = {
+		text = EVTDESCAtrial_by_seven_1
+		trigger = { 
+			character = FROM
+		}
+	}
+	# The captor
+	desc = {
+		text = EVTDESCBtrial_by_seven_1
+		trigger = { 
+			NOT = { character = FROM }
+		}
+	}
+	
+	###Options###
+	
+	# The prisoner
+	option = {
+		name = EVTOPTAtrial_by_seven_1 # Let the fighting begin
+		trigger = { 
+			character = FROM
+		}
+		custom_tooltip = {
+			text = TOOLTIPtrial_by_seven_1
+			hidden_tooltip = {
+				character_event = { id = trial_by_seven.5 days = 28 }			
+				add_character_modifier = {
+					name = trial_by_seven
+					days = 100
+				}
+				character_event = { id = trial_by_seven.299 } #ai chooses champion
+			}
+		}
+	}
+	# The captor
+	option = {
+		name = EVTOPTBtrial_by_seven_1 # The seven shall protect us
+		trigger = { 
+			NOT = { character = FROM }
+			OR = { #uses the kingsguard
+				NOT = { has_landed_title = e_iron_throne } 
+				NOT = { d_kingsguard = { has_holder = yes } }
+			}
+		}
+		ai_chance = {
+			factor = 20
+		}	
+		custom_tooltip = {
+			text = TOOLTIPtrial_by_seven_1B
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = trial_by_seven
+					days = 100
+				}
+				character_event = { id = trial_by_seven.299 } #ai chooses champion
+			}
+		}
+		set_character_flag = choosing_seven_champion
+		clr_character_flag = seven_trial_fight_personally
+		clr_character_flag = trial_by_seven_begun
+	}
+	# The captor, kingsguard
+	option = {
+		name = EVTOPTEtrial_by_seven_1 # The seven shall protect us
+		trigger = { 
+			NOT = { character = FROM }
+			has_landed_title = e_iron_throne
+			d_kingsguard = { has_holder = yes }
+		}
+		ai_chance = {
+			factor = 20
+		}	
+		custom_tooltip = {
+			text = TOOLTIPtrial_by_seven_1C
+			hidden_tooltip = {
+				add_character_modifier = {
+					name = trial_by_seven
+					days = 100
+				}
+				character_event = { id = trial_by_seven.299 } #ai chooses champion
+			}
+		}
+		set_character_flag = choosing_seven_champion
+		clr_character_flag = seven_trial_fight_personally
+		clr_character_flag = trial_by_seven_begun
+	}
+	# The captor, fight personally
+	option = {
+		name = EVTOPTDtrial_by_seven_1 # I will fight!
+		trigger = { 
+			NOT = { character = FROM }
+			OR = {
+				trait = poor_warrior
+				trait = trained_warrior
+				trait = skilled_warrior
+				trait = master_warrior
+			}	
+			age = 16
+			is_ill = no
+			NOT = { has_severe_disability_trigger = yes }
+			NOR = {
+				has_epidemic = yes
+				prisoner = yes
+			}	
+			OR = {
+				is_female = no
+				female_get_masculine_event_trigger = yes
+			}
+			OR = {
+				NOT = { trait = dwarf }
+				trait = skilled_warrior
+			}
+		}
+		ai_chance = {
+			factor = 5
+			
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 2
+				trait = proud
+			}
+			modifier = {
+				factor = 2
+				trait = lunatic
+			}
+			modifier = {
+				factor = 0.5
+				trait = patient
+			}
+			modifier = {
+				factor = 0.5
+				trait = humble
+			}
+			
+			modifier = {
+				factor = 10
+				trait = master_warrior
+			}
+			modifier = {
+				factor = 6
+				trait = skilled_warrior
+			}
+			modifier = {
+				factor = 3
+				trait = trained_warrior
+			}
+			# Physical Strength Effects
+			modifier = {
+				factor = 2
+				is_strong_trigger = yes
+			}
+			modifier = {
+				factor = 0.5
+				is_weak_trigger = yes
+			}
+			
+			# Cunning/Intelligence Effects
+			modifier = {
+				factor = 2
+				trait = genius
+			}
+			modifier = {
+				factor = 1.5
+				is_smart_trigger = yes
+			}
+			modifier = {
+				factor = 0.5
+				trait = imbecile
+			}
+			modifier = {
+				factor = 0.66
+				is_dumb_trigger = yes
+			}
+			
+			# Personality Effects
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 0.05
+				trait = craven
+			}
+		
+			# Wound Effects
+			modifier = {
+				factor = 0.5
+				trait = wounded
+			}
+		
+			# Health Effects
+			modifier = {
+				factor = 0.5
+				is_ill = yes
+			}	
+			
+			# Body Shape Effects
+			modifier = {
+				factor = 4
+				trait = tall
+			}
+			modifier = {
+				factor = 0.25
+				trait = hunchback
+			}
+			modifier = {
+				factor = 0.25
+				trait = dwarf
+			}
+			modifier = {
+				factor = 0.25
+				trait = clubfooted
+			}
+			modifier = {
+				factor = 0.8
+				FROM = { trait = trained_warrior }
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { trait = skilled_warrior }
+			}
+			modifier = {
+				factor = 0.3
+				FROM = { trait = master_warrior }
+			}
+			modifier = {
+				factor = 0.5
+				tier = EMPEROR
+			}
+			modifier = {
+				factor = 0.75
+				tier = KING
+			}
+		}
+		hidden_tooltip = {
+			add_character_modifier = {
+				name = trial_by_seven
+				days = 100
+			}
+			character_event = { id = trial_by_seven.299 } #ai chooses champion
+		}
+		set_character_flag = choosing_seven_champion
+		set_character_flag = seven_trial_fight_personally
+		clr_character_flag = trial_by_seven_begun
+	}
+}
+#AI locates champions (player uses decision)
+character_event = {
+	id = trial_by_seven.299
+	
+	is_triggered_only = yes
+	hide_window = yes
+	ai = yes
+	
+	trigger = {
+		has_character_modifier = trial_by_seven	
+	}
+	
+	immediate = {
+		repeat_event = { id = trial_by_seven.299 days = 2 }
+		if = {
+			limit = {	
+				NOR = {
+					AND = {
+						prisoner = yes
+						has_character_flag = demmanded_first_trial_by_combat
+						has_character_flag = choosing_seven_champion
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 6
+								reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+								NOT = { has_severe_disability_trigger = yes }
+								has_epidemic = no
+								prisoner = no
+							}	
+						}	
+					}
+					AND = {
+						any_courtier = {
+							prisoner = yes	
+							host = { character = PREVPREV }
+							has_character_flag = demmanded_first_trial_by_combat
+							has_character_flag = choosing_seven_champion
+						}	
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+								NOT = { has_severe_disability_trigger = yes }
+								has_epidemic = no
+								prisoner = no
+							}	
+						}	
+					}
+				}
+			}
+			break = yes
+		}
+		top_liege = {
+			random_realm_character = {
+				limit = {
+					eligible_trial_by_combat_champion_for_FROM_trigger = yes
+					NOT = { trait = kingsguard }
+					NOT = { has_character_modifier = trial_by_seven }
+					combat_rating = 80
+				}
+				letter_event = { id = trial_by_seven.2 }
+				break = yes
+			}
+		}	
+		random_dynasty_member = {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 80
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		random_friend= {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 80
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		top_liege = {
+			random_realm_character = {
+				limit = {
+					eligible_trial_by_combat_champion_for_FROM_trigger = yes
+					NOT = { trait = kingsguard }
+					NOT = { has_character_modifier = trial_by_seven }
+					combat_rating = 60
+				}
+				letter_event = { id = trial_by_seven.2 }
+				break = yes
+			}
+		}	
+		random_dynasty_member = {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 60
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		random_friend= {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 60
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		top_liege = {
+			random_realm_character = {
+				limit = {
+					eligible_trial_by_combat_champion_for_FROM_trigger = yes
+					NOT = { trait = kingsguard }
+					NOT = { has_character_modifier = trial_by_seven }
+					combat_rating = 40
+				}
+				letter_event = { id = trial_by_seven.2 }
+				break = yes
+			}
+		}	
+		random_dynasty_member = {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 40
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		random_friend= {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 40
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		top_liege = {
+			random_realm_character = {
+				limit = {
+					eligible_trial_by_combat_champion_for_FROM_trigger = yes
+					NOT = { trait = kingsguard }
+					NOT = { has_character_modifier = trial_by_seven }
+					combat_rating = 20
+				}
+				letter_event = { id = trial_by_seven.2 }
+				break = yes
+			}
+		}	
+		random_dynasty_member = {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 20
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+		random_friend= {
+			limit = {
+				eligible_trial_by_combat_champion_for_FROM_trigger = yes
+				NOT = { trait = kingsguard }
+				NOT = { has_character_modifier = trial_by_seven }
+				combat_rating = 20
+			}
+			letter_event = { id = trial_by_seven.2 }
+			break = yes
+		}
+	}
+	
+	option = {
+		name = OK
+	}	
+}
+#Character receives champion request
+letter_event = {
+	id = trial_by_seven.2
+	desc = "EVTDESCtrial_by_seven.2"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+	
+	show_from_from = yes
+	
+	option = { # yes he will fight
+		name = "EVTOPTAtrial_by_seven.2" 
+		ai_chance = { 
+			factor = 50
+			modifier = {
+				factor = 2
+				trait = brave
+			}
+			modifier = {
+				factor = 2
+				trait = honorable
+			}
+			modifier = {
+				factor = 2
+				trait = wroth
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 15 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 40 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 65 }
+			}
+			modifier = {
+				factor = 1.5
+				opinion = { who = FROMFROM value = 90 }
+			}
+			modifier = {
+				factor = 1.5
+				dynasty = FROMFROM
+			}
+			modifier = {
+				factor = 1.5
+				is_close_relative = FROMFROM
+			}
+			modifier = {
+				factor = 5
+				trait = familyperson
+				is_close_relative = FROMFROM
+			}
+		}
+		FROM = {
+			FROM = {
+				opinion = { who = ROOT modifier = champion_of_relative }
+				hidden_tooltip = {
+					opinion = { who = ROOT modifier = opinion_seven_champion }
+					reverse_opinion = { who = ROOT modifier = opinion_seven_championing_for } 
+				}
+				letter_event = { id = trial_by_seven.3 tooltip = EVTTOOLTIPtrial_by_seven.3 }
+			}
+		}
+		piety = 35
+		add_character_modifier = {
+			name = trial_by_seven
+			days = 50
+		}
+	}
+	
+	option = { # no
+		name = "EVTOPTBtrial_by_seven.2" 
+		ai_chance = { 
+			factor = 50
+			
+			modifier = {
+				factor = 0
+				NOT = { trait = craven }
+				opinion = { who = FROMFROM value = 15 }
+				OR = {
+					trait = honorable
+					trait = brave
+					AND = {
+						is_close_relative = FROMFROM
+						trait = familyperson
+					}
+					combat_rating = 60
+				}
+			}
+			modifier = {
+				factor = 2
+				trait = craven
+			}
+			modifier = {
+				factor = 2
+				trait = ambitious
+			}
+			modifier = {
+				factor = 2
+				trait = arbitrary
+			}
+			modifier = {
+				factor = 1.5
+				is_ruler = yes
+			}
+			modifier = {
+				factor = 1.5
+				is_primary_heir = yes
+			}
+		}
+		FROM = {
+			FROM = {
+				opinion = {
+					who = ROOT
+					modifier = refused_championing
+					months = 60
+				}
+				letter_event = { id = trial_by_seven.4 tooltip = EVTTOOLTIPtrial_by_combat.3 }	
+			}
+		}	
+	}
+}
+letter_event = { # inform accept
+	id = trial_by_seven.3
+	desc = "EVTDESCtrial_by_seven.3"
+	
+	is_triggered_only = yes
+
+	option = { 
+		name = "EVTOPTAtrial_by_seven.3" 	
+	}
+}
+letter_event = { # inform reject
+	id = trial_by_seven.4
+	desc = "EVTDESCtrial_by_seven.4"
+	
+	is_triggered_only = yes
+	
+	option = { # 
+		name = "EVTOPTAtrial_by_seven.4" 
+	}
+}
+# Prisoner's champions assembled
+character_event = {
+	id = trial_by_seven.5
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		prisoner = yes
+		host = { has_character_modifier = trial_by_seven }
+		OR = {
+			ai = yes
+			any_opinion_modifier_target = {
+				count = 6
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+				NOT = { has_severe_disability_trigger = yes }
+				has_epidemic = no
+				prisoner = no
+			}
+		}	
+	}
+	
+	immediate = {
+		clr_character_flag = choosing_seven_champion
+		any_opinion_modifier_target = { #remove invalid champions
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+				OR = {
+					has_severe_disability_trigger = yes
+					has_epidemic = yes
+					prisoner = yes
+				}			
+			}
+			reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+			remove_character_modifier = trial_by_seven
+		}
+		if = { #Select additional AI champions
+			limit = { ai = yes }
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}	
+				}
+				if = {
+					limit = {
+						wealth = 0
+						NOT = { piety = 300 }
+						NOT = { prestige = 400 }
+					}
+					wealth = -50
+				}
+				if = {
+					limit = { prestige = 0 }
+					prestige = -50
+				}
+				if = {
+					limit = { piety = 0 }
+					piety = -50
+				}				
+				location = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = THIS
+						culture = THIS
+						female = no
+					}
+					new_character = {
+						random_list = {
+							10 = { add_trait = skilled_warrior }
+							45 = { add_trait = trained_warrior }
+							45 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+						if = {
+							limit = { ROOT = { is_ruler = yes } }
+							move_character = ROOT
+						}
+					}	
+				}
+			}
+		}
+		host = { character_event = { id = trial_by_seven.699 } }
+	}
+
+	option = {
+		name = OK
+	}
+}
+# Captor's champions assembled
+character_event = {
+	id = trial_by_seven.699
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		clr_character_flag = choosing_seven_champion
+		if = { #check they can still fight
+			limit = {
+				has_character_flag = seven_trial_fight_personally
+				OR = {
+					has_severe_disability_trigger = yes
+					has_epidemic = yes
+					prisoner = yes
+				}
+			}
+			clr_character_flag = seven_trial_fight_personally
+		}
+		any_opinion_modifier_target = { #remove invalid champions
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+				OR = {
+					has_severe_disability_trigger = yes
+					has_epidemic = yes
+					prisoner = yes
+				}			
+			}
+			reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+			remove_character_modifier = trial_by_seven
+		}
+		#Iron Throne uses the Kingsguard
+		if = {
+			limit = { 
+				has_landed_title = e_iron_throne 
+				d_kingsguard = { has_holder = yes }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOR = {
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOR = {
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOR = {
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOR = {
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOR = {
+						has_severe_disability_trigger = yes
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOT = { has_severe_disability_trigger = yes }
+					NOR = {
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+			kingsguard = {
+				limit = {
+					is_alive = yes
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { character = FROM }
+					NOT = { has_severe_disability_trigger = yes }
+					NOR = {
+						has_epidemic = yes
+						prisoner = yes
+					}
+				}
+				reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+				opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			}
+		}
+		#Select random additional champions if needed
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}				
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}				
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}			
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}			
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}			
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						any_opinion_modifier_target = {
+							count = 6
+							reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						}
+					}
+					AND = {
+						NOT = { has_character_flag = seven_trial_fight_personally }
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 7
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+					}
+				}	
+			}			
+			capital_scope = {
+				ROOT = {
+					create_random_soldier = {
+						random_traits = yes
+						dynasty = actually_culture
+						religion = PREV
+						culture = PREV
+						female = no
+					}
+					new_character = {
+						random_list = {
+							5 = { add_trait = skilled_warrior }
+							40 = { add_trait = trained_warrior }
+							55 = { add_trait = poor_warrior }
+						}
+						if = {
+							limit = { religion = the_seven }
+							knight_character_effect = yes
+						}
+						reverse_opinion = { who = ROOT modifier = opinion_seven_champion }
+						opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					}
+				}	
+			}
+		}
+		
+		character_event = { id = trial_by_seven.698 days = 1 }
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = trial_by_seven.698
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		if = {
+			limit = { 
+				has_landed_title = e_iron_throne 
+				d_kingsguard = { has_holder = yes }
+			}
+			#Fill in spare slots with substitutes
+			while = {
+				count = 7
+				limit = {
+					OR = {
+						NOT = {
+							any_opinion_modifier_target = {
+								count = 6
+								OR = {
+									trait = kingsguard
+									has_character_flag = kingsguard_substitute
+								}
+								reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+							}
+						}
+						AND = {
+							NOT = { has_character_flag = seven_trial_fight_personally }
+							NOT = {
+								any_opinion_modifier_target = {
+									count = 7
+									OR = {
+										trait = kingsguard
+										has_character_flag = kingsguard_substitute
+									}
+									reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+								}
+							}
+						}
+					}	
+				}				
+				random_opinion_modifier_target = {
+					limit = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						NOT = { trait = kingsguard }
+						NOT = { has_character_flag = kingsguard_substitute }		
+					}
+					set_character_flag = kingsguard_substitute
+				}
+			}
+			#clear unused substitutes
+			any_opinion_modifier_target = { 
+				limit = {
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }				
+					NOT = { trait = kingsguard }
+				}
+				if = {
+					limit = { NOT = { has_character_flag = kingsguard_substitute } }
+					reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+					remove_opinion = { who = ROOT modifier = opinion_seven_championing_for }
+					remove_character_modifier = trial_by_seven
+				}	
+				if = {
+					limit = { has_character_flag = kingsguard_substitute }
+					clr_character_flag = kingsguard_substitute
+				}
+			}
+		}
+		while = {
+			count = 20
+			limit = {
+				has_character_flag = seven_trial_fight_personally 
+				any_opinion_modifier_target = {
+					count = 7
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+				}
+			}	
+			random_opinion_modifier_target = {
+				limit = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+				reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+				remove_opinion = { who = ROOT modifier = opinion_seven_championing_for }
+				remove_character_modifier = trial_by_seven
+			}
+		}	
+		character_event = { id = trial_by_seven.6 days = 1 }
+	}
+
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = trial_by_seven.6
+	desc = EVTDESCtrial_by_seven.6
+	picture = GFX_evt_trial_by_seven
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	
+	immediate = {
+		
+	}
+	
+	option = {
+		name = EVTOPTtrial_by_seven.6
+		set_character_flag = trial_by_seven_begun
+		if = {
+			limit = {
+				has_character_flag = seven_trial_fight_personally 	
+			}
+			custom_tooltip = { text = TOOLTIPtrial_by_sevenSELF }
+		}
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }		
+			}
+			tooltip = { show_portrait = yes }
+			custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS }
+		}
+		FROMFROMFROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_ENEMY }
+			}
+			character_event = { id = trial_by_seven.7 tooltip = TOOLTIPtrial_by_seven.8 }
+		}
+	}
+}
+# Prisoner's champions assembled
+character_event = {
+	id = trial_by_seven.7
+	desc = EVTDESCtrial_by_seven.7
+	picture = GFX_evt_trial_by_seven
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTtrial_by_seven.7
+		hidden_tooltip = { #link to captor
+			reverse_opinion = { who = FROM modifier = opinion_trial_by_seven }		
+			opinion = { who = FROM modifier = opinion_trial_by_seven }	
+			any_playable_ruler = { #inform world
+				limit = { 
+					ai = no
+					NOT = { character = ROOT }
+					NOT = { character = FROM }
+					OR = {
+						religion = the_seven
+						is_liege_or_above = ROOT
+						is_liege_or_above = FROM
+						is_close_relative = ROOT
+						is_close_relative = FROM
+					}
+				}
+				narrative_event = { id = trial_by_seven.70 }
+			}
+		}
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }		
+			}
+			tooltip = { show_portrait = yes }
+			custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS }
+			hidden_tooltip = { #link to captor
+				remove_character_modifier = trial_by_seven
+				reverse_opinion = { who = FROM modifier = opinion_seven_trial_enemy }		
+			}
+		}	
+		FROM = {
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_ENEMY }
+				hidden_tooltip = { #link to prisoner
+					remove_character_modifier = trial_by_seven
+					reverse_opinion = { who = ROOT modifier = opinion_seven_trial_enemy }		
+				}
+			}
+			character_event = { id = trial_by_seven.8 days = 1 tooltip = TOOLTIPtrial_by_seven.8 }
+		}
+	}
+}
+narrative_event = { #Inform World
+	id = trial_by_seven.70
+	title = EVTTITLEtrial_by_seven_1
+	desc = EVTDESCAtrial_by_seven.70
+	picture = GFX_evt_trial_by_seven
+	
+	is_triggered_only = yes
+	ai = no
+
+	option = {
+		name = {
+			text = EVTOPTAtrial_by_seven_70
+			trigger = {
+				NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_seven_champion } }	
+				NOT = { reverse_has_opinion_modifier = { who = FROMFROM modifier = opinion_seven_champion } }	
+			}
+		}	
+		name = {
+			text = EVTOPTAtrial_by_seven_70B
+			trigger = {
+				reverse_has_opinion_modifier = { who = FROM modifier = opinion_seven_champion }
+			}
+		}
+		name = {
+			text = EVTOPTAtrial_by_seven_70C
+			trigger = {
+				reverse_has_opinion_modifier = { who = FROMFROM modifier = opinion_seven_champion }
+			}
+		}
+		FROM = {
+			tooltip = { show_portrait = yes }
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROMFROM = {
+			tooltip = { show_portrait = yes }
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+	}
+	option = { #inform of every duel
+		name = EVTOPTBtrial_by_seven_70
+		trigger = {
+			NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_seven_champion } }	
+			NOT = { reverse_has_opinion_modifier = { who = FROMFROM modifier = opinion_seven_champion } }	
+		}
+		set_character_flag = trial_by_seven_inform
+	}		
+}	
+# The trial! check status every 3 days (ROOT is the Captor)
+character_event = {
+	id = trial_by_seven.8
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = { has_character_modifier = trial_by_seven }
+	
+	immediate = {	
+		if = { #Check for prisoner death
+			limit = {
+				FROM = { is_alive = no }
+			}
+			character_event = { id = trial_by_seven.13 } #Captor's team wins
+			break = yes
+		}
+		if = { #Check for captor defeat
+			limit = {
+				OR = {
+					has_character_flag = trial_by_seven_defeated
+					NOT = { has_character_flag = seven_trial_fight_personally }
+				}	
+				NOT = {
+					any_opinion_modifier_target = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						NOT = { has_character_flag = trial_by_seven_defeated }
+					}
+				}
+			}
+			FROM = { 
+				character_event = { id = trial_by_seven.16 } #Prisoner's team wins
+				if = {
+					limit = { 
+						is_ruler = no 
+						liege = { character = ROOT }
+					}
+					character_event = { id = trial_by_combat.239 } # Prisoner leaves court
+				}
+			}
+			break = yes
+		}			
+		if = { #Check for prisoner defeat
+			limit = {
+				FROM = {
+					has_character_flag = trial_by_seven_defeated
+					NOT = {
+						any_opinion_modifier_target = {
+							reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+							NOT = { has_character_flag = trial_by_seven_defeated }
+						}
+					}	
+				}	
+			}
+			character_event = { id = trial_by_seven.13 } #Captor's team wins
+			break = yes
+		}
+		FROM = {
+			#Find new duel matchups
+			if = {
+				limit = { 
+					NAND = {
+						NOT = { has_character_flag = trial_by_seven_defeated }
+						OR = {
+							NOT = { has_character_flag = trial_by_seven_duel }
+							had_character_flag = { flag = trial_by_seven_duel days = 4 }
+						}	
+						is_alive = yes
+					}	
+				}
+				random_opinion_modifier_target = {
+					limit = {
+						reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+						NOT = { has_character_flag = trial_by_seven_defeated }
+						OR = {
+							NOT = { has_character_flag = trial_by_seven_duel }
+							had_character_flag = { flag = trial_by_seven_duel days = 4 }
+						}
+						is_alive = yes
+					}
+					character_event = { id = trial_by_seven.9 }
+				}
+			}
+			if = {
+				limit = { 
+					NOT = { has_character_flag = trial_by_seven_defeated }
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}	
+					is_alive = yes
+				}
+				character_event = { id = trial_by_seven.9 }
+			}			
+			random_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+					NOT = { has_character_flag = trial_by_seven_defeated }
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}
+					is_alive = yes
+				}
+				character_event = { id = trial_by_seven.9 days = 1 }
+			}
+			random_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+					NOT = { has_character_flag = trial_by_seven_defeated }
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}
+					is_alive = yes
+				}
+				character_event = { id = trial_by_seven.9 days = 2 }
+			}
+		}
+		repeat_event = { id = trial_by_seven.8 days = 3 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+# New Duel
+character_event = {
+	id = trial_by_seven.9
+	desc = EVTDESCtrial_by_seven_9
+	picture = GFX_trial_by_combat
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = {
+		clear_event_target = seven_duel_target
+		FROM = {
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally
+					NOT = { has_character_flag = trial_by_seven_defeated }					
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}
+					is_alive = yes
+				}
+				random = {
+					chance = 33
+					set_character_flag = trial_by_seven_duel
+					save_event_target_as = seven_duel_target
+					break = yes
+				}
+			}
+			random_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+					NOT = { has_character_flag = trial_by_seven_defeated }
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}
+					is_alive = yes
+				}
+				set_character_flag = trial_by_seven_duel
+				save_event_target_as = seven_duel_target
+				break = yes
+			}
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally
+					NOT = { has_character_flag = trial_by_seven_defeated }					
+					OR = {
+						NOT = { has_character_flag = trial_by_seven_duel }
+						had_character_flag = { flag = trial_by_seven_duel days = 4 }
+					}
+					is_alive = yes
+				}
+				set_character_flag = trial_by_seven_duel
+				save_event_target_as = seven_duel_target
+				break = yes
+			}			
+		}
+	}
+	
+	option = {
+		name = EVTOPTtrial_by_seven_9
+		FROM = { tooltip = { show_portrait = yes } }
+		event_target:seven_duel_target = {
+			ROOT = {
+				set_character_flag = flag_duel_friendly
+				set_character_flag = trial_by_seven_duel
+			}
+			set_character_flag = flag_duel_friendly
+			character_event = { id = trial_by_seven.10 tooltip = TOOLTIPtrial_by_seven_10 }
+			clear_event_target = seven_duel_target
+		}
+	}
+}	
+character_event = {
+	id = trial_by_seven.10
+	desc = EVTDESCtrial_by_seven_9
+	picture = GFX_trial_by_combat
+	
+	is_triggered_only = yes
+
+	option = {
+		name = EVTOPTtrial_by_seven_9
+		custom_tooltip = {
+			text = TOOLTIPtrial_by_seven_10B
+		}
+		hidden_tooltip = { e_rebels = { holder_scope = { character_event = { id = duel.0 } } } }
+	}
+}
+# Win duel
+character_event = {
+	id = trial_by_seven.11
+	picture = GFX_trial_by_combat
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_11
+		trigger = { FROMFROM = { is_alive = no } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_11B
+		trigger = { FROMFROM = { is_alive = yes } }
+	}
+	
+	option = {
+		name = EVTOPTtrial_by_seven_11
+		piety = 25
+		hidden_tooltip = { #inform others
+			if = {
+				limit = { has_character_modifier = trial_by_seven }
+				any_opinion_modifier_target = {
+					limit = {
+						ai = no
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+						NOT = { character = ROOT }
+						NOT = { character = FROMFROM }
+					}
+					character_event = { id = trial_by_seven.12 }
+				}
+				random_opinion_modifier_target = {
+					limit = {
+						reverse_has_opinion_modifier = { who = ROOT modifier = opinion_trial_by_seven }
+					}
+					if = {
+						limit = {
+							ai = no
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+						}
+						character_event = { id = trial_by_seven.12 }
+					}	
+					any_opinion_modifier_target = {
+						limit = {
+							ai = no
+							reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+						}
+						character_event = { id = trial_by_seven.12 }
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_character_modifier = trial_by_seven } }
+				random_opinion_modifier_target = {
+					limit = {
+						has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+					}
+					if = {
+						limit = {
+							ai = no
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+						}
+						character_event = { id = trial_by_seven.12 }
+					}
+					any_opinion_modifier_target = {
+						limit = {
+							ai = no
+							reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+							NOT = { character = ROOT }
+							NOT = { character = FROMFROM }
+						}
+						character_event = { id = trial_by_seven.12 }
+					}
+					random_opinion_modifier_target = {
+						limit = {
+							reverse_has_opinion_modifier = { who = PREV modifier = opinion_trial_by_seven }
+						}
+						if = {
+							limit = {
+								ai = no
+								NOT = { character = ROOT }
+								NOT = { character = FROMFROM }
+							}
+							character_event = { id = trial_by_seven.12 }
+						}	
+						any_opinion_modifier_target = {
+							limit = {
+								ai = no
+								reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+								NOT = { character = ROOT }
+								NOT = { character = FROMFROM }
+							}
+							character_event = { id = trial_by_seven.12 }
+						}
+					}
+				}	
+			}
+			any_player = {
+				limit = {
+					NOT = { character = ROOT }
+					NOT = { character = FROMFROM }
+					has_character_flag = trial_by_seven_inform
+				}
+				character_event = { id = trial_by_seven.12 }
+			}
+		}		
+		clr_character_flag = trial_by_seven_duel	
+	}
+}
+character_event = {
+	id = trial_by_seven.12
+	picture = GFX_trial_by_combat
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_12
+		trigger = { FROMFROMFROM = { is_alive = no } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_12B
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = EVTOPTtrial_by_seven_12 #ok
+		trigger = {
+			OR = {
+				NOT = { has_character_modifier = trial_by_seven }
+				any_opinion_modifier_target = {
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+					NOT = { has_character_flag = trial_by_seven_defeated }
+				}
+				NOR = {
+					has_character_flag = trial_by_seven_defeated
+					AND = {
+						prisoner = no
+						NOT = { has_character_flag = seven_trial_fight_personally }
+					}	
+				}
+			}	
+		}
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+	option = {
+		name = EVTOPTtrial_by_seven_12B #we have lost the trial!
+		trigger = {
+			has_character_modifier = trial_by_seven
+			NOT = {
+				any_opinion_modifier_target = {
+					reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion }
+					NOT = { has_character_flag = trial_by_seven_defeated }
+				}
+			}
+			OR = {
+				has_character_flag = trial_by_seven_defeated
+				AND = {
+					prisoner = no
+					NOT = { has_character_flag = seven_trial_fight_personally }
+				}	
+			}
+		}
+		FROMFROMFROM = { tooltip = { show_portrait = yes } }
+	}
+}
+#Captor's Team wins
+character_event = {
+	id = trial_by_seven.13
+	picture = GFX_evt_trial_by_seven
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_13
+		trigger = { FROMFROM = { is_alive = yes } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_13B
+		trigger = { FROMFROM = { is_alive = no } }
+	}
+	
+	is_triggered_only = yes
+	show_from_from = yes
+	
+	immediate = { 
+		character_event = { id = trial_by_seven.25 days = 2 } #Clear flags and opinions
+			
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+			}
+			character_event = { id = trial_by_seven.14 }
+		}
+		FROMFROM = {
+			remove_character_modifier = trial_by_seven 
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				character_event = { id = trial_by_seven.15 }
+			}
+		}
+		if = {
+			limit = { FROMFROM = { is_alive = no } }
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_trial_enemy }
+				}
+				character_event = { id = trial_by_seven.15 }
+			}
+		}
+		hidden_tooltip = {
+			any_playable_ruler = { #inform world
+				limit = { 
+					ai = no
+					NOT = { character = ROOT }
+					NOT = { character = FROMFROM }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_trial_enemy } }
+					OR = {
+						religion = the_seven
+						is_liege_or_above = ROOT
+						is_liege_or_above = FROMFROM
+						is_close_relative = ROOT
+						is_close_relative = FROMFROM
+					}
+				}
+				narrative_event = { id = trial_by_seven.159 }
+			}
+		}
+	}
+	
+	option = {
+		name = EVTOPTAtrial_by_seven_13
+		trigger = { FROMFROM = { is_alive = no } }
+		piety = 100
+		prestige = 100
+	}
+	
+	option = {
+		name = EVTOPTBtrial_by_seven_13 #Death
+		trigger = { FROMFROM = { is_alive = yes } }
+		ai_chance = { 
+			factor = 25 	
+			modifier = {
+				factor = 4
+				trait = zealous
+			}			
+			modifier = {
+				factor = 4
+				trait = cruel
+			}
+			modifier = {
+				factor = 4
+				trait = wroth
+			}
+			modifier = {
+				factor = 4
+				trait = proud
+			}
+			modifier = {
+				factor = 4
+				trait = ruthless
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { any_claim = { holder_scope = { character = ROOT } } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -10 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -35 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -60 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -85 } }
+			}
+		}
+		piety = 100
+		prestige = 100
+		FROMFROM = { character_event = { id = trial_by_combat.121 tooltip = TOOLTIPtrial_by_combat.121 } }	
+	}
+	
+	option = {
+		name = EVTOPTCtrial_by_seven_13 #To the Wall
+		trigger = {
+			FROMFROM = { is_alive = yes }
+			
+			NOT = { trait = nightswatch }
+			NOT = { trait = deserter }
+			FROMFROM = {
+				is_female = no
+				age = 14
+				NOT = { trait = nightswatch } 
+			}
+			nightswatch_culture_trigger = yes
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 4
+				trait = diligent
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { dynasty = ROOT }
+			}
+		}
+		piety = 100
+		prestige = 100
+		FROMFROM = { 
+			custom_tooltip = { 
+				text = TOOLTIPBANISHTONW 
+				hidden_tooltip = { character_event = { id = nightswatch.2098 } } #set banisher as FROMFROM
+			}
+			hidden_tooltip = { character_event = { id = trial_by_combat.122 } }
+		}
+	}
+	option = { 
+		name = EVTOPTDtrial_by_seven_13 ##Send to priesthood
+		trigger = { 
+			FROMFROM = { 
+				is_alive = yes
+				is_female = yes 
+				OR = {
+					AND = {
+						religion = the_seven
+						ROOT = { religion = the_seven }
+						NOT = { trait = silent_sister }
+						NOT = { trait = septa }
+					}
+					AND = {
+						OR = {
+							religion = harpy
+							religion = harpy_reformed
+						}
+						ROOT = { 
+							OR = {
+								religion = harpy
+								religion = harpy_reformed
+							}
+						}
+						NOT = { trait = grace }
+					}				
+				}
+			}		
+		}
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 4
+				trait = diligent
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { dynasty = ROOT }
+			}
+		}
+		piety = 100
+		prestige = 100
+		FROMFROM = { 
+			tooltip = {
+				if = {
+					limit = { religion = the_seven }
+					add_trait = silent_sister
+				}
+				if = {
+					limit = { 
+						OR = {
+							religion = harpy
+							religion = harpy_reformed
+						}
+					}
+					add_trait = grace
+				}
+			}	
+			hidden_tooltip = { character_event = { id = trial_by_combat.125 } }
+		} 
+	}#option
+	option = {
+		name = EVTOPTEtrial_by_seven_13 #Back to the Dungeon
+		trigger = { FROMFROM = { is_alive = yes } }
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = just
+			}
+			modifier = {
+				factor = 4
+				trait = paranoid
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -10 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -35 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -60 } }
+			}
+			modifier = {
+				factor = 2
+				NOT = { opinion = { who = FROMFROM value = -85 } }
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { dynasty = ROOT }
+			}
+		}
+		piety = 100
+		prestige = 100
+		FROMFROM = { character_event = { id = trial_by_combat.123 tooltip = TOOLTIPtrial_by_combat.123 } }	
+	}
+	
+	option = {
+		name = EVTOPTDtrial_by_combat.120 #House Arrest
+		trigger = { FROMFROM = { is_alive = yes } }
+		ai_chance = { 
+			factor = 25 
+			modifier = {
+				factor = 4
+				trait = kind
+			}
+			modifier = {
+				factor = 4
+				trait = patient
+			}
+			modifier = {
+				factor = 4
+				trait = honorable
+				FROMFROM = { 
+					OR = {
+						is_ruler = yes 
+						trait = knight
+						has_priest_trait_trigger = yes
+					}	
+				}
+			}
+			modifier = {
+				factor = 4
+				FROMFROM = { dynasty = ROOT }
+			}
+			modifier = {
+				factor = 2
+				FROMFROM = { is_close_relative = ROOT }
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROMFROM value = 10 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROMFROM value = 35 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROMFROM value = 60 } 
+			}
+			modifier = {
+				factor = 2
+				opinion = { who = FROMFROM value = 85 } 
+			}
+		}
+		piety = 100
+		prestige = 100
+		FROMFROM = { 
+			character_event = { id = trial_by_combat.124 tooltip = TOOLTIPtrial_by_combat.124 }
+			opinion = {
+				who = ROOT
+				modifier = opinion_merciful
+				months = 60
+			}			
+		}	
+	}
+}
+character_event = { #inform captor team
+	id = trial_by_seven.14
+	picture = GFX_evt_trial_by_seven
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_14
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_14B
+		trigger = { FROMFROMFROM = { is_alive = no } }
+	}
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	ai = no
+	
+	option = {
+		name = EVTOPTAtrial_by_seven_14
+		FROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROMFROMFROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = ROOT_FROM modifier = opinion_seven_trial_enemy }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		
+		piety = -30
+		prestige = -30
+	}
+}	
+character_event = { #inform prisoner team
+	id = trial_by_seven.15
+	picture = GFX_evt_trial_by_seven
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_15
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_15B
+		trigger = { FROMFROMFROM = { is_alive = no } }
+	}
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	ai = no
+	
+	option = {
+		name = EVTOPTAtrial_by_seven_15
+		FROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROMFROMFROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = ROOT_FROM modifier = opinion_seven_trial_enemy }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		
+		piety = 30
+		prestige = 30
+	}
+}
+character_event = { #inform world
+	id = trial_by_seven.159
+	picture = GFX_evt_trial_by_seven
+	
+	desc = {
+		text = EVTDESCtrial_by_seven_159
+		trigger = { FROMFROMFROM = { is_alive = yes } }
+	}
+	desc = {
+		text = EVTDESCtrial_by_seven_159B
+		trigger = { FROMFROMFROM = { is_alive = no } }
+	}
+	
+	is_triggered_only = yes
+	show_from_from_from = yes
+	ai = no
+	
+	option = {
+		name = EVTOPTAtrial_by_seven_159
+		clr_character_flag = trial_by_seven_inform
+		FROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROMFROMFROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = ROOT_FROM modifier = opinion_seven_trial_enemy }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+	}
+}
+#Prisoner's Team Wins
+character_event = {
+	id = trial_by_seven.16
+	desc = "EVTDESCtrial_by_seven.16"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+	
+	immediate = { 
+		character_event = { id = trial_by_seven.26 days = 2 } #Clear flags and opinions
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+			}
+			character_event = { id = trial_by_seven.17 }
+		}
+		FROM = {
+			character_event = { id = trial_by_seven.18 }
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				character_event = { id = trial_by_seven.18 }
+			}
+		}
+		hidden_tooltip = {
+			any_playable_ruler = { #inform world
+				limit = { 
+					ai = no
+					NOT = { character = ROOT }
+					NOT = { character = FROM }
+					NOT = { reverse_has_opinion_modifier = { who = ROOT modifier = opinion_seven_champion } }
+					NOT = { reverse_has_opinion_modifier = { who = FROM modifier = opinion_seven_champion } }
+					OR = {
+						religion = the_seven
+						is_liege_or_above = ROOT
+						is_liege_or_above = FROM
+						is_close_relative = ROOT
+						is_close_relative = FROM
+					}
+				}
+				narrative_event = { id = trial_by_seven.189 }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAtrial_by_seven.16" 
+		piety = 100
+		prestige = 100
+		prisoner = no
+		hidden_tooltip = {
+			clear_delayed_event = { id = trial.500 }
+			diplomatic_immunity = no
+		}
+	}
+}
+character_event = {
+	id = trial_by_seven.17 #inform prisoner team
+	desc = "EVTDESCtrial_by_seven.17"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+	ai = no
+	
+	option = {
+		name = "EVTOPTAtrial_by_seven.17" 
+		FROMFROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		piety = 30
+		prestige = 30
+	}
+}	
+character_event = {
+	id = trial_by_seven.18 #inform captor team
+	desc = "EVTDESCtrial_by_seven.18"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+	ai = no
+	
+	option = {
+		name = "EVTOPTAtrial_by_seven.18" 
+		FROMFROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		piety = -30
+		prestige = -30
+	}
+}	
+character_event = {
+	id = trial_by_seven.189 #inform world
+	desc = "EVTDESCtrial_by_seven.189"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+	ai = no
+	
+	option = {
+		name = "EVTOPTAtrial_by_seven.189" 
+		clr_character_flag = trial_by_seven_inform
+		FROMFROM = { 
+			tooltip = { show_portrait = yes } 
+			if = {
+				limit = {
+					has_character_flag = seven_trial_fight_personally 	
+				}
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenENEMYSELF }
+			}
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }		
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+		FROM = {
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				tooltip = { show_portrait = yes }
+				custom_tooltip = { text = TOOLTIPtrial_by_sevenCHAMPIONS_OTHER }
+			}
+		}
+	}
+}
+#Captor dies, heir inherits trial
+character_event = { #ping to prisoner
+	id = trial_by_seven.19
+
+	is_triggered_only = yes
+	
+	immediate = {
+		random_opinion_modifier_target = {
+			limit = {
+				is_ruler = yes
+				reverse_has_opinion_modifier = { who = ROOT modifier = opinion_trial_by_seven }
+			}
+			hidden_tooltip = { character_event = { id = trial_by_seven.8 } }
+			character_event = { id = trial_by_seven.20 }
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+character_event = {
+	id = trial_by_seven.20
+	desc = "EVTDESCtrial_by_seven.20"
+	picture = "GFX_evt_trial_by_seven"
+	
+	is_triggered_only = yes
+
+	option = {
+		name = "EVTOPTAtrial_by_seven.20" 
+		FROMFROM = { tooltip = { show_portrait = yes } }
+		set_character_flag = trial_by_seven_begun
+	}
+}	
+#Clear flags and opinions
+character_event = { #captor wins
+	id = trial_by_seven.25
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		remove_character_modifier = trial_by_seven 
+		remove_opinion = { who = FROMFROMFROM modifier = opinion_trial_by_seven }
+		reverse_remove_opinion = { who = FROMFROMFROM modifier = opinion_trial_by_seven }
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+			}
+			remove_character_modifier = trial_by_seven 
+			remove_opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+			reverse_remove_opinion = { who = FROMFROMFROM modifier = opinion_seven_trial_enemy }
+		}
+		FROMFROMFROM = {
+			remove_character_modifier = trial_by_seven 
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				remove_character_modifier = trial_by_seven 
+				remove_opinion = { who = PREV modifier = opinion_seven_championing_for }
+				reverse_remove_opinion = { who = PREV modifier = opinion_seven_champion }
+				reverse_remove_opinion = { who = ROOT modifier = opinion_seven_trial_enemy }
+			}
+		}
+		if = {
+			limit = { FROMFROMFROM = { is_alive = no } }
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_trial_enemy }
+				}
+				remove_character_modifier = trial_by_seven 
+				reverse_remove_opinion = { who = PREV modifier = opinion_seven_trial_enemy }
+			}
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}	
+character_event = { #prisoner team wins
+	id = trial_by_seven.26
+
+	is_triggered_only = yes
+	hide_window = yes
+	
+	immediate = {
+		remove_character_modifier = trial_by_seven 
+		remove_opinion = { who = FROMFROM modifier = opinion_trial_by_seven }
+		reverse_remove_opinion = { who = FROMFROM modifier = opinion_trial_by_seven }
+		any_opinion_modifier_target = {
+			limit = {
+				reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+			}
+			remove_character_modifier = trial_by_seven 
+			remove_opinion = { who = ROOT modifier = opinion_seven_championing_for }
+			reverse_remove_opinion = { who = ROOT modifier = opinion_seven_champion }
+			reverse_remove_opinion = { who = FROMFROM modifier = opinion_seven_trial_enemy }
+		}
+		FROMFROM = {
+			remove_character_modifier = trial_by_seven 
+			clr_character_flag = trial_by_seven_begun
+			clr_character_flag = seven_trial_fight_personally
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_champion }
+				}
+				remove_character_modifier = trial_by_seven 
+				remove_opinion = { who = PREV modifier = opinion_seven_championing_for }
+				reverse_remove_opinion = { who = PREV modifier = opinion_seven_champion }
+				reverse_remove_opinion = { who = ROOT modifier = opinion_seven_trial_enemy }
+			}
+		}
+		if = {
+			limit = { FROMFROM = { is_alive = no } }
+			any_opinion_modifier_target = {
+				limit = {
+					reverse_has_opinion_modifier = { who = PREV modifier = opinion_seven_trial_enemy }
+				}
+				remove_character_modifier = trial_by_seven 
+				reverse_remove_opinion = { who = PREV modifier = opinion_seven_trial_enemy }
+			}
+		}
+	}
+
+	option = {
+		name = OK
+	}
+}	

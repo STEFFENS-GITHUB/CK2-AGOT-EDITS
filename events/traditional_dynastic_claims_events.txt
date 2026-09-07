@@ -1,0 +1,2490 @@
+######################################
+# Traditional Dynastic Claims Events #
+######################################
+namespace = traditional_claims
+# Galle (Gregory Hayes)
+# June 2 2012
+
+#Improvements and bloodlines adaptation by knuckey
+
+######################################
+# Bloodlines can have "traditional" claims to certain
+# lands. Not all of them are necessarily the current
+# reigning house in said lands, either. If they are ever
+# deposed, they will always have at least one bloodline
+# member with a relevant claim, so long as the bloodline
+# still exists.
+######################################
+
+
+#Ruler grants traditional title to non-dynast, apply title flag
+character_event = {
+	id = traditional_claims.1
+	desc = "EVTDESCtraditional_claims.1"
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		NOT = { reverse_has_opinion_modifier = { who = FROMFROM modifier = opinion_usurped_title } }
+		FROMFROM = { 
+			is_alive = yes 
+			any_owned_bloodline = {
+				has_bloodline_flag = dynastic_bloodline
+				has_bloodline_flag = dynastic_claim_@ROOT_FROM
+				ROOT = { NOT = { is_bloodline_member_of = PREV } }
+			}
+		}	
+	}
+	
+	immediate = {
+		set_dynasty_flag = traditional_title_grant_@FROM
+	}
+	
+	option = {
+		name = OK
+	}	
+}	
+###Claim on/Ownership of Iron Throne gives extra claims in crownlands
+character_event = {
+	id = traditional_claims.2
+	desc = "EVTDESCtraditional_claims.2"
+	picture = GFX_KINGS_LANDING
+	
+	is_triggered_only = yes
+	#only_independent = yes
+		
+	trigger = {
+		NOT = { has_global_flag = KL_not_capital }
+		OR = { 
+			has_landed_title = e_iron_throne
+			e_iron_throne = { ROOT = { has_claim = PREV } }
+		}	
+		OR = { 		
+			AND = {	
+				NOT = { has_landed_title = d_kings_landing }
+				d_kings_landing = { 
+					holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } #was not given the title by the king
+					NOT = { ROOT = { has_claim = PREV } } 
+				}
+			}
+			AND = {	
+				NOT = { has_landed_title = c_kings_landing }
+				c_kings_landing = { 
+					holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } #was not given the title by the king
+					NOT = { ROOT = { has_claim = PREV } } 
+				}
+			}	
+			AND = {					
+				k_crownlands = { 
+					has_holder = yes
+					NOT = { ROOT = { has_claim = PREV } } 
+					holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } #was not given the title by the king
+				}
+				has_landed_title = e_iron_throne
+				NOT = { has_landed_title = k_crownlands }
+			}
+		}			
+	}
+
+	option = {
+		name = "EVTOPTAtraditional_claims.2" #
+		e_iron_throne = {
+			if = {
+				limit = { 
+					ROOT = { 
+						OR = {
+							has_strong_claim = PREV 
+							has_landed_title = e_iron_throne
+						}	
+					} 
+				}
+				d_kings_landing = { 
+					if = {
+						limit = { holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } }#was not given the title by the king
+						add_claim = ROOT 
+					}	
+				}
+				c_kings_landing = { 
+					if = {
+						limit = { holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } }#was not given the title by the king
+						add_claim = ROOT 
+					}
+				}
+				if = {
+					limit = {
+						ROOT = { 
+							has_landed_title = e_iron_throne
+							NOT = { has_landed_title = k_crownlands } 
+						}
+						k_crownlands = { 
+							has_holder = yes
+							NOT = { ROOT = { has_claim = PREV } } 
+							holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } #was not given the title by the king
+						}
+					}
+					k_crownlands = { add_claim = ROOT }
+				}
+			}	
+			if = {
+				limit = { 
+					ROOT = { 
+						has_weak_claim = PREV
+						NOT = { has_landed_title = e_iron_throne }
+					} 
+				}
+				d_kings_landing = { 
+					if = {
+						limit = { holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } }#was not given the title by the king
+						add_weak_claim = ROOT
+					}	
+				}
+				c_kings_landing = { 
+					if = {
+						limit = { holder_scope = { NOT = { has_dynasty_flag = traditional_title_grant_@PREV } } }#was not given the title by the king
+						add_weak_claim = ROOT
+					}	
+				}
+			}
+		}	
+	}
+}
+#DYNASTIC CLAIM FROM BLOODLINE
+character_event = { #on new holder
+	id = traditional_claims.198
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		FROM = { higher_tier_than = COUNT }
+		has_game_rule = { name = traditional_dynastic_claims value = on }
+		any_bloodline = { 
+			has_bloodline_flag = dynastic_bloodline
+			has_bloodline_flag = dynastic_claim_@FROM
+			NOT = { ROOT = { is_bloodline_member_of = PREV } }
+		}		
+	}
+	
+	immediate = {
+		any_bloodline = { 
+			limit = {
+				has_bloodline_flag = dynastic_bloodline
+				has_bloodline_flag = dynastic_claim_@FROM
+				NOT = { ROOT = { is_bloodline_member_of = PREV } }
+			}
+			any_bloodline_member = {
+				limit = {
+					NOT = { has_strong_claim = FROM }
+				}
+				character_event = { id = traditional_claims.199 days = 2 }
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}	
+character_event = {
+	id = traditional_claims.199
+	desc = "EVTDESCtraditional_claims.199"
+	picture = GFX_evt_powerful_ruler
+	
+	desc = {
+		text = "EVTDESCtraditional_claims.3"
+		picture = GFX_TARGARYEN
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = targaryen }
+			NOT = { dynasty = 57 }
+		}
+	}	
+	desc = {
+		text = "EVTDESCtraditional_claims.4"
+		picture = GFX_STARK
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = stark }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.5"
+		picture = GFX_GREYJOY
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = greyjoy }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.6"
+		picture = GFX_TULLY
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = tully }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.7"
+		picture = GFX_ARRYN
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = arryn }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.8"
+		picture = GFX_LANNISTER
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = lannister }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.9"
+		picture = GFX_BARATHEON
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = baratheon }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.10"
+		picture = GFX_TYRELL
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = tyrell }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.10B"
+		picture = GFX_TYRELL
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = garth_greenhand }
+			dynasty = 1254
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.10C"
+		picture = GFX_TYRELL
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = garth_greenhand }
+			NOT = { dynasty = 253 }
+			NOT = { dynasty = 1254 }
+			NOT = { dynasty = 281 }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.11"
+		picture = GFX_MARTELL
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = martell }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.12"
+		picture = GFX_FLORENT
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = garth_greenhand }
+			dynasty = 281
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.15"
+		picture = "GFX_evt_blackfyre"
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = targaryen }
+			dynasty = 57
+		}
+	}
+	desc = { #Volmark
+		text = "EVTDESCtraditional_claims.16"
+		picture = GFX_GREYJOY
+		trigger = {
+			any_owned_bloodline = { has_bloodline_flag = hoare }
+			dynasty = 119
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = traditional_dynastic_claims value = on }
+		any_owned_bloodline = { has_bloodline_flag = dynastic_bloodline }
+		can_press_claims_trigger = yes		
+		# Must either be senior member of a branch or be a duke or above	
+		OR = {
+			higher_tier_than = COUNT
+			NOR = {
+				any_sibling = { 
+					is_alive = yes 
+					dynasty = ROOT 
+					higher_tier_than = COUNT
+					can_press_claims_trigger = yes
+				}
+				father = { 
+					is_alive = yes 
+					dynasty = ROOT 
+					can_press_claims_trigger = yes
+				}
+				father_even_if_dead = { 
+					father = {  
+						is_alive = yes 
+						dynasty = ROOT 
+						can_press_claims_trigger = yes
+					} 
+				}
+			}
+		}
+		any_playable_ruler = {
+			higher_tier_than = COUNT
+			any_demesne_title = {
+				higher_tier_than = COUNT			
+				ROOT = {
+					any_owned_bloodline = {
+						has_bloodline_flag = dynastic_bloodline
+						has_bloodline_flag = dynastic_claim_@PREVPREV
+						NAND = { #In greenhand bloodline, during interregnum only gardeners get claims
+							has_bloodline_flag = garth_greenhand
+							PREVPREV = { is_in_interregnum_trigger = yes }
+							NOT = { dynasty = 1254 }
+							any_bloodline_member = {
+								dynasty = 1254
+								is_alive = yes
+								can_press_claims_trigger = yes	
+							}
+						}
+					}	
+					NOT = { has_strong_claim = PREV }			
+				}
+				holder_scope = { #Holder is not in the same bloodline
+					NOR = {
+						character = ROOT
+						any_owned_bloodline = {
+							has_bloodline_flag = dynastic_bloodline
+							ROOT = { is_bloodline_member_of = PREV }
+							has_bloodline_flag = dynastic_claim_@PREVPREV
+							trigger_if = { #Greenhand line special restrictions
+								limit = { has_bloodline_flag = garth_greenhand }
+								NOR = {
+									ROOT = { #Gardeners always have precedence in greenhand bloodline
+										dynasty = 1254
+										NOT = { dynasty = PREVPREV }
+									}
+									AND = { #Florents only tolerate gardeners in greenhand bloodline
+										ROOT = { 
+											dynasty = 281
+											NOT = { dynasty = PREVPREV }
+										}
+										PREV = { NOT = { dynasty = 1254 } }
+									}	
+								}	
+							}
+						}
+						has_dynasty_flag = traditional_title_grant_@PREV
+					}
+				}
+				NOT = { holder_scope = { culture_group = unoccupied_group } } 
+				NAND = {
+					ROOT = { has_character_flag = no_iron_throne_claim }
+					OR = {
+						title = e_iron_throne
+						title = d_dragonstone
+						location = { region = world_westeros }
+					}
+				}
+			}	
+		}
+	}	
+	
+	option = {
+		name = {
+			text = "EVTOPTAtraditional_claims.199"
+			trigger = { has_house_words_trigger = no }
+		}	
+		name = {
+			text = "EVTOPTAtraditional_claims.199B"
+			trigger = { has_house_words_trigger = yes }
+		}	
+		any_title = {
+			limit = {
+				higher_tier_than = COUNT
+				OR = {
+					has_holder = yes
+					title = e_iron_throne			
+				}				
+				ROOT = {
+					any_owned_bloodline = {
+						has_bloodline_flag = dynastic_bloodline
+						has_bloodline_flag = dynastic_claim_@PREVPREV
+					}	
+					NOT = { has_strong_claim = PREV }			
+				}
+				holder_scope = {
+					NOR = {
+						character = ROOT
+						any_owned_bloodline = {
+							has_bloodline_flag = dynastic_bloodline
+							ROOT = { is_bloodline_member_of = PREV }
+							has_bloodline_flag = dynastic_claim_@PREVPREV
+							NAND = { #Greenhand line special restrictions
+								has_bloodline_flag = garth_greenhand
+								OR = {
+									ROOT = { #Gardeners have precedence in greenhand bloodline
+										dynasty = 1254
+										NOT = { dynasty = PREVPREV }
+									}
+									AND = { #Florents only tolerate gardeners in greenhand bloodline
+										ROOT = { 
+											dynasty = 281
+											NOT = { dynasty = PREVPREV }
+										}
+										NOT = { dynasty = 1254 }
+									}	
+								}	
+							}
+						}
+					}
+				}
+				NOT = { holder_scope = { culture_group = unoccupied_group } } 
+				NAND = {
+					ROOT = { has_character_flag = no_iron_throne_claim }
+					OR = {
+						title = e_iron_throne
+						title = d_dragonstone
+						location = { region = world_westeros }
+					}
+				}
+			}
+			show_scope_change = no
+			if = {
+				limit = { ROOT = { NOT = { trait = bastard } } }
+				add_claim = ROOT
+			}	
+			else = {
+				add_weak_claim = ROOT
+			}
+			if = {  #Add claim on capital of any duchies
+				limit = { tier = DUKE }
+				capital_scope = { 
+					show_scope_change = no
+					county = {
+						show_scope_change = no
+						if = {
+							limit = { 
+								ROOT = { NOT = { has_strong_claim = PREV } } 
+								NOT = { holder_scope = { culture_group = unoccupied_group } } 
+							}
+							if = {
+								limit = { ROOT = { NOT = { trait = bastard } } }
+								add_claim = ROOT
+							}	
+							else = {
+								add_weak_claim = ROOT
+							}
+						}
+					}					
+				}
+			}
+			capital_scope = { #Titular Kingdoms
+				show_scope_change = no
+				any_playable_ruler = { 
+					limit = { 
+						higher_tier_than = DUKE 
+						any_demesne_title = {
+							tier = KING
+							capital_scope = { province_id = PREVPREVPREV }
+							NOT = { title = PREVPREVPREV }
+							ROOT = { NOT = { has_strong_claim = PREV } }
+						}
+					}
+					show_scope_change = no
+					any_demesne_title = {
+						limit = {
+							tier = KING
+							capital_scope = { province_id = PREVPREVPREV }
+							NOT = { title = PREVPREVPREV }
+							ROOT = { NOT = { has_strong_claim = PREV } }
+						}	
+						show_scope_change = no
+						if = {
+							limit = { ROOT = { NOT = { trait = bastard } } }
+							add_claim = ROOT
+						}	
+						else = {
+							add_weak_claim = ROOT
+						}
+					}
+				}
+			}	
+		}		
+	}
+}	
+# ESTABLISH NEW DYNASTIC CLAIM
+character_event = { #Conventional trigger event, seperate so subsequent event can be triggered in other ways
+	id = traditional_claims.200
+	
+	is_triggered_only = yes
+	only_playable = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 18
+	war = no
+	hide_window = yes
+	
+	trigger = {
+		higher_tier_than = DUKE
+		ruled_years = 10
+		prestige = 1000
+		is_feudal = yes
+		NOT = { government = noble_oligarchy }
+		NOT = { government = alliance_government }
+		NOT = { government = theocratic_feudal_government }
+		NOT = { dynasty = 0 }
+		any_demesne_title = {
+			OR = {
+				AND = {
+					tier = EMPEROR
+					ROOT = { tier = EMPEROR }
+				}
+				AND = {
+					tier = KING
+					ROOT = { tier = KING }
+				}
+			}
+			NOT = {
+				ROOT = {
+					any_owned_bloodline = {
+						has_bloodline_flag = dynastic_bloodline
+						has_bloodline_flag = dynastic_claim_@PREVPREV
+					}
+				}
+			}
+			any_previous_holder = { #At least 5 previous holders in dynasty
+				dynasty = ROOT
+				count = 5
+			}
+		}
+	}
+	
+	immediate = {
+		character_event = { id = traditional_claims.201 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+	
+character_event = {
+	id = traditional_claims.201		
+	sound = bloodline_added
+	
+	is_triggered_only = yes
+	
+	desc = {
+		text = "EVTDESCtraditional_claims.201"
+		trigger = {
+			NOT = { has_character_flag = sisterman_special_bloodline }
+			NOT = { has_character_flag = skagosi_special_bloodline }
+			NOT = { has_character_flag = conquest_special_bloodline }
+			NOT = { has_character_flag = founder_special_bloodline }
+		}
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.201A"
+		trigger = { has_character_flag = sisterman_special_bloodline }
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.201B"
+		trigger = { has_character_flag = skagosi_special_bloodline }
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.201C"
+		trigger = { has_character_flag = conquest_special_bloodline }
+	}
+	desc = {
+		text = "EVTDESCtraditional_claims.201D"
+		trigger = { has_character_flag = founder_special_bloodline }
+	}
+	
+	picture = {
+		picture = GFX_evt_powerful_ruler
+		trigger = {
+		}
+	}
+	picture = {
+		picture = GFX_TARGARYEN
+		trigger = {
+			OR = {
+				dynasty = 496 #Targaryen
+				dynasty = 497 #Aegons "of Essos"
+				#Targ Cadets
+				dynasty = 450204
+				dynasty = 450205
+				dynasty = 450206
+				dynasty = 450207
+			}
+		}
+	}	
+	picture = {
+		picture = GFX_STARK
+		trigger = {
+			dynasty = 59
+		}
+	}
+	picture = {
+		picture = GFX_GREYJOY
+		trigger = {
+			dynasty=107
+		}
+	}
+	picture = {
+		picture = GFX_TULLY
+		trigger = {
+			dynasty=159
+		}
+	}
+	picture = {
+		picture = GFX_ARRYN
+		trigger = {
+			dynasty=178
+		}
+	}
+	picture = {
+		picture = GFX_LANNISTER
+		trigger = {
+			dynasty=190
+		}
+	}
+	picture = {
+		picture = GFX_BARATHEON
+		trigger = {
+			dynasty=317
+		}
+	}
+	picture = {
+		picture = GFX_TYRELL
+		trigger = {
+			dynasty = 253
+		}
+	}
+	picture = {
+		picture = GFX_MARTELL
+		trigger = {
+			dynasty = 1
+		}
+	}
+	picture = {
+		picture = GFX_FLORENT
+		trigger = {
+			dynasty = 281
+		}
+	}
+	picture = {
+		picture = "GFX_evt_blackfyre"
+		trigger = {
+			dynasty = 57
+		}
+	}
+	picture = {
+		picture = "GFX_asshai"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = k_asshai
+					capital_scope = { region = world_asshai }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_braavos"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = k_braavos
+					capital_scope = { region = world_braavos }
+				}		
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_god_emperor"
+		trigger = {
+			event_target:bloodline_title = { 
+				title = e_yi_ti
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_highgarden"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_reach
+					title = k_reach
+					capital_scope = { region = world_reach }
+				}
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_ironthrone"
+		trigger = {
+			event_target:bloodline_title = { 
+				title = e_iron_throne
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_kayakayanaya"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = k_hyrkoon
+					capital_scope = { region = world_bone_mountains }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_riverrun"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_riverlands
+					title = k_riverlands
+					capital_scope = { region = world_riverlands }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_summer_islanders"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_summer_sea
+					title = k_summer_islands
+					capital_scope = { region = world_summer_islands }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_theeyrie"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_vale
+					title = k_vale
+					capital_scope = { region = world_vale }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_valyria"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_new_valyria
+					title = k_valyria
+					title = k_long_summer
+					capital_scope = { region = world_valyrian_peninsula }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_volantis"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = k_volantis
+					capital_scope = { region = world_volantis }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_winterfell"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_north
+					title = k_north
+					capital_scope = { region = world_north }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_yunkai"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = e_ghiscar
+					capital_scope = { region = world_ghiscar }
+				}	
+			}
+		}
+	}
+	picture = {
+		picture = "GFX_evt_norvos"
+		trigger = {
+			event_target:bloodline_title = { 
+				OR = {
+					title = k_norvos
+					capital_scope = { region = world_norvos }
+				}	
+			}
+		}
+	}
+
+	trigger = {
+		higher_tier_than = DUKE
+		is_feudal = yes
+		NOT = { government = noble_oligarchy }
+		NOT = { government = alliance_government }
+		NOT = { government = theocratic_feudal_government }
+		NOT = { dynasty = 0 }
+		any_demesne_title = {
+			OR = {
+				AND = {
+					tier = EMPEROR
+					ROOT = { tier = EMPEROR }
+				}
+				AND = {
+					tier = KING
+					ROOT = { tier = KING }
+				}
+			}
+			NOT = {
+				ROOT = {
+					any_owned_bloodline = {
+						has_bloodline_flag = dynastic_bloodline
+						has_bloodline_flag = dynastic_claim_@PREVPREV
+					}
+				}
+			}
+			OR = {
+				any_previous_holder = { #At least 5 previous holders in dynasty
+					dynasty = ROOT
+					count = 5
+				}
+				title = event_target:bloodline_title
+			}
+		}
+	}
+	
+	fail_trigger_effect = {
+		clr_character_flag = sisterman_special_bloodline
+		clr_character_flag = skagosi_special_bloodline
+		clr_character_flag = conquest_special_bloodline
+		clr_character_flag = founder_special_bloodline
+	}
+	
+	immediate = {	
+		#find main title for bloodline
+		if = {
+			limit = { 
+				event_target:bloodline_title = { 
+					OR = {
+						AND = {
+							tier = EMPEROR
+							ROOT = { tier = EMPEROR }
+						}
+						AND = {
+							tier = KING
+							ROOT = { tier = KING }
+						}
+					}
+					NOT = {
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+				} 
+			}
+			#keep this target
+		}
+		else_if = {
+			limit = {
+				primary_title = {
+					NOT = {
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+					any_previous_holder = { #At least 5 previous holders in dynasty
+						dynasty = ROOT
+						count = 5
+					}
+				}
+			}
+			primary_title = { save_event_target_as = bloodline_title }
+		}	
+		else_if = {
+			limit = {
+				tier = EMPEROR
+				capital_scope = {
+					empire = {
+						holder_scope = { character = ROOT }
+						NOT = {
+							ROOT = {
+								any_owned_bloodline = {
+									has_bloodline_flag = dynastic_bloodline
+									has_bloodline_flag = dynastic_claim_@PREVPREV
+								}
+							}
+						}
+						any_previous_holder = { #At least 5 previous holders in dynasty
+							dynasty = ROOT
+							count = 5
+						}
+					}
+				}
+			}
+			capital_scope = { empire = { save_event_target_as = bloodline_title } }
+		}
+		else_if = {
+			limit = {
+				tier = KING
+				capital_scope = {
+					kingdom = {
+						holder_scope = { character = ROOT }
+						NOT = {
+							ROOT = {
+								any_owned_bloodline = {
+									has_bloodline_flag = dynastic_bloodline
+									has_bloodline_flag = dynastic_claim_@PREVPREV
+								}
+							}
+						}
+						any_previous_holder = { #At least 5 previous holders in dynasty
+							dynasty = ROOT
+							count = 5
+						}
+					}
+				}
+			}
+			capital_scope = { kingdom = { save_event_target_as = bloodline_title } }
+		}
+		else_if = {
+			limit = {
+				any_demesne_title = { 
+					OR = {
+						AND = {
+							tier = EMPEROR
+							ROOT = { tier = EMPEROR }
+						}
+						AND = {
+							tier = KING
+							ROOT = { tier = KING }
+						}
+					}
+					NOT = {
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+					any_previous_holder = { #At least 5 previous holders in dynasty
+						dynasty = ROOT
+						count = 5
+					}
+				}
+			}
+			random_demesne_title = { 
+				limit = {
+					OR = {
+						AND = {
+							tier = EMPEROR
+							ROOT = { tier = EMPEROR }
+						}
+						AND = {
+							tier = KING
+							ROOT = { tier = KING }
+						}
+					}
+					NOT = {
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+					any_previous_holder = { #At least 5 previous holders in dynasty
+						dynasty = ROOT
+						count = 5
+					}
+				}
+				save_event_target_as = bloodline_title
+			}
+		}
+		else = {
+			random_demesne_title = { 
+				limit = {
+					OR = {
+						AND = {
+							tier = EMPEROR
+							ROOT = { tier = EMPEROR }
+						}
+						AND = {
+							tier = KING
+							ROOT = { tier = KING }
+						}
+					}
+					NOT = {
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}
+					}
+				}
+				preferred_limit = {
+					ROOT = { primary_title = { title = PREVPREV } }
+				}
+				save_event_target_as = bloodline_title
+			}
+		}
+		#Should a cadet bloodline be created?
+		if = {
+			limit = {
+				any_owned_bloodline = { #Dynasty already has founded bloodline
+					has_bloodline_flag = dynastic_bloodline
+					founder = { dynasty = ROOT }
+				}
+				NOT = { dynasty_head = { character = ROOT } }
+				
+				#Dynasty head is NOT descendent of previous holder
+				NOT = {
+					dynasty_head = {
+						is_descendant_of = ROOT
+					}
+				}	
+				NOT = { 
+					event_target:bloodline_title = {
+						any_previous_holder = {
+							dynasty = ROOT
+							tier = ROOT #not sub-title
+							ROOT = {
+								dynasty_head = {
+									is_descendant_of = PREVPREV
+									NOT = { character = PREVPREV }
+								}
+							}	
+						}
+					}
+				}
+				#
+				
+				NOT = { #Owned title is not already claimed by a cadet bloodline
+					any_demesne_title = {
+						higher_tier_than = DUKE
+						ROOT = {
+							any_owned_bloodline = {
+								has_bloodline_flag = dynastic_bloodline
+								has_bloodline_flag = cadet_dynastic_bloodline
+								has_bloodline_flag = dynastic_claim_@PREVPREV
+							}
+						}					
+					}
+				}							
+			}
+			set_character_flag = create_cadet_bloodline	
+		}
+		else_if = { #If a higher or equal tier ruler of different dynasty in bloodline, start a cadet
+			limit = {
+				any_owned_bloodline = { 
+					has_bloodline_flag = dynastic_bloodline
+					founder = { dynasty = ROOT }
+				}
+				NOT = {
+					any_owned_bloodline = { 
+						has_bloodline_flag = dynastic_bloodline
+						founder = { dynasty = ROOT }
+						NOT = {
+							any_bloodline_member = {
+								is_alive = yes
+								higher_tier_than = DUKE
+								NOT = { dynasty = ROOT }
+							}
+						}
+					}
+				}
+			}
+			set_character_flag = create_cadet_bloodline	
+		}
+		else = { #If no cadet bloodline is being created, try to find an existing one
+			random_owned_bloodline = {   
+				limit = {			
+					has_bloodline_flag = dynastic_bloodline			
+					founder = { dynasty = ROOT }
+				}
+				preferred_limit = { #If not dynasty head try a cadet line first
+					ROOT = { NOT = { dynasty_head = { character = ROOT } } }
+					has_bloodline_flag = cadet_dynastic_bloodline
+				}
+				preferred_limit = {
+					NOT = { has_bloodline_flag = cadet_dynastic_bloodline }
+				}
+				set_bloodline_flag = bloodline_to_add_claim
+				break = yes
+			}
+		}			
+		####If no existing bloodline found, create a new one
+		set_character_flag = created_new_bloodline
+		#bloodline type depends on title
+		if = { 
+			limit = {
+				event_target:bloodline_title = { title = e_iron_throne }
+			}
+			create_bloodline = { type = e_iron_throne_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { title = e_new_valyria }
+			}
+			create_bloodline = { type = e_new_valyria_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { title = e_summer_sea }
+			}
+			create_bloodline = { type = e_summer_sea_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { title = e_ghiscar }
+			}
+			create_bloodline = { type = e_ghiscar_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { title = e_yi_ti }
+			}
+			create_bloodline = { type = e_yi_ti_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = old_first_man
+				capital_scope = { culture = old_first_man }
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_riverlands
+						title = k_riverlands
+						capital_scope = { region = world_westeros }
+					}	
+					NOR = {
+						title = e_north
+						title = k_north
+						capital_scope = { region = world_north }
+					}	
+				}
+			}
+			create_bloodline = { type = old_first_man_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_riverlands
+						title = k_riverlands
+						capital_scope = { region = world_riverlands }
+					}	
+				}
+			}
+			create_bloodline = { type = riverlander_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_westerlands
+						title = k_westerlands
+						capital_scope = { region = world_westerlands }
+					}	
+				}
+			}
+			create_bloodline = { type = westerman_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = sisterman
+				capital_scope = { culture = sisterman }
+				event_target:bloodline_title = { 
+					capital_scope = { region = world_the_sisters }
+				}
+			}
+			create_bloodline = { type = sisterman_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_vale
+						title = k_vale
+						capital_scope = { region = world_vale }
+					}	
+				}
+			}
+			create_bloodline = { type = valeman_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_stormlands
+						title = k_stormlands
+						capital_scope = { region = world_stormlands }
+					}	
+				}
+			}
+			create_bloodline = { type = stormlander_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_reach
+						title = k_reach
+						capital_scope = { region = world_reach }
+					}	
+				}
+			}
+			create_bloodline = { type = reachman_bl }
+		}
+		else_if = { 
+			limit = {
+				OR = {
+					culture = old_andal 
+					capital_scope = { 
+						culture = old_andal 
+						NOT = { has_province_flag = colony_province }
+					}
+				}	
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_andalos
+						title = k_andalos
+						title = k_lorath
+						capital_scope = { region = world_andalos }
+						capital_scope = { region = world_lorath }
+						capital_scope = { region = world_braavos }
+					}	
+				}
+			}
+			create_bloodline = { type = old_andal_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_dorne
+						title = k_dorne
+						capital_scope = { region = world_dorne }
+					}	
+				}
+			}
+			create_bloodline = { type = dornish_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = hill_clansman
+				capital_scope = { culture = hill_clansman }
+				event_target:bloodline_title = { 
+					NOT = { title = e_north }
+					NOT = { title = k_north }
+					capital_scope = { region = world_north }
+				}
+			}
+			create_bloodline = { type = hill_clansman_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = crannogman
+				capital_scope = { culture = crannogman }
+				event_target:bloodline_title = { 
+					NOT = { title = e_north }
+					NOT = { title = k_north }
+					capital_scope = { region = world_north }
+				}
+			}
+			create_bloodline = { type = crannogman_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = crackclawmen
+				capital_scope = { culture = crackclawmen }
+				event_target:bloodline_title = { 
+					capital_scope = { region = world_crackclaw_point }
+				}
+			}
+			create_bloodline = { type = crackclawmen_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_north
+						title = k_north
+						capital_scope = { region = world_north }
+					}	
+				}
+			}
+			create_bloodline = { type = northman_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_iron_isles
+						title = k_iron_isles
+						capital_scope = { region = world_iron_isles }
+					}	
+				}
+			}
+			create_bloodline = { type = ironborn_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_valyria
+						title = k_dragonstone
+						title = k_long_summer
+						title = k_north_valyria
+						capital_scope = { region = world_valyrian_peninsula }
+						capital_scope = { region = world_north_valyria }
+						capital_scope = { region = world_dragonstone }
+					}	
+				}
+			}
+			create_bloodline = { type = valyrian_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_pentos
+						capital_scope = { region = world_pentos }
+					}	
+				}
+			}
+			create_bloodline = { type = pentosi_bl }
+		}
+		else_if = { 
+			limit = {
+				OR = {
+					culture = braavosi
+					capital_scope = { culture = braavosi NOT = { has_province_flag = colony_province } }
+				}	
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_braavos
+						capital_scope = { region = world_braavos }
+					}	
+				}
+			}
+			create_bloodline = { type = braavosi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_lys
+						capital_scope = { region = world_lys }
+					}	
+				}
+			}
+			create_bloodline = { type = lysene_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_qohor
+						capital_scope = { region = world_qohor }
+					}	
+				}
+			}
+			create_bloodline = { type = qohorik_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_norvos
+						capital_scope = { region = world_norvos }
+					}	
+				}
+			}
+			create_bloodline = { type = norvosi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_myr
+						capital_scope = { region = world_myr }
+					}	
+				}
+			}
+			create_bloodline = { type = myrman_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_tyrosh
+						capital_scope = { region = world_tyrosh }
+					}	
+				}
+			}
+			create_bloodline = { type = tyroshi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_volantis
+						capital_scope = { region = world_volantis }
+					}	
+				}
+			}
+			create_bloodline = { type = volantene_bl }
+		}
+		else_if = { 
+			limit = {
+				OR = {
+					culture = lorathi
+					capital_scope = { culture = lorathi NOT = { has_province_flag = colony_province } }
+				}	
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_lorath
+						capital_scope = { region = world_lorath }
+					}	
+				}
+			}
+			create_bloodline = { type = lorathi_bl }
+		}
+		else_if = { 
+			limit = {
+				OR = {
+					culture = essarian
+					capital_scope = { culture = essarian NOT = { has_province_flag = colony_province } }
+				}
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_essaria
+						capital_scope = { region = world_essaria }
+					}	
+				}
+			}
+			create_bloodline = { type = essarian_bl }
+		}
+		else_if = { 
+			limit = {
+				OR = {
+					culture = gogossosi 
+					capital_scope = { culture = gogossosi  NOT = { has_province_flag = colony_province } }
+				}
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_basilisk_isles
+						capital_scope = { region = world_basilisk_isles }
+					}	
+				}
+			}
+			create_bloodline = { type = gogossosi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_astapor
+						capital_scope = { region = world_astapor }
+					}	
+				}
+			}
+			create_bloodline = { type = astapori_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_yunkai
+						capital_scope = { region = world_yunkai }
+					}	
+				}
+			}
+			create_bloodline = { type = yunkaii_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_meereen
+						capital_scope = { region = world_meereen }
+					}	
+				}
+			}
+			create_bloodline = { type = meereenese_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_lhazar
+						capital_scope = { region = world_lhazar }
+					}	
+				}
+			}
+			create_bloodline = { type = lhazareen_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					capital_scope = { region = world_ghiscar }
+				}
+			}
+			create_bloodline = { type = ghiscari_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_hyrkoon
+						capital_scope = { region = world_bone_mountains }
+					}	
+				}
+			}
+			create_bloodline = { type = hyrkoon_group_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_moraq
+						capital_scope = { region = world_moraq }
+					}	
+				}
+			}
+			create_bloodline = { type = moraqi_group_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_asabhad
+						capital_scope = { duchy = { title = d_asabhad } }
+					}	
+				}
+			}
+			create_bloodline = { type = asabhadi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_leng
+						capital_scope = { region = world_leng }
+					}	
+				}
+			}
+			create_bloodline = { type = lengi_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					capital_scope = { region = world_yi_ti }	
+				}
+			}
+			create_bloodline = { type = yi_ti_bl }
+		}
+		else_if = { 
+			limit = {
+				culture = shadowlander
+				capital_scope = { culture = shadowlander }
+				event_target:bloodline_title = { 
+					NOT = { title = k_asshai }
+					capital_scope = { region = world_asshai }
+				}
+			}
+			create_bloodline = { type = shadowlander_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_asshai
+						capital_scope = { region = world_asshai }
+					}	
+				}
+			}
+			create_bloodline = { type = asshai_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = e_qarth
+						title = k_qarth
+						capital_scope = { region = world_qarth }
+					}	
+				}
+			}
+			create_bloodline = { type = qartheen_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_ibben
+						capital_scope = { region = world_ibben }
+					}	
+				}
+			}
+			create_bloodline = { type = ibbenese_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_nghai
+						capital_scope = { region = world_nghai }
+					}	
+				}
+			}
+			create_bloodline = { type = nghai_bl }
+		}
+		else_if = { 
+			limit = {
+				event_target:bloodline_title = { 
+					OR = {
+						title = k_summer_islands
+						capital_scope = { region = world_summer_islands }
+					}	
+				}
+			}
+			create_bloodline = { type = summer_islander_bl }
+		}
+		else_if = { 
+			limit = {				
+				event_target:bloodline_title = { 
+					capital_scope = { duchy = { title = d_naath } }
+				}
+			}
+			create_bloodline = { type = naathi_bl }
+		}
+		else_if = { 
+			limit = {				
+				religion = pirate
+			}
+			create_bloodline = { type = pirate_bl }
+		}
+		else_if = { 
+			limit = {				
+				religion = corsair
+			}
+			create_bloodline = { type = corsair_bl }
+		}
+		else = { #backup which gives smaller opinion boost to all vassals
+			create_bloodline = { type = dynastic_bl }
+		}
+		random_owned_bloodline = {
+			limit = {
+				has_bloodline_flag = dynastic_bloodline
+				founder = { character = ROOT }
+			}
+			set_name = [Root.GetBloodlineName]
+			set_bloodline_flag = bloodline_to_add_claim
+			if = {
+				limit = { ROOT = { has_character_flag = create_cadet_bloodline } }
+				set_bloodline_flag = cadet_dynastic_bloodline
+			}	
+			#Special bloodline descriptions
+			if = {
+				limit = { ROOT = { has_character_flag = sisterman_special_bloodline } }
+				set_description = BloodlineDescSisterman
+			}
+			if = {
+				limit = { ROOT = { has_character_flag = skagosi_special_bloodline } }
+				set_description = BloodlineDescSkagosi
+			}
+			if = {
+				limit = { ROOT = { has_character_flag = conquest_special_bloodline } }
+				set_description = BloodlineDescConquest
+			}
+			if = {
+				limit = { ROOT = { has_character_flag = founder_special_bloodline } }
+				set_description = BloodlineDescFounder
+			}
+		}		
+	}
+	
+	
+	option = {
+		name = {
+			text = "EVTOPTAtraditional_claims.201"
+			trigger = { has_house_words_trigger = no }
+		}	
+		name = {
+			text = "EVTOPTAtraditional_claims.201B"
+			trigger = { has_house_words_trigger = yes }
+		}
+		random_owned_bloodline = {
+			limit = { has_bloodline_flag = bloodline_to_add_claim }
+			show_scope_change = no
+			ROOT = {
+				show_scope_change = no
+				if = {
+					limit = { has_character_flag = created_new_bloodline }
+					if = {
+						limit = { has_character_flag = create_cadet_bloodline }
+						custom_tooltip = { 
+							text = TOOLTIPtraditional_claims.201A 
+							hidden_tooltip = {
+								any_dynasty_member_even_if_dead = { #Add all dynasts descended from title holders
+									limit = {
+										event_target:bloodline_title = {
+											any_previous_holder = {
+												dynasty = ROOT
+												tier = ROOT #not sub-title
+												is_ancestor_of = PREVPREV
+											}
+										}
+									}
+									add_to_bloodline = PREVPREV
+								}
+								clr_character_flag = create_cadet_bloodline
+							}
+						}
+					}
+					else = {
+						custom_tooltip = {
+							text = TOOLTIPtraditional_claims.201B 
+							hidden_tooltip = {
+								any_dynasty_member_even_if_dead = { #Add all dynasts
+									add_to_bloodline = PREVPREV
+								}
+							}
+						}
+					}
+					clr_character_flag = created_new_bloodline
+				}
+			}	
+		}	
+		any_demesne_title = {
+			limit = {
+				tier = ROOT
+				NOT = {
+					ROOT = {
+						any_owned_bloodline = {
+							has_bloodline_flag = dynastic_bloodline
+							has_bloodline_flag = dynastic_claim_@PREVPREV
+						}
+					}
+				}
+				OR = {
+					title = event_target:bloodline_title
+					any_previous_holder = { #At least 5 previous holders in dynasty
+						dynasty = ROOT
+						count = 5
+					}
+				}	
+			}	
+			custom_tooltip = { text = TOOLTIPtraditional_claims.201C }			
+			show_scope_change = no
+			hidden_tooltip = {
+				ROOT = {
+					random_owned_bloodline = {
+						limit = { has_bloodline_flag = bloodline_to_add_claim }
+						set_bloodline_flag = dynastic_claim_@PREVPREV 
+					}	
+				}
+			}	
+			#Add equivalent westerosi kingdom
+			if = {
+				limit = { title = e_north }
+				k_north = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_riverlands }
+				k_riverlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_vale }
+				k_vale = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_westerlands }
+				k_westerlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_reach }
+				k_reach = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_stormlands }
+				k_stormlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_dorne }
+				k_dorne = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = e_iron_isles }
+				k_iron_isles = { save_event_target_as = westerosi_kingdom }
+			}
+			
+			if = {
+				limit = { title = k_north }
+				e_north = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_riverlands }
+				e_riverlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_vale }
+				e_vale = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_westerlands }
+				e_westerlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_reach }
+				e_reach = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_stormlands }
+				e_stormlands = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_dorne }
+				e_dorne = { save_event_target_as = westerosi_kingdom }
+			}
+			if = {
+				limit = { title = k_iron_isles }
+				e_iron_isles = { save_event_target_as = westerosi_kingdom }
+			}
+			event_target:westerosi_kingdom = {
+				custom_tooltip = { text = TOOLTIPtraditional_claims.201C }			
+				show_scope_change = no
+				hidden_tooltip = {
+					ROOT = {
+						random_owned_bloodline = {
+							limit = { has_bloodline_flag = bloodline_to_add_claim }
+							set_bloodline_flag = dynastic_claim_@PREVPREV 
+						}	
+					}
+				}
+			}	
+			clear_event_target = westerosi_kingdom
+		}
+		#Also add to capital kingdom/duchy
+		if = {
+			limit = { 
+				tier = EMPEROR 
+				capital_scope = { kingdom = { holder_scope = { character = ROOT } } }
+			}
+			capital_scope = {
+				show_scope_change = no
+				kingdom = {
+					custom_tooltip = { text = TOOLTIPtraditional_claims.201C }			
+					show_scope_change = no
+					hidden_tooltip = {
+						ROOT = {
+							random_owned_bloodline = {
+								limit = { has_bloodline_flag = bloodline_to_add_claim }
+								set_bloodline_flag = dynastic_claim_@PREVPREV 
+							}	
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { 
+				capital_scope = { duchy = { holder_scope = { character = ROOT } } }
+			}
+			capital_scope = {
+				show_scope_change = no
+				duchy = {
+					custom_tooltip = { text = TOOLTIPtraditional_claims.201C }			
+					show_scope_change = no
+					hidden_tooltip = {
+						ROOT = {
+							random_owned_bloodline = {
+								limit = { has_bloodline_flag = bloodline_to_add_claim }
+								set_bloodline_flag = dynastic_claim_@PREVPREV 
+							}	
+						}
+					}
+				}
+			}
+		}
+		hidden_tooltip = { #add capital
+			capital_scope = {
+				show_scope_change = no
+				county = {
+					custom_tooltip = { text = TOOLTIPtraditional_claims.201C }			
+					show_scope_change = no
+					hidden_tooltip = {
+						ROOT = {
+							random_owned_bloodline = {
+								limit = { has_bloodline_flag = bloodline_to_add_claim }
+								set_bloodline_flag = dynastic_claim_@PREVPREV 
+							}	
+						}
+					}
+				}
+			}
+		}
+		hidden_tooltip = {
+			any_player = { #inform world
+				limit = {
+					OR = {
+						same_realm = ROOT
+						dynasty = ROOT
+						is_close_relative = ROOT
+						is_married = ROOT
+						AND = {
+							is_within_diplo_range = ROOT
+							culture_group = ROOT							
+						}
+					}
+					NOT = { character = ROOT }
+				}
+				character_event = { id = traditional_claims.202 }
+			}
+			random_owned_bloodline = {
+				limit = { has_bloodline_flag = bloodline_to_add_claim }
+				clr_bloodline_flag = bloodline_to_add_claim
+			}
+		}
+	}
+	after = {
+		clr_character_flag = sisterman_special_bloodline
+		clr_character_flag = skagosi_special_bloodline
+		clr_character_flag = conquest_special_bloodline
+		clr_character_flag = founder_special_bloodline
+	}
+}
+character_event = { #Inform
+	id = traditional_claims.202
+	desc = "EVTDESCtraditional_claims.202"
+	picture = GFX_evt_powerful_ruler
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = OK
+	}
+}
+#Alternative trigger- form a new kingdom/empire (on_create_title)
+character_event = { 
+	id = traditional_claims.203
+	
+	is_triggered_only = yes
+	only_independent = yes
+	capable_only = yes
+	prisoner = no
+	min_age = 14
+	hide_window = yes
+	
+	trigger = {
+		higher_tier_than = DUKE
+		primary_title = { 
+			title = FROM 
+			NOT = { has_title_flag = founder_bloodline_set }
+			NOT = {
+				ROOT = {
+					any_owned_bloodline = {
+						has_bloodline_flag = dynastic_bloodline
+						has_bloodline_flag = dynastic_claim_@PREVPREV
+					}
+				}
+			}
+			OR = {
+				NOT = { #1st non-nomadic holder
+					any_previous_holder = { 
+						NOT = { character = ROOT } 
+						is_nomadic = no
+					} 
+				} 
+				#Ancient kingdoms
+				AND = {
+					title = k_sarnor
+					start_date = 7975.1.1
+				}
+				AND = {
+					title = k_andalos
+					start_date = 7100.1.1
+				}
+				AND = {
+					title = k_rhoynar
+					start_date = 7600.1.1
+				}
+				AND = {
+					title = e_ghiscar
+					start_date = 7886.1.1
+				}
+				AND = {
+					title = k_summer_islands
+					start_date = 3000.1.1
+				}
+			}
+		}
+		is_feudal = yes
+		NOT = { government = noble_oligarchy }
+		NOT = { government = alliance_government }
+		NOT = { government = theocratic_feudal_government }
+		NOT = { dynasty = 0 }
+	}
+	
+	immediate = {
+		primary_title = { 
+			save_event_target_as = bloodline_title 
+			set_title_flag = founder_bloodline_set
+		}
+		set_character_flag = founder_special_bloodline
+		character_event = { id = traditional_claims.201 }
+	}
+	
+	option = {
+		name = OK
+	}
+}
+# INHERIT BLOODLINE FROM MOTHER (if same dynasty and not bastard)
+character_event = {
+	id = traditional_claims.220
+	
+	is_triggered_only = yes
+	hide_window = yes
+	
+	trigger = {
+		mother_even_if_dead = {
+			dynasty = ROOT
+		}
+		NOT = { trait = bastard }
+	}
+	
+	immediate = {	
+		mother_even_if_dead = {
+			any_owned_bloodline = {
+				limit = {
+					OR = {
+						has_bloodline_flag = inherit_matrilineal_same_dynasty
+						has_bloodline_flag = dynastic_bloodline
+					}
+				}
+				add_bloodline_member = ROOT				
+			}
+		}
+	}
+	
+	option = {
+		name = OK
+	}
+}
+	
+# BLACKWOOD/BRACKEN
+character_event = {
+	id = traditional_claims.14
+	desc = "EVTDESCtraditional_claims.14"
+	picture = GFX_evt_battle
+	is_triggered_only = yes
+	
+	trigger = {
+		has_game_rule = { name = traditional_dynastic_claims value = on }
+		# Must belong to the relevant house
+		OR = {
+			dynasty = 149 #Bracken
+			dynasty = 150 # Blackwood
+		}	
+		# Must not be a Maester, of the Night's Watch, or of the Kingsguard
+		can_press_claims_trigger = yes
+		
+		# Must either be senior member of a branch or be a duke or above	
+		OR = {
+			higher_tier_than = COUNT
+			NOT = {
+				OR = {
+					any_sibling = { 
+						is_alive = yes 
+						dynasty = ROOT 
+						higher_tier_than = COUNT
+						can_press_claims_trigger = yes
+					}
+					father = { 
+						is_alive = yes 
+						dynasty = ROOT 
+						can_press_claims_trigger = yes
+					}
+					father = { 
+						father = {  
+							is_alive = yes 
+							dynasty = ROOT 
+							can_press_claims_trigger = yes
+						} 
+					}
+				}
+			}
+		}
+		OR = {
+			k_blackwoodTK = {
+				ROOT = { dynasty = 150 }
+				has_holder = yes # Must exist
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+				}
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			d_blackwood = {
+				ROOT = { dynasty = 150 }
+				has_holder = yes # Must exist
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+				}
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			c_blackwoodvale = {
+				ROOT = { dynasty = 150 }
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+				}	
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			k_southstoneTK = {
+				ROOT = { dynasty = 149 }
+				has_holder = yes # Must exist
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+				}	
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			d_southstone = {
+				ROOT = { dynasty = 149 }
+				has_holder = yes # Must exist
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+				}	
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			c_stonehedge = {
+				ROOT = { dynasty = 149 }
+				holder_scope = { 
+					NOT = { dynasty = ROOT }
+					NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+				}	
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			#Disputed baronies
+			b_lushton = {
+				ROOT = { has_landed_title = c_stonehedge }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			b_oldgodshill = {
+				ROOT = { has_landed_title = c_stonehedge }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			b_woodford = {
+				ROOT = { has_landed_title = c_stonehedge }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			b_lambswold = {
+				ROOT = { has_landed_title = c_blackwoodvale }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			b_halfway = {
+				ROOT = { has_landed_title = c_blackwoodvale }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+			b_mudford = {
+				ROOT = { has_landed_title = c_blackwoodvale }
+				NOT = { holder_scope = { dynasty = ROOT } }
+				NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+				ROOT = { NOT = { has_strong_claim = PREV } }
+			}
+		}
+	}
+	
+	option = {
+		name = "EVTOPTAtraditional_claims.14"
+		if = {
+			limit = {
+				k_blackwoodTK = {
+					ROOT = { dynasty = 150 }
+					has_holder = yes # Must exist
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+					}	
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				k_blackwoodTK = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				k_blackwoodTK = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				d_blackwood = {
+					ROOT = { dynasty = 150 }
+					has_holder = yes # Must exist
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+					}	
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				d_blackwood = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				d_blackwood = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				c_blackwoodvale = {
+					ROOT = { dynasty = 150 }
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = blackwood_traditional_title_grant }				
+					}
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				c_blackwoodvale = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				c_blackwoodvale = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				k_southstoneTK = {
+					ROOT = { dynasty = 149 }
+					has_holder = yes # Must exist
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+					}		
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				k_southstoneTK = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				k_southstoneTK = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				d_southstone = {
+					ROOT = { dynasty = 149 }
+					has_holder = yes # Must exist
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+					}		
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				d_southstone = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				d_southstone = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				c_stonehedge = {
+					ROOT = { dynasty = 149 }
+					holder_scope = { 
+						NOT = { dynasty = ROOT }
+						NOT = { has_dynasty_flag = bracken_traditional_title_grant }				
+					}		
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			if = {
+				limit = { NOT = { trait = bastard } }
+				c_stonehedge = { add_claim = ROOT }
+			}	
+			if = {
+				limit = { trait = bastard } 
+				c_stonehedge = { add_weak_claim = ROOT }
+			}
+		}
+		if = {
+			limit = {
+				b_lushton = {
+					ROOT = { has_landed_title = c_stonehedge }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_lushton = { add_claim = ROOT }
+		}
+		if = {
+			limit = {
+				b_oldgodshill = {
+					ROOT = { has_landed_title = c_stonehedge }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_oldgodshill = { add_claim = ROOT }
+		}
+		if = {
+			limit = {
+				b_woodford = {
+					ROOT = { has_landed_title = c_stonehedge }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_woodford = { add_claim = ROOT }
+		}
+		if = {
+			limit = {
+				b_lambswold = {
+					ROOT = { has_landed_title = c_blackwoodvale }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_lambswold = { add_claim = ROOT }
+		}
+		if = {
+			limit = {
+				b_halfway = {
+					ROOT = { has_landed_title = c_blackwoodvale }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_halfway = { add_claim = ROOT }
+		}
+		if = {
+			limit = {
+				b_mudford = {
+					ROOT = { has_landed_title = c_blackwoodvale }
+					NOT = { holder_scope = { dynasty = ROOT } }
+					NOT = { holder_scope = { any_liege = { dynasty = ROOT } } }
+					ROOT = { NOT = { has_strong_claim = PREV } }
+				}
+			}
+			b_mudford = { add_claim = ROOT }
+		}
+		if = {
+			limit = { dynasty = 150 }
+			#Titular Kingdoms
+			any_playable_ruler = {
+				limit = { 
+					higher_tier_than = DUKE 
+					NOT = { dynasty = ROOT }
+					any_demesne_title = {
+						tier = KING
+						capital_scope = { province_id = 90 } #Blackwood Vale
+						ROOT = { NOT = { has_strong_claim = PREV } }
+					}
+				}
+				any_demesne_title = {
+					limit = {
+						tier = KING
+						capital_scope = { province_id = 90 } #Blackwood Vale
+						ROOT = { NOT = { has_strong_claim = PREV } }
+					}	
+					if = {
+						limit = { ROOT = { NOT = { trait = bastard } } }
+						add_claim = ROOT
+					}	
+					if = {
+						limit = { ROOT = { trait = bastard } } 
+						add_weak_claim = ROOT
+					}
+				}
+			}
+		}	
+		if = {
+			limit = { dynasty = 149 }
+			#Titular Kingdoms
+			any_playable_ruler = {
+				limit = { 
+					higher_tier_than = DUKE 
+					NOT = { dynasty = ROOT }
+					any_demesne_title = {
+						tier = KING
+						capital_scope = { province_id = 91 } #Stone Hedge
+						ROOT = { NOT = { has_strong_claim = PREV } }
+					}
+				}
+				any_demesne_title = {
+					limit = {
+						tier = KING
+						capital_scope = { province_id = 91 } #Stone Hedge
+						ROOT = { NOT = { has_strong_claim = PREV } }
+					}	
+					if = {
+						limit = { ROOT = { NOT = { trait = bastard } } }
+						add_claim = ROOT
+					}	
+					if = {
+						limit = { ROOT = { trait = bastard } } 
+						add_weak_claim = ROOT
+					}
+				}
+			}
+		}	
+	}
+}
