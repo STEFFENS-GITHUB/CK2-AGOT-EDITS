@@ -434,27 +434,78 @@ title_decisions = {
 					}
 				}
 			}
-			FROM = { 
+			FROM = {
 				conditional_tooltip = {
-					trigger = { has_game_rule = { name = colinisation_cost value = expensive } }
+					trigger = { has_game_rule = { name = colinisation_cost value = expensive } ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					wealth = 12800
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = normal } ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					wealth = 8000
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = cheap } ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					wealth = 3200
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = expensive } ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
+					wealth = 6400
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = normal } ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
+					wealth = 4000
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = cheap } ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
 					wealth = 1600
 				}
 				conditional_tooltip = {
-					trigger = { has_game_rule = { name = colinisation_cost value = normal } }
+					trigger = { has_game_rule = { name = colinisation_cost value = expensive } ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+					wealth = 3200
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = normal } ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+					wealth = 2000
+				}
+				conditional_tooltip = {
+					trigger = { has_game_rule = { name = colinisation_cost value = cheap } ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+					wealth = 800
+				}
+				conditional_tooltip = {
+					trigger = {
+						has_game_rule = { name = colinisation_cost value = expensive }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					}
+					wealth = 1600
+				}
+				conditional_tooltip = {
+					trigger = {
+						has_game_rule = { name = colinisation_cost value = normal }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					}
 					wealth = 1000
 				}
 				conditional_tooltip = {
-					trigger = { has_game_rule = { name = colinisation_cost value = cheap } }
+					trigger = {
+						has_game_rule = { name = colinisation_cost value = cheap }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_1 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_2 } } }
+						NOT = { ROOT = { location = { has_province_flag = valyria_price_tier_3 } } }
+					}
 					wealth = 400
 				}
 				is_nomadic = no
-				NOT = { trait = nightswatch } 
+				NOT = { trait = nightswatch }
 				NOT = { trait = kingsguard }
 			}
 			location = {
 				show_scope_change = no
 				NOT = { has_province_modifier = braavos_home }
-			}	
+			}
 		}
 		effect = {
 			hidden_tooltip = {
@@ -619,24 +670,84 @@ title_decisions = {
 				}
 				set_province_flag = colony_province
 				if = {
-					limit = { has_province_flag = ruined_province }
-					ROOT_FROM = { 
+					limit = {
+						has_province_flag = ruined_province
+						has_province_flag = valyria_price_tier_3
+					}
+					ROOT_FROM = {
 						if = {
 							limit = { has_game_rule = { name = colinisation_cost value = expensive } }
-							wealth = -1600
-						}	
+							wealth = -12800
+						}
 						else_if = {
 							limit = { has_game_rule = { name = colinisation_cost value = normal } }
-							wealth = -1000 
-						}	
+							wealth = -8000
+						}
 						else_if = {
 							limit = { has_game_rule = { name = colinisation_cost value = cheap } }
-							wealth = -400
-						}	
+							wealth = -3200
+						}
 					}
 				}
 				else_if = {
-					limit = { 
+					limit = {
+						has_province_flag = ruined_province
+						has_province_flag = valyria_price_tier_2
+					}
+					ROOT_FROM = {
+						if = {
+							limit = { has_game_rule = { name = colinisation_cost value = expensive } }
+							wealth = -6400
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = normal } }
+							wealth = -4000
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = cheap } }
+							wealth = -1600
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_province_flag = ruined_province
+						has_province_flag = valyria_price_tier_1
+					}
+					ROOT_FROM = {
+						if = {
+							limit = { has_game_rule = { name = colinisation_cost value = expensive } }
+							wealth = -3200
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = normal } }
+							wealth = -2000
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = cheap } }
+							wealth = -800
+						}
+					}
+				}
+				else_if = {
+					limit = { has_province_flag = ruined_province }
+					ROOT_FROM = {
+						if = {
+							limit = { has_game_rule = { name = colinisation_cost value = expensive } }
+							wealth = -1600
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = normal } }
+							wealth = -1000
+						}
+						else_if = {
+							limit = { has_game_rule = { name = colinisation_cost value = cheap } }
+							wealth = -400
+						}
+					}
+				}
+				else_if = {
+					limit = {
 						traditional_nomad_territory_trigger = yes
 					}
 					ROOT_FROM = { 
